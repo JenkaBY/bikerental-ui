@@ -14,6 +14,12 @@ have been defined covering the entire application. Next step is to begin executi
 - Memory bank initialized and fully updated with two-module architecture
 - 12 tasks defined (TASK001–TASK012) covering foundation → auth → admin → operator
 - All open questions resolved (auth, QR scanning, i18n, Material, role separation)
+- GitHub Actions CI/CD workflow created: `.github/workflows/build-and-deploy.yml`
+  - Triggers on push to `main` and manual dispatch
+  - Pipeline: checkout → setup Node 24 → npm ci (cached) → test → build → deploy to GitHub Pages
+  - SPA routing handled via `404.html` copy
+  - Uses `actions/upload-pages-artifact` + `actions/deploy-pages` (modern Pages approach)
+- `README.md` updated with CI/CD badge, setup instructions, and Pages configuration guide
 
 ## Next Steps
 

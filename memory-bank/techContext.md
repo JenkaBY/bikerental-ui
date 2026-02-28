@@ -149,3 +149,22 @@ npm install @angular/material @angular/cdk html5-qrcode
 ng add @angular/localize
 ```
 
+## CI/CD
+
+- **Workflow**: `.github/workflows/build-and-deploy.yml`
+- **Runner**: `ubuntu-latest`
+- **Node.js**: 24 (with npm cache via `actions/setup-node`)
+- **Pipeline**: `npm ci` → `npm test` → `ng build --configuration production` → deploy to GitHub Pages
+- **Deployment**: `actions/upload-pages-artifact` + `actions/deploy-pages` (GitHub Pages artifacts approach)
+- **Trigger**: push to `main` + `workflow_dispatch` (manual)
+- **SPA routing**: `index.html` copied to `404.html` for client-side routing on GitHub Pages
+- **Base href**: set dynamically to `/<repo-name>/` for GitHub Pages subpath
+- **Concurrency**: `pages-${{ github.ref }}` group with cancel-in-progress
+- **Permissions**: `contents: read` default; deploy job has `pages: write` + `id-token: write`
+
+### GitHub Pages Repository Settings
+
+To enable deployment, the repository must be configured:
+
+1. Settings → Pages → Source: **GitHub Actions**
+

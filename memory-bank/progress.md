@@ -56,21 +56,22 @@
 
 ## Milestones
 
-| Milestone | Task(s) | Status | Date |
-|---|---|---|---|
-| Project scaffold | — | ✅ Done | Before 2026-02-28 |
-| Memory bank & planning | — | ✅ Done | 2026-02-28 |
-| Foundation + Material + Models + Services | TASK001 | ⬜ Pending | — |
-| Authentication (mock JWT) | TASK002 | ⬜ Pending | — |
-| Admin layout shell | TASK003 | ⬜ Pending | — |
-| Operator layout shell | TASK004 | ⬜ Pending | — |
-| Admin: Equipment Types CRUD | TASK005 | ⬜ Pending | — |
-| Admin: Equipment Statuses CRUD | TASK006 | ⬜ Pending | — |
-| Admin: Equipment CRUD | TASK007 | ⬜ Pending | — |
-| Admin: Tariffs CRUD | TASK008 | ⬜ Pending | — |
-| Admin: Customers + History + Users | TASK009 | ⬜ Pending | — |
-| Operator: Dashboard | TASK010 | ⬜ Pending | — |
-| Operator: Rental creation | TASK011 | ⬜ Pending | — |
-| Operator: Return flow | TASK012 | ⬜ Pending | — |
-| End-to-end rental cycle | All | ⬜ Pending | — |
+| Milestone                                 | Task(s) | Status    | Date              |
+|-------------------------------------------|---------|-----------|-------------------|
+| Project scaffold                          | —       | ✅ Done    | Before 2026-02-28 |
+| Memory bank & planning                    | —       | ✅ Done    | 2026-02-28        |
+| CI/CD: GitHub Actions + GitHub Pages      | —       | ✅ Done    | 2026-02-28        |
+| Foundation + Material + Models + Services | TASK001 | ⬜ Pending | —                 |
+| Authentication (mock JWT)                 | TASK002 | ⬜ Pending | —                 |
+| Admin layout shell                        | TASK003 | ⬜ Pending | —                 |
+| Operator layout shell                     | TASK004 | ⬜ Pending | —                 |
+| Admin: Equipment Types CRUD               | TASK005 | ⬜ Pending | —                 |
+| Admin: Equipment Statuses CRUD            | TASK006 | ⬜ Pending | —                 |
+| Admin: Equipment CRUD                     | TASK007 | ⬜ Pending | —                 |
+| Admin: Tariffs CRUD                       | TASK008 | ⬜ Pending | —                 |
+| Admin: Customers + History + Users        | TASK009 | ⬜ Pending | —                 |
+| Operator: Dashboard                       | TASK010 | ⬜ Pending | —                 |
+| Operator: Rental creation                 | TASK011 | ⬜ Pending | —                 |
+| Operator: Return flow                     | TASK012 | ⬜ Pending | —                 |
+| End-to-end rental cycle                   | All     | ⬜ Pending | —                 |
 
