@@ -53,9 +53,22 @@ npm run fix
 The project uses GitHub Actions for continuous integration and deployment:
 
 - **Workflow**: `.github/workflows/build-and-deploy.yml`
-- **Trigger**: Push to `main` branch or manual dispatch
-- **Pipeline**: Install → Test → Build → Deploy to GitHub Pages
+- **Trigger**: Push/PR to `main`/`master` branch or manual dispatch
+- **Pipeline**: Lint & Format → Unit Tests → Build → Deploy to GitHub Pages
+- **Gate job**: `CI` — aggregates all check results; fails if any job failed
 - **SPA routing**: `404.html` is generated from `index.html` for client-side routing support
+
+### Blocking Merges on Failed Build
+
+To prevent merging pull requests when the build or tests fail:
+
+1. Go to **Settings → Branches**
+2. Add a **Branch protection rule** for `main` (and `master` if used)
+3. Enable **Require status checks to pass before merging**
+4. Search for and add **`CI`** as a required status check
+5. Enable **Require branches to be up to date before merging** (recommended)
+
+The `CI` job acts as a single required check that only passes when lint, tests, and build all succeed.
 
 ### GitHub Pages Setup
 
