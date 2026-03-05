@@ -4,6 +4,8 @@
 
 A web-based point-of-sale (POS) interface for a bicycle rental shop, built with Angular 21 and Angular Material.
 
+The latest stable version is available at: https://jenkaby.github.io/bikerental-ui/
+
 ## Modules
 
 - **Admin** (desktop-first, ≥22" 1080p) — CRUD management of equipment, types, statuses, tariffs, customers, rental/payment history, users
@@ -21,6 +23,29 @@ npm install
 npm start        # http://localhost:4200
 npm test         # run tests
 npm run build    # production build
+npm run fix      # auto-fix all lint and formatting issues
+npm run analyze  # visualize production bundle
+```
+
+## Development Process
+
+Before committing, the following checks run automatically via Husky:
+
+1. **`pre-commit`** — `lint-staged` runs ESLint + Prettier on staged files only
+2. **`commit-msg`** — `commitlint` enforces [Conventional Commits](https://www.conventionalcommits.org/)
+
+Commit message format:
+
+```
+feat: add rental creation stepper
+fix: correct tariff calculation
+chore: update dependencies
+```
+
+To fix all issues manually before committing:
+
+```bash
+npm run fix
 ```
 
 ## CI/CD

@@ -2,9 +2,9 @@
 
 **Status:** Pending  
 **Added:** 2026-02-28  
-**Updated:** 2026-02-28  
+**Updated:** 2026-03-04  
 **Depends on:** TASK001  
-**Blocks:** TASK003, TASK004
+**Blocks:** _None — added last; all pages are accessible by default until this task is completed_
 
 ## Original Request
 
@@ -15,10 +15,13 @@ for authentication and role-based access. Build the Login page with Angular Mate
 
 ## Thought Process
 
-The authentication layer is the critical path — every other module depends on it because:
+Authentication is implemented **last** so that all pages (admin and operator) can be built and tested freely without
+guards blocking access during development. All routes are open by default.
+
+When this task is executed, auth guards will be layered on top of the already-working pages:
 1. All API calls require `Authorization: Bearer <token>` header
-2. Admin and operator routes need guards to prevent unauthorized access
-3. The login page is the entry point for all users
+2. Admin routes will be locked to `ADMIN` role; operator routes will allow `ADMIN` and `OPERATOR`
+3. The login page becomes the entry point for all users
 4. Role-based routing determines where users land after login
 
 **Mock strategy**: The `AuthService.login()` method will NOT call a real HTTP endpoint. Instead it will:
