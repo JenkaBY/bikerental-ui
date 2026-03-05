@@ -44,7 +44,7 @@ jobs:
         run: npx tsc --noEmit
 
   test:
-    name: Unit Tests
+    name: Unit Tests & Coverage
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -62,8 +62,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npx vitest run
+      - name: Run tests with coverage
+        run: ng test:coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/bikerental-ui/
+          retention-days: 7
 
   build:
     name: Build Angular Application
