@@ -3,7 +3,12 @@ name: Build and Deploy to GitHub Pages
 on:
   push:
     branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
+
+env:
+  PROJECT_NAME: bikerental-ui
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -13,10 +18,10 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build Angular Application
+  quality:
+    name: Lint & Format
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -32,26 +37,108 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
+      - name: Check formatting (Prettier)
+        run: npm run format:check
+
+      - name: Lint (ESLint + angular-eslint)
+        run: npm run lint
+
+      - name: Type check (tsc --noEmit)
+        run: npx tsc --noEmit
+
+  test:
+    name: Unit Tests & Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Publish coverage report to PR
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: always()
+        with:
+          threshold-icons: "{0: '🔴', 80: '🔵', 90: '🟢'}"
+          json-summary-path: coverage/${{ env.PROJECT_NAME }}/coverage-summary.json
+          json-final-path: coverage/${{ env.PROJECT_NAME }}/coverage-final.json
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/${{ env.PROJECT_NAME }}/
+          retention-days: 30
+
+  build:
+    name: Build Angular Application
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [ quality, test ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build for production
         run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
 
       - name: Add 404.html for SPA routing
-        run: cp dist/bikerental-ui/browser/index.html dist/bikerental-ui/browser/404.html
+        run: cp dist/${{ env.PROJECT_NAME }}/browser/index.html dist/${{ env.PROJECT_NAME }}/browser/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/bikerental-ui/browser
+          path: dist/${{ env.PROJECT_NAME }}/browser
+
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    needs: [ quality, test, build ]
+    if: always()
+    steps:
+      - name: All CI checks passed
+        run: |
+          if [[ "${{ needs.quality.result }}" != "success" || "${{ needs.test.result }}" != "success" || "${{ needs.build.result }}" != "success" ]]; then
+            echo "One or more CI jobs failed."
+            exit 1
+          fi
+          echo "All CI checks passed."
 
   deploy:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    needs: [ ci, build ]
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
     permissions:
       pages: write
       id-token: write
@@ -62,4 +149,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

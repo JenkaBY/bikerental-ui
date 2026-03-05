@@ -14,24 +14,28 @@ have been defined covering the entire application. Next step is to begin executi
 - Memory bank initialized and fully updated with two-module architecture
 - 12 tasks defined (TASK001–TASK012) covering foundation → auth → admin → operator
 - All open questions resolved (auth, QR scanning, i18n, Material, role separation)
-- GitHub Actions CI/CD workflow created: `.github/workflows/build-and-deploy.yml`
-  - Triggers on push to `main` and manual dispatch
-  - Pipeline: checkout → setup Node 24 → npm ci (cached) → test → build → deploy to GitHub Pages
-  - SPA routing handled via `404.html` copy
-  - Uses `actions/upload-pages-artifact` + `actions/deploy-pages` (modern Pages approach)
+- GitHub Actions CI/CD workflow created
 - `README.md` updated with CI/CD badge, setup instructions, and Pages configuration guide
+- **TASK002 moved to last** — all routes open by default, no auth guards until TASK002
+- **DX tooling set up (2026-03-04)**:
+  - ESLint with `angular-eslint` + `eslint-plugin-prettier` — zero lint errors
+  - Husky: `pre-commit` → `lint-staged`, `commit-msg` → `commitlint`
+  - `commitlint` with `@commitlint/config-conventional`
+  - `.gitattributes` enforcing LF line endings
+  - `.prettierrc` with `endOfLine: lf`
+  - `npm run analyze` for bundle analysis
+  - `index.html`: `lang="ru"`, meta description, Google Fonts preconnect
 
 ## Next Steps
 
 Execute tasks in dependency order:
 
-1. **TASK001** — Project foundation: install Material + html5-qrcode + @angular/localize, environments, models,
-   API services, error interceptor, root routing skeleton
-2. **TASK002** — Authentication: AuthService (mock JWT), auth interceptor, guards, login page
-3. **TASK003** — Admin layout shell: sidenav + toolbar + child routes
-4. **TASK004** — Operator layout shell: bottom nav + toolbar + child routes
-5. **TASK005–009** — Admin CRUD pages (can be parallelized)
-6. **TASK010–012** — Operator pages (can be parallelized after TASK004)
+1. **TASK000** — Server Health Indicator: `HealthService`, `HealthPollerService` (APP_INITIALIZER, 5 мин), `health-indicator` компонент (кружок + тултип в toolbar)
+2. **TASK003** — Admin layout shell: sidenav + toolbar + child routes (встроить health-indicator)
+3. **TASK004** — Operator layout shell: bottom nav + toolbar + child routes (встроить health-indicator)
+4. **TASK005–009** — Admin CRUD pages (can be parallelized)
+5. **TASK010–012** — Operator pages (can be parallelized after TASK004)
+6. **TASK002** — Authentication: AuthService (mock JWT), auth interceptor, guards, login page (added last after all pages are built)
 
 ## Active Decisions (All Resolved)
 
@@ -41,6 +45,7 @@ Execute tasks in dependency order:
 - Token stored in `localStorage`
 - Two roles: `ADMIN` and `OPERATOR`
 - Admin routes require `ADMIN` role; operator routes allow both `ADMIN` and `OPERATOR`
+- **Auth is implemented last (TASK002)** — all pages are accessible by default with no guards until then
 
 ### UI Library
 - **Angular Material** for all components

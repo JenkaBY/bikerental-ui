@@ -123,7 +123,7 @@ Before committing code, verify:
 
 ### Angular Boot Best Practices
 
-- 
+- don't use deprecated APIs
 
 ### Hexagonal Architecture Compliance
 
