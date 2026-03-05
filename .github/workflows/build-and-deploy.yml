@@ -73,6 +73,7 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         if: always()
         with:
+          threshold-icons: "{0: '🔴', 80: '🔵', 90: '🟢'}"
           json-summary-path: coverage/bikerental-ui/coverage-summary.json
           json-final-path: coverage/bikerental-ui/coverage-final.json
 
