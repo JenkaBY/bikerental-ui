@@ -47,6 +47,10 @@ jobs:
     name: Unit Tests & Coverage
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -64,6 +68,13 @@ jobs:
 
       - name: Run tests with coverage
         run: npm run test:coverage
+
+      - name: Publish coverage report to PR
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: always()
+        with:
+          json-summary-path: coverage/bikerental-ui/coverage-summary.json
+          json-final-path: coverage/bikerental-ui/coverage-final.json
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
