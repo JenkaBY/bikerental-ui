@@ -7,6 +7,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+env:
+  PROJECT_NAME: bikerental-ui
+
 concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: true
@@ -74,16 +77,16 @@ jobs:
         if: always()
         with:
           threshold-icons: "{0: '🔴', 80: '🔵', 90: '🟢'}"
-          json-summary-path: coverage/bikerental-ui/coverage-summary.json
-          json-final-path: coverage/bikerental-ui/coverage-final.json
+          json-summary-path: coverage/${{ env.PROJECT_NAME }}/coverage-summary.json
+          json-final-path: coverage/${{ env.PROJECT_NAME }}/coverage-final.json
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
-          path: coverage/bikerental-ui/
-          retention-days: 7
+          path: coverage/${{ env.PROJECT_NAME }}/
+          retention-days: 30
 
   build:
     name: Build Angular Application
@@ -109,12 +112,12 @@ jobs:
         run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
 
       - name: Add 404.html for SPA routing
-        run: cp dist/bikerental-ui/browser/index.html dist/bikerental-ui/browser/404.html
+        run: cp dist/${{ env.PROJECT_NAME }}/browser/index.html dist/${{ env.PROJECT_NAME }}/browser/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/bikerental-ui/browser
+          path: dist/${{ env.PROJECT_NAME }}/browser
 
   deploy:
     name: Deploy to GitHub Pages
