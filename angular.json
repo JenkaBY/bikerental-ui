@@ -33,6 +33,9 @@
             ],
             "polyfills": [
               "@angular/localize/init"
+            ],
+            "localize": [
+              "ru-RU"
             ]
           },
           "configurations": {
@@ -104,6 +107,12 @@
               "src/**/*.html"
             ]
           }
+        }
+      },
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "ru": "src/locale/messages.ru.xlf"
         }
       }
     }
