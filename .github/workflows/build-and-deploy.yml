@@ -112,7 +112,7 @@ jobs:
         run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
 
       - name: Add 404.html for SPA routing
-        run: cp dist/${{ env.PROJECT_NAME }}/browser/ru/index.html dist/${{ env.PROJECT_NAME }}/ru/browser/404.html
+        run: cp dist/${{ env.PROJECT_NAME }}/browser/ru/index.html dist/${{ env.PROJECT_NAME }}/browser/ru/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
