@@ -35,7 +35,7 @@
               "@angular/localize/init"
             ],
             "localize": [
-              "ru-RU"
+              "ru"
             ]
           },
           "configurations": {
