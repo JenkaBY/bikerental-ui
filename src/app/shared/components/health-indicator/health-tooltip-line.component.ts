@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (value() !== null) {
+    @if (value() !== null && value() !== undefined) {
       <div class="flex gap-2 text-xs leading-snug">
         <span class="text-white/60">{{ label() }}</span>
         <span class="text-white font-medium">{{ value() }}</span>
