@@ -1,0 +1,21 @@
+<div class="flex items-center gap-1.5">
+  <span
+    cdkOverlayOrigin
+    #origin="cdkOverlayOrigin"
+    class="inline-block w-3 h-3 rounded-full cursor-default"
+    [class]="dotClass()"
+    (mouseenter)="open()"
+    (mouseleave)="close()"
+  ></span>
+  <span class="text-xs tabular-nums leading-none">{{ checkedAt() }}</span>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayPositions]="overlayPositions"
+  [cdkConnectedOverlayHasBackdrop]="false"
+>
+  <app-health-tooltip [lines]="lines()" (mouseenter)="open()" (mouseleave)="close()" />
+</ng-template>

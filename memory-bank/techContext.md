@@ -99,7 +99,7 @@ bikerental-ui/
 - **Angular Material**: All UI components from Material library
 - **JWT Auth**: All API requests require Bearer token (except login)
 - **Role-based**: Admin and Operator roles, enforced by route guards
-- **i18n**: All UI text must go through Angular's i18n system, Russian as default
+- **i18n**: All UI text must go through Angular's i18n system. English is the source language (en-US) and Russian is provided via translations; default runtime locale is `ru`.
 - **Mobile support**: Operator module must work on phone screen (bottom nav, stepper, QR camera)
 - **Desktop support**: Admin module optimized for ≥22" 1080p (sidenav, data tables, pagination)
 - **TypeScript strict mode**: Enabled in tsconfig
