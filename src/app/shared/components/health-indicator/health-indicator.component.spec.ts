@@ -32,7 +32,7 @@ describe('HealthIndicatorComponent', () => {
       imports: [HealthIndicatorComponent],
       providers: [
         { provide: HealthService, useValue: makeHealthService(overrides) },
-        { provide: LOCALE_ID, useValue: 'ru-RU' },
+        { provide: LOCALE_ID, useValue: 'ru' },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(HealthIndicatorComponent);

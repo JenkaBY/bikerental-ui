@@ -24,7 +24,7 @@ modules:
 - Display and select appropriate tariffs automatically
 - Secure all API calls with JWT Bearer token authorization
 - Role-based access: Admin vs Operator
-- i18n support from the start (Russian as default language)
+- i18n support from the start (English source strings; runtime default locale: `ru`)
 
 ## Scope
 
@@ -75,5 +75,4 @@ modules:
 - Admin can manage all reference data from a desktop browser
 - All API interactions secured with JWT Bearer token
 - All API interactions use the Bike Rental API (http://localhost:8080)
-- UI labels support i18n (Russian as default)
-
+- UI labels support i18n (English source strings; runtime default locale: `ru`)

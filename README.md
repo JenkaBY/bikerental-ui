@@ -77,3 +77,7 @@ To enable deployment, configure your repository:
 1. Go to **Settings → Pages**
 2. Set **Source** to **GitHub Actions**
 
+## i18n
+
+- Source language: `en-US` (all source strings in code are English via `$localize`)
+- Runtime default locale: `ru` (Russian translations are provided in `src/locale/messages.ru.xlf`)

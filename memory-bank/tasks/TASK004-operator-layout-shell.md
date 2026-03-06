@@ -37,7 +37,8 @@ The layout uses flexbox: `flex-direction: column; height: 100vh;`
 - Bottom nav — fixed height at bottom
 
 ### i18n consideration
-All labels use `i18n` attribute. Russian as default.
+
+All labels use `i18n` attribute. English source strings (en-US); runtime default locale: `ru`.
 
 ## Implementation Plan
 

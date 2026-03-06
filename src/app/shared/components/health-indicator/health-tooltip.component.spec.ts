@@ -8,7 +8,7 @@ describe('HealthTooltipComponent', () => {
   async function setup(lines: TooltipLine[]) {
     await TestBed.configureTestingModule({
       imports: [HealthTooltipComponent],
-      providers: [{ provide: LOCALE_ID, useValue: 'ru-RU' }],
+      providers: [{ provide: LOCALE_ID, useValue: 'ru' }],
     }).compileComponents();
     fixture = TestBed.createComponent(HealthTooltipComponent);
     fixture.componentRef.setInput('lines', lines);

@@ -12,16 +12,16 @@ The application is split into two modules because the admin and operator have fu
 
 ## Problems It Solves
 
-| Problem | Solution |
-|---|---|
-| Slow customer lookup | Partial phone search (4+ digits) returning instant results |
-| Manual tariff calculation | Auto-tariff selection based on equipment type + duration |
-| Billing errors on return | Automatic overtime calculation with forgiveness logic |
-| Equipment identification | QR code scanning via phone camera to read equipment UID |
-| Lost revenue on disputes | Clear cost breakdown shown at return |
-| Refund confusion | Explicit early-return rule (< 10 min = full refund) |
-| Unauthorized access | JWT Bearer token auth with role-based route guards |
-| Language barriers | i18n support with Russian as default language |
+| Problem                   | Solution                                                                                         |
+|---------------------------|--------------------------------------------------------------------------------------------------|
+| Slow customer lookup      | Partial phone search (4+ digits) returning instant results                                       |
+| Manual tariff calculation | Auto-tariff selection based on equipment type + duration                                         |
+| Billing errors on return  | Automatic overtime calculation with forgiveness logic                                            |
+| Equipment identification  | QR code scanning via phone camera to read equipment UID                                          |
+| Lost revenue on disputes  | Clear cost breakdown shown at return                                                             |
+| Refund confusion          | Explicit early-return rule (< 10 min = full refund)                                              |
+| Unauthorized access       | JWT Bearer token auth with role-based route guards                                               |
+| Language barriers         | i18n support with English source strings and Russian translations (default runtime locale: `ru`) |
 
 ## How It Should Work
 
@@ -81,7 +81,7 @@ Return:
 - **Desktop-optimized**: Admin module designed for large monitor (≥22" 1080p)
 - **Error prevention**: Confirm actions that charge or refund money
 - **Minimal training**: Self-explanatory UI for new operators
-- **Accessible**: i18n ready, Russian as default language
+- **Accessible**: i18n ready — English source strings; runtime default locale: `ru`
 - **Secure**: JWT auth, role-based guards, auto-logout on token expiry
 
 ## Target Users
@@ -103,4 +103,3 @@ Main domains consumed:
 - `Rentals` — create (fast path + draft), update (JSON Patch), return, search, get by ID, prepayment
 - `Tariffs` — get all, get active, select, create, update, activate, deactivate
 - `Finance` — record payment, get by ID, get by rental
-

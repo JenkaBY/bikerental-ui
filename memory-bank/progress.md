@@ -1,4 +1,4 @@
-# Progress
+h# Progress
 
 ## Current Status
 
@@ -34,7 +34,7 @@
     - `health-tooltip.component` — dumb; `lines = input.required<TooltipLine[]>()`; single `@for` loop; `separator` flag renders divider
     - `health-tooltip-line.component` — dumb; hides itself when `value` is `null`/`undefined`
     - `health-tooltip-lines.builder.ts` — pure function `buildTooltipLines(health, serverInfo, lastChecked, locale?)` + `TOOLTIP_LINE_LABELS` + `TooltipLineId`
-  - i18n: English default labels in `$localize`; `src/locale/messages.xlf` generated (8 messages); ready for `messages.ru.xlf`
+  - i18n: English default labels in `$localize`; `src/locale/messages.xlf` generated (8 messages); ready for `messages.ru.xlf` (runtime default locale: `ru`)
   - `AppComponent` includes `<app-health-indicator>` (fixed bottom-right) so compiler visits it for i18n extraction
 
 ## What's Left to Build
