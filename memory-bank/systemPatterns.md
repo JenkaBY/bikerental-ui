@@ -36,7 +36,13 @@ src/app/
 │       └── error.interceptor.ts
 ├── shared/                            # Reusable UI: components, pipes, directives
 │   └── components/
-│       └── qr-scanner/               # QR code scanner (camera-based, html5-qrcode)
+│       ├── qr-scanner/               # QR code scanner (camera-based, html5-qrcode)
+│       └── health-indicator/         # Server health status indicator (dot + CDK overlay tooltip)
+│           ├── health-indicator.component.ts   # Smart: overlay, dotClass, checkedAt, lines computed
+│           ├── health-indicator.component.html
+│           ├── health-tooltip.component.ts     # Dumb: lines input → @for loop
+│           ├── health-tooltip-line.component.ts # Dumb: label+value, hides when value null
+│           └── health-tooltip-lines.builder.ts # Pure fn: buildTooltipLines(health, serverInfo, lastChecked)
 ├── features/
 │   ├── auth/                          # Login page (public route)
 │   │   └── login.component.ts
@@ -113,12 +119,33 @@ Global HTTP error interceptor catches API errors and maps `ProblemDetail` respon
 Components handle loading/error states using signals.
 
 ### 10. i18n
-Angular's built-in `@angular/localize` for internationalization. Russian as the default language.
-All UI labels extracted to translation files from the start.
+
+Angular's built-in `@angular/localize` for internationalization. **English as source language** (default strings in
+`$localize` calls). Russian translation provided via `src/locale/messages.ru.xlf`.
+All UI labels extracted to `src/locale/messages.xlf` via `npm run i18n:extract`.
+Components must be reachable from `AppComponent` for the compiler to extract their `$localize` calls.
 
 ### 11. QR Code Scanning
 `html5-qrcode` library for reading QR codes from phone camera. Shared reusable component in
 `shared/components/qr-scanner/`. Used by operator module for equipment UID input and return flow.
+
+### 12. Health Indicator Component Architecture
+
+The health indicator follows a strict smart/dumb decomposition with a pure builder function:
+
+- **`HealthIndicatorComponent`** (smart): injects `HealthService` + `LOCALE_ID`; owns `isOpen` signal,
+  `dotClass`, `checkedAt`, `lines` computed; passes `lines` to tooltip via input binding
+- **`HealthTooltipComponent`** (dumb): `lines = input.required<TooltipLine[]>()`; single `@for` loop;
+  `separator: true` on a line renders a `<div class="border-t">` divider before it
+- **`HealthTooltipLineComponent`** (dumb): `label = input.required<string>()`, `value = input<string|null|undefined>()`;
+  hides itself entirely with `@if (value() != null)`
+- **`buildTooltipLines(health, serverInfo, lastChecked, locale?)`** (pure function, no Angular):
+  - Param 1: `Pick<HealthResponse, 'status'|'components'> & { error? }` — status + components + error
+  - Param 2: `ServerInfo | null` — from `/actuator/info`
+  - Param 3: `Date | null` — raw timestamp, formatted internally
+  - Returns `TooltipLine[]` with component entries appended when status ≠ UP
+- CDK `cdkConnectedOverlay` (not `matTooltip`) renders a real component on hover
+- `TOOLTIP_LINE_LABELS` and `TooltipLineId` live in `health-tooltip-lines.builder.ts` (sole consumer)
 
 ## Routing Strategy
 
@@ -165,6 +192,7 @@ Rental creation uses `mat-vertical-stepper` (linear mode) with one child compone
 
 ```
 AppComponent
+├── HealthIndicatorComponent (fixed bottom-right; temporary until toolbar shells)
 └── RouterOutlet
     ├── LoginComponent
     ├── AdminLayoutComponent (smart)
@@ -194,7 +222,11 @@ AppComponent
         └── bottom-nav (3 tabs)
 
 Shared:
-└── QrScannerComponent (used by EquipmentStepComponent + ReturnComponent)
+├── QrScannerComponent (used by EquipmentStepComponent + ReturnComponent)
+└── HealthIndicatorComponent
+    ├── HealthTooltipComponent
+    │   └── HealthTooltipLineComponent (×n)
+    └── [buildTooltipLines() — pure function, no Angular]
 ```
 
 ## API Integration Patterns

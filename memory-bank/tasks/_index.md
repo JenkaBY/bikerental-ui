@@ -3,7 +3,8 @@
 ## Task Dependency Chain
 
 ```
-TASK001 → TASK000 (health indicator — shared component, встраивается в TASK003 и TASK004)
+TASK001 → TASK000 (health indicator core — complete)
+        → TASK013
         → TASK003 → TASK005, TASK006, TASK007, TASK008, TASK009
         → TASK004 → TASK010, TASK011 → TASK012
         → TASK002 (auth added last — all pages accessible by default, no auth guards)
@@ -15,9 +16,9 @@ _None_
 
 ## Pending
 
-- [TASK000] Server Health Indicator — цветной кружок статуса сервера в toolbar, `/actuator/health` + `/actuator/info`, фоновый поллер 5 мин. Depends on: TASK001
 - [TASK003] Admin Layout Shell — Desktop sidenav + toolbar + admin child routes. Depends on: TASK001
 - [TASK004] Operator Layout Shell — Mobile bottom nav + toolbar + operator child routes. Depends on: TASK001
+- [TASK013] Embed Health Indicator into Toolbar Shells — Completed on 2026-03-06
 - [TASK005] Admin: Equipment Types CRUD — Table + create/edit dialog. Depends on: TASK003
 - [TASK006] Admin: Equipment Statuses CRUD — Table + dialog with transitions multi-select. Depends on: TASK003
 - [TASK007] Admin: Equipment CRUD — Paginated table with filters + dialog with selects/datepicker. Depends on: TASK003
@@ -30,9 +31,9 @@ _None_
 
 ## Completed
 
+- [TASK000] Server Health Indicator — Completed on 2026-03-06
 - [TASK001] Project Foundation & Angular Material Setup — Completed on 2026-02-28
 
 ## Abandoned
 
 _None_
-
