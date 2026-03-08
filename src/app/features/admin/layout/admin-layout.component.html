@@ -1,0 +1,36 @@
+<mat-sidenav-container autosize class="h-screen min-h-screen overflow-hidden" style="height: 100vh">
+  <!-- ── Sidebar ───────────────────────────────────────────────────── -->
+  <mat-sidenav
+    mode="side"
+    opened
+    class="w-72 bg-slate-50 border-r border-slate-200 flex flex-col h-full"
+  >
+    <div class="flex flex-col h-full">
+      <div class="flex-1 overflow-y-auto">
+        <app-sidebar [items]="navItems" [brand]="brand"> </app-sidebar>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <!-- ── Main area ─────────────────────────────────────────────────── -->
+  <mat-sidenav-content class="flex flex-col min-h-0 w-full h-full">
+    <!-- Top toolbar (fixed height) -->
+    <mat-toolbar
+      color="primary"
+      class="sticky top-0 z-20 shrink-0 flex items-center gap-2 px-4 shadow-md h-14"
+    >
+      <span class="text-base font-medium" i18n>Admin Panel</span>
+      <span class="flex-1"></span>
+      <button mat-icon-button aria-label="Logout" title="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <!-- Page content (scrollable region) -->
+    <main class="flex-1 overflow-auto bg-white w-full">
+      <div class="p-6 min-h-full">
+        <router-outlet />
+      </div>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
