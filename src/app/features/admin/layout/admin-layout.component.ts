@@ -27,6 +27,7 @@ const NAV_ITEMS: NavItem[] = [
 export class AdminLayoutComponent {
   protected navItems = NAV_ITEMS;
   protected brand = inject(APP_BRAND);
+  protected title = $localize`Admin Dashboard`;
   protected sidenavOpened = signal(true);
 
   protected onToggleSidebar() {
