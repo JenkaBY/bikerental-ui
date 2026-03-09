@@ -37,3 +37,13 @@ mat-sidenav {
   color: rgb(99, 102, 241) !important;
   font-weight: 600 !important;
 }
+
+/* BottomNavComponent – active state set by routerLinkActive */
+.bottom-nav-item.bottom-nav-active {
+  color: rgb(99, 102, 241) !important;
+  font-weight: 500;
+}
+
+.bottom-nav-item.bottom-nav-active mat-icon {
+  color: rgb(99, 102, 241) !important;
+}

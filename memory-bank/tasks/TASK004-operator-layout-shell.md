@@ -1,8 +1,8 @@
 # TASK004 - Operator Layout Shell (Mobile Bottom Navigation)
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-02-28  
-**Updated:** 2026-02-28  
+**Updated:** 2026-03-09  
 **Depends on:** TASK002  
 **Blocks:** TASK010, TASK011, TASK012
 
@@ -247,17 +247,17 @@ Test manually on phone (or Chrome DevTools mobile emulation):
 
 ## Progress Tracking
 
-**Overall Status:** Not Started - 0%
+**Overall Status:** Complete - 100%
 
 ### Subtasks
 
 | ID | Description | Status | Updated | Notes |
 |----|-------------|--------|---------|-------|
-| 4.1 | Operator child routes (operator.routes.ts) | Not Started | 2026-02-28 | |
-| 4.2 | OperatorLayoutComponent (toolbar + bottom nav) | Not Started | 2026-02-28 | |
-| 4.3 | Placeholder components for operator sections (3) | Not Started | 2026-02-28 | |
-| 4.4 | Delete old operator placeholder | Not Started | 2026-02-28 | |
-| 4.5 | Verify build and test on mobile | Not Started | 2026-02-28 | |
+| 4.1 | Operator child routes (operator.routes.ts) | Complete | 2026-03-09 | OperatorLayoutComponent as shell; 3 lazy-loaded children |
+| 4.2 | OperatorLayoutComponent (toolbar + bottom nav) | Complete | 2026-03-09 | Uses AppToolbarComponent + BottomNavComponent; no sidenav |
+| 4.3 | Placeholder components for operator sections (3) | Complete | 2026-03-09 | dashboard, rental-create, return; Tailwind typography + i18n |
+| 4.4 | Delete old operator placeholder | Complete | 2026-03-09 | operator-placeholder.component.ts removed |
+| 4.5 | Verify build and test on mobile | Complete | 2026-03-09 | Build passes; 105 tests pass (10 new for layout + 6 for BottomNav) |
 
 ## Progress Log
 
@@ -268,4 +268,26 @@ Test manually on phone (or Chrome DevTools mobile emulation):
 - 3 navigation items: Dashboard, New Rental, Return
 - 100dvh for dynamic viewport height on mobile browsers
 - Max-width 480px for operator shell
+
+### 2026-03-09 — Implementation complete
+
+- Created `BottomNavComponent` at `shared/components/bottom-nav/bottom-nav.component.ts`:
+  - Standalone, OnPush, `items = input.required<NavItem[]>()`
+  - Renders `<nav>` with `@for` loop, each item an `<a routerLink routerLinkActive="bottom-nav-active">`
+  - Tailwind utilities: `flex justify-around items-center h-16 bg-white border-t border-slate-200`
+  - Active styles (`.bottom-nav-item.bottom-nav-active`) placed in global `src/styles.css` (same pattern as `active-nav-item`)
+- Created `OperatorLayoutComponent` at `features/operator/layout/operator-layout.component.ts`:
+  - Standalone, OnPush, `host: { class: 'flex flex-col h-screen max-w-[480px] mx-auto' }`
+  - Imports: `AppToolbarComponent`, `BottomNavComponent`, `HealthIndicatorComponent`, `LogoutButtonComponent`, `RouterOutlet`
+  - 3 `NAV_ITEMS` using `$localize`: Dashboard / New Rental / Return
+  - `AppToolbarComponent` with `[showToggle]="false"` — no hamburger on mobile
+  - `<app-health-indicator>` and `<app-logout-button>` projected into toolbar as content
+  - `<main class="flex-1 overflow-y-auto p-4">` for scrollable content area
+  - `<app-bottom-nav [items]="navItems">` fixed at bottom
+- Rewrote `operator.routes.ts`: `OperatorLayoutComponent` as root shell with nested lazy-loaded children (`dashboard`, `rental/new`, `return`); default redirect `'' → 'dashboard'`
+- Created 3 placeholder components: `dashboard/dashboard.component.ts`, `rental-create/rental-create.component.ts`, `return/return.component.ts` — OnPush, Tailwind typography, `i18n` attributes
+- Deleted `operator-placeholder.component.ts`
+- Added `bottom-nav.component.spec.ts` (6 tests) and `operator-layout.component.spec.ts` (10 tests)
+- All 105 tests pass; build passes with only expected i18n translation warnings
+- TASK013 partially completed: `<app-health-indicator>` now embedded in operator toolbar as well
 
