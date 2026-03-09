@@ -26,6 +26,7 @@ _None_
 - [TASK011] Operator: Rental Creation Flow — 4-step mobile stepper + shared QR scanner component. Depends on: TASK004
 - [TASK012] Operator: Equipment Return Flow — QR scan → cost breakdown → payment → close. Depends on: TASK004, TASK011
 - [TASK002] Authentication — AuthService (mock JWT), auth interceptor, auth/role guards, login page. Depends on: TASK001 (added last — pages are open by default)
+- [TASK014] Create home page with links to Operator and Administrator dashboards — Pending (2026-03-09)
 
 ## Completed
 
