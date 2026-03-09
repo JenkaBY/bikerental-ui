@@ -4,6 +4,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { provideRouter } from '@angular/router';
 import { SidebarComponent } from './sidebar.component';
+import { APP_BRAND } from '../../../app.tokens';
 
 @Component({
   standalone: true,
@@ -24,7 +25,7 @@ describe('SidebarComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HostComponent, MatListModule, MatIconModule],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), { provide: APP_BRAND, useValue: 'Bike Rental Test' }],
     }).compileComponents();
   });
 
