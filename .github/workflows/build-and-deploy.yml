@@ -108,6 +108,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Inject Bike Rental API host
+        run: |
+          sed -i "s|BIKE_API_PLACEHOLDER|${{ vars.BIKE_RENTAL_API }}|g" \
+            src/environments/environment.prod.ts
+
       - name: Build for production
         run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
 
@@ -117,7 +122,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/${{ env.PROJECT_NAME }}/browser
+          path: dist/${{ env.PROJECT_NAME }}/browser/ru
 
   ci:
     name: CI
