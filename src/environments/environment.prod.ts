@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: '/api',
+  apiUrl: 'BIKE_API_PLACEHOLDER/api',
   healthPollIntervalMs: 300_000,
   defaultLocale: 'ru',
   brand: 'Bike Rental',

@@ -9,7 +9,6 @@ on:
 
 env:
   PROJECT_NAME: bikerental-ui
-  DEPLOY_ENVIRONMENT: render
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -112,7 +111,7 @@ jobs:
       - name: Inject Bike Rental API host
         run: |
           sed -i "s|BIKE_API_PLACEHOLDER|${{ vars.BIKE_RENTAL_API }}|g" \
-            src/environments/environment.${{ env.DEPLOY_ENVIRONMENT }}.ts
+            src/environments/environment.prod.ts
 
       - name: Build for production
         run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
