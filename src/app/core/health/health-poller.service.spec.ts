@@ -2,22 +2,19 @@ import { TestBed } from '@angular/core/testing';
 import { HealthPollerService } from './health-poller.service';
 import { HealthService } from './health.service';
 
-class MockHealthService {
-  called = 0;
-  checkHealth() {
-    this.called++;
-  }
-}
-
 describe('HealthPollerService', () => {
-  let mock: MockHealthService;
-  beforeEach(() => {
-    mock = new MockHealthService();
-    TestBed.configureTestingModule({ providers: [{ provide: HealthService, useValue: mock }] });
-  });
+  it('calls checkHealth on the injected HealthService when constructed', async () => {
+    const checkHealth = vi.fn();
+    const mockHealth = { checkHealth } as unknown as HealthService;
 
-  it('should call checkHealth immediately on construction', () => {
+    await TestBed.configureTestingModule({
+      providers: [{ provide: HealthService, useValue: mockHealth }, HealthPollerService],
+    }).compileComponents();
+
+    // instantiate the service so constructor runs
     TestBed.inject(HealthPollerService);
-    expect(mock.called).toBeGreaterThanOrEqual(1);
+
+    // constructor should have called checkHealth at least once
+    expect(checkHealth).toHaveBeenCalled();
   });
 });
