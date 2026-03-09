@@ -2,7 +2,7 @@
 
 ## Current Status
 
-**Phase**: TASK003 complete (admin layout + shared shell component layer). Next: **TASK004** (Operator layout shell) to embed `<app-health-indicator>` in operator toolbar and finish TASK000.
+**Phase**: TASK004 complete (operator layout shell + BottomNavComponent). Next: **TASK005–009** (Admin CRUD pages) and/or **TASK010** (Operator dashboard).
 
 ## What Works
 
@@ -52,13 +52,23 @@
   - 8 placeholder child components with Tailwind typography
   - Active nav-item styles in `src/styles.css` (global MDC selectors)
   - Tests: `ShellComponent` (211 lines), `AppBrandComponent` (37 lines), `AppToolbarComponent` (140 lines), `ButtonComponent` (51 lines), `ToggleButtonComponent` (54 lines)
+- **Operator Layout Shell (TASK004 — 2026-03-09) — complete**:
+  - `shared/components/bottom-nav/` — `BottomNavComponent`: standalone, OnPush, `items = input.required<NavItem[]>()`; `<nav>` with `@for` loop; `routerLinkActive="bottom-nav-active"`; Tailwind: `flex justify-around items-center h-16 bg-white border-t border-slate-200`; active styles in `src/styles.css`
+  - `features/operator/layout/operator-layout.component.ts` — standalone, OnPush, `host: { class: 'flex flex-col h-screen max-w-[480px] mx-auto' }`; `AppToolbarComponent` (`[showToggle]="false"`), `BottomNavComponent`, `HealthIndicatorComponent`, `LogoutButtonComponent`; 3 `$localize` NAV_ITEMS
+  - `features/operator/operator.routes.ts` — `OperatorLayoutComponent` as root shell; 3 lazy children: `dashboard`, `rental/new`, `return`; redirect `'' → 'dashboard'`
+  - 3 placeholder child components: `dashboard/`, `rental-create/`, `return/` — OnPush, Tailwind, `i18n`
+  - `operator-placeholder.component.ts` deleted
+  - Tests: `bottom-nav.component.spec.ts` (6 tests) + `operator-layout.component.spec.ts` (10 tests); **105 total tests pass**
+- **TASK013 (Health Indicator in Toolbar Shells) — complete**:
+  - Admin: `<app-health-indicator>` in `[sidebar-footer]` slot of `ShellComponent`
+  - Operator: `<app-health-indicator>` projected into `AppToolbarComponent` in `OperatorLayoutComponent`
 
 ## What's Left to Build
 
 ### Health Indicator (TASK000 — remaining)
 
 - [x] Embed `<app-health-indicator>` in admin toolbar (AdminLayoutComponent sidebar-footer) — done 2026-03-09
-- [ ] Embed `<app-health-indicator>` into operator toolbar (TASK004)
+- [x] Embed `<app-health-indicator>` into operator toolbar — done 2026-03-09 (TASK004)
 
 ### Admin Module (TASK005–TASK009)
 
@@ -72,9 +82,9 @@
 - [ ] Payment history (read-only)
 - [ ] User management placeholder
 
-### Operator Module (TASK004, TASK010–TASK012)
+### Operator Module (TASK010–TASK012)
 
-- [ ] Operator layout shell — use `ShellComponent` without sidebar; bottom nav tabs
+- [x] Operator layout shell — BottomNavComponent + AppToolbarComponent — done 2026-03-09
 - [ ] Active rentals dashboard
 - [ ] Rental creation flow (4-step stepper)
 - [ ] QR scanner shared component (stub exists at `shared/components/qr-scanner/`)
@@ -96,6 +106,6 @@
 | Foundation + Material + Models + Services       | TASK001 | ✅ Done    | 2026-02-28        |
 | Server Health Indicator (core + refactor)       | TASK000 | ✅ Done    | 2026-03-06        |
 | Admin layout shell + shared shell components    | TASK003 | ✅ Done    | 2026-03-09        |
+| Operator layout shell (bottom nav)              | TASK004 | ✅ Done    | 2026-03-09        |
 | Authentication (mock JWT)                       | TASK002 | ⬜ Pending | —                 |
-| Operator layout shell                           | TASK004 | ⬜ Pending | —                 |
 
