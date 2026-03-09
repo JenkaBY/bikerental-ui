@@ -3,4 +3,5 @@ export const environment = {
   apiUrl: 'http://localhost:8080',
   healthPollIntervalMs: 300_000,
   defaultLocale: 'ru',
+  brand: 'Bike Rental',
 };

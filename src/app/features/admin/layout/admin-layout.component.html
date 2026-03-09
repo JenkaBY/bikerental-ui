@@ -1,48 +1,17 @@
-<mat-sidenav-container autosize class="h-screen min-h-screen overflow-hidden" style="height: 100vh">
-  <!-- ── Sidebar ───────────────────────────────────────────────────── -->
-  <mat-sidenav
-    mode="side"
-    [opened]="sidenavOpened()"
-    class="sidenav-with-status w-72 bg-slate-50 border-r border-slate-200"
-  >
-    <div class="sidenav-inner flex flex-col h-full min-h-0">
-      <div class="flex-1 min-h-0 overflow-y-auto pb-12">
-        <app-sidebar [items]="navItems" [brand]="brand"> </app-sidebar>
-      </div>
-      <div class="sidebar-status-footer shrink-0 px-4 py-3 border-t border-slate-200 bg-slate-100">
-        <app-health-indicator />
-      </div>
-    </div>
-  </mat-sidenav>
+<app-shell
+  [items]="navItems"
+  [brand]="brand"
+  [title]="brand"
+  (toggleSidebar)="onToggleSidebar()"
+  (logout)="onLogout()"
+>
+  <div sidebar-footer>
+    <app-health-indicator />
+  </div>
 
-  <!-- ── Main area ─────────────────────────────────────────────────── -->
-  <mat-sidenav-content class="flex flex-col min-h-0 min-w-0 w-full h-full">
-    <!-- Top toolbar (fixed height) -->
-    <mat-toolbar
-      color="primary"
-      class="sticky top-0 z-20 shrink-0 flex items-center gap-2 px-4 shadow-md h-14 min-w-0 overflow-hidden"
-    >
-      <button
-        mat-icon-button
-        aria-label="Toggle sidebar"
-        title="Toggle sidebar"
-        class="shrink-0"
-        (click)="onToggleSidebar()"
-      >
-        <mat-icon>{{ sidenavOpened() ? 'menu_open' : 'menu' }}</mat-icon>
-      </button>
-      <span class="text-base font-medium shrink-0" i18n>Admin Panel</span>
-      <span class="flex-1 min-w-0"></span>
-      <button mat-icon-button aria-label="Logout" title="Logout" class="shrink-0">
-        <mat-icon>logout</mat-icon>
-      </button>
-    </mat-toolbar>
+  <div toolbar-actions>
+    <app-logout-button (logout)="onLogout()" />
+  </div>
 
-    <!-- Page content (scrollable region) -->
-    <main class="flex-1 overflow-auto bg-white w-full">
-      <div class="p-6 min-h-full">
-        <router-outlet />
-      </div>
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  <router-outlet></router-outlet>
+</app-shell>

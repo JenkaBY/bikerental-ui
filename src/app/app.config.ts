@@ -11,6 +11,12 @@ import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { HealthPollerService } from './core/health/health-poller.service';
 import { environment } from '../environments/environment';
+import { APP_BRAND, BRAND } from './app.tokens';
+
+interface EnvWithBrand {
+  brand?: string;
+}
+const envBrand = (environment as EnvWithBrand).brand ?? BRAND;
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,5 +27,6 @@ export const appConfig: ApplicationConfig = {
       inject(HealthPollerService);
     }),
     { provide: LOCALE_ID, useValue: environment.defaultLocale },
+    { provide: APP_BRAND, useValue: envBrand },
   ],
 };
