@@ -22,10 +22,15 @@ import { ToggleButtonComponent } from '../toggle-button/toggle-button.component'
         ></app-toggle-button>
       }
 
-      <span class="text-base font-medium shrink-0">{{ title() }}</span>
-      <span class="flex-1 min-w-0"></span>
+      <span class="text-base flex-auto font-medium shrink-0">{{ title() }}</span>
+      <span class="flex-auto min-w-0"></span>
 
-      <ng-content select="[toolbar-actions]"></ng-content>
+      <!-- Wrapped projection to ensure projected nodes are placed and styled correctly -->
+      <!--      <div class="toolbar-projection-container flex items-center gap-2">-->
+      <!--        &lt;!&ndash;        <ng-content select="[toolbar-actions]"></ng-content>&ndash;&gt;-->
+      <!--        <ng-content></ng-content>-->
+      <!--      </div>-->
+      <ng-content></ng-content>
     </mat-toolbar>
   `,
 })

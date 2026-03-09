@@ -22,11 +22,7 @@ import { NavItem } from '../sidebar-nav-item/nav-item.model';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mat-sidenav-container
-      autosize
-      class="h-screen min-h-screen overflow-hidden"
-      style="height: 100vh"
-    >
+    <mat-sidenav-container class="h-screen min-h-screen overflow-hidden" style="height: 100vh">
       @if (hasSidebar()) {
         <mat-sidenav
           mode="side"
