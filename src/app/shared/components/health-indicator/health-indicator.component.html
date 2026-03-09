@@ -1,4 +1,5 @@
 <div class="flex items-center gap-1.5">
+  <span class="text-xs tabular-nums leading-none" i18n>status API:</span>
   <span
     cdkOverlayOrigin
     #origin="cdkOverlayOrigin"
@@ -7,7 +8,7 @@
     (mouseenter)="open()"
     (mouseleave)="close()"
   ></span>
-  <span class="text-xs tabular-nums leading-none">{{ checkedAt() }}</span>
+  <span class="text-xs tabular-nums leading-none" i18n> last checked: {{ checkedAt() }}</span>
 </div>
 
 <ng-template
@@ -16,6 +17,8 @@
   [cdkConnectedOverlayOpen]="isOpen()"
   [cdkConnectedOverlayPositions]="overlayPositions"
   [cdkConnectedOverlayHasBackdrop]="false"
+  [cdkConnectedOverlayViewportMargin]="12"
+  [cdkConnectedOverlayPush]="true"
 >
   <app-health-tooltip [lines]="lines()" (mouseenter)="open()" (mouseleave)="close()" />
 </ng-template>

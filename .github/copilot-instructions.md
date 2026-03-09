@@ -50,66 +50,6 @@ To be more efficient, you can also read the following files for apply your exter
 
 ## Architecture Understanding
 
-### Required Parsing from backend-architecture.md
-
-1. **Extract and Understand**:
-   - Module boundaries and relationships
-   - Data flow patterns
-   - System interfaces
-   - Component dependencies
-   - Hexagonal architecture layers (Domain, Application, Adapters)
-
-2. **Validation**:
-   - Validate changes against architectural constraints
-   - Ensure new code maintains defined separation of concerns
-   - Verify module boundaries are respected
-   - Check that domain logic stays in domain layer
-   - Confirm adapters properly isolate external dependencies
-
-3. **Error Handling**:
-   - If file not found: **STOP** and notify user
-   - If diagram parse fails: **REQUEST** clarification
-   - If architectural violation detected: **WARN** user with specific details
-   - If dependency direction is wrong: **BLOCK** implementation
-
-## Testing Strategy
-
-### TDD Approach - Write Tests First
-
-**Order of implementation**: Test → Interface → Implementation
-
-1. **Component Tests** (`component-test` module):
-   - Full integration tests with Spring Boot context
-   - Endpoint testing with real HTTP requests
-   - Focus on positive scenarios and happy paths
-   - Test complete user flows end-to-end
-   - Use real database with test containers if needed
-
-2. **Unit Tests** (`service` module):
-   - Service layer business logic testing
-   - Application use case testing
-   - Module interaction testing
-   - Domain model behavior testing
-   - Fast execution without Spring context
-
-3. **WebMvc Tests** (`service` module):
-   - Controller endpoint testing
-   - Request validation and binding
-   - Response format verification
-   - Error handling and status codes
-   - Security and authorization rules
-
-### Testing Tools and Practices
-
-- **Assertions**: Use **AssertJ** for all assertions (fluent and readable)
-- **Async Operations**: Use **Awaitility** for async testing and eventual consistency
-- **Mocking**:
-   - **Mockito** for service mocks and behavior verification
-   - **WireMock** for external HTTP services
-   - **@MockBean** for Spring-managed dependencies
-- **Spring Profile**: **MUST** use `test` profile for all test execution
-- **Test Data**: Use builders or fixtures for consistent test data
-
 ## Code Quality Standards
 
 ### Validation Rules
@@ -126,14 +66,7 @@ Before committing code, verify:
 
 ### Angular Boot Best Practices
 
-- don't use deprecated APIs
-
-### Hexagonal Architecture Compliance
-
-- **Domain Layer**: Pure business logic, no framework dependencies
-- **Application Layer**: Use cases and orchestration, depends on domain
-- **Adapters**: Controllers, repositories, external clients - depend on application/domain
-- **Ports**: Interfaces defined in domain/application, implemented in adapters
+- don't use deprecated APIs either in main source or tests
 
 ## Error Prevention
 
@@ -141,10 +74,7 @@ Before committing code, verify:
 
 - [ ] Read all memory bank files
 - [ ] Understand current task context from `activeContext.md`
-- [ ] Review architectural constraints from `backend-architecture.md`
-- [ ] Verify technical specifications from `technical-details.md`
-- [ ] Plan test strategy (component, unit, WebMvc)
-- [ ] Identify domain boundaries and module responsibilities
+- [ ] Verify technical specifications from `memory-bank/techContext.md`
 
 ### Post-Implementation Checklist
 
@@ -178,7 +108,6 @@ When user requests:
 
 Remember: After each session, context resets completely. The memory bank is the ONLY source of truth. Keep it updated
 with:
-
 - Current work focus and decisions
 - Architectural patterns discovered
 - Integration approaches taken

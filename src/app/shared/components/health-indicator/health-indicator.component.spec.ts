@@ -52,13 +52,18 @@ describe('HealthIndicatorComponent', () => {
 
   it('should show --:--:-- when lastChecked is null', async () => {
     await setup({ lastChecked: null });
-    const ts: HTMLElement = fixture.nativeElement.querySelector('span.tabular-nums');
-    expect(ts.textContent?.trim()).toBe('--:--:--');
+    const spans: NodeListOf<HTMLElement> =
+      fixture.nativeElement.querySelectorAll('span.tabular-nums');
+    const ts: HTMLElement = spans[1];
+    // The span includes the localized label (e.g. "last checked: --:--:--") so assert it contains the sentinel
+    expect(ts.textContent?.trim().endsWith('--:--:--')).toBe(true);
   });
 
   it('should show formatted HH:mm:ss when lastChecked is set', async () => {
     await setup({ lastChecked: new Date(2026, 2, 5, 14, 32, 5) });
-    const ts: HTMLElement = fixture.nativeElement.querySelector('span.tabular-nums');
+    const spans2: NodeListOf<HTMLElement> =
+      fixture.nativeElement.querySelectorAll('span.tabular-nums');
+    const ts: HTMLElement = spans2[1];
     expect(ts.textContent?.trim()).toMatch(/\d{2}:\d{2}:\d{2}/);
   });
 

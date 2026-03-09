@@ -36,7 +36,15 @@ src/app/
 │       └── error.interceptor.ts
 ├── shared/                            # Reusable UI: components, pipes, directives
 │   └── components/
-│       ├── qr-scanner/               # QR code scanner (camera-based, html5-qrcode)
+│       ├── shell/                    # ShellComponent — generic layout shell (sidebar + toolbar + content projection)
+│       ├── sidebar/                  # SidebarComponent — brand header + nav list
+│       ├── app-brand/                # AppBrandComponent — icon + brand name (input or APP_BRAND token)
+│       ├── app-toolbar/              # AppToolbarComponent — mat-toolbar with toggle + title + ng-content
+│       ├── button/                   # ButtonComponent — text or icon-only mat-button; activated output
+│       ├── toggle-button/            # ToggleButtonComponent — menu/menu_open icon; toggled output
+│       ├── logout-button/            # LogoutButtonComponent — logout icon; logout output
+│       ├── sidebar-nav-item/         # NavItem model + SidebarNavItemComponent (dumb, signal input)
+│       ├── qr-scanner/               # QrScannerComponent stub (camera-based, html5-qrcode — TASK011)
 │       └── health-indicator/         # Server health status indicator (dot + CDK overlay tooltip)
 │           ├── health-indicator.component.ts   # Smart: overlay, dotClass, checkedAt, lines computed
 │           ├── health-indicator.component.html
@@ -87,9 +95,12 @@ Local component state uses `signal()` and `computed()`. Cross-component state us
 Material components used throughout: `mat-sidenav`, `mat-toolbar`, `mat-table`, `mat-paginator`, `mat-dialog`,
 `mat-stepper`, `mat-card`, `mat-form-field`, `mat-button-toggle`, `mat-snack-bar`, `mat-select`, `mat-datepicker`.
 
-### 4. Two Layout Shells
-- **Admin layout**: `mat-sidenav-container` with permanent side nav (260px) + toolbar. Desktop-optimized.
-- **Operator layout**: `mat-toolbar` at top + fixed bottom navigation bar (3 tabs). Mobile-optimized, max-width 480px.
+### 4. Two Layout Shells via Shared ShellComponent
+
+Both admin and operator layouts use the shared `ShellComponent` (`shared/components/shell/`):
+
+- **Admin layout**: `ShellComponent` with `[items]` → sidebar rendered (`w-72`, `bg-slate-50`); `[brand]` from `APP_BRAND`; `[sidebar-footer]` for health indicator; `[toolbar-actions]` for logout button. Desktop-optimized.
+- **Operator layout** (TASK004): `ShellComponent` without `[items]` → `hasSidebar = false`, no sidebar rendered; bottom navigation bar added separately. Mobile-optimized, max-width 480px.
 
 ### 5. Typed HTTP Services
 Each API domain has a dedicated service in `core/api/`. Services return `Observable<T>` using `HttpClient`.
@@ -192,36 +203,55 @@ Rental creation uses `mat-vertical-stepper` (linear mode) with one child compone
 
 ```
 AppComponent
-├── HealthIndicatorComponent (fixed bottom-right; temporary until toolbar shells)
 └── RouterOutlet
     ├── LoginComponent
     ├── AdminLayoutComponent (smart)
-    │   ├── mat-sidenav (navigation)
-    │   ├── mat-toolbar (title + logout)
-    │   └── router-outlet
-    │       ├── EquipmentListComponent → EquipmentDialogComponent
-    │       ├── EquipmentTypeListComponent → EquipmentTypeDialogComponent
-    │       ├── EquipmentStatusListComponent → EquipmentStatusDialogComponent
-    │       ├── TariffListComponent → TariffDialogComponent
-    │       ├── CustomerListComponent → CustomerDialogComponent
-    │       ├── RentalHistoryComponent
-    │       ├── PaymentHistoryComponent
-    │       └── UserPlaceholderComponent
-    └── OperatorLayoutComponent (smart)
-        ├── mat-toolbar (title + logout)
-        ├── router-outlet
-        │   ├── DashboardComponent (smart)
-        │   ├── RentalCreateComponent (smart, stepper)
-        │   │   ├── CustomerStepComponent (dumb)
-        │   │   ├── EquipmentStepComponent (dumb) → QrScannerComponent
-        │   │   ├── DurationStepComponent (dumb)
-        │   │   └── ConfirmStepComponent (dumb)
-        │   └── ReturnComponent (smart)
-        │       ├── QrScannerComponent (shared)
-        │       └── CostBreakdownComponent (dumb)
-        └── bottom-nav (3 tabs)
+    │   └── ShellComponent
+    │       ├── SidebarComponent
+    │       │   ├── AppBrandComponent
+    │       │   └── SidebarNavItemComponent (×8)
+    │       ├── AppToolbarComponent
+    │       │   └── ToggleButtonComponent → ButtonComponent
+    │       ├── [sidebar-footer] → HealthIndicatorComponent
+    │       │   ├── HealthTooltipComponent
+    │       │   │   └── HealthTooltipLineComponent (×n)
+    │       │   └── [buildTooltipLines() — pure function]
+    │       ├── [toolbar-actions] → LogoutButtonComponent → ButtonComponent
+    │       └── router-outlet
+    │           ├── EquipmentListComponent → EquipmentDialogComponent
+    │           ├── EquipmentTypeListComponent → EquipmentTypeDialogComponent
+    │           ├── EquipmentStatusListComponent → EquipmentStatusDialogComponent
+    │           ├── TariffListComponent → TariffDialogComponent
+    │           ├── CustomerListComponent → CustomerDialogComponent
+    │           ├── RentalHistoryComponent
+    │           ├── PaymentHistoryComponent
+    │           └── UserPlaceholderComponent
+    └── OperatorLayoutComponent (smart — TASK004)
+        └── ShellComponent (no items → no sidebar)
+            ├── AppToolbarComponent
+            │   └── ToggleButtonComponent → ButtonComponent
+            ├── [toolbar-actions] → LogoutButtonComponent → ButtonComponent
+            ├── [sidebar-footer] → HealthIndicatorComponent
+            └── router-outlet
+                ├── DashboardComponent (smart)
+                ├── RentalCreateComponent (smart, stepper)
+                │   ├── CustomerStepComponent (dumb)
+                │   ├── EquipmentStepComponent (dumb) → QrScannerComponent
+                │   ├── DurationStepComponent (dumb)
+                │   └── ConfirmStepComponent (dumb)
+                └── ReturnComponent (smart)
+                    ├── QrScannerComponent (shared)
+                    └── CostBreakdownComponent (dumb)
 
 Shared:
+├── ShellComponent (used by AdminLayoutComponent + OperatorLayoutComponent)
+├── SidebarComponent (used by ShellComponent when items provided)
+├── AppToolbarComponent (used by ShellComponent)
+├── AppBrandComponent (used by SidebarComponent)
+├── ButtonComponent (used by ToggleButtonComponent + LogoutButtonComponent)
+├── ToggleButtonComponent (used by AppToolbarComponent)
+├── LogoutButtonComponent (used by layout consumers via toolbar-actions slot)
+├── SidebarNavItemComponent (used by SidebarComponent)
 ├── QrScannerComponent (used by EquipmentStepComponent + ReturnComponent)
 └── HealthIndicatorComponent
     ├── HealthTooltipComponent

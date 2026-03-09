@@ -2,43 +2,49 @@
 
 ## Technology Stack
 
-| Layer | Technology | Version |
-|---|---|---|
-| Language | TypeScript | ~5.9.2 |
-| Framework | Angular | ^21.2.0 |
-| UI Library | Angular Material + CDK | ^21.x (match Angular) |
-| Runtime | Node.js | 24 |
-| Package Manager | npm | 11.9.0 |
-| Testing | Vitest | ^4.0.8 |
-| HTTP | Angular HttpClient | (bundled with Angular) |
-| Reactivity | RxJS | ~7.8.0 |
-| QR Scanning | html5-qrcode | ^2.3.8 |
-| i18n | @angular/localize | ^21.x (match Angular) |
-| Utilities | tslib | ^2.3.0 |
-| Code Formatting | Prettier | ^3.8.1 |
-| DOM Testing | jsdom | ^28.0.0 |
+| Layer           | Technology             | Version                |
+|-----------------|------------------------|------------------------|
+| Language        | TypeScript             | ~5.9.2                 |
+| Framework       | Angular                | ^21.2.0                |
+| UI Library      | Angular Material + CDK | ^21.x (match Angular)  |
+| Runtime         | Node.js                | 24                     |
+| Package Manager | npm                    | 11.9.0                 |
+| Testing         | Vitest                 | ^4.0.8                 |
+| HTTP            | Angular HttpClient     | (bundled with Angular) |
+| Reactivity      | RxJS                   | ~7.8.0                 |
+| QR Scanning     | html5-qrcode           | ^2.3.8                 |
+| i18n            | @angular/localize      | ^21.x (match Angular)  |
+| Utilities       | tslib                  | ^2.3.0                 |
+| Code Formatting | Prettier               | ^3.8.1                 |
+| DOM Testing     | jsdom                  | ^28.0.0                |
+| Tailwind        | post css               | ^4.2.0                 |
 
 ## Development Setup
 
 ### Prerequisites
+
 - Node.js 24
 - npm 11.9.0
 
 ### Install & Run
+
 ```powershell
 npm install
 npm start        # ng serve → http://localhost:4200
 npm test         # vitest
 npm run build    # production build
+npm test:coverag # coverage report
 ```
 
 ### Backend API
+
 - URL: `http://localhost:8080`
 - OpenAPI spec: `docs/api-docs/all.json`
 - Auth: JWT Bearer token in `Authorization` header
 - Login endpoint: `POST /api/auth/login` (not yet implemented — mock in frontend)
 
 ## Project Structure
+
 ```
 bikerental-ui/
 ├── src/
@@ -105,13 +111,16 @@ bikerental-ui/
 - **TypeScript strict mode**: Enabled in tsconfig
 - **OnPush**: All components use `ChangeDetectionStrategy.OnPush`
 - **Signal inputs/outputs**: Use `input()` / `output()` functions (not decorators) per Angular 21+
-
+- **Small component** Keep components tiny (max 200 lines TS + 100 lines HTML) — split into multiple components if needed
+- **No deprecated features** Don't use any Angular APIs marked as deprecated in v21
+- **any**: Avoid using `any` type; prefer strict typing and interfaces from OpenAPI spec
 ## Angular Configuration Notes
 
 - `app.config.ts` must include:
   - `provideHttpClient(withInterceptors([authInterceptor, errorInterceptor]))`
   - `provideRouter(routes)`
-  - `provideAnimationsAsync()`
+  - `provideAnimations()` / `provideNoopAnimations()` — note: these APIs are marked deprecated in Angular 20.2 with an intent to remove in v23.
+    Prefer using animation triggers built with `animate.enter` / `animate.leave` for new animation logic, and avoid depending on animation provider helpers in unit tests (use no-op or remove providers from TestBed providers when tests do not rely on animation behavior).
 - `angular.json` styles array must include Material prebuilt theme
 - `angular.json` must configure i18n settings for `@angular/localize`
 - Feature routes lazy-loaded via `loadChildren` / `loadComponent`
@@ -139,8 +148,9 @@ bikerental-ui/
 - **Test runner**: Vitest (not Karma/Jasmine)
 - **DOM**: jsdom
 - **Test files**: `*.spec.ts` alongside source files
-- **Coverage**: Run via `vitest --coverage`
-- Test strategy: unit tests for services + component tests for critical flows
+- **Coverage**: Run via `npm run test:coverage`
+- Test strategy: unit tests for component tests for critical flows. Don't cover by tests service classes that just wrap HttpClient calls without additional logic, but cover any custom logic in services (e.g. AuthService) and all components.
+- Coverage should be above 80%
 
 ## Packages to Install
 
@@ -167,4 +177,3 @@ ng add @angular/localize
 To enable deployment, the repository must be configured:
 
 1. Settings → Pages → Source: **GitHub Actions**
-

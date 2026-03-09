@@ -2,26 +2,54 @@
 
 ## Current Work Focus
 
-**TASK000 is complete.** Next focus: **TASK003 — Admin Layout Shell**.
+**TASK003 is complete (including refactor).** Next focus: **TASK004 — Operator Layout Shell**.
+
+**TASK003** (Admin Layout Shell) — fully complete, including shared shell component layer refactor (2026-03-09):
+
+- **Shared shell component layer** — new reusable components in `shared/components/`:
+  - `shell/` — `ShellComponent`: generic layout with optional sidebar (`mat-sidenav`), toolbar, content projection slots `[sidebar-footer]` and `[toolbar-actions]`; sidebar toggled via `sidenavOpened` signal input or internal `_opened` signal; `hasSidebar = computed(() => Array.isArray(items()))`; sidebar width `w-72`
+  - `sidebar/` — `SidebarComponent`: flex column with `AppBrandComponent` header + `mat-nav-list` of `SidebarNavItemComponent`; accepts `items` and `brand` inputs
+  - `app-brand/` — `AppBrandComponent`: bike icon + brand text; prefers `brand` input over `APP_BRAND` injection token fallback
+  - `app-toolbar/` — `AppToolbarComponent`: `mat-toolbar` with optional `ToggleButtonComponent`, `flex-1 truncate` title span, `<ng-content>` for projected toolbar actions
+  - `button/` — `ButtonComponent`: generic `mat-button` (text+icon) or `mat-icon-button` (icon-only); `activated` output
+  - `toggle-button/` — `ToggleButtonComponent`: wraps `ButtonComponent`; `pressed` → `menu`/`menu_open` icon; `customIcon` override; `toggled` output
+  - `logout-button/` — `LogoutButtonComponent`: wraps `ButtonComponent` with logout icon; `logout` output
+  - `qr-scanner/` — `QrScannerComponent` stub (empty file, to be implemented in TASK011)
+- **`APP_BRAND` token**: `app.tokens.ts` exports `BRAND` constant + `APP_BRAND: InjectionToken<string>`; `app.config.ts` provides it (env override or `BRAND` fallback)
+- **`AdminLayoutComponent`** refactored to use `<app-shell>`: `navItems` → `[items]`, `APP_BRAND` → `[brand]`, `$localize\`Admin Dashboard\`` → `[title]`; health indicator in `[sidebar-footer]`; logout button in `[toolbar-actions]`; router-outlet as default content; manages `sidenavOpened` signal internally
+- `shared/components/sidebar-nav-item/` — `NavItem` model + `SidebarNavItemComponent` (dumb, OnPush, signal input, Tailwind utilities) — unchanged
+- `features/admin/admin.routes.ts` — full child route tree (8 lazy-loaded pages) — unchanged
+- 8 placeholder child components — unchanged
+- Active nav-item styles in `src/styles.css` — unchanged
+- Tests: `ShellComponent` (211 lines), `AppBrandComponent` (37 lines), `AppToolbarComponent` (140 lines), `ButtonComponent` (51 lines), `ToggleButtonComponent` (54 lines)
 
 **TASK000** (Server Health Indicator) — fully complete:
 
 - `core/health/` — `health.model.ts`, `health.service.ts`, `health-poller.service.ts`
 - `shared/components/health-indicator/` — 4 files + builder; CDK overlay tooltip; 54 tests; 87% branch coverage
+- `<app-health-indicator>` embedded in `AdminLayoutComponent` toolbar via `[sidebar-footer]` slot (visible in admin shell)
 - i18n: `src/locale/messages.xlf` with 10 messages (8 tooltip labels + 2 toolbar titles)
 
 **TASK013** (Embed Health Indicator into Toolbar Shells):
 
-- `AdminPlaceholderComponent` and `OperatorPlaceholderComponent` both have a minimal `<header>` toolbar with `<app-health-indicator />` in the right corner
-- Fixed bottom-right placement removed from `AppComponent`
-- When TASK003/TASK004 build real `mat-toolbar` shells, `<app-health-indicator>` simply moves from the placeholder header to `mat-toolbar`
+- `AdminLayoutComponent` — `<app-health-indicator>` placed in `[sidebar-footer]` slot of `ShellComponent` — verified 2026-03-09
+- Operator toolbar: pending TASK004
+
+## Recent Changes
+
+- **2026-03-09**: Shared shell component layer extracted and AdminLayoutComponent refactored:
+  - `ShellComponent`, `SidebarComponent`, `AppToolbarComponent`, `AppBrandComponent`, `ButtonComponent`, `ToggleButtonComponent`, `LogoutButtonComponent` created
+  - `APP_BRAND` injection token + `BRAND` constant added to `app.tokens.ts`; provided in `app.config.ts`
+  - `AdminLayoutComponent` now delegates all layout to `ShellComponent`
+  - `QrScannerComponent` stub created
+  - 5 new spec files added for the new shared components
 
 ## Recent Changes
 
 - Angular 21 project scaffolded with `ng new bikerental-ui`
 - `package.json` dependencies confirmed: Angular 21, RxJS 7.8, Vitest for testing
 - `docs/api-docs/all.json` populated with full OpenAPI spec from the backend
-- `docs/main-flow.md` and `docs/main-flow-diaram.mermaid` document the business flow
+- `docs/main-flow.md` and `docs/main-flow-diagram.mermaid` document the business flow
 - Memory bank initialized and fully updated with two-module architecture
 - 12 tasks defined (TASK001–TASK012) covering foundation → auth → admin → operator
 - All open questions resolved (auth, QR scanning, i18n, Material, role separation)
@@ -42,7 +70,7 @@
   - `matTooltip` replaced with CDK `cdkConnectedOverlay` for a real component tooltip
   - `provideNoopAnimations` / `provideAnimationsAsync` (deprecated) removed from tests
   - i18n labels switched to English defaults; `src/locale/messages.xlf` generated with 8 messages
-  - `$localize` extraction works because `HealthIndicatorComponent` is in `AppComponent` tree
+  - `$localize` extraction works because `HealthIndicatorComponent` is in `AdminLayoutComponent` tree
   - 54 tests across 6 spec files (was 17 across 2)
   - Branch coverage: 87%
 
@@ -50,8 +78,8 @@
 
 Execute tasks in dependency order:
 
-1. **TASK003** — Admin layout shell: sidenav + toolbar + child routes → move `<app-health-indicator>` from `AppComponent` fixed position to toolbar (completes TASK000 subtask 1.7)
-2. **TASK004** — Operator layout shell: bottom nav + toolbar + child routes → embed `<app-health-indicator>` in toolbar (completes TASK000 subtask 1.8)
+1. **TASK003** — Admin layout shell — complete including shared shell component refactor (2026-03-09)
+2. **TASK004** — Operator layout shell: use `ShellComponent` without sidebar (no `items` input → `hasSidebar = false`), bottom nav tabs, `<router-outlet>` → embed `<app-health-indicator>` in sidebar-footer or toolbar (completes TASK000 subtask 1.8)
 3. **TASK005–009** — Admin CRUD pages (can be parallelized after TASK003)
 4. **TASK010–012** — Operator pages (can be parallelized after TASK004)
 5. **TASK002** — Authentication: AuthService (mock JWT), auth interceptor, guards, login page (added last after all pages are built)
