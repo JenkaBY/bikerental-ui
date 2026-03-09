@@ -49,6 +49,7 @@ import { NavItem } from '../sidebar-nav-item/nav-item.model';
           [menuOpen]="effectiveOpened()"
           (toggleSidebar)="onToggleSidebar()"
           (logout)="logout.emit()"
+          [showDesktopModeToggle]="showModeToggle()"
         >
           <ng-content select="[toolbar-actions]"></ng-content>
         </app-toolbar>
@@ -67,6 +68,7 @@ export class ShellComponent {
   brand = input<string | undefined>(undefined);
   title = input<string>('');
   hasSidebar = computed(() => Array.isArray(this.items()));
+  showModeToggle = input<boolean>(false);
 
   private _opened = signal(true);
   sidenavOpened = input<boolean | undefined>(undefined);

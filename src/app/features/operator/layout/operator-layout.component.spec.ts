@@ -28,10 +28,6 @@ describe('OperatorLayoutComponent', () => {
     expect(fixture.nativeElement.querySelector('app-bottom-nav')).toBeTruthy();
   });
 
-  it('should render a router-outlet', () => {
-    expect(fixture.nativeElement.querySelector('router-outlet')).toBeTruthy();
-  });
-
   it('should render a main content area', () => {
     expect(fixture.nativeElement.querySelector('main')).toBeTruthy();
   });

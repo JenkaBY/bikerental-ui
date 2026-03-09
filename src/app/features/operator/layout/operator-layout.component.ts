@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { AppToolbarComponent } from '../../../shared/components/app-toolbar/app-toolbar.component';
 import { BottomNavComponent } from '../../../shared/components/bottom-nav/bottom-nav.component';
 import { HealthIndicatorComponent } from '../../../shared/components/health-indicator/health-indicator.component';
@@ -17,7 +16,6 @@ const NAV_ITEMS: NavItem[] = [
   selector: 'app-operator-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterOutlet,
     AppToolbarComponent,
     BottomNavComponent,
     HealthIndicatorComponent,
@@ -25,13 +23,13 @@ const NAV_ITEMS: NavItem[] = [
   ],
   host: { class: 'flex flex-col h-screen max-w-[480px] mx-auto' },
   template: `
-    <app-toolbar [title]="title" [showToggle]="false">
+    <app-toolbar [title]="title" [showToggle]="false" [showDesktopModeToggle]="true">
       <app-health-indicator />
       <app-logout-button (logout)="onLogout()" />
     </app-toolbar>
 
     <main class="flex-1 overflow-y-auto p-4 [-webkit-overflow-scrolling:touch]">
-      <router-outlet />
+      <ng-content></ng-content>
     </main>
 
     <app-bottom-nav [items]="navItems" />

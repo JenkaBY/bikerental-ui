@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { OperatorLayoutComponent } from './layout/operator-layout.component';
+import { OperatorShellWrapperComponent } from './layout/operator-shell-wrapper.component';
 
 export const OPERATOR_ROUTES: Routes = [
   {
     path: '',
-    component: OperatorLayoutComponent,
+    component: OperatorShellWrapperComponent,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
