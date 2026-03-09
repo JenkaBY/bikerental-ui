@@ -42,7 +42,7 @@ import { NavItem } from '../sidebar-nav-item/nav-item.model';
         </mat-sidenav>
       }
 
-      <mat-sidenav-content class="flex flex-col min-h-0 min-w-0 w-full h-full">
+      <mat-sidenav-content class="flex flex-col min-h-0 min-w-0 h-full">
         <app-toolbar
           [title]="title()"
           [showToggle]="hasSidebar()"
