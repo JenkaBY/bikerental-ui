@@ -9,6 +9,7 @@ on:
 
 env:
   PROJECT_NAME: bikerental-ui
+  DEPLOY_ENVIRONMENT: render
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -108,8 +109,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Inject Bike Rental API host
+        run: |
+          sed -i "s|BIKE_API_PLACEHOLDER|${{ vars.BIKE_RENTAL_API }}|g" \
+            src/environments/environment.${{ env.DEPLOY_ENVIRONMENT }}.ts
+
       - name: Build for production
-        run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
+        run: npx ng build --configuration ${{ env.DEPLOY_ENVIRONMENT }} --base-href /${{ github.event.repository.name }}/
 
       - name: Add 404.html for SPA routing
         run: cp dist/${{ env.PROJECT_NAME }}/browser/ru/index.html dist/${{ env.PROJECT_NAME }}/browser/ru/404.html
@@ -117,7 +123,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/${{ env.PROJECT_NAME }}/browser
+          path: dist/${{ env.PROJECT_NAME }}/browser/ru
 
   ci:
     name: CI
