@@ -109,9 +109,11 @@ jobs:
         run: npm ci
 
       - name: Inject Bike Rental API host
+        env:
+          BIKE_RENTAL_API: ${{ vars.BIKE_RENTAL_API }}
         run: |
-          sed -i "s|BIKE_API_PLACEHOLDER|${{ vars.BIKE_RENTAL_API }}|g" \
-            src/environments/environment.prod.ts
+          echo "Injecting Bike Rental API host: ${{ env.BIKE_RENTAL_API }}"
+          sed -i "s|BIKE_API_PLACEHOLDER|${{ env.BIKE_RENTAL_API }}|g" src/environments/environment.prod.ts
 
       - name: Build for production
         run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
@@ -162,7 +164,7 @@ jobs:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [ ci, build ]
+    needs: [ ci ]
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
     permissions:
       pages: write
