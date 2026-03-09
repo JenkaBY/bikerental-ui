@@ -3,9 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -27,16 +25,9 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.css"
-            ],
-            "polyfills": [
-              "@angular/localize/init"
-            ],
-            "localize": [
-              "ru"
-            ]
+            "styles": ["@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.css"],
+            "polyfills": ["@angular/localize/init"],
+            "localize": ["ru", "en"]
           },
           "configurations": {
             "production": {
@@ -89,30 +80,22 @@
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageReporters": [
-                "lcov",
-                "html",
-                "text-summary",
-                "json-summary",
-                "json"
-              ]
+              "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
             }
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       },
       "i18n": {
         "sourceLocale": "en-US",
         "locales": {
-          "ru": "src/locale/messages.ru.xlf"
+          "ru": "src/locale/messages.ru.xlf",
+          "en": "src/locale/messages.xlf"
         }
       }
     }

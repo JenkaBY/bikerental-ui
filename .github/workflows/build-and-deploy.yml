@@ -116,13 +116,33 @@ jobs:
       - name: Build for production
         run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
 
+      - name: Create root redirect to /en/
+        run: |
+          BASE="/${{ github.event.repository.name }}"
+          cat > dist/${{ env.PROJECT_NAME }}/browser/index.html << 'HTMLEOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <title>Bike Rental</title>
+              <meta http-equiv="refresh" content="0; url=BASE_PLACEHOLDER/en/" />
+              <script>window.location.replace('BASE_PLACEHOLDER/en/');</script>
+            </head>
+            <body></body>
+          </html>
+          HTMLEOF
+          sed -i "s|BASE_PLACEHOLDER|${BASE}|g" dist/${{ env.PROJECT_NAME }}/browser/index.html
+
       - name: Add 404.html for SPA routing
-        run: cp dist/${{ env.PROJECT_NAME }}/browser/ru/index.html dist/${{ env.PROJECT_NAME }}/browser/ru/404.html
+        run: |
+          cp dist/${{ env.PROJECT_NAME }}/browser/index.html dist/${{ env.PROJECT_NAME }}/browser/404.html
+          cp dist/${{ env.PROJECT_NAME }}/browser/en/index.html dist/${{ env.PROJECT_NAME }}/browser/en/404.html
+          cp dist/${{ env.PROJECT_NAME }}/browser/ru/index.html dist/${{ env.PROJECT_NAME }}/browser/ru/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/${{ env.PROJECT_NAME }}/browser/ru
+          path: dist/${{ env.PROJECT_NAME }}/browser
 
   ci:
     name: CI
