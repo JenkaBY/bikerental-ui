@@ -46,6 +46,13 @@
 
 ## Recent Changes
 
+- **2026-03-09**: GitHub Pages i18n redirect fix:
+  - Build job now uploads `dist/bikerental-ui/browser` (all locales) instead of `browser/ru` only
+  - Added "Create root redirect to /en/" step: writes `browser/index.html` with `<meta http-equiv="refresh">` + `window.location.replace` pointing to `/<repo>/en/`
+  - `browser/404.html` is a copy of the root redirect (handles GitHub Pages SPA fallback at root)
+  - `browser/en/404.html` is a copy of `browser/en/index.html` (handles deep-link SPA routing within en locale)
+  - Deployed app now always opens `en` locale on first visit; `ru` locale is accessible at `/<repo>/ru/`
+
 - Angular 21 project scaffolded with `ng new bikerental-ui`
 - `package.json` dependencies confirmed: Angular 21, RxJS 7.8, Vitest for testing
 - `docs/api-docs/all.json` populated with full OpenAPI spec from the backend
