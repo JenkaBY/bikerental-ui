@@ -2,7 +2,7 @@
 
 **Status:** Completed  
 **Added:** 2026-02-28  
-**Updated:** 2026-03-07
+**Updated:** 2026-03-09  
 **Depends on:** TASK002  
 **Blocks:** TASK005, TASK006, TASK007, TASK008, TASK009
 
@@ -238,14 +238,15 @@ Expected: build succeeds; only i18n translation warnings for new English strings
 
 ### Subtasks
 
-| ID  | Description                                       | Status   | Updated    | Notes                                           |
-|-----|---------------------------------------------------|----------|------------|-------------------------------------------------|
-| 3.0 | NavItem model + SidebarNavItemComponent (shared)  | Complete | 2026-03-07 | Tailwind utilities; active styles in styles.css |
-| 3.1 | Admin child routes (admin.routes.ts)              | Complete | 2026-03-07 | Full child route tree wired                     |
-| 3.2 | AdminLayoutComponent (sidenav + toolbar)          | Complete | 2026-03-07 | No .css file; Tailwind only; host class         |
-| 3.3 | Placeholder components for all admin sections (8) | Complete | 2026-03-07 | Tailwind typography utilities                   |
-| 3.4 | Delete old admin-placeholder.component.ts         | Complete | 2026-03-07 | File removed                                    |
-| 3.5 | Verify build                                      | Complete | 2026-03-07 | Build passes; i18n warnings only                |
+| ID  | Description                                       | Status   | Updated    | Notes                                                                                                                                         |
+|-----|---------------------------------------------------|----------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| 3.0 | NavItem model + SidebarNavItemComponent (shared)  | Complete | 2026-03-07 | Tailwind utilities; active styles in styles.css                                                                                               |
+| 3.1 | Admin child routes (admin.routes.ts)              | Complete | 2026-03-07 | Full child route tree wired                                                                                                                   |
+| 3.2 | AdminLayoutComponent (sidenav + toolbar)          | Complete | 2026-03-09 | Refactored to use ShellComponent                                                                                                              |
+| 3.3 | Placeholder components for all admin sections (8) | Complete | 2026-03-07 | Tailwind typography utilities                                                                                                                 |
+| 3.4 | Delete old admin-placeholder.component.ts         | Complete | 2026-03-07 | File removed                                                                                                                                  |
+| 3.5 | Verify build                                      | Complete | 2026-03-07 | Build passes; i18n warnings only                                                                                                              |
+| 3.6 | Shared shell component layer                      | Complete | 2026-03-09 | ShellComponent + SidebarComponent + AppToolbarComponent + AppBrandComponent + ButtonComponent + ToggleButtonComponent + LogoutButtonComponent |
 
 ## Progress Log
 
@@ -254,6 +255,22 @@ Expected: build succeeds; only i18n translation warnings for new English strings
 - Task created with full layout design
 - 8 navigation items defined with icons and Russian labels
 - Desktop-first layout: 260px sidenav, full-height, OnPush
+
+### 2026-03-09 — Admin layout refactored to use shared ShellComponent
+
+- Introduced `ShellComponent` (`shared/components/shell/`) — generic layout shell with optional sidebar, toolbar toggle, content projection slots (`[sidebar-footer]`, `[toolbar-actions]`)
+- Introduced `SidebarComponent` (`shared/components/sidebar/`) — wraps `AppBrandComponent` + `SidebarNavItemComponent` in a flex column; accepts `items` and optional `brand` input
+- Introduced `AppBrandComponent` (`shared/components/app-brand/`) — renders bike icon + brand name; prefers `brand` input, falls back to `APP_BRAND` injection token
+- Introduced `AppToolbarComponent` (`shared/components/app-toolbar/`) — `mat-toolbar` wrapper with optional toggle button (`ToggleButtonComponent`), title span with `flex-1 truncate`, and `<ng-content>` for toolbar actions
+- Introduced `ButtonComponent` (`shared/components/button/`) — generic reusable button: text mode (`mat-button` + icon + label) or icon-only mode (`mat-icon-button`); outputs `activated`
+- Introduced `ToggleButtonComponent` (`shared/components/toggle-button/`) — wraps `ButtonComponent`; `pressed` input drives `menu` vs `menu_open` icon; `customIcon` overrides computed icon; outputs `toggled`
+- Introduced `LogoutButtonComponent` (`shared/components/logout-button/`) — wraps `ButtonComponent` with logout icon; outputs `logout`
+- `APP_BRAND` injection token added to `app.tokens.ts`; `BRAND` constant defined; `app.config.ts` provides `APP_BRAND` using env override or fallback to `BRAND`
+- `AdminLayoutComponent` refactored: now uses `<app-shell>` with `[items]`, `[brand]`, `[title]`; `<app-health-indicator>` placed in `[sidebar-footer]` slot; `<app-logout-button>` placed in `[toolbar-actions]` slot; `<router-outlet>` as default content
+- `AdminLayoutComponent` manages `sidenavOpened` signal internally and passes it to `ShellComponent` via `[sidenavOpened]` binding; `onToggleSidebar()` toggles the signal
+- `ShellComponent` sidebar width changed from `w-65` to `w-72` (288 px)
+- Tests added: `ShellComponent` (211 lines), `AppBrandComponent` (37 lines), `AppToolbarComponent` (140 lines), `ButtonComponent` (51 lines), `ToggleButtonComponent` (54 lines)
+- `QrScannerComponent` stub file created at `shared/components/qr-scanner/qr-scanner.component.ts` (empty — to be implemented in TASK011)
 
 ### 2026-03-07 — Reusable components + Tailwind-first styling
 

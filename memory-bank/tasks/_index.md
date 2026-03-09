@@ -32,7 +32,7 @@ _None_
 
 - [TASK000] Server Health Indicator — Completed on 2026-03-06
 - [TASK001] Project Foundation & Angular Material Setup — Completed on 2026-02-28
-- [TASK003] Admin Layout Shell — Sidenav + toolbar + lazy child routes; reusable SidebarNavItemComponent; Tailwind 4 utilities. Completed on 2026-03-07
+- [TASK003] Admin Layout Shell — Sidenav + toolbar + lazy child routes; shared ShellComponent layer (ShellComponent, SidebarComponent, AppToolbarComponent, AppBrandComponent, ButtonComponent, ToggleButtonComponent, LogoutButtonComponent); APP_BRAND token; QrScannerComponent stub. Completed on 2026-03-09
 
 ## Abandoned
 
