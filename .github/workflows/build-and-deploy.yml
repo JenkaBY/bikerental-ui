@@ -115,7 +115,7 @@ jobs:
             src/environments/environment.${{ env.DEPLOY_ENVIRONMENT }}.ts
 
       - name: Build for production
-        run: npx ng build --configuration ${{ env.DEPLOY_ENVIRONMENT }} --base-href /${{ github.event.repository.name }}/
+        run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
 
       - name: Add 404.html for SPA routing
         run: cp dist/${{ env.PROJECT_NAME }}/browser/ru/index.html dist/${{ env.PROJECT_NAME }}/browser/ru/404.html
