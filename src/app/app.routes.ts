@@ -14,6 +14,9 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/operator/operator.routes').then((m) => m.OPERATOR_ROUTES),
   },
-  { path: '', redirectTo: 'admin', pathMatch: 'full' },
-  { path: '**', redirectTo: 'admin' },
+  {
+    path: '',
+    loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent),
+  },
+  { path: '**', redirectTo: '' },
 ];

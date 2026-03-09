@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,7 +30,17 @@ import { LayoutModeToggleComponent } from '../layout-mode-toggle/layout-mode-tog
         ></app-toggle-button>
       }
 
-      <span class="text-base font-medium truncate flex-1 min-w-0">{{ title() }}</span>
+      <span
+        class="text-base font-medium truncate flex-1 min-w-0 hover:cursor-pointer focus:outline-none"
+        (click)="goHome()"
+        tabindex="0"
+        role="button"
+        (keyup.enter)="goHome()"
+        (keyup.space)="goHome()"
+        (keydown.space)="$event.preventDefault()"
+      >
+        {{ title() }}
+      </span>
 
       @if (showDesktopModeToggle()) {
         <app-layout-mode-toggle></app-layout-mode-toggle>
@@ -53,4 +64,10 @@ export class AppToolbarComponent {
   toggleSidebar = output<void>();
 
   logout = output<void>();
+
+  private router = inject(Router);
+
+  goHome(): void {
+    void this.router.navigate(['/']);
+  }
 }

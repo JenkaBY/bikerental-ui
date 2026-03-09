@@ -9,7 +9,7 @@ import { LayoutModeService } from '../../../core/layout-mode.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
-      class="flex items-center gap-2"
+      class="flex items-center gap-2 hover:shadow-md hover:cursor-pointer focus:outline-none"
       (click)="onToggle()"
       aria-label="Toggle layout mode"
       title="Toggle layout mode"
