@@ -2,12 +2,12 @@ h# Progress
 
 ## Current Status
 
-**Phase**: TASK000 (Server Health Indicator) core complete and fully refactored. Next: TASK003 (Admin layout shell) and TASK004 (Operator layout shell) — both needed to embed `<app-health-indicator>` into toolbars and finish TASK000.
+**Phase**: TASK000 (Server Health Indicator) embedded in admin toolbar. Next: TASK004 (Operator layout shell) to embed `<app-health-indicator>` in operator toolbar and finish TASK000.
 
 ## What Works
 
 - Angular 21 project skeleton generated and running (`npm start`)
-- Root `AppComponent` with `RouterOutlet` + `<app-health-indicator>` fixed bottom-right (temporary until toolbars)
+- Root `AppComponent` with `RouterOutlet`; `<app-health-indicator>` embedded in admin toolbar (`AdminLayoutComponent`)
 - `app.routes.ts` with lazy-loaded admin/operator routes (no auth guards — pages accessible by default)
 - `app.config.ts` with `provideRouter`, `provideHttpClient`, global `errorInterceptor`, `provideAppInitializer` for health poller
 - `docs/api-docs/all.json` — full OpenAPI spec available for reference
@@ -35,13 +35,13 @@ h# Progress
     - `health-tooltip-line.component` — dumb; hides itself when `value` is `null`/`undefined`
     - `health-tooltip-lines.builder.ts` — pure function `buildTooltipLines(health, serverInfo, lastChecked, locale?)` + `TOOLTIP_LINE_LABELS` + `TooltipLineId`
   - i18n: English default labels in `$localize`; `src/locale/messages.xlf` generated (8 messages); ready for `messages.ru.xlf` (runtime default locale: `ru`)
-  - `AppComponent` includes `<app-health-indicator>` (fixed bottom-right) so compiler visits it for i18n extraction
+  - `AdminLayoutComponent` toolbar includes `<app-health-indicator>` (verified in browser 2026-03-08)
 
 ## What's Left to Build
 
 ### Health Indicator (TASK000 — remaining)
 
-- [ ] Move `<app-health-indicator>` from `AppComponent` fixed position into admin toolbar (TASK003)
+- [x] Embed `<app-health-indicator>` in admin toolbar (AdminLayoutComponent) — done 2026-03-08
 - [ ] Embed `<app-health-indicator>` into operator toolbar (TASK004)
 
 ### Admin Module (TASK003, TASK005–TASK009)
@@ -82,3 +82,5 @@ h# Progress
 | Authentication (mock JWT)                       | TASK002 | ⬜ Pending      | —                 |
 | Admin layout shell                              | TASK003 | ⬜ Pending      | —                 |
 | Operator layout shell                           | TASK004 | ⬜ Pending      | —                 |
+
+- Verified TypeScript compile (no errors). Manual UI verification recommended in browser to confirm toolbar now resizes and logout button remains visible.

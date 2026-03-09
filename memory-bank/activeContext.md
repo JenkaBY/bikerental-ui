@@ -2,7 +2,17 @@
 
 ## Current Work Focus
 
-**TASK000 is complete.** Next focus: **TASK003 — Admin Layout Shell**.
+**TASK003 is complete.** Next focus: **TASK004 — Operator Layout Shell**.
+
+**TASK003** (Admin Layout Shell) — fully complete:
+
+- `shared/components/sidebar-nav-item/` — `NavItem` model + `SidebarNavItemComponent` (dumb, OnPush, signal input, Tailwind utilities)
+- `features/admin/layout/admin-layout.component.ts` + `.html` — no `.css` file; `host: { class: 'block h-screen' }`; `NAV_ITEMS` array; `@for` loop
+- `features/admin/admin.routes.ts` — full child route tree (8 lazy-loaded pages) under `AdminLayoutComponent`
+- 8 placeholder child components (equipment, equipment-types, equipment-statuses, tariffs, customers, rentals, payments, users)
+- Tailwind 4 utilities throughout: `w-65`, `flex flex-col`, `shrink-0`, `overflow-y-auto p-6`, `bg-slate-50`, `border-r border-slate-200`, `shadow-md`, `rounded-lg!`, `mx-2!`, suffix-`!` important syntax
+- Active nav-item styles in `src/styles.css` (global, MDC selectors)
+- All text in English; `i18n` attributes retained
 
 **TASK000** (Server Health Indicator) — fully complete:
 
@@ -12,9 +22,8 @@
 
 **TASK013** (Embed Health Indicator into Toolbar Shells):
 
-- `AdminPlaceholderComponent` and `OperatorPlaceholderComponent` both have a minimal `<header>` toolbar with `<app-health-indicator />` in the right corner
-- Fixed bottom-right placement removed from `AppComponent`
-- When TASK003/TASK004 build real `mat-toolbar` shells, `<app-health-indicator>` simply moves from the placeholder header to `mat-toolbar`
+- `AdminLayoutComponent` mat-toolbar includes `<app-health-indicator />` (right of title, left of Logout) — verified in browser 2026-03-08
+- Operator toolbar: pending TASK004 (Operator layout shell)
 
 ## Recent Changes
 
@@ -42,7 +51,7 @@
   - `matTooltip` replaced with CDK `cdkConnectedOverlay` for a real component tooltip
   - `provideNoopAnimations` / `provideAnimationsAsync` (deprecated) removed from tests
   - i18n labels switched to English defaults; `src/locale/messages.xlf` generated with 8 messages
-  - `$localize` extraction works because `HealthIndicatorComponent` is in `AppComponent` tree
+  - `$localize` extraction works because `HealthIndicatorComponent` is in `AdminLayoutComponent` tree
   - 54 tests across 6 spec files (was 17 across 2)
   - Branch coverage: 87%
 
@@ -50,7 +59,8 @@
 
 Execute tasks in dependency order:
 
-1. **TASK003** — Admin layout shell: sidenav + toolbar + child routes → move `<app-health-indicator>` from `AppComponent` fixed position to toolbar (completes TASK000 subtask 1.7)
+1. **TASK003** — Admin layout shell: sidenav + toolbar + child routes — complete. `<app-health-indicator>` embedded in toolbar (completes TASK000 subtask 1.7)
+  - **Updated 2026-03-08**: Health indicator added to mat-toolbar; verified in browser
 2. **TASK004** — Operator layout shell: bottom nav + toolbar + child routes → embed `<app-health-indicator>` in toolbar (completes TASK000 subtask 1.8)
 3. **TASK005–009** — Admin CRUD pages (can be parallelized after TASK003)
 4. **TASK010–012** — Operator pages (can be parallelized after TASK004)

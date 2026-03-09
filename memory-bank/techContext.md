@@ -2,43 +2,49 @@
 
 ## Technology Stack
 
-| Layer | Technology | Version |
-|---|---|---|
-| Language | TypeScript | ~5.9.2 |
-| Framework | Angular | ^21.2.0 |
-| UI Library | Angular Material + CDK | ^21.x (match Angular) |
-| Runtime | Node.js | 24 |
-| Package Manager | npm | 11.9.0 |
-| Testing | Vitest | ^4.0.8 |
-| HTTP | Angular HttpClient | (bundled with Angular) |
-| Reactivity | RxJS | ~7.8.0 |
-| QR Scanning | html5-qrcode | ^2.3.8 |
-| i18n | @angular/localize | ^21.x (match Angular) |
-| Utilities | tslib | ^2.3.0 |
-| Code Formatting | Prettier | ^3.8.1 |
-| DOM Testing | jsdom | ^28.0.0 |
+| Layer           | Technology             | Version                |
+|-----------------|------------------------|------------------------|
+| Language        | TypeScript             | ~5.9.2                 |
+| Framework       | Angular                | ^21.2.0                |
+| UI Library      | Angular Material + CDK | ^21.x (match Angular)  |
+| Runtime         | Node.js                | 24                     |
+| Package Manager | npm                    | 11.9.0                 |
+| Testing         | Vitest                 | ^4.0.8                 |
+| HTTP            | Angular HttpClient     | (bundled with Angular) |
+| Reactivity      | RxJS                   | ~7.8.0                 |
+| QR Scanning     | html5-qrcode           | ^2.3.8                 |
+| i18n            | @angular/localize      | ^21.x (match Angular)  |
+| Utilities       | tslib                  | ^2.3.0                 |
+| Code Formatting | Prettier               | ^3.8.1                 |
+| DOM Testing     | jsdom                  | ^28.0.0                |
+| Tailwind        | post css               | ^4.2.0                 |
 
 ## Development Setup
 
 ### Prerequisites
+
 - Node.js 24
 - npm 11.9.0
 
 ### Install & Run
+
 ```powershell
 npm install
 npm start        # ng serve → http://localhost:4200
 npm test         # vitest
 npm run build    # production build
+npm test:coverag # coverage report
 ```
 
 ### Backend API
+
 - URL: `http://localhost:8080`
 - OpenAPI spec: `docs/api-docs/all.json`
 - Auth: JWT Bearer token in `Authorization` header
 - Login endpoint: `POST /api/auth/login` (not yet implemented — mock in frontend)
 
 ## Project Structure
+
 ```
 bikerental-ui/
 ├── src/
@@ -105,6 +111,8 @@ bikerental-ui/
 - **TypeScript strict mode**: Enabled in tsconfig
 - **OnPush**: All components use `ChangeDetectionStrategy.OnPush`
 - **Signal inputs/outputs**: Use `input()` / `output()` functions (not decorators) per Angular 21+
+- **Small component** Keep components tiny (max 200 lines TS + 100 lines HTML) — split into multiple components if needed
+- **No deprecated features** Don't use any Angular APIs marked as deprecated in v21
 
 ## Angular Configuration Notes
 
