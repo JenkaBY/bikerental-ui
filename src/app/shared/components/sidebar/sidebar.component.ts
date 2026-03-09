@@ -13,7 +13,7 @@ import { AppBrandComponent } from '../app-brand/app-brand.component';
     <div class="flex flex-col h-full">
       <app-brand [brand]="brand()"></app-brand>
 
-      <div class="flex-1 overflow-y-auto">
+      <div class="flex-1 min-h-0 overflow-y-auto">
         <mat-nav-list class="mt-2 px-2">
           @for (item of items(); track item.route) {
             <app-sidebar-nav-item [item]="item" />

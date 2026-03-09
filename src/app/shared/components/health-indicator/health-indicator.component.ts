@@ -20,8 +20,10 @@ const DOT_CLASSES: Record<HealthStatus, string> = {
 };
 
 const OVERLAY_POSITIONS: ConnectedPosition[] = [
+  { originX: 'end', originY: 'center', overlayX: 'start', overlayY: 'center', offsetX: 8 },
   { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetY: 6 },
   { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -6 },
+  { originX: 'start', originY: 'center', overlayX: 'end', overlayY: 'center', offsetX: -8 },
 ];
 
 @Component({
@@ -37,7 +39,7 @@ export class HealthIndicatorComponent {
 
   protected readonly overlayPositions = OVERLAY_POSITIONS;
   protected readonly isOpen = signal(false);
-
+  protected readonly status = computed(() => this.healthService.status());
   protected readonly dotClass = computed(() => DOT_CLASSES[this.healthService.status()]);
 
   protected readonly checkedAt = computed(() => {

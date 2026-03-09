@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { HealthIndicatorComponent } from '../../../shared/components/health-indicator/health-indicator.component';
 import { NavItem } from '../../../shared/components/sidebar-nav-item/nav-item.model';
 
 const NAV_ITEMS: NavItem[] = [
@@ -30,6 +31,7 @@ const NAV_ITEMS: NavItem[] = [
     MatButtonModule,
     RouterOutlet,
     SidebarComponent,
+    HealthIndicatorComponent,
   ],
   host: { class: 'block h-screen' },
   templateUrl: './admin-layout.component.html',
@@ -37,4 +39,9 @@ const NAV_ITEMS: NavItem[] = [
 export class AdminLayoutComponent {
   protected navItems = NAV_ITEMS;
   protected brand = `Bike Rental`;
+  protected sidenavOpened = signal(true);
+
+  protected onToggleSidebar() {
+    this.sidenavOpened.update((v) => !v);
+  }
 }
