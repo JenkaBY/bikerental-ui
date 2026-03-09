@@ -113,13 +113,14 @@ bikerental-ui/
 - **Signal inputs/outputs**: Use `input()` / `output()` functions (not decorators) per Angular 21+
 - **Small component** Keep components tiny (max 200 lines TS + 100 lines HTML) — split into multiple components if needed
 - **No deprecated features** Don't use any Angular APIs marked as deprecated in v21
-
+- **any**: Avoid using `any` type; prefer strict typing and interfaces from OpenAPI spec
 ## Angular Configuration Notes
 
 - `app.config.ts` must include:
   - `provideHttpClient(withInterceptors([authInterceptor, errorInterceptor]))`
   - `provideRouter(routes)`
-  - `provideAnimationsAsync()`
+  - `provideAnimations()` / `provideNoopAnimations()` — note: these APIs are marked deprecated in Angular 20.2 with an intent to remove in v23.
+    Prefer using animation triggers built with `animate.enter` / `animate.leave` for new animation logic, and avoid depending on animation provider helpers in unit tests (use no-op or remove providers from TestBed providers when tests do not rely on animation behavior).
 - `angular.json` styles array must include Material prebuilt theme
 - `angular.json` must configure i18n settings for `@angular/localize`
 - Feature routes lazy-loaded via `loadChildren` / `loadComponent`
@@ -147,8 +148,9 @@ bikerental-ui/
 - **Test runner**: Vitest (not Karma/Jasmine)
 - **DOM**: jsdom
 - **Test files**: `*.spec.ts` alongside source files
-- **Coverage**: Run via `vitest --coverage`
-- Test strategy: unit tests for services + component tests for critical flows
+- **Coverage**: Run via `npm run test:coverage`
+- Test strategy: unit tests for component tests for critical flows. Don't cover by tests service classes that just wrap HttpClient calls without additional logic, but cover any custom logic in services (e.g. AuthService) and all components.
+- Coverage should be above 80%
 
 ## Packages to Install
 
@@ -175,4 +177,3 @@ ng add @angular/localize
 To enable deployment, the repository must be configured:
 
 1. Settings → Pages → Source: **GitHub Actions**
-
