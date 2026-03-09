@@ -122,7 +122,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/${{ env.PROJECT_NAME }}/browser/ru
+          path: dist/${{ env.PROJECT_NAME }}/browser/
 
   ci:
     name: CI
