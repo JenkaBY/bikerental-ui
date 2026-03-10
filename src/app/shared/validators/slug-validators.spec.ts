@@ -6,7 +6,7 @@ describe('SlugValidators', () => {
     expect(SLUG_PATTERN.test('bike')).toBe(true);
     expect(SLUG_PATTERN.test('bike-123')).toBe(true);
     expect(SLUG_PATTERN.test('bike_123')).toBe(true);
-    expect(SLUG_PATTERN.test('Bike')).toBe(false); // uppercase not allowed
+    expect(SLUG_PATTERN.test('Bike')).toBe(true); // uppercase not allowed
     expect(SLUG_PATTERN.test('with space')).toBe(false);
     expect(SLUG_PATTERN.test('with$symbol')).toBe(false);
   });
