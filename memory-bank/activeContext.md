@@ -2,14 +2,13 @@
 
 ## Current Work Focus
 
-**TASK005 is complete.** Next focus: **TASK006 — Admin Equipment Statuses CRUD** (or any TASK006–009 in parallel).
+**TASK006 is complete.** Next focus: **TASK007 — Admin Equipment CRUD** (or any TASK007–009 in parallel).
 
-**TASK005** (Admin Equipment Types CRUD) — fully complete (2026-03-10):
+**TASK006** (Admin Equipment Statuses CRUD) — fully complete (2026-03-10):
 
-- **`EquipmentTypeListComponent`** (`features/admin/equipment-types/`) — standalone, `OnPush`; `MatTableModule`, `MatCardModule`, `MatButtonModule`, `MatIconModule`, `MatTooltipModule`; signals `types = signal<EquipmentTypeResponse[]>([])`, `loading = signal(false)`; `loadTypes()` on `ngOnInit` using `takeUntilDestroyed`; `openCreateDialog()` / `openEditDialog()` open `EquipmentTypeDialogComponent` and refresh on `true` result
-- **`EquipmentTypeDialogComponent`** (`features/admin/equipment-types/`) — standalone, `OnPush`; `ReactiveFormsModule`; typed `FormGroup` with `slug` (required, pattern `/^[a-z0-9-_]+$/`, maxLength 50, disabled in edit), `name` (required), `description` (optional); `saving` signal; `save()` calls `create` or `update`; `description || undefined` coercion; snackbar on error; closes dialog with `true` on success
-- **Tests**: `equipment-type-list.component.spec.ts` (8 tests) + `equipment-type-dialog.component.spec.ts` (13 tests); 152 total tests pass (36 files)
-- **Pattern established**: this CRUD pattern (list + dialog, signal state, ReactiveFormsModule) is the template for TASK006–TASK009
+- **`EquipmentStatusListComponent`** (`features/admin/equipment-statuses/`) — standalone, `OnPush`; `MatTableModule`, `MatCardModule`, `MatButtonModule`, `MatIconModule`, `MatTooltipModule`, `MatChipsModule`; signals `statuses = signal<EquipmentStatusResponse[]>([])`, `loading = signal(false)`; `loadStatuses()` on `ngOnInit` using `takeUntilDestroyed`; slug-sorted; `openCreateDialog()` / `openEditDialog()` pass full `statuses` array to dialog for transition options; refresh on `true` result
+- **`EquipmentStatusDialogComponent`** (`features/admin/equipment-statuses/`) — standalone, `OnPush`; `ReactiveFormsModule`, `MatSelectModule`; typed `FormGroup` with `slug` (required, pattern, maxLength 50, disabled in edit), `name` (required), `description` (optional), `allowedTransitions: FormControl<string[]>` (pre-filled from status or `[]`); `transitionOptions` getter excludes self-slug in edit mode; `saving` signal; `save()` calls `create` or `update` with `EquipmentStatusRequest` including `allowedTransitions`; snackbar on error/success; closes dialog with `true` on success
+- **Tests**: `equipment-status-list.component.spec.ts` (10 tests) + `equipment-status-dialog.component.spec.ts` (19 tests) + `equipment-status-dialog.error.spec.ts` (2 tests) = 31 new tests; 257 total pass (49 files)
 
 ## Next Steps
 
