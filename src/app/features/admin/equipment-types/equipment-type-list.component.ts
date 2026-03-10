@@ -37,7 +37,7 @@ import {
           </button>
         </div>
 
-        <table mat-table [dataSource]="types()" class="full-width">
+        <table mat-table [dataSource]="types()" class="w-full">
           <ng-container matColumnDef="slug">
             <th mat-header-cell *matHeaderCellDef i18n>Slug</th>
             <td mat-cell *matCellDef="let row">{{ row.slug }}</td>
@@ -96,6 +96,9 @@ export class EquipmentTypeListComponent implements OnInit {
       .subscribe({
         next: (types) => {
           this.types.set(types);
+          // sort by slug (ascending) before setting the signal so table always shows slug-sorted order
+          const sorted = (types ?? []).slice().sort((a, b) => a.slug.localeCompare(b.slug));
+          this.types.set(sorted);
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
