@@ -9,7 +9,7 @@
 ## Original Request
 
 Build a CRUD page for Equipment Statuses in the admin module. Same pattern as TASK005 (table + dialog), but the
-dialog includes an `allowedTransitions` multi-select field that lets the admin choose which other statuses this
+dialog includes an `allowedTransitions` multi-select field that lets the admin choose which other statuses (except itself) this
 status can transition to.
 
 ## Thought Process
@@ -42,22 +42,23 @@ Replace placeholder at `src/app/features/admin/equipment-statuses/equipment-stat
 - Standalone, `OnPush`
 - Imports: `MatTableModule`, `MatButtonModule`, `MatIconModule`, `MatCardModule`, `MatChipsModule`, `MatDialog`, `MatTooltipModule`
 - Injects: `EquipmentStatusService`, `MatDialog`
-- Signals: `statuses = signal<EquipmentStatusResponse[]>([])`, `loading = signal(false)`
-- On init: `loadStatuses()` → fetches all statuses
+- Signals: `statuses = signal<EquipmentStatusResponse[]>([])`, `loading = signal(false)` 
+- On init: `loadStatuses()` → fetches all statuses. Must be sorted by the 'slug' field for consistent display. Cache statuses to pass all of them into dialog for transition options.
 - `openCreateDialog()`: opens `EquipmentStatusDialogComponent` with `{ statuses: this.statuses() }`, on close → refresh
 - `openEditDialog(status)`: opens dialog with `{ status, statuses: this.statuses() }`, on close → refresh
+- disable 'Save' button while loading, when form is invalid, or when no changes are made (for edit mode)
 
 Template:
 ```html
 <mat-card>
   <mat-card-header>
-    <mat-card-title i18n>Статусы оборудования</mat-card-title>
+    <mat-card-title i18n>Equipment statuses</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <div class="actions-bar">
       <button mat-raised-button color="primary" (click)="openCreateDialog()">
         <mat-icon>add</mat-icon>
-        <span i18n>Создать</span>
+        <span i18n>Create</span>
       </button>
     </div>
 
@@ -68,17 +69,17 @@ Template:
       </ng-container>
 
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef i18n>Название</th>
+        <th mat-header-cell *matHeaderCellDef i18n>Name</th>
         <td mat-cell *matCellDef="let row">{{ row.name }}</td>
       </ng-container>
 
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef i18n>Описание</th>
+        <th mat-header-cell *matHeaderCellDef i18n>Description</th>
         <td mat-cell *matCellDef="let row">{{ row.description }}</td>
       </ng-container>
 
       <ng-container matColumnDef="allowedTransitions">
-        <th mat-header-cell *matHeaderCellDef i18n>Разрешенные переходы</th>
+        <th mat-header-cell *matHeaderCellDef i18n>Allowed transitions</th>
         <td mat-cell *matCellDef="let row">
           <mat-chip-set>
             @for (t of row.allowedTransitions; track t) {
@@ -91,7 +92,7 @@ Template:
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let row">
-          <button mat-icon-button (click)="openEditDialog(row)" matTooltip="Редактировать" i18n-matTooltip>
+          <button mat-icon-button (click)="openEditDialog(row)" matTooltip="Edit" i18n-matTooltip>
             <mat-icon>edit</mat-icon>
           </button>
         </td>
@@ -111,9 +112,10 @@ Where `displayedColumns = ['slug', 'name', 'description', 'allowedTransitions', 
 Create `src/app/features/admin/equipment-statuses/equipment-status-dialog.component.ts`:
 
 - Data injection: `{ status?: EquipmentStatusResponse, statuses: EquipmentStatusResponse[] }`
-- Reactive form: `slug`, `name`, `description`, `allowedTransitions` (FormControl<string[]>)
+- Reactive form: `slug`, `name`, `description`, `allowedTransitions` (FormControl<string[]>). Use `SlugValidators` for slug validation.
 - Computed property `transitionOptions`: filter out the current status slug from `data.statuses`
 - `mat-select` with `multiple` for transitions, displaying slug as label
+- Create toast in `save()` for success/error, close dialog on success
 
 Template:
 ```html
@@ -130,10 +132,10 @@ Template:
       <mat-label i18n>Slug</mat-label>
       <input matInput formControlName="slug" placeholder="e.g. available">
       @if (form.controls.slug.hasError('required')) {
-        <mat-error i18n>Slug обязателен</mat-error>
+        <mat-error i18n>Slug required</mat-error>
       }
       @if (form.controls.slug.hasError('pattern')) {
-        <mat-error i18n>Только строчные буквы, цифры и дефисы</mat-error>
+        <mat-error i18n>Only lowercase letters, numbers, hyphens and underscores</mat-error>
       }
     </mat-form-field>
 
@@ -141,17 +143,17 @@ Template:
       <mat-label i18n>Название</mat-label>
       <input matInput formControlName="name">
       @if (form.controls.name.hasError('required')) {
-        <mat-error i18n>Название обязательно</mat-error>
+        <mat-error i18n>Name is required</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label i18n>Описание</mat-label>
+      <mat-label i18n>Description</mat-label>
       <textarea matInput formControlName="description" rows="3"></textarea>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label i18n>Разрешенные переходы</mat-label>
+      <mat-label i18n>Allowed transitions</mat-label>
       <mat-select formControlName="allowedTransitions" multiple>
         @for (opt of transitionOptions; track opt.slug) {
           <mat-option [value]="opt.slug">{{ opt.name }} ({{ opt.slug }})</mat-option>
@@ -161,12 +163,12 @@ Template:
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close i18n>Отмена</button>
+  <button mat-button mat-dialog-close i18n>Cancel</button>
   <button mat-raised-button color="primary" (click)="save()" [disabled]="saving()">
     @if (saving()) {
-      <span i18n>Сохранение...</span>
+      <span i18n>Saving...</span>
     } @else {
-      <span i18n>Сохранить</span>
+      <span i18n>Save</span>
     }
   </button>
 </mat-dialog-actions>
