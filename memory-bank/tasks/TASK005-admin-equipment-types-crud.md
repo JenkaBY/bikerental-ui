@@ -1,8 +1,8 @@
 # TASK005 - Admin: Equipment Types CRUD
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-02-28  
-**Updated:** 2026-02-28  
+**Updated:** 2026-03-10  
 **Depends on:** TASK003  
 **Blocks:** None
 
@@ -186,17 +186,26 @@ Test manually:
 
 ## Progress Tracking
 
-**Overall Status:** Not Started - 0%
+**Overall Status:** Completed - 100%
 
 ### Subtasks
 
 | ID | Description | Status | Updated | Notes |
 |----|-------------|--------|---------|-------|
-| 5.1 | EquipmentTypeListComponent (table + dialog open) | Not Started | 2026-02-28 | |
-| 5.2 | EquipmentTypeDialogComponent (form + save) | Not Started | 2026-02-28 | |
-| 5.3 | Verify build and test | Not Started | 2026-02-28 | |
+| 5.1 | EquipmentTypeListComponent (table + dialog open) | Complete | 2026-03-10 | `signal<EquipmentTypeResponse[]>`, `takeUntilDestroyed`, barrel import |
+| 5.2 | EquipmentTypeDialogComponent (form + save) | Complete | 2026-03-10 | ReactiveFormsModule, `description \|\| undefined` coercion |
+| 5.3 | Verify build and test | Complete | 2026-03-10 | 21 new tests (8 list + 13 dialog); 152 total pass |
 
 ## Progress Log
+
+### 2026-03-10
+
+- Implemented `EquipmentTypeListComponent`: replaced placeholder; `OnPush`; `MatTableModule`, `MatCardModule`, `MatButtonModule`, `MatIconModule`, `MatTooltipModule`; signals `types` + `loading`; `loadTypes()` via `takeUntilDestroyed`; `openCreateDialog()` / `openEditDialog()` open dialog and refresh on `true` result
+- Implemented `EquipmentTypeDialogComponent`: `ReactiveFormsModule`; typed `FormGroup` with `slug` (disabled in edit mode, pattern `/^[a-z0-9-_]+$/`, maxLength 50), `name` (required), `description` (optional); `saving` signal; `save()` calls `create` or `update` depending on mode; snackbar on error; closes with `true` on success
+- Key decision: used standard `ReactiveFormsModule` (not experimental Signal Forms) — stable, consistent with task spec, establishes reusable CRUD pattern for TASK006–TASK009
+- Key fix: `description || undefined` to coerce empty string to `undefined` in request body
+- Created `equipment-type-list.component.spec.ts` (8 tests) and `equipment-type-dialog.component.spec.ts` (13 tests)
+- All 152 tests pass across 36 test files
 
 ### 2026-02-28
 

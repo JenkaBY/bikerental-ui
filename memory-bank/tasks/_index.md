@@ -16,7 +16,6 @@ _None_
 
 ## Pending
 
-- [TASK005] Admin: Equipment Types CRUD — Table + create/edit dialog. Depends on: TASK003
 - [TASK006] Admin: Equipment Statuses CRUD — Table + dialog with transitions multi-select. Depends on: TASK003
 - [TASK007] Admin: Equipment CRUD — Paginated table with filters + dialog with selects/datepicker. Depends on: TASK003
 - [TASK008] Admin: Tariffs CRUD — Paginated table + dialog with price fields + activate/deactivate. Depends on: TASK003
@@ -32,6 +31,7 @@ _None_
 - [TASK001] Project Foundation & Angular Material Setup — Completed on 2026-02-28
 - [TASK003] Admin Layout Shell — Sidenav + toolbar + lazy child routes; shared ShellComponent layer (ShellComponent, SidebarComponent, AppToolbarComponent, AppBrandComponent, ButtonComponent, ToggleButtonComponent, LogoutButtonComponent); APP_BRAND token; QrScannerComponent stub. Completed on 2026-03-09
 - [TASK004] Operator Layout Shell — Mobile bottom nav (BottomNavComponent) + AppToolbarComponent + HealthIndicator + LogoutButton + 3 lazy child routes (dashboard, rental/new, return). Completed on 2026-03-09
+- [TASK005] Admin: Equipment Types CRUD — EquipmentTypeListComponent (table + signals) + EquipmentTypeDialogComponent (ReactiveFormsModule, create/edit modes); 21 new tests. Completed on 2026-03-10
 - [TASK013] Embed Health Indicator into Toolbar Shells — Completed on 2026-03-09
 - [TASK014] Create home page with links to Operator and Administrator dashboards — Pending (2026-03-09)
 
