@@ -21,4 +21,25 @@ describe('AppBrandComponent handlers', () => {
     comp.goHome();
     expect(navigate).toHaveBeenCalledWith(['/']);
   });
+
+  it('clicking the brand button calls goHome', async () => {
+    const navigate = vi.fn();
+    const mockRouter: { navigate: (...args: unknown[]) => unknown } = { navigate };
+
+    await TestBed.configureTestingModule({
+      imports: [AppBrandComponent],
+      providers: [
+        { provide: (await import('@angular/router')).Router, useValue: mockRouter },
+        { provide: APP_BRAND, useValue: BRAND },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(AppBrandComponent);
+    fixture.detectChanges();
+
+    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    btn.click();
+
+    expect(navigate).toHaveBeenCalledWith(['/']);
+  });
 });
