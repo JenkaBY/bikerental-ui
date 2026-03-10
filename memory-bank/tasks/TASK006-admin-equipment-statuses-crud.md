@@ -1,8 +1,8 @@
 # TASK006 - Admin: Equipment Statuses CRUD
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-02-28  
-**Updated:** 2026-02-28  
+**Updated:** 2026-03-10  
 **Depends on:** TASK003  
 **Blocks:** None
 
@@ -185,17 +185,27 @@ Test:
 
 ## Progress Tracking
 
-**Overall Status:** Not Started - 0%
+**Overall Status:** Completed - 100%
 
 ### Subtasks
 
 | ID | Description | Status | Updated | Notes |
 |----|-------------|--------|---------|-------|
-| 6.1 | EquipmentStatusListComponent | Not Started | 2026-02-28 | |
-| 6.2 | EquipmentStatusDialogComponent (with transitions multi-select) | Not Started | 2026-02-28 | |
-| 6.3 | Verify build and test | Not Started | 2026-02-28 | |
+| 6.1 | EquipmentStatusListComponent | Complete | 2026-03-10 | |
+| 6.2 | EquipmentStatusDialogComponent (with transitions multi-select) | Complete | 2026-03-10 | |
+| 6.3 | Verify build and test | Complete | 2026-03-10 | 31 tests in 3 spec files, 257 total pass |
 
 ## Progress Log
+
+### 2026-03-10
+
+- Replaced placeholder `EquipmentStatusListComponent` with full standalone `OnPush` implementation
+- Added `MatChipsModule` for `allowedTransitions` chip display in the table
+- Created `EquipmentStatusDialogComponent` with `mat-select multiple` for `allowedTransitions`; `transitionOptions` getter excludes self-slug in edit mode
+- `FormControl<string[]>` for `allowedTransitions`, pre-filled from `data.status.allowedTransitions ?? []`
+- Created 3 spec files: `equipment-status-list.component.spec.ts` (10 tests), `equipment-status-dialog.component.spec.ts` (19 tests), `equipment-status-dialog.error.spec.ts` (2 tests)
+- All 257 tests pass (49 files)
+- Pattern follows TASK005 exactly; `update()` uses single `EquipmentStatusRequest` type (no separate update type)
 
 ### 2026-02-28
 

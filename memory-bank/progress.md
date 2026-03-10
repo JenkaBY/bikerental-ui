@@ -2,7 +2,7 @@
 
 ## Current Status
 
-**Phase**: TASK005 complete (Admin Equipment Types CRUD). Next: **TASK006–009** (remaining Admin CRUD pages) and/or **TASK010** (Operator dashboard).
+**Phase**: TASK006 complete (Admin Equipment Statuses CRUD). Next: **TASK007–009** (remaining Admin CRUD pages) and/or **TASK010** (Operator dashboard).
 
 ## What Works
 
@@ -67,6 +67,10 @@
   - `features/admin/equipment-types/equipment-type-dialog.component.ts` — standalone, OnPush; `ReactiveFormsModule`; typed `FormGroup` (`slug` disabled in edit, pattern, maxLength; `name` required; `description` optional); `saving` signal; `save()` with create/edit branching; `description || undefined` coercion; snackbar on error
   - Tests: `equipment-type-list.component.spec.ts` (8 tests) + `equipment-type-dialog.component.spec.ts` (13 tests); **152 total tests pass**
   - CRUD pattern established for TASK006–TASK009
+- **Admin Equipment Statuses CRUD (TASK006 — 2026-03-10) — complete**:
+  - `features/admin/equipment-statuses/equipment-status-list.component.ts` — standalone, OnPush; `MatTableModule`, `MatCardModule`, `MatButtonModule`, `MatIconModule`, `MatTooltipModule`, `MatChipsModule`; signals `statuses`, `loading`; `loadStatuses()` via `takeUntilDestroyed`; slug-sorted; passes full `statuses` array to dialog for transition options
+  - `features/admin/equipment-statuses/equipment-status-dialog.component.ts` — standalone, OnPush; `ReactiveFormsModule`, `MatSelectModule`; `FormControl<string[]>` for `allowedTransitions`; `transitionOptions` getter excludes self-slug in edit mode; `EquipmentStatusRequest` for both create and update
+  - Tests: `equipment-status-list.component.spec.ts` (10) + `equipment-status-dialog.component.spec.ts` (19) + `equipment-status-dialog.error.spec.ts` (2) = 31 new tests; **257 total tests pass (49 files)**
 
 ## What's Left to Build
 
@@ -79,7 +83,7 @@
 
 - [x] Admin layout shell (sidenav + toolbar + shared shell components) — done 2026-03-09
 - [x] Equipment Types CRUD — done 2026-03-10
-- [ ] Equipment Statuses CRUD
+- [x] Equipment Statuses CRUD — done 2026-03-10
 - [ ] Equipment CRUD (paginated, filtered)
 - [ ] Tariffs CRUD (with activate/deactivate)
 - [ ] Customers (search + edit)
@@ -113,5 +117,6 @@
 | Admin layout shell + shared shell components    | TASK003 | ✅ Done    | 2026-03-09        |
 | Operator layout shell (bottom nav)              | TASK004 | ✅ Done    | 2026-03-09        |
 | Admin Equipment Types CRUD                      | TASK005 | ✅ Done    | 2026-03-10        |
+| Admin Equipment Statuses CRUD                   | TASK006 | ✅ Done    | 2026-03-10        |
 | Authentication (mock JWT)                       | TASK002 | ⬜ Pending | —                 |
 
