@@ -11,10 +11,8 @@ describe('HealthPollerService', () => {
       providers: [{ provide: HealthService, useValue: mockHealth }, HealthPollerService],
     }).compileComponents();
 
-    // instantiate the service so constructor runs
     TestBed.inject(HealthPollerService);
 
-    // constructor should have called checkHealth at least once
     expect(checkHealth).toHaveBeenCalled();
   });
 });

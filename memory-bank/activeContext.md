@@ -2,61 +2,27 @@
 
 ## Current Work Focus
 
-**TASK004 is complete.** Next focus: **TASK005 — Admin Equipment Types CRUD** (or any TASK005–009 in parallel).
+**TASK005 is complete.** Next focus: **TASK006 — Admin Equipment Statuses CRUD** (or any TASK006–009 in parallel).
 
-**TASK004** (Operator Layout Shell) — fully complete (2026-03-09):
+**TASK005** (Admin Equipment Types CRUD) — fully complete (2026-03-10):
 
-- **`BottomNavComponent`** (`shared/components/bottom-nav/`) — standalone, OnPush, `items = input.required<NavItem[]>()`; renders `<nav>` with `@for` loop, each item `<a routerLink routerLinkActive="bottom-nav-active">`; Tailwind: `flex justify-around items-center h-16 bg-white border-t border-slate-200`; active styles (`.bottom-nav-item.bottom-nav-active`) in global `src/styles.css`
-- **`OperatorLayoutComponent`** (`features/operator/layout/`) — standalone, OnPush, `host: { class: 'flex flex-col h-screen max-w-[480px] mx-auto' }`; uses `AppToolbarComponent` (`[showToggle]="false"`), `BottomNavComponent`, `HealthIndicatorComponent`, `LogoutButtonComponent`, `RouterOutlet`; 3 `$localize` NAV_ITEMS (Dashboard/New Rental/Return); `<main class="flex-1 overflow-y-auto p-4">` for scrollable content
-- **`operator.routes.ts`** rewritten: `OperatorLayoutComponent` as root shell, 3 lazy-loaded children (`dashboard`, `rental/new`, `return`), redirect `'' → 'dashboard'`
-- **3 placeholder child components**: `dashboard/dashboard.component.ts`, `rental-create/rental-create.component.ts`, `return/return.component.ts` — OnPush, Tailwind typography, `i18n`
-- Deleted `operator-placeholder.component.ts`
-- **Tests**: `bottom-nav.component.spec.ts` (6 tests) + `operator-layout.component.spec.ts` (10 tests); 105 total tests pass
-- **TASK013** now fully complete: `<app-health-indicator>` embedded in both admin (`[sidebar-footer]`) and operator toolbar
+- **`EquipmentTypeListComponent`** (`features/admin/equipment-types/`) — standalone, `OnPush`; `MatTableModule`, `MatCardModule`, `MatButtonModule`, `MatIconModule`, `MatTooltipModule`; signals `types = signal<EquipmentTypeResponse[]>([])`, `loading = signal(false)`; `loadTypes()` on `ngOnInit` using `takeUntilDestroyed`; `openCreateDialog()` / `openEditDialog()` open `EquipmentTypeDialogComponent` and refresh on `true` result
+- **`EquipmentTypeDialogComponent`** (`features/admin/equipment-types/`) — standalone, `OnPush`; `ReactiveFormsModule`; typed `FormGroup` with `slug` (required, pattern `/^[a-z0-9-_]+$/`, maxLength 50, disabled in edit), `name` (required), `description` (optional); `saving` signal; `save()` calls `create` or `update`; `description || undefined` coercion; snackbar on error; closes dialog with `true` on success
+- **Tests**: `equipment-type-list.component.spec.ts` (8 tests) + `equipment-type-dialog.component.spec.ts` (13 tests); 152 total tests pass (36 files)
+- **Pattern established**: this CRUD pattern (list + dialog, signal state, ReactiveFormsModule) is the template for TASK006–TASK009
 
-**TASK003** (Admin Layout Shell) — fully complete, including shared shell component layer refactor (2026-03-09):
+## Next Steps
 
-- **Shared shell component layer** — new reusable components in `shared/components/`:
-  - `shell/` — `ShellComponent`: generic layout with optional sidebar (`mat-sidenav`), toolbar, content projection slots `[sidebar-footer]` and `[toolbar-actions]`; sidebar toggled via `sidenavOpened` signal input or internal `_opened` signal; `hasSidebar = computed(() => Array.isArray(items()))`; sidebar width `w-72`
-  - `sidebar/` — `SidebarComponent`: flex column with `AppBrandComponent` header + `mat-nav-list` of `SidebarNavItemComponent`; accepts `items` and `brand` inputs
-  - `app-brand/` — `AppBrandComponent`: bike icon + brand text; prefers `brand` input over `APP_BRAND` injection token fallback
-  - `app-toolbar/` — `AppToolbarComponent`: `mat-toolbar` with optional `ToggleButtonComponent`, `flex-1 truncate` title span, `<ng-content>` for projected toolbar actions
-  - `button/` — `ButtonComponent`: generic `mat-button` (text+icon) or `mat-icon-button` (icon-only); `activated` output
-  - `toggle-button/` — `ToggleButtonComponent`: wraps `ButtonComponent`; `pressed` → `menu`/`menu_open` icon; `customIcon` override; `toggled` output
-  - `logout-button/` — `LogoutButtonComponent`: wraps `ButtonComponent` with logout icon; `logout` output
-  - `qr-scanner/` — `QrScannerComponent` stub (empty file, to be implemented in TASK011)
-  - `bottom-nav/` — `BottomNavComponent`: mobile bottom navigation bar (added in TASK004)
-- **`APP_BRAND` token**: `app.tokens.ts` exports `BRAND` constant + `APP_BRAND: InjectionToken<string>`; `app.config.ts` provides it (env override or `BRAND` fallback)
-- **`AdminLayoutComponent`** uses `<app-shell>`: `navItems` → `[items]`, `APP_BRAND` → `[brand]`, title → `[title]`; health indicator in `[sidebar-footer]`; logout button in `[toolbar-actions]`; manages `sidenavOpened` signal internally
+Execute tasks in dependency order:
 
-**TASK000** (Server Health Indicator) — fully complete:
-
-- `core/health/` — `health.model.ts`, `health.service.ts`, `health-poller.service.ts`
-- `shared/components/health-indicator/` — 4 files + builder; CDK overlay tooltip; 54 tests; 87% branch coverage
-- `<app-health-indicator>` embedded in both admin sidebar footer and operator toolbar
-
-**TASK013** (Embed Health Indicator into Toolbar Shells) — complete:
-
-- Admin: `<app-health-indicator>` in `[sidebar-footer]` slot of `ShellComponent`
-- Operator: `<app-health-indicator>` projected into `AppToolbarComponent` in `OperatorLayoutComponent`
-
-## Recent Changes
-
-- **2026-03-09**: TASK004 implemented:
-  - `BottomNavComponent` created in `shared/components/bottom-nav/`
-  - `OperatorLayoutComponent` created; uses AppToolbarComponent + BottomNavComponent (no sidenav)
-  - `operator.routes.ts` rewritten with proper shell + lazy children
-  - 3 operator placeholder components created
-  - `operator-placeholder.component.ts` deleted
-  - Active bottom-nav styles added to `src/styles.css`
-  - 16 new tests (6 + 10); 105 total tests pass
-
-- **2026-03-09**: Shared shell component layer extracted and AdminLayoutComponent refactored:
-  - `ShellComponent`, `SidebarComponent`, `AppToolbarComponent`, `AppBrandComponent`, `ButtonComponent`, `ToggleButtonComponent`, `LogoutButtonComponent` created
-  - `APP_BRAND` injection token + `BRAND` constant added to `app.tokens.ts`; provided in `app.config.ts`
-  - `AdminLayoutComponent` now delegates all layout to `ShellComponent`
-  - `QrScannerComponent` stub created
-  - 5 new spec files added for the new shared components
+1. **TASK006** — Admin: Equipment Statuses CRUD (depends on TASK003 ✓, similar pattern to TASK005)
+2. **TASK007** — Admin: Equipment CRUD (depends on TASK003 ✓)
+3. **TASK008** — Admin: Tariffs CRUD (depends on TASK003 ✓)
+4. **TASK009** — Admin: Customers, Rental History, Payment History, Users Placeholder
+5. **TASK010** — Operator: Active Rentals Dashboard (depends on TASK004 ✓)
+6. **TASK011** — Operator: Rental Creation Flow (depends on TASK004 ✓)
+7. **TASK012** — Operator: Equipment Return Flow (depends on TASK004 ✓, TASK011)
+8. **TASK002** — Authentication (added last — all pages accessible by default)
 
 ## Next Steps
 

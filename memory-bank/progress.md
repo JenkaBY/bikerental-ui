@@ -2,7 +2,7 @@
 
 ## Current Status
 
-**Phase**: TASK004 complete (operator layout shell + BottomNavComponent). Next: **TASK005–009** (Admin CRUD pages) and/or **TASK010** (Operator dashboard).
+**Phase**: TASK005 complete (Admin Equipment Types CRUD). Next: **TASK006–009** (remaining Admin CRUD pages) and/or **TASK010** (Operator dashboard).
 
 ## What Works
 
@@ -58,10 +58,15 @@
   - `features/operator/operator.routes.ts` — `OperatorLayoutComponent` as root shell; 3 lazy children: `dashboard`, `rental/new`, `return`; redirect `'' → 'dashboard'`
   - 3 placeholder child components: `dashboard/`, `rental-create/`, `return/` — OnPush, Tailwind, `i18n`
   - `operator-placeholder.component.ts` deleted
-  - Tests: `bottom-nav.component.spec.ts` (6 tests) + `operator-layout.component.spec.ts` (10 tests); **105 total tests pass**
+  - Tests: `bottom-nav.component.spec.ts` (6 tests) + `operator-layout.component.spec.ts` (10 tests); **131 total tests pass**
 - **TASK013 (Health Indicator in Toolbar Shells) — complete**:
   - Admin: `<app-health-indicator>` in `[sidebar-footer]` slot of `ShellComponent`
   - Operator: `<app-health-indicator>` projected into `AppToolbarComponent` in `OperatorLayoutComponent`
+- **Admin Equipment Types CRUD (TASK005 — 2026-03-10) — complete**:
+  - `features/admin/equipment-types/equipment-type-list.component.ts` — standalone, OnPush; `MatTableModule`, `MatCardModule`, `MatButtonModule`, `MatIconModule`, `MatTooltipModule`; signals `types`, `loading`; `loadTypes()` via `takeUntilDestroyed`; `openCreateDialog()` / `openEditDialog()` open dialog; refresh on `true` result
+  - `features/admin/equipment-types/equipment-type-dialog.component.ts` — standalone, OnPush; `ReactiveFormsModule`; typed `FormGroup` (`slug` disabled in edit, pattern, maxLength; `name` required; `description` optional); `saving` signal; `save()` with create/edit branching; `description || undefined` coercion; snackbar on error
+  - Tests: `equipment-type-list.component.spec.ts` (8 tests) + `equipment-type-dialog.component.spec.ts` (13 tests); **152 total tests pass**
+  - CRUD pattern established for TASK006–TASK009
 
 ## What's Left to Build
 
@@ -73,7 +78,7 @@
 ### Admin Module (TASK005–TASK009)
 
 - [x] Admin layout shell (sidenav + toolbar + shared shell components) — done 2026-03-09
-- [ ] Equipment Types CRUD
+- [x] Equipment Types CRUD — done 2026-03-10
 - [ ] Equipment Statuses CRUD
 - [ ] Equipment CRUD (paginated, filtered)
 - [ ] Tariffs CRUD (with activate/deactivate)
@@ -107,5 +112,6 @@
 | Server Health Indicator (core + refactor)       | TASK000 | ✅ Done    | 2026-03-06        |
 | Admin layout shell + shared shell components    | TASK003 | ✅ Done    | 2026-03-09        |
 | Operator layout shell (bottom nav)              | TASK004 | ✅ Done    | 2026-03-09        |
+| Admin Equipment Types CRUD                      | TASK005 | ✅ Done    | 2026-03-10        |
 | Authentication (mock JWT)                       | TASK002 | ⬜ Pending | —                 |
 

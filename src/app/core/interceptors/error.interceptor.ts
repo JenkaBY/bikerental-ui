@@ -8,19 +8,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.error && typeof error.error === 'object' && 'title' in error.error) {
-        errorService.setError({
-          title: error.error.title ?? 'Error',
-          detail: error.error.detail ?? '',
-          status: error.error.status ?? error.status,
-        });
-      } else {
-        errorService.setError({
-          title: `HTTP Error ${error.status}`,
-          detail: error.message,
-          status: error.status,
-        });
-      }
+      errorService.handleError(error);
       return throwError(() => error);
     }),
   );

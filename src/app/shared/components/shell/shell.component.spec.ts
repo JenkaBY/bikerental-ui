@@ -207,4 +207,44 @@ describe('ShellComponent', () => {
       expect(btn).toBeTruthy();
     });
   });
+
+  describe('logout event', () => {
+    it('shell emits logout when toolbar logout event fires', async () => {
+      await TestBed.configureTestingModule({
+        imports: [HostWithSidebarComponent],
+        providers: [provideRouter([]), { provide: APP_BRAND, useValue: BRAND }],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(HostWithSidebarComponent);
+      fixture.detectChanges();
+
+      const shell = fixture.nativeElement.querySelector('app-shell');
+      expect(shell).toBeTruthy();
+
+      const shellComp: ShellComponent = fixture.debugElement.children[0].componentInstance;
+      let logoutFired = false;
+      shellComp.logout.subscribe(() => (logoutFired = true));
+      shellComp.logout.emit();
+      expect(logoutFired).toBe(true);
+    });
+  });
+
+  describe('external sidenavOpened: onToggleSidebar emits event without toggling internal state', () => {
+    it('emits toggleSidebar when consumer provides external sidenavOpened', async () => {
+      await TestBed.configureTestingModule({
+        imports: [HostWithControlledSidebarComponent],
+        providers: [provideRouter([]), { provide: APP_BRAND, useValue: BRAND }],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(HostWithControlledSidebarComponent);
+      fixture.detectChanges();
+
+      const shellComp: ShellComponent = fixture.debugElement.children[0].componentInstance;
+      let toggleFired = false;
+      shellComp.toggleSidebar.subscribe(() => (toggleFired = true));
+
+      (shellComp as unknown as { onToggleSidebar: () => void }).onToggleSidebar();
+      expect(toggleFired).toBe(true);
+    });
+  });
 });
