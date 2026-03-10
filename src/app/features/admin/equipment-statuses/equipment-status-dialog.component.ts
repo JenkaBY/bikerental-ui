@@ -10,6 +10,8 @@ import { EquipmentStatusService } from '../../../core/api';
 import { EquipmentStatusRequest, EquipmentStatusResponse } from '../../../core/models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
+import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
+import { Labels } from '../../../shared/components/save-button/labels';
 
 export interface EquipmentStatusDialogData {
   status?: EquipmentStatusResponse;
@@ -26,19 +28,20 @@ export interface EquipmentStatusDialogData {
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
+    SaveButtonComponent,
   ],
   template: `
     <h2 mat-dialog-title>
       @if (data.status) {
-        <span i18n>Edit status</span>
+        <span>{{ labels.EditStatus }}</span>
       } @else {
-        <span i18n>Create status</span>
+        <span>{{ labels.CreateStatus }}</span>
       }
     </h2>
     <mat-dialog-content>
       <form [formGroup]="form" class="flex flex-col gap-4 min-w-100 pt-1">
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label i18n>Slug</mat-label>
+          <mat-label>{{ labels.Slug }}</mat-label>
           <input matInput formControlName="slug" placeholder="e.g. available" />
           @if (form.controls.slug.hasError('required')) {
             <mat-error>{{ errors.slugRequired }}</mat-error>
@@ -52,7 +55,7 @@ export interface EquipmentStatusDialogData {
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label i18n>Name</mat-label>
+          <mat-label>{{ labels.Name }}</mat-label>
           <input matInput formControlName="name" />
           @if (form.controls.name.hasError('required')) {
             <mat-error>{{ errors.nameRequired }}</mat-error>
@@ -60,12 +63,12 @@ export interface EquipmentStatusDialogData {
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label i18n>Description</mat-label>
+          <mat-label>{{ labels.Description }}</mat-label>
           <textarea matInput formControlName="description" rows="3"></textarea>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label i18n>Allowed transitions</mat-label>
+          <mat-label>{{ labels.AllowedTransitions }}</mat-label>
           <mat-select formControlName="allowedTransitions" multiple>
             @for (opt of transitionOptions; track opt.slug) {
               <mat-option [value]="opt.slug">{{ opt.name }} ({{ opt.slug }})</mat-option>
@@ -75,19 +78,12 @@ export interface EquipmentStatusDialogData {
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close i18n>Cancel</button>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="save()"
-        [disabled]="saving() || form.invalid"
-      >
-        @if (saving()) {
-          <span i18n>Saving...</span>
-        } @else {
-          <span i18n>Save</span>
-        }
-      </button>
+      <button mat-button mat-dialog-close>{{ labels.Cancel }}</button>
+      <app-form-save-button
+        [saving]="saving()"
+        [disabled]="form.invalid"
+        (save)="save()"
+      ></app-form-save-button>
     </mat-dialog-actions>
   `,
 })
@@ -97,6 +93,7 @@ export class EquipmentStatusDialogComponent {
   private service = inject(EquipmentStatusService);
   private snackBar = inject(MatSnackBar);
 
+  readonly labels = Labels;
   readonly errors = FormErrorMessages;
   saving = signal(false);
 
@@ -142,13 +139,13 @@ export class EquipmentStatusDialogComponent {
         const message = this.isCreateMode()
           ? $localize`Equipment status created`
           : $localize`Equipment status updated`;
-        this.snackBar.open(message, $localize`Close`, { duration: 3000 });
+        this.snackBar.open(message, this.labels.Close, { duration: 3000 });
         this.dialogRef.close(true);
       },
       error: (err: unknown) => {
         console.log('Error saving equipment status', err);
         this.saving.set(false);
-        this.snackBar.open($localize`Failed to save equipment status`, $localize`Close`, {
+        this.snackBar.open($localize`Failed to save equipment status`, this.labels.Close, {
           duration: 4000,
         });
       },

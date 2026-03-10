@@ -13,6 +13,8 @@ import {
 } from '../../../core/models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
+import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
+import { Labels } from '../../../shared/components/save-button/labels';
 
 export interface EquipmentTypeDialogData {
   type?: EquipmentTypeResponse;
@@ -27,19 +29,20 @@ export interface EquipmentTypeDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    SaveButtonComponent,
   ],
   template: `
     <h2 mat-dialog-title>
       @if (data.type) {
-        <span i18n>Edit</span>
+        <span>{{ labels.Edit }}</span>
       } @else {
-        <span i18n>Create</span>
+        <span i18n>{{ labels.Create }}</span>
       }
     </h2>
     <mat-dialog-content>
       <form [formGroup]="form" class="flex flex-col gap-4 min-w-100 pt-1">
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label i18n>Slug</mat-label>
+          <mat-label>{{ labels.Slug }}</mat-label>
           <input matInput formControlName="slug" placeholder="e.g. bike" />
           @if (form.controls.slug.hasError('required')) {
             <mat-error>{{ errors.slugRequired }}</mat-error>
@@ -53,7 +56,7 @@ export interface EquipmentTypeDialogData {
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label i18n>Name</mat-label>
+          <mat-label>{{ labels.Name }}</mat-label>
           <input matInput formControlName="name" />
           @if (form.controls.name.hasError('required')) {
             <mat-error>{{ errors.nameRequired }}</mat-error>
@@ -61,25 +64,18 @@ export interface EquipmentTypeDialogData {
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label i18n>Description</mat-label>
+          <mat-label>{{ labels.Description }}</mat-label>
           <textarea matInput formControlName="description" rows="3"></textarea>
         </mat-form-field>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close i18n>Cancel</button>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="save()"
-        [disabled]="saving() || form.invalid"
-      >
-        @if (saving()) {
-          <span i18n>Saving...</span>
-        } @else {
-          <span i18n>Save</span>
-        }
-      </button>
+      <button mat-button mat-dialog-close>{{ labels.Cancel }}</button>
+      <app-form-save-button
+        [saving]="saving()"
+        [disabled]="form.invalid"
+        (save)="save()"
+      ></app-form-save-button>
     </mat-dialog-actions>
   `,
 })
@@ -89,6 +85,7 @@ export class EquipmentTypeDialogComponent {
   private service = inject(EquipmentTypeService);
   private snackBar = inject(MatSnackBar);
 
+  readonly labels = Labels;
   readonly errors = FormErrorMessages;
   saving = signal(false);
 
