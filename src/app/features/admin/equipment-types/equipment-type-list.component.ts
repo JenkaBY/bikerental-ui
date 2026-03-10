@@ -9,12 +9,12 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentTypeResponse } from '../../../core/models';
+import { EquipmentTypeRequest, EquipmentTypeResponse } from '../../../core/models';
 import {
   EquipmentTypeDialogComponent,
   EquipmentTypeDialogData,
@@ -73,15 +73,6 @@ import {
       </mat-card-content>
     </mat-card>
   `,
-  styles: `
-    .full-width {
-      width: 100%;
-    }
-
-    .actions-bar {
-      margin-bottom: 16px;
-    }
-  `,
 })
 export class EquipmentTypeListComponent implements OnInit {
   private service = inject(EquipmentTypeService);
@@ -112,10 +103,11 @@ export class EquipmentTypeListComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    const ref = this.dialog.open<EquipmentTypeDialogComponent, EquipmentTypeDialogData, boolean>(
-      EquipmentTypeDialogComponent,
-      { autoFocus: 'first-tabbable' },
-    );
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = {} as EquipmentTypeRequest;
+    const ref = this.dialog.open(EquipmentTypeDialogComponent, dialogConfig);
     ref.afterClosed().subscribe((result) => {
       if (result) this.loadTypes();
     });

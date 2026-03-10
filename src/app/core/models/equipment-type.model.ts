@@ -1,5 +1,10 @@
 export interface EquipmentTypeRequest {
-  slug?: string;
+  slug: string;
+  name?: string;
+  description?: string;
+}
+
+export interface EquipmentTypeUpdateRequest {
   name?: string;
   description?: string;
 }

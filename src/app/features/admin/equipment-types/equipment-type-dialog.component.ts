@@ -6,7 +6,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentTypeResponse } from '../../../core/models';
+import {
+  EquipmentTypeRequest,
+  EquipmentTypeResponse,
+  EquipmentTypeUpdateRequest,
+} from '../../../core/models';
+import { SlugValidators } from '../../../shared/validators/slug-validators';
 
 export interface EquipmentTypeDialogData {
   type?: EquipmentTypeResponse;
@@ -95,11 +100,10 @@ export class EquipmentTypeDialogComponent {
   saving = signal(false);
 
   form = new FormGroup({
-    slug: new FormControl({ value: this.data?.type?.slug ?? '', disabled: !!this.data?.type }, [
-      Validators.required,
-      Validators.pattern(/^[a-z0-9-_]+$/),
-      Validators.maxLength(50),
-    ]),
+    slug: new FormControl(
+      { value: this.data?.type?.slug ?? '', disabled: !!this.data?.type },
+      SlugValidators,
+    ),
     name: new FormControl(this.data?.type?.name ?? '', [Validators.required]),
     description: new FormControl(this.data?.type?.description ?? ''),
   });
@@ -114,19 +118,34 @@ export class EquipmentTypeDialogComponent {
 
     const { slug, name, description } = this.form.getRawValue();
     const request = { name: name ?? '', description: description || undefined };
-
-    const operation$ = this.data?.type
-      ? this.service.update(this.data.type.slug, request)
-      : this.service.create({ slug: slug ?? '', ...request });
+    let operation$;
+    if (this.isCreateMode()) {
+      const req = { slug: slug, ...request } as EquipmentTypeRequest;
+      operation$ = this.service.create(req);
+    } else {
+      operation$ = this.service.update(this.data.type!.slug, request as EquipmentTypeUpdateRequest);
+    }
 
     operation$.subscribe({
-      next: () => this.dialogRef.close(true),
-      error: () => {
+      next: () => {
+        // Show success toast for create or update
+        const message = this.isCreateMode()
+          ? $localize`Equipment type created`
+          : $localize`Equipment type updated`;
+        this.snackBar.open(message, $localize`Close`, { duration: 3000 });
+        this.dialogRef.close(true);
+      },
+      error: (err: unknown) => {
+        console.log('Error saving equipment type', err);
         this.saving.set(false);
         this.snackBar.open($localize`Failed to save equipment type`, $localize`Close`, {
           duration: 4000,
         });
       },
     });
+  }
+
+  private isCreateMode(): boolean {
+    return !this.data?.type;
   }
 }

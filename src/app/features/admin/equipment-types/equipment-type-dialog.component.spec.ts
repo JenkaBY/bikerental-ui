@@ -1,0 +1,162 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { of, throwError } from 'rxjs';
+import { EquipmentTypeService } from '../../../core/api';
+import { EquipmentTypeResponse } from '../../../core/models';
+import {
+  EquipmentTypeDialogComponent,
+  EquipmentTypeDialogData,
+} from './equipment-type-dialog.component';
+
+const existingType: EquipmentTypeResponse = {
+  slug: 'bike',
+  name: 'Bike',
+  description: 'A bicycle',
+};
+
+function makeService() {
+  return {
+    create: vi.fn().mockReturnValue(of(existingType)),
+    update: vi.fn().mockReturnValue(of(existingType)),
+  };
+}
+
+function makeDialogRef() {
+  return { close: vi.fn() };
+}
+
+function makeSnackBar() {
+  return { open: vi.fn() };
+}
+
+async function setup(data: EquipmentTypeDialogData = {}) {
+  const service = makeService();
+  const dialogRef = makeDialogRef();
+  const snackBar = makeSnackBar();
+
+  await TestBed.configureTestingModule({
+    imports: [EquipmentTypeDialogComponent],
+    providers: [
+      { provide: EquipmentTypeService, useValue: service },
+      { provide: MatDialogRef, useValue: dialogRef },
+      { provide: MAT_DIALOG_DATA, useValue: data },
+      { provide: MatSnackBar, useValue: snackBar },
+    ],
+  }).compileComponents();
+
+  const fixture: ComponentFixture<EquipmentTypeDialogComponent> = TestBed.createComponent(
+    EquipmentTypeDialogComponent,
+  );
+  fixture.detectChanges();
+
+  return { fixture, component: fixture.componentInstance, service, dialogRef, snackBar };
+}
+
+describe('EquipmentTypeDialogComponent — create mode', () => {
+  it('should create', async () => {
+    const { component } = await setup();
+    expect(component).toBeTruthy();
+  });
+
+  it('should have slug enabled in create mode', async () => {
+    const { component } = await setup();
+    expect(component.form.controls.slug.disabled).toBe(false);
+  });
+
+  it('should have empty form in create mode', async () => {
+    const { component } = await setup();
+    expect(component.form.controls.slug.value).toBe('');
+    expect(component.form.controls.name.value).toBe('');
+    expect(component.form.controls.description.value).toBe('');
+  });
+
+  it('should mark form touched and not call service when form is invalid', async () => {
+    const { component, service } = await setup();
+    component.save();
+    expect(service.create).not.toHaveBeenCalled();
+    expect(component.form.touched).toBe(true);
+  });
+
+  it('should call service.create on valid submit', async () => {
+    const { component, service, dialogRef } = await setup();
+    component.form.controls.slug.setValue('bike');
+    component.form.controls.name.setValue('Bike');
+    component.save();
+    expect(service.create).toHaveBeenCalledWith({
+      slug: 'bike',
+      name: 'Bike',
+      description: undefined,
+    });
+    expect(dialogRef.close).toHaveBeenCalledWith(true);
+  });
+
+  it('should include description in create request when provided', async () => {
+    const { component, service } = await setup();
+    component.form.controls.slug.setValue('bike');
+    component.form.controls.name.setValue('Bike');
+    component.form.controls.description.setValue('A bicycle');
+    component.save();
+    expect(service.create).toHaveBeenCalledWith({
+      slug: 'bike',
+      name: 'Bike',
+      description: 'A bicycle',
+    });
+  });
+
+  it('should fail slug validation for invalid pattern', async () => {
+    const { component } = await setup();
+    component.form.controls.slug.setValue('Invalid Slug!');
+    component.form.controls.slug.updateValueAndValidity();
+    expect(component.form.controls.slug.hasError('pattern')).toBe(true);
+  });
+
+  it('should fail slug validation when exceeding maxLength', async () => {
+    const { component } = await setup();
+    component.form.controls.slug.setValue('a'.repeat(51));
+    component.form.controls.slug.updateValueAndValidity();
+    expect(component.form.controls.slug.hasError('maxlength')).toBe(true);
+  });
+
+  it('should show snackbar and reset saving on error', async () => {
+    const { component, service, snackBar } = await setup();
+    service.create.mockReturnValue(throwError(() => new Error('Server error')));
+    component.form.controls.slug.setValue('bike');
+    component.form.controls.name.setValue('Bike');
+    component.save();
+    expect(snackBar.open).toHaveBeenCalled();
+    expect(component.saving()).toBe(false);
+  });
+});
+
+describe('EquipmentTypeDialogComponent — edit mode', () => {
+  it('should pre-fill form with existing type data', async () => {
+    const { component } = await setup({ type: existingType });
+    expect(component.form.controls.slug.value).toBe('bike');
+    expect(component.form.controls.name.value).toBe('Bike');
+    expect(component.form.controls.description.value).toBe('A bicycle');
+  });
+
+  it('should disable slug in edit mode', async () => {
+    const { component } = await setup({ type: existingType });
+    expect(component.form.controls.slug.disabled).toBe(true);
+  });
+
+  it('should call service.update with original slug', async () => {
+    const { component, service, dialogRef } = await setup({ type: existingType });
+    component.form.controls.name.setValue('Updated Bike');
+    component.save();
+    expect(service.update).toHaveBeenCalledWith(
+      'bike',
+      expect.objectContaining({ name: 'Updated Bike' }),
+    );
+    expect(dialogRef.close).toHaveBeenCalledWith(true);
+  });
+
+  it('should not call service.create in edit mode', async () => {
+    const { component, service } = await setup({ type: existingType });
+    component.form.controls.name.setValue('Updated Bike');
+    component.save();
+    expect(service.create).not.toHaveBeenCalled();
+  });
+});
