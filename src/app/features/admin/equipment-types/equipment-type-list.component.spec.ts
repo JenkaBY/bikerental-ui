@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { EquipmentTypeService } from '../../../core/api';
 import { EquipmentTypeResponse } from '../../../core/models';
 import { EquipmentTypeListComponent } from './equipment-type-list.component';
@@ -97,5 +97,36 @@ describe('EquipmentTypeListComponent', () => {
     component.openCreateDialog();
     dialogAfterClosed.next(undefined);
     expect(service.getAll).toHaveBeenCalledOnce();
+  });
+
+  it('should sort types by slug ascending', async () => {
+    const unsorted: EquipmentTypeResponse[] = [
+      { slug: 'scooter', name: 'Scooter' },
+      { slug: 'bike', name: 'Bike' },
+      { slug: 'moped', name: 'Moped' },
+    ];
+    await setup(unsorted);
+    expect(component.types().map((t) => t.slug)).toEqual(['bike', 'moped', 'scooter']);
+  });
+
+  it('should set loading false and keep empty types on error', async () => {
+    service = { getAll: vi.fn().mockReturnValue(throwError(() => new Error('Network error'))) };
+    dialogAfterClosed = new Subject();
+    dialog = makeDialog(dialogAfterClosed);
+
+    await TestBed.configureTestingModule({
+      imports: [EquipmentTypeListComponent],
+      providers: [
+        { provide: EquipmentTypeService, useValue: service },
+        { provide: MatDialog, useValue: dialog },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(EquipmentTypeListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.loading()).toBe(false);
+    expect(component.types()).toEqual([]);
   });
 });

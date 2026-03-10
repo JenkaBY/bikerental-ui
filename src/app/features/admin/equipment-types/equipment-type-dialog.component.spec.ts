@@ -127,6 +127,14 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
     expect(snackBar.open).toHaveBeenCalled();
     expect(component.saving()).toBe(false);
   });
+
+  it('should show success snackbar on successful create', async () => {
+    const { component, snackBar } = await setup();
+    component.form.controls.slug.setValue('bike');
+    component.form.controls.name.setValue('Bike');
+    component.save();
+    expect(snackBar.open).toHaveBeenCalled();
+  });
 });
 
 describe('EquipmentTypeDialogComponent — edit mode', () => {
@@ -158,5 +166,12 @@ describe('EquipmentTypeDialogComponent — edit mode', () => {
     component.form.controls.name.setValue('Updated Bike');
     component.save();
     expect(service.create).not.toHaveBeenCalled();
+  });
+
+  it('should show success snackbar on successful update', async () => {
+    const { component, snackBar } = await setup({ type: existingType });
+    component.form.controls.name.setValue('Updated Bike');
+    component.save();
+    expect(snackBar.open).toHaveBeenCalled();
   });
 });
