@@ -52,13 +52,13 @@ Template (`equipment-type-list.component.html`):
 ```html
 <mat-card>
   <mat-card-header>
-    <mat-card-title i18n>Типы оборудования</mat-card-title>
+    <mat-card-title i18n>Equipment types</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <div class="actions-bar">
       <button mat-raised-button color="primary" (click)="openCreateDialog()">
         <mat-icon>add</mat-icon>
-        <span i18n>Создать</span>
+        <span i18n>Create</span>
       </button>
     </div>
 
@@ -69,19 +69,19 @@ Template (`equipment-type-list.component.html`):
       </ng-container>
 
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef i18n>Название</th>
+        <th mat-header-cell *matHeaderCellDef i18n>Name</th>
         <td mat-cell *matCellDef="let row">{{ row.name }}</td>
       </ng-container>
 
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef i18n>Описание</th>
+        <th mat-header-cell *matHeaderCellDef i18n>Description</th>
         <td mat-cell *matCellDef="let row">{{ row.description }}</td>
       </ng-container>
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let row">
-          <button mat-icon-button (click)="openEditDialog(row)" matTooltip="Редактировать" i18n-matTooltip>
+          <button mat-icon-button (click)="openEditDialog(row)" matTooltip="Edit" i18n-matTooltip>
             <mat-icon>edit</mat-icon>
           </button>
         </td>
@@ -106,7 +106,7 @@ Create `src/app/features/admin/equipment-types/equipment-type-dialog.component.t
 - `OnPush` change detection
 - Data injection: `data: { type?: EquipmentTypeResponse }` — if `type` is present, it's edit mode
 - Reactive form: `FormGroup` with controls:
-  - `slug`: `FormControl<string>` (required, pattern `/^[a-z0-9-]+$/`, maxLength 50). Disabled if edit mode.
+  - `slug`: `FormControl<string>` (required, pattern `/^[a-z0-9-_]+$/`, maxLength 50). Disabled if edit mode.
   - `name`: `FormControl<string>` (required)
   - `description`: `FormControl<string>` (optional)
 - Signal: `saving = signal(false)`
@@ -123,9 +123,9 @@ Template (`equipment-type-dialog.component.html`):
 ```html
 <h2 mat-dialog-title>
   @if (data?.type) {
-    <span i18n>Редактировать тип оборудования</span>
+    <span i18n>Edit</span>
   } @else {
-    <span i18n>Создать тип оборудования</span>
+    <span i18n>Create</span>
   }
 </h2>
 <mat-dialog-content>
@@ -134,34 +134,34 @@ Template (`equipment-type-dialog.component.html`):
       <mat-label i18n>Slug</mat-label>
       <input matInput formControlName="slug" placeholder="e.g. bike">
       @if (form.controls.slug.hasError('required')) {
-        <mat-error i18n>Slug обязателен</mat-error>
+        <mat-error i18n>Slug required</mat-error>
       }
       @if (form.controls.slug.hasError('pattern')) {
-        <mat-error i18n>Только строчные буквы, цифры и дефисы</mat-error>
+        <mat-error i18n>Only lowercase letters, numbers, hyphens and underscores</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label i18n>Название</mat-label>
+      <mat-label i18n>Name</mat-label>
       <input matInput formControlName="name">
       @if (form.controls.name.hasError('required')) {
-        <mat-error i18n>Название обязательно</mat-error>
+        <mat-error i18n>Name is required</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label i18n>Описание</mat-label>
+      <mat-label i18n>Description</mat-label>
       <textarea matInput formControlName="description" rows="3"></textarea>
     </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close i18n>Отмена</button>
+  <button mat-button mat-dialog-close i18n>Cancel</button>
   <button mat-raised-button color="primary" (click)="save()" [disabled]="saving()">
     @if (saving()) {
-      <span i18n>Сохранение...</span>
+      <span i18n>Saving...</span>
     } @else {
-      <span i18n>Сохранить</span>
+      <span i18n>Save</span>
     }
   </button>
 </mat-dialog-actions>
