@@ -36,8 +36,8 @@ export interface EquipmentTypeDialogData {
       }
     </h2>
     <mat-dialog-content>
-      <form [formGroup]="form" class="dialog-form">
-        <mat-form-field appearance="outline" class="full-width">
+      <form [formGroup]="form" class="flex flex-col gap-4 min-w-100 pt-1">
+        <mat-form-field appearance="outline" class="w-full">
           <mat-label i18n>Slug</mat-label>
           <input matInput formControlName="slug" placeholder="e.g. bike" />
           @if (form.controls.slug.hasError('required')) {
@@ -51,7 +51,7 @@ export interface EquipmentTypeDialogData {
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="w-full">
           <mat-label i18n>Name</mat-label>
           <input matInput formControlName="name" />
           @if (form.controls.name.hasError('required')) {
@@ -59,7 +59,7 @@ export interface EquipmentTypeDialogData {
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="w-full">
           <mat-label i18n>Description</mat-label>
           <textarea matInput formControlName="description" rows="3"></textarea>
         </mat-form-field>
@@ -80,15 +80,6 @@ export interface EquipmentTypeDialogData {
         }
       </button>
     </mat-dialog-actions>
-  `,
-  styles: `
-    .dialog-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      min-width: 400px;
-      padding-top: 4px;
-    }
   `,
 })
 export class EquipmentTypeDialogComponent {
