@@ -14,6 +14,7 @@ import {
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
+import { CancelButtonComponent } from '../../../shared/components/save-button/cancel-button.component';
 import { Labels } from '../../../shared/components/save-button/labels';
 
 export interface EquipmentTypeDialogData {
@@ -30,6 +31,7 @@ export interface EquipmentTypeDialogData {
     MatInputModule,
     MatButtonModule,
     SaveButtonComponent,
+    CancelButtonComponent,
   ],
   template: `
     <h2 mat-dialog-title>
@@ -70,7 +72,7 @@ export interface EquipmentTypeDialogData {
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>{{ labels.Cancel }}</button>
+      <app-form-cancel-button />
       <app-form-save-button
         [saving]="saving()"
         [disabled]="form.invalid"
@@ -85,9 +87,9 @@ export class EquipmentTypeDialogComponent {
   private service = inject(EquipmentTypeService);
   private snackBar = inject(MatSnackBar);
 
-  readonly labels = Labels;
   readonly errors = FormErrorMessages;
   saving = signal(false);
+  readonly labels = Labels;
 
   form = new FormGroup({
     slug: new FormControl(
@@ -125,8 +127,7 @@ export class EquipmentTypeDialogComponent {
         this.snackBar.open(message, $localize`Close`, { duration: 3000 });
         this.dialogRef.close(true);
       },
-      error: (err: unknown) => {
-        console.log('Error saving equipment type', err);
+      error: () => {
         this.saving.set(false);
         this.snackBar.open($localize`Failed to save equipment type`, $localize`Close`, {
           duration: 4000,

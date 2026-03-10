@@ -11,6 +11,7 @@ import { EquipmentStatusRequest, EquipmentStatusResponse } from '../../../core/m
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
+import { CancelButtonComponent } from '../../../shared/components/save-button/cancel-button.component';
 import { Labels } from '../../../shared/components/save-button/labels';
 
 export interface EquipmentStatusDialogData {
@@ -29,6 +30,7 @@ export interface EquipmentStatusDialogData {
     MatButtonModule,
     MatSelectModule,
     SaveButtonComponent,
+    CancelButtonComponent,
   ],
   template: `
     <h2 mat-dialog-title>
@@ -78,7 +80,7 @@ export interface EquipmentStatusDialogData {
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>{{ labels.Cancel }}</button>
+      <app-form-cancel-button />
       <app-form-save-button
         [saving]="saving()"
         [disabled]="form.invalid"
@@ -142,8 +144,7 @@ export class EquipmentStatusDialogComponent {
         this.snackBar.open(message, this.labels.Close, { duration: 3000 });
         this.dialogRef.close(true);
       },
-      error: (err: unknown) => {
-        console.log('Error saving equipment status', err);
+      error: () => {
         this.saving.set(false);
         this.snackBar.open($localize`Failed to save equipment status`, this.labels.Close, {
           duration: 4000,
