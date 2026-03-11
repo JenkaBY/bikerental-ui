@@ -114,6 +114,9 @@ bikerental-ui/
 - **Small component** Keep components tiny (max 200 lines TS + 100 lines HTML) — split into multiple components if needed
 - **No deprecated features** Don't use any Angular APIs marked as deprecated in v21
 - **any**: Avoid using `any` type; prefer strict typing and interfaces from OpenAPI spec
+- **Labels** Use constants(`shared/constant/labels`) for repeated strings (e.g. column names, button text) to ensure consistency and ease i18n
+- **FormErrorMessages** Use constants(`shared/validators/form-error-messages`) for messages related to form validation errors to ensure consistency across forms and ease i18n
+
 ## Angular Configuration Notes
 
 - `app.config.ts` must include:

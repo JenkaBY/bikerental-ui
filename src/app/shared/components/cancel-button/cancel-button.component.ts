@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { Labels } from './labels';
+import { Labels } from '../../constant/labels';
 
 @Component({
   selector: 'app-form-cancel-button',

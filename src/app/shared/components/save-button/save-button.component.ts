@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { Labels } from './labels';
+import { Labels } from '../../constant/labels';
 
 @Component({
   selector: 'app-form-save-button',
@@ -15,9 +15,9 @@ import { Labels } from './labels';
       [disabled]="disabled() || saving()"
     >
       @if (saving()) {
-        <span>{{ msg.saving }}</span>
+        <span>{{ msg.Saving }}</span>
       } @else {
-        <span>{{ msg.save }}</span>
+        <span>{{ msg.Save }}</span>
       }
     </button>
   `,
