@@ -29,4 +29,5 @@ export class Labels {
   static readonly Condition = $localize`Condition`;
   static readonly CreateEquipment = $localize`Create Equipment`;
   static readonly EditEquipment = $localize`Edit Equipment`;
+  static readonly FormatDate = $localize`Format Date:`;
 }

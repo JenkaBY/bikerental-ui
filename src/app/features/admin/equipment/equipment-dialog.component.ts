@@ -100,7 +100,7 @@ export interface EquipmentDialogData {
           <input matInput [matDatepicker]="picker" formControlName="commissionedAt" />
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <mat-hint>Format date: {{ dateFormatHint }}</mat-hint>
+          <mat-hint>{{ Labels.FormatDate }} {{ dateFormatHint }}</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-full">
@@ -188,4 +188,6 @@ export class EquipmentDialogComponent {
       },
     });
   }
+
+  protected readonly Labels = Labels;
 }
