@@ -55,7 +55,7 @@ export interface EquipmentDialogData {
       }
     </h2>
     <mat-dialog-content>
-      <form [formGroup]="form" class="flex flex-col gap-4 min-w-100 pt-1">
+      <form [formGroup]="form" class="grid grid-cols-2 gap-4 min-w-100 pt-1">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.SerialNumber }}</mat-label>
           <input matInput formControlName="serialNumber" maxlength="50" />
@@ -103,7 +103,7 @@ export interface EquipmentDialogData {
           <mat-hint>{{ Labels.FormatDate }} {{ dateFormatHint }}</mat-hint>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="w-full">
+        <mat-form-field appearance="outline" class="w-full col-span-2">
           <mat-label>{{ labels.Condition }}</mat-label>
           <textarea matInput formControlName="condition" rows="3"></textarea>
         </mat-form-field>
