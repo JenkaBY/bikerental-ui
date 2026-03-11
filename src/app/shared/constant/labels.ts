@@ -30,6 +30,9 @@ export class Labels {
   static readonly CreateEquipment = $localize`Create Equipment`;
   static readonly EditEquipment = $localize`Edit Equipment`;
   static readonly FormatDate = $localize`Format Date:`;
+  static readonly TransitionFrom = $localize`Transition from`;
+  static readonly TransitionTo = $localize`to`;
+  static readonly NoTransitionsAvailable = $localize`No transitions for this status`;
   // Added for equipment list
   static readonly Equipment = $localize`Equipment`;
   static readonly All = $localize`All`;
