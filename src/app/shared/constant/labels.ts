@@ -11,4 +11,15 @@ export class Labels {
   static readonly EditStatus = $localize`Edit Status`;
   static readonly CreateStatus = $localize`Create Status`;
   static readonly AllowedTransitions = $localize`Allowed Transitions`;
+
+  // Equipment-specific labels
+  static readonly SerialNumber = $localize`Serial Number`;
+  static readonly Uid = $localize`UID`;
+  static readonly Type = $localize`Type`;
+  static readonly Status = $localize`Status`;
+  static readonly Model = $localize`Model`;
+  static readonly CommissionedAt = $localize`Commissioned At`;
+  static readonly Condition = $localize`Condition`;
+  static readonly CreateEquipment = $localize`Create Equipment`;
+  static readonly EditEquipment = $localize`Edit Equipment`;
 }
