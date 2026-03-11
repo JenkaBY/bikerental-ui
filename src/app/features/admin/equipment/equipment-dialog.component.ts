@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, LOCALE_ID, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentService } from '../../../core/api';
@@ -19,6 +20,7 @@ import { SaveButtonComponent } from '../../../shared/components/save-button/save
 import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
 import { Labels } from '../../../shared/constant/labels';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
+import { formatDate } from '@angular/common';
 
 export interface EquipmentDialogData {
   equipment?: EquipmentResponse;
@@ -28,6 +30,7 @@ export interface EquipmentDialogData {
 
 @Component({
   selector: 'app-equipment-dialog',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
@@ -36,6 +39,7 @@ export interface EquipmentDialogData {
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
+    MatIconModule,
     MatNativeDateModule,
     MatButtonModule,
     SaveButtonComponent,
@@ -95,6 +99,7 @@ export interface EquipmentDialogData {
           <input matInput [matDatepicker]="picker" formControlName="commissionedAt" />
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
+          <mat-hint>Format date: {{ dateFormatHint }}</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-full">
@@ -121,6 +126,8 @@ export class EquipmentDialogComponent {
 
   readonly labels = Labels;
   readonly errors = FormErrorMessages;
+
+  readonly dateFormatHint = formatDate(new Date(), 'shortDate', inject(LOCALE_ID));
 
   saving = signal(false);
 

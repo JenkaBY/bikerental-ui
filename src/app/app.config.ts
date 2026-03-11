@@ -29,14 +29,9 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([errorInterceptor])),
     importProvidersFrom(MatNativeDateModule),
     provideAppInitializer(() => {
-      // Ensure health poller is instantiated and register locale data used by formatDate
       inject(HealthPollerService);
       // Register Russian locale data (used when LOCALE_ID === 'ru')
-      try {
-        registerLocaleData(localeRu, 'ru');
-      } catch {
-        // noop - avoid breaking startup if registration fails for any reason
-      }
+      registerLocaleData(localeRu, 'ru');
     }),
     { provide: LOCALE_ID, useValue: environment.defaultLocale },
     { provide: APP_BRAND, useValue: envBrand },
