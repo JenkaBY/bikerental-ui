@@ -21,6 +21,7 @@ import { CancelButtonComponent } from '../../../shared/components/cancel-button/
 import { Labels } from '../../../shared/constant/labels';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { formatDate } from '@angular/common';
+import { parseDate, toIsoDate } from '../../../shared/utils/date.util';
 
 export interface EquipmentDialogData {
   equipment?: EquipmentResponse;
@@ -140,21 +141,9 @@ export class EquipmentDialogComponent {
     typeSlug: new FormControl(this.data?.equipment?.type ?? ''),
     statusSlug: new FormControl(this.data?.equipment?.status ?? ''),
     model: new FormControl(this.data?.equipment?.model ?? '', [Validators.maxLength(200)]),
-    commissionedAt: new FormControl(
-      this.parseCommissionedAt(this.data?.equipment?.commissionedAt ?? null),
-    ),
+    commissionedAt: new FormControl(parseDate(this.data?.equipment?.commissionedAt ?? null)),
     condition: new FormControl(this.data?.equipment?.condition ?? ''),
   });
-
-  private parseCommissionedAt(dateStr: string | null | undefined): Date | null {
-    if (!dateStr) return null;
-    // Ensure parsing as local date (avoid timezone shifts)
-    try {
-      return new Date(dateStr + 'T00:00:00');
-    } catch {
-      return null;
-    }
-  }
 
   save(): void {
     if (this.form.invalid) {
@@ -172,7 +161,7 @@ export class EquipmentDialogComponent {
       typeSlug: raw.typeSlug || undefined,
       statusSlug: raw.statusSlug || undefined,
       model: raw.model || undefined,
-      commissionedAt: raw.commissionedAt ? this.formatDate(raw.commissionedAt) : undefined,
+      commissionedAt: raw.commissionedAt ? toIsoDate(raw.commissionedAt) : undefined,
       condition: raw.condition || undefined,
     };
 
@@ -198,13 +187,5 @@ export class EquipmentDialogComponent {
         });
       },
     });
-  }
-
-  private formatDate(d: Date): string {
-    // YYYY-MM-DD
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
   }
 }
