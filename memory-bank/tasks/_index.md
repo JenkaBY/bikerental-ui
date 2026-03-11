@@ -16,7 +16,6 @@ _None_
 
 ## Pending
 
-- [TASK007] Admin: Equipment CRUD — Paginated table with filters + dialog with selects/datepicker. Depends on: TASK003
 - [TASK008] Admin: Tariffs CRUD — Paginated table + dialog with price fields + activate/deactivate. Depends on: TASK003
 - [TASK009] Admin: Customers, Rental History, Payment History, Users Placeholder — 4 pages. Depends on: TASK003
 - [TASK010] Operator: Active Rentals Dashboard — Mobile card list with auto-refresh. Depends on: TASK004
@@ -34,6 +33,7 @@ _None_
 - [TASK006] Admin: Equipment Statuses CRUD — EquipmentStatusListComponent (table + chips) + EquipmentStatusDialogComponent (multi-select transitions, self-exclusion); 31 new tests. Completed on 2026-03-10
 - [TASK013] Embed Health Indicator into Toolbar Shells — Completed on 2026-03-09
 - [TASK014] Create home page with links to Operator and Administrator dashboards — Pending (2026-03-09)
+ - [TASK007] Admin: Equipment CRUD — Paginated table with filters + dialog with selects/datepicker. Completed on 2026-03-11
 
 ## Abandoned
 
