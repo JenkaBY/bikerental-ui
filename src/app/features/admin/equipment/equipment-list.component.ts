@@ -17,6 +17,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CommonModule } from '@angular/common';
 import { EquipmentService, EquipmentStatusService, EquipmentTypeService } from '../../../core/api';
 import {
   EquipmentResponse,
@@ -26,11 +27,14 @@ import {
   Pageable,
 } from '../../../core/models';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
+import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
 
 @Component({
   selector: 'app-equipment-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
+    TruncatePipe,
     MatCardModule,
     MatTableModule,
     MatFormFieldModule,
@@ -104,7 +108,18 @@ import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialo
 
           <ng-container matColumnDef="model">
             <th mat-header-cell *matHeaderCellDef i18n>Model</th>
-            <td mat-cell *matCellDef="let row">{{ row.model }}</td>
+            <td mat-cell *matCellDef="let row">
+              <span
+                class="inline-block truncate"
+                [matTooltip]="row.model"
+                [matTooltipDisabled]="!row.model"
+                matTooltipPosition="above"
+                matTooltipShowDelay="250"
+                [attr.aria-label]="row.model"
+              >
+                {{ row.model | truncate: 20 }}
+              </span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="commissionedAt">
@@ -114,7 +129,18 @@ import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialo
 
           <ng-container matColumnDef="condition">
             <th mat-header-cell *matHeaderCellDef i18n>Condition</th>
-            <td mat-cell *matCellDef="let row">{{ row.condition }}</td>
+            <td mat-cell *matCellDef="let row">
+              <span
+                class="inline-block truncate"
+                [matTooltip]="row.condition"
+                [matTooltipDisabled]="!row.condition"
+                matTooltipPosition="above"
+                matTooltipShowDelay="250"
+                [attr.aria-label]="row.condition"
+              >
+                {{ row.condition | truncate: 20 }}
+              </span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
@@ -132,7 +158,11 @@ import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialo
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            [attr.data-row-uid]="row?.uid"
+          ></tr>
         </table>
 
         <mat-paginator

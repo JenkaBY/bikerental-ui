@@ -105,7 +105,7 @@ export interface EquipmentDialogData {
 
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.Condition }}</mat-label>
-          <input matInput formControlName="condition" />
+          <textarea matInput formControlName="condition" rows="3"></textarea>
         </mat-form-field>
       </form>
     </mat-dialog-content>
