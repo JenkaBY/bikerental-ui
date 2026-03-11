@@ -1,6 +1,14 @@
+// This class is used to keep labels to be translated
+// the rule of usage is:
+// 1. case of constant name depends on the storing value
+// 2. any signs or spaces are omitted
+//  Ex. Save = $localize`Save`;
+//      save = $localize`save`;
+//      CreateStatus = $localize`Create Status`;
+//
 export class Labels {
-  static readonly save = $localize`Save`;
-  static readonly saving = $localize`Saving...`;
+  static readonly Save = $localize`Save`;
+  static readonly Saving = $localize`Saving...`;
   static readonly Cancel = $localize`Cancel`;
   static readonly Description = $localize`Description`;
   static readonly Name = $localize`Name`;
@@ -12,7 +20,6 @@ export class Labels {
   static readonly CreateStatus = $localize`Create Status`;
   static readonly AllowedTransitions = $localize`Allowed Transitions`;
 
-  // Equipment-specific labels
   static readonly SerialNumber = $localize`Serial Number`;
   static readonly Uid = $localize`UID`;
   static readonly Type = $localize`Type`;

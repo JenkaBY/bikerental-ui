@@ -15,9 +15,9 @@ import { Labels } from '../../constant/labels';
       [disabled]="disabled() || saving()"
     >
       @if (saving()) {
-        <span>{{ msg.saving }}</span>
+        <span>{{ msg.Saving }}</span>
       } @else {
-        <span>{{ msg.save }}</span>
+        <span>{{ msg.Save }}</span>
       }
     </button>
   `,
