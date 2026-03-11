@@ -16,7 +16,7 @@ import {
   EquipmentTypeResponse,
 } from '../../../core/models';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
-import { CancelButtonComponent } from '../../../shared/components/save-button/cancel-button.component';
+import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
 import { Labels } from '../../../shared/constant/labels';
 
 export interface EquipmentDialogData {

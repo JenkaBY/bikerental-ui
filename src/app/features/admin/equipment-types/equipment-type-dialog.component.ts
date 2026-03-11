@@ -14,7 +14,7 @@ import {
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
-import { CancelButtonComponent } from '../../../shared/components/save-button/cancel-button.component';
+import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
 import { Labels } from '../../../shared/constant/labels';
 
 export interface EquipmentTypeDialogData {
