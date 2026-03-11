@@ -65,7 +65,7 @@ import { Labels } from '../../../shared/constant/labels';
           <mat-spinner diameter="40"></mat-spinner>
         }
 
-        <table mat-table [dataSource]="equipment()" class="w-full compact-table">
+        <table mat-table [dataSource]="equipment()" class="w-full">
           <ng-container matColumnDef="uid">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.Uid }}</th>
             <td mat-cell *matCellDef="let row">{{ row.uid }}</td>
@@ -78,7 +78,7 @@ import { Labels } from '../../../shared/constant/labels';
 
           <ng-container matColumnDef="type">
             <th mat-header-cell *matHeaderCellDef>
-              <mat-form-field appearance="outline" class="w-32">
+              <mat-form-field appearance="outline" class="w-full">
                 <mat-label>{{ Labels.Type }}</mat-label>
                 <mat-select
                   [value]="filterType()"
@@ -96,7 +96,7 @@ import { Labels } from '../../../shared/constant/labels';
 
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef>
-              <mat-form-field appearance="outline" class="w-32">
+              <mat-form-field appearance="outline" class="w-full">
                 <mat-label>{{ Labels.Status }}</mat-label>
                 <mat-select
                   [value]="filterStatus()"
@@ -177,26 +177,6 @@ import { Labels } from '../../../shared/constant/labels';
       </mat-card-content>
     </mat-card>
   `,
-  styles: [
-    `
-      /* Compact table header for equipment list: reduce header row height and vertical padding */
-      .compact-table tr[mat-header-row] {
-        height: 40px; /* overall header row height */
-      }
-
-      .compact-table th[mat-header-cell],
-      .compact-table td[mat-cell] {
-        padding-top: 6px;
-        padding-bottom: 6px;
-      }
-
-      /* Ensure header cell text is vertically centered and slightly smaller to fit the reduced height */
-      .compact-table th[mat-header-cell] {
-        line-height: 1.2;
-        font-size: 13px;
-      }
-    `,
-  ],
 })
 export class EquipmentListComponent implements OnInit {
   private service = inject(EquipmentService);
