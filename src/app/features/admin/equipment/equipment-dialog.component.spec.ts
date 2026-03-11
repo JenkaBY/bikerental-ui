@@ -3,6 +3,7 @@ import { LOCALE_ID } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import type { Mock } from 'vitest';
 import { vi } from 'vitest';
+import { toIsoDate } from '../../../shared/utils/date.util';
 
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
 import { EquipmentService } from '../../../core/api';
@@ -160,6 +161,210 @@ describe('EquipmentDialogComponent', () => {
     expect(options).toContain('maintenance');
     expect(options).not.toContain('retired');
     expect(component.statusSelectDisabled).toBe(false);
+  });
+
+  it('should enable commissionedAt control in edit mode and retain Date value', async () => {
+    const existing: EquipmentResponse = {
+      id: 99,
+      serialNumber: 'X',
+      uid: 'U99',
+      type: 'bike',
+      status: 'available',
+      model: 'M',
+      condition: 'ok',
+      commissionedAt: '2020-06-15',
+    };
+
+    const data: EquipmentDialogData = { equipment: existing, types: [], statuses: [] };
+
+    await createComponentWithData(data);
+
+    fixture.detectChanges();
+
+    const ctrl = component.form.get('commissionedAt');
+    expect(ctrl).toBeTruthy();
+    // in edit mode the control should be enabled
+    expect(ctrl?.disabled).toBe(false);
+    // value should be a Date parsed from the string
+    const raw = component.form.getRawValue();
+    expect(raw.commissionedAt instanceof Date).toBe(true);
+  });
+
+  it('should include commissionedAt as ISO string in update request', async () => {
+    const existing: EquipmentResponse = {
+      id: 55,
+      serialNumber: 'OLD',
+      uid: 'U55',
+      type: 'bike',
+      status: 'available',
+      model: 'M',
+      condition: 'ok',
+    };
+
+    const data: EquipmentDialogData = { equipment: existing, types: [], statuses: [] };
+    const { equipmentService, snack, dialogRef } = await createComponentWithData(data);
+
+    const date = new Date(2021, 5, 15); // 2021-06-15
+    equipmentService.update.mockReturnValue(of(existing));
+
+    fixture.detectChanges();
+
+    // set values including a Date for commissionedAt
+    component.form.patchValue({ serialNumber: 'SN', commissionedAt: date });
+
+    component.save();
+
+    expect(equipmentService.update).toHaveBeenCalled();
+    const [[id, req]] = equipmentService.update.mock.calls;
+    expect(id).toBe(55);
+    expect(req.commissionedAt).toBe(toIsoDate(date));
+    expect(dialogRef.close).toHaveBeenCalledWith(true);
+    expect(snack.open).toHaveBeenCalled();
+  });
+
+  it('should mark form touched and not call service when form invalid', async () => {
+    const data: EquipmentDialogData = { types: [], statuses: [] };
+    const { equipmentService } = await createComponentWithData(data);
+
+    fixture.detectChanges();
+
+    // ensure serialNumber empty -> invalid
+    component.form.patchValue({ serialNumber: '' });
+
+    component.save();
+
+    expect(component.form.get('serialNumber')?.touched).toBe(true);
+    expect(equipmentService.create).not.toHaveBeenCalled();
+  });
+
+  it('should show error and keep dialog open on update failure', async () => {
+    const existing: EquipmentResponse = {
+      id: 7,
+      serialNumber: 'OLD',
+      uid: 'U7',
+      type: 'bike',
+      status: 'available',
+      model: 'M',
+      condition: 'ok',
+    };
+    const statuses: EquipmentStatusResponse[] = [];
+    const data: EquipmentDialogData = { equipment: existing, types: [], statuses };
+
+    const { equipmentService, snack, dialogRef } = await createComponentWithData(data);
+
+    equipmentService.update.mockReturnValue(throwError(() => new Error('oops')));
+
+    fixture.detectChanges();
+
+    component.form.patchValue({ serialNumber: 'NEW' });
+
+    component.save();
+
+    expect(snack.open).toHaveBeenCalled();
+    expect(dialogRef.close).not.toHaveBeenCalled();
+    expect(component.saving()).toBe(false);
+  });
+
+  it('currentStatusName returns slug when no matching status found', async () => {
+    const existing: EquipmentResponse = {
+      id: 88,
+      serialNumber: 'S',
+      uid: 'U88',
+      type: 'bike',
+      status: 'unknown-slug',
+      model: 'M',
+      condition: 'ok',
+    };
+
+    const data: EquipmentDialogData = { equipment: existing, types: [], statuses: [] };
+    await createComponentWithData(data);
+
+    fixture.detectChanges();
+
+    expect(component.currentStatusName).toBe('unknown-slug');
+  });
+
+  it('statusOptions returns all statuses in create mode', async () => {
+    const statuses: EquipmentStatusResponse[] = [
+      { slug: 'a', name: 'A', allowedTransitions: [] },
+      { slug: 'b', name: 'B', allowedTransitions: [] },
+    ];
+    const data: EquipmentDialogData = { types: [], statuses };
+    await createComponentWithData(data);
+
+    fixture.detectChanges();
+
+    const opts = component.statusOptions.map((s) => s.slug);
+    expect(opts).toEqual(['a', 'b']);
+  });
+
+  it('should re-enable status control when allowed transitions are added and syncStatusControl called', async () => {
+    const existing: EquipmentResponse = {
+      id: 123,
+      serialNumber: 'S',
+      uid: 'U123',
+      type: 'bike',
+      status: 'retired',
+      model: 'M',
+      condition: 'ok',
+    };
+
+    const statuses: EquipmentStatusResponse[] = [
+      { slug: 'retired', name: 'Retired', allowedTransitions: [] },
+      { slug: 'available', name: 'Available', allowedTransitions: [] },
+    ];
+
+    const data: EquipmentDialogData = { equipment: existing, types: [], statuses };
+
+    await createComponentWithData(data);
+
+    fixture.detectChanges();
+
+    // initially disabled
+    expect(component.form.get('statusSlug')?.disabled).toBe(true);
+
+    // mutate the injected data to allow a transition and call syncStatusControl
+    data.statuses[0].allowedTransitions = ['available'];
+    // call private syncStatusControl to re-evaluate (use a typed cast instead of `any`)
+    (component as unknown as { syncStatusControl: () => void }).syncStatusControl();
+
+    expect(component.form.get('statusSlug')?.disabled).toBe(false);
+  });
+
+  it('should send all form fields on create including commissionedAt as ISO', async () => {
+    const data: EquipmentDialogData = { types: [], statuses: [] };
+    const { equipmentService, snack, dialogRef } = await createComponentWithData(data);
+
+    equipmentService.create.mockReturnValue(of({ id: 'new' }));
+
+    const date = new Date(2022, 0, 5); // 2022-01-05
+
+    fixture.detectChanges();
+
+    component.form.patchValue({
+      serialNumber: 'SNX',
+      uid: 'UX',
+      typeSlug: 'bike',
+      statusSlug: 'available',
+      model: 'MX',
+      commissionedAt: date,
+      condition: 'good',
+    });
+
+    component.save();
+
+    expect(equipmentService.create).toHaveBeenCalled();
+    const [[req]] = equipmentService.create.mock.calls;
+    // req is the first (and only) argument
+    expect(req.serialNumber).toBe('SNX');
+    expect(req.uid).toBe('UX');
+    expect(req.typeSlug).toBe('bike');
+    expect(req.statusSlug).toBe('available');
+    expect(req.model).toBe('MX');
+    expect(req.condition).toBe('good');
+    expect(req.commissionedAt).toBe(toIsoDate(date));
+    expect(dialogRef.close).toHaveBeenCalledWith(true);
+    expect(snack.open).toHaveBeenCalled();
   });
 
   it('should disable status select when there are no allowed transitions besides current', async () => {
