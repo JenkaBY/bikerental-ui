@@ -67,19 +67,21 @@ Replace placeholder at `src/app/features/admin/equipment/equipment-list.componen
 - On filter change: reset `pageIndex` to 0, call `loadEquipment()`
 - On page change (from `mat-paginator`): update `pageIndex`/`pageSize`, call `loadEquipment()`
 - `openCreateDialog()` and `openEditDialog(equipment)`: pass `{ types, statuses }` as dialog data
+- use `Labels` for column definitions and i18n, buttons, etc.
+- reuse common components for actions (edit/delete) if created in other tasks, otherwise implement basic buttons with icons
 
 Template:
 ```html
 <mat-card>
   <mat-card-header>
-    <mat-card-title i18n>Оборудование</mat-card-title>
+    <mat-card-title i18n>Equipment</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <div class="filter-bar">
       <mat-form-field appearance="outline">
         <mat-label i18n>Статус</mat-label>
         <mat-select [value]="filterStatus()" (selectionChange)="onFilterStatusChange($event.value)">
-          <mat-option [value]="undefined" i18n>Все</mat-option>
+          <mat-option [value]="undefined" i18n>All</mat-option>
           @for (s of statuses(); track s.slug) {
             <mat-option [value]="s.slug">{{ s.name }}</mat-option>
           }
@@ -87,7 +89,7 @@ Template:
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label i18n>Тип</mat-label>
+        <mat-label i18n>Type</mat-label>
         <mat-select [value]="filterType()" (selectionChange)="onFilterTypeChange($event.value)">
           <mat-option [value]="undefined" i18n>Все</mat-option>
           @for (t of types(); track t.slug) {
@@ -98,7 +100,7 @@ Template:
 
       <button mat-raised-button color="primary" (click)="openCreateDialog()">
         <mat-icon>add</mat-icon>
-        <span i18n>Создать</span>
+        <span i18n>Create</span>
       </button>
     </div>
 
