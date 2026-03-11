@@ -28,6 +28,7 @@ import {
 } from '../../../core/models';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
 import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
+import { Labels } from '../../../shared/constant/labels';
 
 @Component({
   selector: 'app-equipment-list',
@@ -48,37 +49,16 @@ import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
   template: `
     <mat-card>
       <mat-card-header>
-        <mat-card-title i18n>Equipment</mat-card-title>
+        <mat-card-title>{{ Labels.Equipment }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <div class="filter-bar">
-          <mat-form-field appearance="outline">
-            <mat-label i18n>Status</mat-label>
-            <mat-select
-              [value]="filterStatus()"
-              (selectionChange)="onFilterStatusChange($event.value)"
-            >
-              <mat-option [value]="undefined" i18n>All</mat-option>
-              @for (s of statuses(); track s.slug) {
-                <mat-option [value]="s.slug">{{ s.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label i18n>Type</mat-label>
-            <mat-select [value]="filterType()" (selectionChange)="onFilterTypeChange($event.value)">
-              <mat-option [value]="undefined" i18n>All</mat-option>
-              @for (t of types(); track t.slug) {
-                <mat-option [value]="t.slug">{{ t.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <button mat-raised-button color="primary" (click)="openCreateDialog()">
-            <mat-icon>add</mat-icon>
-            <span i18n>Create</span>
-          </button>
+          <div class="flex gap-2">
+            <button mat-raised-button color="primary" (click)="openCreateDialog()">
+              <mat-icon>add</mat-icon>
+              <span>{{ Labels.Create }}</span>
+            </button>
+          </div>
         </div>
 
         @if (loading()) {
@@ -87,27 +67,53 @@ import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
 
         <table mat-table [dataSource]="equipment()" class="w-full">
           <ng-container matColumnDef="uid">
-            <th mat-header-cell *matHeaderCellDef i18n>UID</th>
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.Uid }}</th>
             <td mat-cell *matCellDef="let row">{{ row.uid }}</td>
           </ng-container>
 
           <ng-container matColumnDef="serialNumber">
-            <th mat-header-cell *matHeaderCellDef i18n>Serial Number</th>
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.SerialNumber }}</th>
             <td mat-cell *matCellDef="let row">{{ row.serialNumber }}</td>
           </ng-container>
 
           <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef i18n>Type</th>
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-form-field appearance="outline" class="w-32">
+                <mat-label>{{ Labels.Type }}</mat-label>
+                <mat-select
+                  [value]="filterType()"
+                  (selectionChange)="onFilterTypeChange($event.value)"
+                >
+                  <mat-option [value]="undefined">{{ Labels.All }}</mat-option>
+                  @for (t of types(); track t.slug) {
+                    <mat-option [value]="t.slug">{{ t.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </th>
             <td mat-cell *matCellDef="let row">{{ row.type }}</td>
           </ng-container>
 
           <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef i18n>Status</th>
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-form-field appearance="outline" class="w-32">
+                <mat-label>{{ Labels.Status }}</mat-label>
+                <mat-select
+                  [value]="filterStatus()"
+                  (selectionChange)="onFilterStatusChange($event.value)"
+                >
+                  <mat-option [value]="undefined">{{ Labels.All }}</mat-option>
+                  @for (s of statuses(); track s.slug) {
+                    <mat-option [value]="s.slug">{{ s.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </th>
             <td mat-cell *matCellDef="let row">{{ row.status }}</td>
           </ng-container>
 
           <ng-container matColumnDef="model">
-            <th mat-header-cell *matHeaderCellDef i18n>Model</th>
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.Model }}</th>
             <td mat-cell *matCellDef="let row">
               <span
                 class="inline-block truncate"
@@ -123,12 +129,12 @@ import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
           </ng-container>
 
           <ng-container matColumnDef="commissionedAt">
-            <th mat-header-cell *matHeaderCellDef i18n>Commissioned</th>
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.CommissionedAt }}</th>
             <td mat-cell *matCellDef="let row">{{ row.commissionedAt }}</td>
           </ng-container>
 
           <ng-container matColumnDef="condition">
-            <th mat-header-cell *matHeaderCellDef i18n>Condition</th>
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.Condition }}</th>
             <td mat-cell *matCellDef="let row">
               <span
                 class="inline-block truncate"
@@ -146,12 +152,7 @@ import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
-              <button
-                mat-icon-button
-                (click)="openEditDialog(row)"
-                matTooltip="Edit"
-                i18n-matTooltip
-              >
+              <button mat-icon-button (click)="openEditDialog(row)" [matTooltip]="Labels.Edit">
                 <mat-icon>edit</mat-icon>
               </button>
             </td>
@@ -183,6 +184,9 @@ export class EquipmentListComponent implements OnInit {
   private statusService = inject(EquipmentStatusService);
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
+
+  // expose Labels constant so template expressions can reference it
+  readonly Labels = Labels;
 
   equipment = signal<EquipmentResponse[]>([]);
   totalItems = signal(0);

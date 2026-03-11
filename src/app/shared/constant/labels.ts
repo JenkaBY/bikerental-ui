@@ -25,9 +25,12 @@ export class Labels {
   static readonly Type = $localize`Type`;
   static readonly Status = $localize`Status`;
   static readonly Model = $localize`Model`;
-  static readonly CommissionedAt = $localize`Commissioned At`;
+  static readonly CommissionedAt = $localize`Commissioned`; // keep singular label used in templates
   static readonly Condition = $localize`Condition`;
   static readonly CreateEquipment = $localize`Create Equipment`;
   static readonly EditEquipment = $localize`Edit Equipment`;
   static readonly FormatDate = $localize`Format Date:`;
+  // Added for equipment list
+  static readonly Equipment = $localize`Equipment`;
+  static readonly All = $localize`All`;
 }
