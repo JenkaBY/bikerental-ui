@@ -120,3 +120,13 @@
 | Admin Equipment Statuses CRUD                   | TASK006 | ✅ Done    | 2026-03-10        |
 | Authentication (mock JWT)                       | TASK002 | ⬜ Pending | —                 |
 
+
+## Recent Implementation Notes
+
+### 2026-03-11
+
+- Added `MatIconModule` to `src/app/features/admin/equipment/equipment-dialog.component.ts` imports so datepicker toggles and icon buttons render inside the dialog.
+- Ran the full test suite (`npm test`) locally — all tests passed: 267 tests across 52 files (no regressions).
+
+These small infra and import fixes were made to ensure UI components render correctly and to keep the repository in a test-green state before continuing with TASK007 (Equipment CRUD).
+

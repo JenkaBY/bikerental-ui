@@ -1,11 +1,15 @@
 import {
   ApplicationConfig,
+  importProvidersFrom,
   inject,
   LOCALE_ID,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeRu from '@angular/common/locales/ru';
 import { provideRouter } from '@angular/router';
+import { MatNativeDateModule } from '@angular/material/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
@@ -23,8 +27,16 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([errorInterceptor])),
+    importProvidersFrom(MatNativeDateModule),
     provideAppInitializer(() => {
+      // Ensure health poller is instantiated and register locale data used by formatDate
       inject(HealthPollerService);
+      // Register Russian locale data (used when LOCALE_ID === 'ru')
+      try {
+        registerLocaleData(localeRu, 'ru');
+      } catch {
+        // noop - avoid breaking startup if registration fails for any reason
+      }
     }),
     { provide: LOCALE_ID, useValue: environment.defaultLocale },
     { provide: APP_BRAND, useValue: envBrand },

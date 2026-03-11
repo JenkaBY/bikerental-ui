@@ -169,3 +169,11 @@ Test:
 - Datepicker for commissionedAt field
 - Foreign key selects for typeSlug and statusSlug
 
+### 2026-03-11
+
+- Small infra fixes applied to prepare for TASK007 implementation:
+  - Added `MatIconModule` import to `src/app/features/admin/equipment/equipment-dialog.component.ts` to ensure datepicker toggle icons and icon buttons render inside the dialog.
+  - Ran test suite locally — all tests passed (267 tests across 52 files).
+
+These changes are preparatory and do not alter application behavior beyond fixing visual/asset imports. Proceeding to implement `EquipmentListComponent` and `EquipmentDialogComponent` next.
+
