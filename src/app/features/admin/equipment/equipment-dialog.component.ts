@@ -18,6 +18,7 @@ import {
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
 import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
 import { Labels } from '../../../shared/constant/labels';
+import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 
 export interface EquipmentDialogData {
   equipment?: EquipmentResponse;
@@ -119,10 +120,7 @@ export class EquipmentDialogComponent {
   private snackBar = inject(MatSnackBar);
 
   readonly labels = Labels;
-  readonly errors = {
-    serialNumberRequired: $localize`Serial number is required`,
-    serialNumberMaxLength: $localize`Maximum 50 characters`,
-  };
+  readonly errors = FormErrorMessages;
 
   saving = signal(false);
 
