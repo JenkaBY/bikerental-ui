@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { Labels } from './labels';
+import { Labels } from '../../constant/labels';
 
 @Component({
   selector: 'app-form-save-button',
