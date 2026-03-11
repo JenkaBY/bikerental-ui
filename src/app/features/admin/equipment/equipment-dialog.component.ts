@@ -141,7 +141,10 @@ export class EquipmentDialogComponent {
     typeSlug: new FormControl(this.data?.equipment?.type ?? ''),
     statusSlug: new FormControl(this.data?.equipment?.status ?? ''),
     model: new FormControl(this.data?.equipment?.model ?? '', [Validators.maxLength(200)]),
-    commissionedAt: new FormControl(parseDate(this.data?.equipment?.commissionedAt ?? null)),
+    commissionedAt: new FormControl({
+      value: parseDate(this.data?.equipment?.commissionedAt ?? null),
+      disabled: !this.data?.equipment?.id,
+    }),
     condition: new FormControl(this.data?.equipment?.condition ?? ''),
   });
 
