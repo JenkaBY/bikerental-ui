@@ -36,7 +36,6 @@ _None_
 - [TASK020] Wire TariffDialog into TariffList (create + edit buttons). Depends on: TASK016, TASK018, TASK019 (blocks: TASK021, TASK022)
 - [TASK021] Unit tests: TariffListComponent. Depends on: TASK016, TASK017, TASK020
 - [TASK022] Unit tests: TariffDialogComponent. Depends on: TASK018, TASK019, TASK020
-- [TASK023] EquipmentType domain model + mapper — `EquipmentType`/`EquipmentTypeWrite`/`EquipmentTypeUpdate` in `core/domain/`; `EquipmentTypeMapper` in `core/mappers/`; `shareReplay(1)` cache on `getAll()`; refactor service + list + dialog components to domain types. Depends on: TASK005 (completed), TASK015 (blocks: TASK024)
 - [TASK024] EquipmentTypeDropdownComponent — standalone shared dropdown in `shared/components/`; `ControlValueAccessor`; loads types from cached `EquipmentTypeService.getAll()`; displays `name`, binds `slug`; i18n label. Depends on: TASK023 (blocks: TASK018)
 - [TASK009] Admin: Customers, Rental History, Payment History, Users Placeholder — 4 pages. Depends on: TASK003
 - [TASK010] Operator: Active Rentals Dashboard — Mobile card list with auto-refresh. Depends on: TASK004
@@ -55,6 +54,7 @@ _None_
 - [TASK013] Embed Health Indicator into Toolbar Shells — Completed on 2026-03-09
 - [TASK014] Create home page with links to Operator and Administrator dashboards — Completed on 2026-03-09
 - [TASK007] Admin: Equipment CRUD — Paginated table with filters + dialog with selects/datepicker. Completed on 2026-03-11
+- [TASK023] EquipmentType domain model + mapper — Implemented domain types, mapper, refreshable cached service and component updates. Completed on 2026-03-23
 
 ## Abandoned
 

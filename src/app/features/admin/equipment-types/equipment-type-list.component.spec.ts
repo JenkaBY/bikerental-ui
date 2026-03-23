@@ -2,15 +2,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { of, Subject, throwError } from 'rxjs';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentTypeResponse } from '../../../core/models';
+import { EquipmentType } from '../../../core/domain';
 import { EquipmentTypeListComponent } from './equipment-type-list.component';
 
-const mockTypes: EquipmentTypeResponse[] = [
+const mockTypes: EquipmentType[] = [
   { slug: 'bike', name: 'Bike', description: 'A bicycle' },
   { slug: 'scooter', name: 'Scooter' },
 ];
 
-function makeService(types: EquipmentTypeResponse[] = mockTypes) {
+function makeService(types: EquipmentType[] = mockTypes) {
   return { getAll: vi.fn().mockReturnValue(of(types)) };
 }
 
@@ -26,7 +26,7 @@ describe('EquipmentTypeListComponent', () => {
   let dialog: ReturnType<typeof makeDialog>;
   let dialogAfterClosed: Subject<boolean | undefined>;
 
-  async function setup(types: EquipmentTypeResponse[] = mockTypes) {
+  async function setup(types: EquipmentType[] = mockTypes) {
     service = makeService(types);
     dialogAfterClosed = new Subject();
     dialog = makeDialog(dialogAfterClosed);
@@ -100,7 +100,7 @@ describe('EquipmentTypeListComponent', () => {
   });
 
   it('should sort types by slug ascending', async () => {
-    const unsorted: EquipmentTypeResponse[] = [
+    const unsorted: EquipmentType[] = [
       { slug: 'scooter', name: 'Scooter' },
       { slug: 'bike', name: 'Bike' },
       { slug: 'moped', name: 'Moped' },

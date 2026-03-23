@@ -19,13 +19,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { EquipmentService, EquipmentStatusService, EquipmentTypeService } from '../../../core/api';
-import {
-  EquipmentResponse,
-  EquipmentStatusResponse,
-  EquipmentTypeResponse,
-  Page,
-  Pageable,
-} from '../../../core/models';
+import { EquipmentResponse, EquipmentStatusResponse, Page, Pageable } from '../../../core/models';
+import { EquipmentType } from '../../../core/domain';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
 import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
 import { Labels } from '../../../shared/constant/labels';
@@ -191,7 +186,7 @@ export class EquipmentListComponent implements OnInit {
   equipment = signal<EquipmentResponse[]>([]);
   totalItems = signal(0);
   loading = signal(false);
-  types = signal<EquipmentTypeResponse[]>([]);
+  types = signal<EquipmentType[]>([]);
   statuses = signal<EquipmentStatusResponse[]>([]);
   filterStatus = signal<string | undefined>(undefined);
   filterType = signal<string | undefined>(undefined);

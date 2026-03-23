@@ -6,11 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentTypeService } from '../../../core/api';
-import {
-  EquipmentTypeRequest,
-  EquipmentTypeResponse,
-  EquipmentTypeUpdateRequest,
-} from '../../../core/models';
+import { EquipmentType, EquipmentTypeWrite } from '../../../core/domain';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
@@ -18,7 +14,7 @@ import { CancelButtonComponent } from '../../../shared/components/cancel-button/
 import { Labels } from '../../../shared/constant/labels';
 
 export interface EquipmentTypeDialogData {
-  type?: EquipmentTypeResponse;
+  type?: EquipmentType;
 }
 
 @Component({
@@ -108,14 +104,17 @@ export class EquipmentTypeDialogComponent {
 
     this.saving.set(true);
 
-    const { slug, name, description } = this.form.getRawValue();
-    const request = { name: name ?? '', description: description || undefined };
+    const raw = this.form.getRawValue() as EquipmentTypeWrite; // includes disabled slug in edit mode
+    const write: EquipmentTypeWrite = {
+      slug: raw.slug,
+      name: raw.name,
+      description: raw.description || undefined,
+    };
     let operation$;
     if (this.isCreateMode()) {
-      const req = { slug: slug, ...request } as EquipmentTypeRequest;
-      operation$ = this.service.create(req);
+      operation$ = this.service.create(write);
     } else {
-      operation$ = this.service.update(this.data.type!.slug, request as EquipmentTypeUpdateRequest);
+      operation$ = this.service.update(write);
     }
 
     operation$.subscribe({

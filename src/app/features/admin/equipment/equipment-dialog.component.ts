@@ -18,12 +18,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentService } from '../../../core/api';
-import {
-  EquipmentRequest,
-  EquipmentResponse,
-  EquipmentStatusResponse,
-  EquipmentTypeResponse,
-} from '../../../core/models';
+import { EquipmentRequest, EquipmentResponse, EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentType } from '../../../core/domain';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
 import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
 import { Labels } from '../../../shared/constant/labels';
@@ -33,7 +29,7 @@ import { parseDate, toIsoDate } from '../../../shared/utils/date.util';
 
 export interface EquipmentDialogData {
   equipment?: EquipmentResponse;
-  types: EquipmentTypeResponse[];
+  types: EquipmentType[];
   statuses: EquipmentStatusResponse[];
 }
 

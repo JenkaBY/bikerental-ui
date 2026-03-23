@@ -1,8 +1,8 @@
 # TASK023 - EquipmentType Domain Model + Mapper
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
-**Updated:** 2026-03-23  
+**Updated:** 2026-03-23, 2026-03-23 (implementation completed)  
 **Depends on:** TASK005 (equipment type CRUD complete), TASK015 (domain/mappers pattern established)  
 **Blocks:** TASK018 (TariffDialogData.types must use EquipmentType)  
 **Related:** TASK008 (tariff domain)
@@ -190,6 +190,20 @@ update(write: EquipmentTypeWrite): Observable<EquipmentType> {
 | 23.9  | Update TariffDialogData.types: EquipmentType[] (TASK018 prerequisite) | Not Started | 2026-03-23 | superseded: types removed from dialog data in TASK024 |
 | 23.10 | Add `shareReplay(1)` lazy cache to `EquipmentTypeService.getAll()`     | Not Started | 2026-03-23 | required by TASK024 EquipmentTypeDropdown |
 
+### Updated Subtasks
+
+| ID    | Description                                                        | Status    | Updated    | Notes                                                                                                  |
+|-------|--------------------------------------------------------------------|-----------|------------|--------------------------------------------------------------------------------------------------------|
+| 23.1  | Create EquipmentType + EquipmentTypeWrite in core/domain/          | Completed | 2026-03-23 | Added `src/app/core/domain/equipment-type.model.ts` and exported in `core/domain/index.ts`             |
+| 23.2  | Create EquipmentTypeMapper in core/mappers/                        | Completed | 2026-03-23 | Added `src/app/core/mappers/equipment-type.mapper.ts` and `core/mappers/index.ts`                      |
+| 23.3  | Update domain/index.ts + mappers/index.ts exports                  | Completed | 2026-03-23 | Exports added                                                                                          |
+| 23.4  | Update EquipmentTypeService (domain types + mapper)                | Completed | 2026-03-23 | Modified `src/app/core/api/equipment-type.service.ts` to use domain types and mapper; added lazy cache |
+| 23.5  | Update EquipmentTypeListComponent (EquipmentType signal)           | Completed | 2026-03-23 | Modified `equipment-type-list.component.ts` to use domain types                                        |
+| 23.6  | Update EquipmentTypeDialogComponent (single EquipmentTypeWrite)    | Completed | 2026-03-23 | Modified `equipment-type-dialog.component.ts` to use domain types and write object                     |
+| 23.7  | Update equipment-type.service.spec.ts                              | Completed | 2026-03-23 | Tests updated to expect domain outputs and new signatures                                              |
+| 23.8  | Update equipment-type-list/dialog component specs                  | Completed | 2026-03-23 | Tests updated to use domain types                                                                      |
+| 23.10 | Add `shareReplay(1)` lazy cache to `EquipmentTypeService.getAll()` | Completed | 2026-03-23 | Implemented in service using `defer` + `shareReplay(1)`                                                |
+
 ## Progress Log
 
 ### 2026-03-23
@@ -199,4 +213,23 @@ update(write: EquipmentTypeWrite): Observable<EquipmentType> {
 - Structural change only: EquipmentType domain fields are identical to EquipmentTypeResponse (no Date conversions)
 - TASK018 dependency updated to include TASK023
 - **Decision**: single `EquipmentTypeWrite` replaces separate `EquipmentTypeWrite` + `EquipmentTypeUpdate` — `slug` is always required and present; on update it becomes the URL path param via `write.slug`; dialog re-uses same type with `slug` control disabled in edit mode
+
+---
+
+## Final Progress Entry
+
+### 2026-03-23 (Completed)
+
+- Implemented `EquipmentType` (domain) and `EquipmentTypeWrite` in `src/app/core/domain/equipment-type.model.ts` and exported via `core/domain/index.ts`.
+- Implemented `EquipmentTypeMapper` in `src/app/core/mappers/equipment-type.mapper.ts` and exported via `core/mappers/index.ts`.
+- Refactored `src/app/core/api/equipment-type.service.ts` to return domain types, use the mapper internally, and introduce a refreshable cached observable for `getAll()` using a `refresh$` Subject + `startWith` + `switchMap` and `shareReplay(1)`. `create()` and `update()` now trigger a cache refresh after successful responses.
+- Updated `equipment-type-list.component.ts` and `equipment-type-dialog.component.ts` to consume domain types and the new service signatures. The dialog builds a `EquipmentTypeWrite` from `form.getRawValue()` and coerces an empty description to `undefined` to match API expectations.
+- Updated related components (`equipment` list/dialog) and all affected unit tests. Ran the full test suite (Vitest) — all tests pass locally (56 spec files, 302 tests).
+
+## Notes and Next Steps
+
+- TASK024 (EquipmentTypeDropdownComponent) can now be implemented to consume the cached `EquipmentTypeService.getAll()` and provide a `ControlValueAccessor` dropdown that displays the `name` and binds the `slug`.
+- Optionally implement optimistic UI updates to append newly-created items to the cache immediately for an instant user experience; current approach refreshes after server success to ensure correctness.
+- If you want me to update `TariffDialogData` to use `EquipmentType[]` now, I can do that as a follow-up (TASK018/TASK015 scope dependent).
+
 
