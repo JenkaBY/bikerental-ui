@@ -130,3 +130,7 @@
 
 These small infra and import fixes were made to ensure UI components render correctly and to keep the repository in a test-green state before continuing with TASK007 (Equipment CRUD).
 
+### 2026-03-23
+
+- Completed [TASK017] TariffListComponent status toggle: slide-toggle in Status column, per-row pending state, active/inactive colors with hover override, snackbar messages, and unit tests added. Updated task files and index.
+

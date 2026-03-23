@@ -36,4 +36,8 @@ export class Labels {
   // Added for equipment list
   static readonly Equipment = $localize`Equipment`;
   static readonly All = $localize`All`;
+  static readonly Activate = $localize`Activate`;
+  static readonly Deactivate = $localize`Deactivate`;
+  static readonly StatusChanged = $localize`Status changed`;
+  static readonly ErrorOccurred = $localize`Error occurred`;
 }
