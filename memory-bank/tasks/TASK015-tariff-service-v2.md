@@ -1,6 +1,6 @@
 # TASK015 - Update TariffService & Models to v2 API + Domain Layer
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
 **Updated:** 2026-03-23  
 **Depends on:** TASK003 (admin shell complete)  
@@ -128,7 +128,7 @@ export class TariffMapper {
 
 ## Updated TariffService method signatures (core/api/)
 
-```typescript
+```text
 getAll(pageable?: Pageable): Observable<Page<Tariff>>        // maps items via fromResponse
 getById(id: number): Observable<Tariff>
 getActive(equipmentType: string): Observable<Tariff[]>
@@ -167,7 +167,7 @@ deactivate(id: number): Observable<Tariff>                  // PATCH → fromRes
 
 ## Progress Tracking
 
-**Overall Status:** Not Started — 0%
+**Overall Status:** Completed — 100%
 
 ### Subtasks
 
@@ -185,10 +185,18 @@ deactivate(id: number): Observable<Tariff>                  // PATCH → fromRes
 
 ## Progress Log
 
+
 ### 2026-03-23
 
-- Task created as part of TASK008 decomposition
-- v2 schema documented: `pricingType` enum + `PricingParams` polymorphic object replaces flat price fields
-- Domain/mapper layer added: `Tariff` uses `Date` objects; `TariffWrite` for create/update
-- Old v1 types (`TariffRequest`, `TariffResponse`) preserved to avoid breaking rental/operator flow compilation
+- Implemented v2 API types in `src/app/core/models/tariff.model.ts` (`PricingType`, `PricingParams`, `TariffV2Request`, `TariffV2Response`).
+- Created domain models `Tariff` and `TariffWrite` in `src/app/core/domain/tariff.model.ts` and exported via `core/domain/index.ts`.
+- Implemented `TariffMapper` in `src/app/core/mappers/tariff.mapper.ts` (fromResponse / toRequest) using `toIsoDate()` for dates; exported via `core/mappers/index.ts`.
+- Updated `TariffService` (`src/app/core/api/tariff.service.ts`) to use base URL `/api/v2/tariffs`, return domain types (`Tariff`, `TariffSelection`), and apply mapper conversions internally.
+- Updated and fixed unit tests in `src/app/core/api/tariff.service.spec.ts` to use v2 fixtures and assert mapped domain objects; resolved lint/type errors and ensured strict null-safety in tests.
+- Ran the full test suite: all tests pass locally (306 tests).
+
+Notes:
+
+- Legacy v1 types (`TariffRequest`/`TariffResponse`) were preserved in `core/models/tariff.model.ts` for backward compatibility where needed.
+- The `selectTariff` endpoint now maps `TariffSelectionResponse` (v2) to domain `TariffSelection` (`tariff: Tariff`, `totalCost`, `calculationBreakdown`).
 
