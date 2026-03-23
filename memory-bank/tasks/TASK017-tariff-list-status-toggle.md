@@ -1,6 +1,6 @@
 # TASK017 - TariffListComponent: Status Toggle (Activate / Deactivate)
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
 **Updated:** 2026-03-23  
 **Depends on:** TASK016 (table shell)  
@@ -85,15 +85,15 @@ toggleStatus(row: Tariff): void {   // Tariff from core/domain — not TariffV2R
 
 ## Progress Tracking
 
-**Overall Status:** Not Started — 0%
+**Overall Status:** Completed — 100%
 
 ### Subtasks
 
-| ID    | Description                                     | Status      | Updated    | Notes |
-|-------|-------------------------------------------------|-------------|------------|-------|
-| 17.1  | Conditional toggle button in actions column     | Not Started | 2026-03-23 |       |
-| 17.2  | toggleStatus(row: Tariff) method with service call | Not Started | 2026-03-23 |    |
-| 17.3  | Snackbar for success + error                    | Not Started | 2026-03-23 |       |
+| ID   | Description                                        | Status    | Updated    | Notes                                                                               |
+|------|----------------------------------------------------|-----------|------------|-------------------------------------------------------------------------------------|
+| 17.1 | Conditional toggle button in actions column        | Completed | 2026-03-23 | Template and imports added; moved toggle into status column                         |
+| 17.2 | toggleStatus(row: Tariff) method with service call | Completed | 2026-03-23 | Implementation added; uses TariffService.activate/deactivate; per-row pending state |
+| 17.3 | Snackbar for success + error                       | Completed | 2026-03-23 | Labels added and snackbar used in method                                            |
 
 ## Progress Log
 
@@ -102,3 +102,24 @@ toggleStatus(row: Tariff): void {   // Tariff from core/domain — not TariffV2R
 - Task created as part of TASK008 decomposition
 - Toggle pattern follows Equipment Status CRUD (TASK006)
 - `row` parameter is `Tariff` domain type — `TariffService.activate/deactivate` already return `Tariff` after TASK015
+
+### 2026-03-23 — Implementation started
+
+- Added actions column to `TariffListComponent` template with icon buttons (toggle_on / toggle_off)
+- Implemented `toggleStatus(row: Tariff)` method calling `TariffService.activate/deactivate`
+- Added per-row `toggling` signal to disable controls while request is pending
+- Added i18n labels to `src/app/shared/constant/labels.ts`: `Activate`, `Deactivate`, `StatusChanged`, `ErrorOccurred`
+- Next: add unit tests for success and error paths, and update `tasks/_index.md` to mark task as In Progress
+
+### 2026-03-23 — Implementation completed
+
+- Implemented slide-toggle in the `status` column (uses `MatSlideToggleModule`) showing active/inactive state as a toggle.
+- Per-row `toggling` signal implemented to disable the toggle while the request is pending.
+- Row background colors: green (`bg-green-100`) for active, yellow (`bg-yellow-100`) for inactive; hover overrides to grey (`bg-gray-100`) for the entire row.
+- `toggleStatus` calls `TariffService.activate` / `TariffService.deactivate`, updates the single row in the `items` signal on success, and shows a localized `MatSnackBar` message on success/error.
+- Added i18n labels (`Activate`, `Deactivate`, `StatusChanged`, `ErrorOccurred`) to `src/app/shared/constant/labels.ts`.
+- Unit tests added for toggle success and error paths in `tariff-list.component.spec.ts`.
+- Updated `tasks/_index.md` to mark TASK017 as Completed and updated memory-bank progress.
+
+**Result:** TASK017 is complete and ready; it unblocks TASK021 (TariffListComponent unit tests that rely on this feature).
+

@@ -4,10 +4,16 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TariffService } from '../../../core/api';
 import { Tariff } from '../../../core/domain';
-import { PricingTypeResponse } from '../../../core/models/tariff.model';
+import { PricingTypeResponse } from '../../../core/models';
+import { Labels } from '../../../shared/constant/labels';
 
 @Component({
   selector: 'app-tariff-list',
@@ -17,6 +23,10 @@ import { PricingTypeResponse } from '../../../core/models/tariff.model';
     CommonModule,
     MatCardModule,
     MatTableModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatSlideToggleModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
   ],
@@ -68,7 +78,7 @@ import { PricingTypeResponse } from '../../../core/models/tariff.model';
                 {{ 'Pricing' }}
               </th>
               <td mat-cell *matCellDef="let row">
-                {{ pricingTypeTitles()[row.pricingType] ?? row.pricingType }}
+                {{ pricingTypeTitles()[row.pricingType] }}
               </td>
             </ng-container>
 
@@ -96,7 +106,6 @@ import { PricingTypeResponse } from '../../../core/models/tariff.model';
               <td mat-cell *matCellDef="let row">{{ row.validTo ? (row.validTo | date) : '' }}</td>
             </ng-container>
 
-            <!-- Status -->
             <ng-container matColumnDef="status">
               <th
                 mat-header-cell
@@ -105,11 +114,26 @@ import { PricingTypeResponse } from '../../../core/models/tariff.model';
               >
                 {{ 'Status' }}
               </th>
-              <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+              <td
+                mat-cell
+                *matCellDef="let row"
+                [ngClass]="row.status === 'ACTIVE' ? 'bg-green-100' : 'bg-yellow-100'"
+              >
+                <mat-slide-toggle
+                  [checked]="row.status === 'ACTIVE'"
+                  (change)="toggleStatus(row)"
+                  [disabled]="toggling()[row.id]"
+                  [aria-label]="row.name"
+                ></mat-slide-toggle>
+              </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-slate-50"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              class="hover:bg-slate-200 transition-colors"
+            ></tr>
           </table>
         }
 
@@ -136,6 +160,7 @@ import { PricingTypeResponse } from '../../../core/models/tariff.model';
 export class TariffListComponent {
   private tariffService = inject(TariffService);
   private destroyRef = inject(DestroyRef);
+  private snackBar = inject(MatSnackBar);
 
   items = signal<Tariff[]>([]);
   totalItems = signal<number>(0);
@@ -145,6 +170,10 @@ export class TariffListComponent {
   pageSizeOptions = [5, 10, 25];
 
   pricingTypeTitles = signal<Record<string, string>>({});
+  // per-row pending state while toggle request is in-flight
+  toggling = signal<Record<number, boolean>>({});
+
+  readonly labels = Labels;
 
   displayedColumns = ['name', 'equipmentType', 'pricingType', 'validFrom', 'validTo', 'status'];
 
@@ -156,9 +185,7 @@ export class TariffListComponent {
       .subscribe((types) => {
         const map: Record<string, string> = {};
         (types || []).forEach((t: PricingTypeResponse) => {
-          if (t && typeof t.slug === 'string') {
-            map[t.slug] = t.title && t.title.length > 0 ? t.title : t.slug;
-          }
+          map[t.slug] = t.title && t.title.length > 0 ? t.title : t.slug;
         });
         this.pricingTypeTitles.set(map);
       });
@@ -186,5 +213,29 @@ export class TariffListComponent {
 
   refresh() {
     this.load();
+  }
+
+  toggleStatus(row: Tariff) {
+    if (!row || row.id == null) return;
+    const id = row.id;
+    const isActive = row.status === 'ACTIVE';
+
+    // set pending
+    this.toggling.update((s) => ({ ...s, [id]: true }));
+
+    const call$ = isActive ? this.tariffService.deactivate(id) : this.tariffService.activate(id);
+    call$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (updated) => {
+        // update single item in the items signal
+        this.items.update((arr) => arr.map((it) => (it.id === id ? updated : it)));
+        this.snackBar.open(Labels.StatusChanged ?? Labels.Close, Labels.Close, { duration: 3000 });
+        this.toggling.update((s) => ({ ...s, [id]: false }));
+      },
+      error: (err) => {
+        const msg = err?.message ?? Labels.ErrorOccurred ?? $localize`Error occurred`;
+        this.snackBar.open(msg, Labels.Close, { duration: 4000 });
+        this.toggling.update((s) => ({ ...s, [id]: false }));
+      },
+    });
   }
 }
