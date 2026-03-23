@@ -5,7 +5,15 @@
 ```
 TASK001 → TASK000 (health indicator core — complete)
         → TASK013
-        → TASK003 → TASK005, TASK006, TASK007, TASK008, TASK009
+        → TASK003 → TASK005, TASK006, TASK007, TASK008 (parent)
+                         └── TASK015 (v2 models + domain Tariff/TariffWrite + TariffMapper)
+                               ├── TASK016 (list — uses Tariff domain type)
+                               │     ├── TASK017 (toggleStatus(row: Tariff))
+                               │     └── TASK020 (openEditDialog(tariff: Tariff)) ←─ TASK018 (dialog, TariffWrite)
+                               │           │                                               └── TASK019 (params)
+                               │           └── TASK021 (list tests — mock Page<Tariff>)
+                               └── TASK022 (dialog tests — mock Tariff with Date) ←── TASK019
+                    → TASK009
         → TASK004 → TASK010, TASK011 → TASK012
         → TASK002 (auth added last — all pages accessible by default, no auth guards)
 ```
@@ -16,7 +24,15 @@ _None_
 
 ## Pending
 
-- [TASK008] Admin: Tariffs CRUD — Paginated table + dialog with price fields + activate/deactivate. Depends on: TASK003
+- [TASK008] Admin: Tariffs CRUD — **Parent tracker** for TASK015–TASK022. Depends on: TASK003
+- [TASK015] v2 API models + Tariff domain + TariffMapper — `TariffV2Request/Response`, `PricingParams`; `core/domain/tariff.model.ts` (`Tariff`, `TariffWrite`); `core/mappers/tariff.mapper.ts`; update service to return domain types. Depends on: TASK003 (blocks: TASK016, TASK018)
+- [TASK016] TariffListComponent — paginated table shell (read-only). Depends on: TASK015 (blocks: TASK017, TASK020)
+- [TASK017] TariffListComponent — status toggle (activate/deactivate). Depends on: TASK016 (blocks: TASK021)
+- [TASK018] TariffDialogComponent — base form (name, type, dates). Depends on: TASK015 (blocks: TASK019, TASK020)
+- [TASK019] TariffDialogComponent — dynamic pricing params section. Depends on: TASK018 (blocks: TASK020, TASK022)
+- [TASK020] Wire TariffDialog into TariffList (create + edit buttons). Depends on: TASK016, TASK018, TASK019 (blocks: TASK021, TASK022)
+- [TASK021] Unit tests: TariffListComponent. Depends on: TASK016, TASK017, TASK020
+- [TASK022] Unit tests: TariffDialogComponent. Depends on: TASK018, TASK019, TASK020
 - [TASK009] Admin: Customers, Rental History, Payment History, Users Placeholder — 4 pages. Depends on: TASK003
 - [TASK010] Operator: Active Rentals Dashboard — Mobile card list with auto-refresh. Depends on: TASK004
 - [TASK011] Operator: Rental Creation Flow — 4-step mobile stepper + shared QR scanner component. Depends on: TASK004
@@ -32,8 +48,8 @@ _None_
 - [TASK005] Admin: Equipment Types CRUD — EquipmentTypeListComponent (table + signals) + EquipmentTypeDialogComponent (ReactiveFormsModule, create/edit modes); 21 new tests. Completed on 2026-03-10
 - [TASK006] Admin: Equipment Statuses CRUD — EquipmentStatusListComponent (table + chips) + EquipmentStatusDialogComponent (multi-select transitions, self-exclusion); 31 new tests. Completed on 2026-03-10
 - [TASK013] Embed Health Indicator into Toolbar Shells — Completed on 2026-03-09
-- [TASK014] Create home page with links to Operator and Administrator dashboards — Pending (2026-03-09)
- - [TASK007] Admin: Equipment CRUD — Paginated table with filters + dialog with selects/datepicker. Completed on 2026-03-11
+- [TASK014] Create home page with links to Operator and Administrator dashboards — Completed on 2026-03-09
+- [TASK007] Admin: Equipment CRUD — Paginated table with filters + dialog with selects/datepicker. Completed on 2026-03-11
 
 ## Abandoned
 
