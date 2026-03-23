@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentTypeRequest, EquipmentTypeResponse } from '../../../core/models';
+import { EquipmentType, EquipmentTypeWrite } from '../../../core/domain';
 import {
   EquipmentTypeDialogComponent,
   EquipmentTypeDialogData,
@@ -79,7 +79,7 @@ export class EquipmentTypeListComponent implements OnInit {
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
 
-  types = signal<EquipmentTypeResponse[]>([]);
+  types = signal<EquipmentType[]>([]);
   loading = signal(false);
 
   readonly displayedColumns = ['slug', 'name', 'description', 'actions'];
@@ -109,14 +109,14 @@ export class EquipmentTypeListComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.data = {} as EquipmentTypeRequest;
+    dialogConfig.data = {} as EquipmentTypeWrite;
     const ref = this.dialog.open(EquipmentTypeDialogComponent, dialogConfig);
     ref.afterClosed().subscribe((result) => {
       if (result) this.loadTypes();
     });
   }
 
-  openEditDialog(type: EquipmentTypeResponse): void {
+  openEditDialog(type: EquipmentType): void {
     const ref = this.dialog.open<EquipmentTypeDialogComponent, EquipmentTypeDialogData, boolean>(
       EquipmentTypeDialogComponent,
       { data: { type }, autoFocus: 'first-tabbable' },

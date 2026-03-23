@@ -18,22 +18,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentService } from '../../../core/api';
-import {
-  EquipmentRequest,
-  EquipmentResponse,
-  EquipmentStatusResponse,
-  EquipmentTypeResponse,
-} from '../../../core/models';
+import { EquipmentRequest, EquipmentResponse, EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentType } from '../../../core/domain';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
 import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
 import { Labels } from '../../../shared/constant/labels';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { formatDate } from '@angular/common';
 import { parseDate, toIsoDate } from '../../../shared/utils/date.util';
+import { EquipmentTypeDropdownComponent } from '../../../shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
 
 export interface EquipmentDialogData {
   equipment?: EquipmentResponse;
-  types: EquipmentTypeResponse[];
+  types: EquipmentType[];
   statuses: EquipmentStatusResponse[];
 }
 
@@ -52,6 +49,7 @@ export interface EquipmentDialogData {
     MatIconModule,
     MatNativeDateModule,
     MatButtonModule,
+    EquipmentTypeDropdownComponent,
     SaveButtonComponent,
     CancelButtonComponent,
   ],
@@ -81,14 +79,10 @@ export interface EquipmentDialogData {
           <input matInput formControlName="uid" maxlength="100" />
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>{{ labels.Type }}</mat-label>
-          <mat-select formControlName="typeSlug">
-            @for (t of data.types; track t.slug) {
-              <mat-option [value]="t.slug">{{ t.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <app-equipment-type-dropdown
+          formControlName="typeSlug"
+          class="w-full"
+        ></app-equipment-type-dropdown>
 
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>
@@ -164,7 +158,7 @@ export class EquipmentDialogComponent implements OnInit {
       Validators.maxLength(50),
     ]),
     uid: new FormControl(this.data?.equipment?.uid ?? '', [Validators.maxLength(100)]),
-    typeSlug: new FormControl(this.data?.equipment?.type ?? ''),
+    typeSlug: new FormControl(this.data?.equipment?.type ?? '', [Validators.required]),
     statusSlug: new FormControl(this.data?.equipment?.status ?? ''),
     model: new FormControl(this.data?.equipment?.model ?? '', [Validators.maxLength(200)]),
     commissionedAt: new FormControl({

@@ -3,13 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentTypeResponse } from '../../../core/models';
+import { EquipmentType } from '../../../core/domain';
 import {
   EquipmentTypeDialogComponent,
   EquipmentTypeDialogData,
 } from './equipment-type-dialog.component';
 
-const existingType: EquipmentTypeResponse = {
+const existingType: EquipmentType = {
   slug: 'bike',
   name: 'Bike',
   description: 'A bicycle',
@@ -155,8 +155,7 @@ describe('EquipmentTypeDialogComponent — edit mode', () => {
     component.form.controls.name.setValue('Updated Bike');
     component.save();
     expect(service.update).toHaveBeenCalledWith(
-      'bike',
-      expect.objectContaining({ name: 'Updated Bike' }),
+      expect.objectContaining({ slug: 'bike', name: 'Updated Bike' }),
     );
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });

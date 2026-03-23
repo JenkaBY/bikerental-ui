@@ -51,8 +51,10 @@ bikerental-ui/
 │   ├── app/
 │   │   ├── core/
 │   │   │   ├── auth/              # AuthService, interceptor, guards
-│   │   │   ├── api/               # HTTP services per domain (7 services)
-│   │   │   ├── models/            # TypeScript interfaces (from OpenAPI)
+│   │   │   ├── api/               # HTTP services per domain — return/accept domain types
+│   │   │   ├── models/            # API-level types: *Request, *Response (from OpenAPI)
+│   │   │   ├── domain/            # Clean UI domain objects: Tariff, TariffWrite, …
+│   │   │   ├── mappers/           # Converter classes: fromResponse() / toRequest()
 │   │   │   └── interceptors/      # Error interceptor
 │   │   ├── shared/
 │   │   │   └── components/
@@ -116,6 +118,10 @@ bikerental-ui/
 - **any**: Avoid using `any` type; prefer strict typing and interfaces from OpenAPI spec
 - **Labels** Use constants(`shared/constant/labels`) for repeated strings (e.g. column names, button text) to ensure consistency and ease i18n
 - **FormErrorMessages** Use constants(`shared/validators/form-error-messages`) for messages related to form validation errors to ensure consistency across forms and ease i18n
+- **Mapper / Domain separation**: Components import **only from `core/domain/`**; never from `core/models/`.
+  All API response/request types stay within `core/api/` services and `core/mappers/`. Mappers are pure
+  static classes — `fromResponse(r): Domain` and `toRequest(w): Request`. Services apply the mapper
+  internally so their public API surface is always domain types.
 
 ## Angular Configuration Notes
 

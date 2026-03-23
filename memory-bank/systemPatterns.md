@@ -16,22 +16,28 @@ src/app/
 │   │   ├── auth.guard.ts
 │   │   └── role.guard.ts
 │   ├── api/                           # HTTP API client services (one per domain)
-│   │   ├── customer.service.ts
+│   │   ├── customer.service.ts        # Returns domain objects (via mapper)
 │   │   ├── equipment.service.ts
 │   │   ├── equipment-type.service.ts
 │   │   ├── equipment-status.service.ts
-│   │   ├── tariff.service.ts
+│   │   ├── tariff.service.ts          # Returns Tariff (domain), accepts TariffWrite
 │   │   ├── rental.service.ts
 │   │   └── payment.service.ts
-│   ├── models/                        # TypeScript interfaces matching API schemas
+│   ├── models/                        # API-level types: raw Request/Response shapes from backend
 │   │   ├── customer.model.ts
 │   │   ├── equipment.model.ts
 │   │   ├── equipment-type.model.ts
 │   │   ├── equipment-status.model.ts
-│   │   ├── tariff.model.ts
+│   │   ├── tariff.model.ts            # TariffV2Request, TariffV2Response, PricingParams, PricingType
 │   │   ├── rental.model.ts
 │   │   ├── payment.model.ts
 │   │   └── common.model.ts           # ProblemDetail, Pageable, PageRequest, Page<T>
+│   ├── domain/                        # Clean UI domain objects (what components use)
+│   │   ├── tariff.model.ts            # Tariff (Date fields), TariffWrite (for create/update)
+│   │   └── index.ts
+│   ├── mappers/                       # Converters: Response → Domain, Domain → Request
+│   │   ├── tariff.mapper.ts           # TariffMapper.fromResponse() / .toRequest()
+│   │   └── index.ts
 │   └── interceptors/
 │       └── error.interceptor.ts
 ├── shared/                            # Reusable UI: components, pipes, directives
@@ -102,9 +108,38 @@ Both admin and operator layouts use the shared `ShellComponent` (`shared/compone
 - **Admin layout**: `ShellComponent` with `[items]` → sidebar rendered (`w-72`, `bg-slate-50`); `[brand]` from `APP_BRAND`; `[sidebar-footer]` for health indicator; `[toolbar-actions]` for logout button. Desktop-optimized.
 - **Operator layout** (TASK004): `ShellComponent` without `[items]` → `hasSidebar = false`, no sidebar rendered; bottom navigation bar added separately. Mobile-optimized, max-width 480px.
 
-### 5. Typed HTTP Services
+### 5. Typed HTTP Services — API → Mapper → Domain → UI
+
 Each API domain has a dedicated service in `core/api/`. Services return `Observable<T>` using `HttpClient`.
-All request/response types are defined in `core/models/`.
+The application enforces a strict **three-layer conversion pipeline**:
+
+```
+Backend ──► Response      ──► Mapper          ──► Domain       ──► UI Component
+            (core/models/)    (core/mappers/)     (core/domain/)
+UI Component ──► Domain ──► Mapper ──► Request ──► Backend
+```
+
+- **`core/models/`** — API-level types only: raw `*Response` / `*Request` shapes mirroring backend JSON.
+  Components **must not** import from `core/models/` directly.
+- **`core/domain/`** — Clean UI domain objects. May use `Date` instead of ISO strings and derived fields.
+  All components, dialogs, and templates exclusively use types from here.
+- **`core/mappers/`** — Pure, stateless classes with two static methods per domain:
+  - `fromResponse(r: XyzResponse): Xyz` — converts API response → domain object
+  - `toRequest(w: XyzWrite): XyzRequest` — converts domain write object → API request
+- **`core/api/` services** — the mapping boundary: all public methods accept/return domain types;
+  mapping is done internally via `.pipe(map(XyzMapper.fromResponse))` / `XyzMapper.toRequest(w)`.
+
+**Example — TariffService:**
+```typescript
+getAll(): Observable<Page<Tariff>> {
+  return this.http.get<Page<TariffV2Response>>(this.baseUrl)
+    .pipe(map(page => ({ items: page.items.map(TariffMapper.fromResponse), totalItems: page.totalItems })));
+}
+create(write: TariffWrite): Observable<Tariff> {
+  return this.http.post<TariffV2Response>(this.baseUrl, TariffMapper.toRequest(write))
+    .pipe(map(TariffMapper.fromResponse));
+}
+```
 
 ### 6. JWT Authentication
 - `AuthService` stores JWT in `localStorage`, exposes `currentUser` / `isAuthenticated` / `token` signals
@@ -158,6 +193,40 @@ The health indicator follows a strict smart/dumb decomposition with a pure build
 - CDK `cdkConnectedOverlay` (not `matTooltip`) renders a real component on hover
 - `TOOLTIP_LINE_LABELS` and `TooltipLineId` live in `health-tooltip-lines.builder.ts` (sole consumer)
 
+### 13. Mapper / Domain Model Layer
+
+The application strictly separates **API types** from **UI domain objects** through a mapper layer.
+
+#### Three layers in `core/`
+
+| Folder           | Purpose                                       | Who creates?          | Who consumes?       |
+|------------------|-----------------------------------------------|-----------------------|---------------------|
+| `core/models/`   | Raw API shapes: `*Request`, `*Response`       | Backend OpenAPI spec  | `core/api/` only    |
+| `core/mappers/`  | Stateless converter classes                   | Developer             | `core/api/` only    |
+| `core/domain/`   | Clean UI objects: `Tariff`, `TariffWrite`, …  | Developer             | Components, dialogs |
+
+#### Mapper class convention
+
+```typescript
+// core/mappers/tariff.mapper.ts
+export class TariffMapper {
+  static fromResponse(r: TariffV2Response): Tariff { … }   // API → UI
+  static toRequest(w: TariffWrite): TariffV2Request { … }  // UI → API
+}
+```
+
+#### Domain model conventions
+
+- Use `Date` objects for date/time fields (not ISO strings)
+- Write types (`*Write`) omit server-managed fields (`id`, `status`, `version`)
+- Shared enum/value types (`PricingType`, `TariffStatus`) may be re-exported from `core/models/` into
+  `core/domain/` if they are conceptually part of the domain (no transformation needed)
+
+#### Enforcement rule
+
+Components and dialogs **import only from `core/domain/`**. If a component needs to display a date, it
+receives a `Date` (or formatted string from the domain object), never a raw ISO string from a Response type.
+
 ## Routing Strategy
 
 ```
@@ -184,6 +253,16 @@ All feature routes are lazy-loaded via `loadChildren` / `loadComponent`.
 
 ### Repository / Service Pattern
 HTTP calls encapsulated in injectable services. Components never call `HttpClient` directly.
+
+### Mapper Pattern (Backend ↔ Domain conversion)
+Each domain that fetches data from the API has a corresponding mapper class in `core/mappers/`. The
+service is the sole place where `fromResponse` / `toRequest` are called. Components only ever deal with
+clean domain types from `core/domain/`.
+
+```
+Read:   HTTP GET → *Response → Mapper.fromResponse() → Domain → Component
+Write:  Component → Domain → Mapper.toRequest() → *Request → HTTP POST/PUT
+```
 
 ### Smart / Dumb Component Split
 - **Smart (container) components**: inject services, manage state, handle navigation
