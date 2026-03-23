@@ -3,7 +3,7 @@
 **Status:** Pending  
 **Added:** 2026-03-23  
 **Updated:** 2026-03-23  
-**Depends on:** TASK015 (v2 models + service + domain + mapper)  
+**Depends on:** TASK015 (v2 models + service + domain + mapper), TASK024 (EquipmentTypeDropdown)  
 **Blocks:** TASK017, TASK020, TASK021  
 **Parent:** TASK008
 
@@ -66,6 +66,13 @@ pageSize   = signal(10);
       <!-- columns: name, equipmentType, pricingType, status, validFrom, validTo, actions -->
       <!-- validFrom/validTo: {{ row.validFrom | date:'dd.MM.yyyy' }} -->
     </table>
+
+    <!--
+      Note: equipmentType filters / inline selectors in the table header should reuse
+      the shared `<app-equipment-type-dropdown>` (TASK024) so that the component
+      owns type loading and benefits from the shared cache. The table should not
+      duplicate type-loading logic.
+    -->
 
     <mat-paginator [length]="totalItems()" [pageSize]="pageSize()"
       [pageSizeOptions]="[10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons>

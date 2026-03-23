@@ -30,13 +30,23 @@ and passes it to the service.
 ### Dialog data type
 
 `types` is **not** part of dialog data — `EquipmentTypeDropdownComponent` (TASK024) loads equipment
-types itself from the cached service:
+types itself from the cached service. The dialog should therefore only accept the optional `Tariff`
+for edit pre-fill:
 
 ```typescript
 export interface TariffDialogData {
   tariff?: Tariff;   // undefined → create mode; Tariff from core/domain/
 }
 ```
+
+When adding the dropdown to the dialog template use:
+
+```html
+
+<app-equipment-type-dropdown formControlName="equipmentTypeSlug"></app-equipment-type-dropdown>
+```
+
+This keeps type loading centralized and leverages the shared cache from `EquipmentTypeService.getAll()`.
 
 ### i18n — Labels to add to `Labels` class
 

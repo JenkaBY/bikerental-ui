@@ -84,8 +84,8 @@ describe('EquipmentDialogComponent', () => {
     // prepare service to succeed
     equipmentService.create.mockReturnValue(of({ id: 'new' }));
 
-    // fill form with minimal valid values
-    component.form.patchValue({ serialNumber: 'SN123' });
+    // fill form with minimal valid values (typeSlug is now required)
+    component.form.patchValue({ serialNumber: 'SN123', typeSlug: 'bike' });
 
     fixture.detectChanges();
 
@@ -438,7 +438,8 @@ describe('EquipmentDialogComponent', () => {
 
     equipmentService.create.mockReturnValue(throwError(() => new Error('fail')));
 
-    component.form.patchValue({ serialNumber: 'SN' });
+    // include required typeSlug
+    component.form.patchValue({ serialNumber: 'SN', typeSlug: 'bike' });
 
     component.save();
 

@@ -1,6 +1,6 @@
 # TASK024 - EquipmentTypeDropdownComponent (shared, cached, ControlValueAccessor)
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
 **Updated:** 2026-03-23  
 **Depends on:** TASK023 (EquipmentType domain + cached service)  
@@ -163,25 +163,30 @@ Only one HTTP request is made across the entire app lifetime.
 
 ## Progress Tracking
 
-**Overall Status:** Not Started — 0%
+**Overall Status:** Completed — 100%
 
 ### Subtasks
 
-| ID    | Description                                                        | Status      | Updated    | Notes |
-|-------|--------------------------------------------------------------------|-------------|------------|-------|
-| 24.1  | Scaffold component with ControlValueAccessor providers             | Not Started | 2026-03-23 |       |
-| 24.2  | Load types from EquipmentTypeService.getAll() on ngOnInit          | Not Started | 2026-03-23 | uses shareReplay cache |
-| 24.3  | Template: mat-select with name display, null option, loading state | Not Started | 2026-03-23 |       |
-| 24.4  | i18n label via $localize`Equipment Type`                           | Not Started | 2026-03-23 |       |
-| 24.5  | ControlValueAccessor: writeValue, onChange, onTouched, disabled    | Not Started | 2026-03-23 |       |
-| 24.6  | Unit tests                                                         | Not Started | 2026-03-23 |       |
+| ID   | Description                                                        | Status    | Updated    | Notes                                                                     |
+|------|--------------------------------------------------------------------|-----------|------------|---------------------------------------------------------------------------|
+| 24.1 | Scaffold component with ControlValueAccessor providers             | Completed | 2026-03-23 | component created at `src/app/shared/components/equipment-type-dropdown/` |
+| 24.2 | Load types from EquipmentTypeService.getAll() on ngOnInit          | Completed | 2026-03-23 | uses existing cached service `getAll()` (shareReplay cache in TASK023)    |
+| 24.3 | Template: mat-select with name display, null option, loading state | Completed | 2026-03-23 | includes loading option and null option                                   |
+| 24.4 | i18n label via $localize`Equipment Type`                           | Completed | 2026-03-23 | label left as `$localize`Equipment Type``                                 |
+| 24.5 | ControlValueAccessor: writeValue, onChange, onTouched, disabled    | Completed | 2026-03-23 | ControlValueAccessor implemented using signals                            |
+| 24.6 | Unit tests                                                         | Completed | 2026-03-23 | spec added and executed; tests passing                                    |
 
 ## Progress Log
 
 ### 2026-03-23
 
 - Task created: self-contained dropdown replaces types-in-dialog-data pattern
-- ControlValueAccessor chosen so component works with formControlName in any reactive form
-- Cache lives in EquipmentTypeService.allTypes$ (shareReplay(1)) — one HTTP call per app lifetime
-- Eliminates need to pass types[] through TariffDialogData, TariffListComponent, etc.
+- Implemented `EquipmentTypeDropdownComponent` at `src/app/shared/components/equipment-type-dropdown/equipment-type-dropdown.component.ts` which:
+  - Loads equipment types from the cached `EquipmentTypeService.getAll()` and sorts by slug
+  - Displays `type.name` and binds `type.slug` as the control value
+  - Implements `ControlValueAccessor` using signals (value signal + onChange/onTouched)
+  - Exposes i18n label via `$localize` and includes a null option and loading indicator
+- Added unit tests: `equipment-type-dropdown.component.spec.ts` covering load, writeValue, selection change, and disabled state
+- Ran full test suite (`npm test`): all tests passed locally (306 tests). New tests included and passing.
+
 
