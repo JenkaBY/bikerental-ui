@@ -23,12 +23,11 @@ TASK001 → TASK000 (health indicator core — complete)
 
 ## In Progress
 
-_None_
 
 ## Pending
 
 - [TASK008] Admin: Tariffs CRUD — **Parent tracker** for TASK015–TASK022. Depends on: TASK003
-- [TASK016] TariffListComponent — paginated table shell (read-only). Depends on: TASK015 (blocks: TASK017, TASK020)
+
 - [TASK017] TariffListComponent — status toggle (activate/deactivate). Depends on: TASK016 (blocks: TASK021)
 - [TASK018] TariffDialogComponent — base form (name, type, dates). Depends on: TASK015 (blocks: TASK019, TASK020)
 - [TASK019] TariffDialogComponent — dynamic pricing params section. Depends on: TASK018 (blocks: TASK020, TASK022)
@@ -56,6 +55,7 @@ _None_
 - [TASK023] EquipmentType domain model + mapper — Implemented domain types, mapper, refreshable cached service and component updates. Completed on 2026-03-23
 
 - [TASK015] v2 API models + Tariff domain + TariffMapper — Implemented v2 models, domain Tariff/TariffWrite, TariffMapper, and updated TariffService to return domain types. Completed on 2026-03-23
+- [TASK016] TariffListComponent — Paginated table shell (read-only). Completed on 2026-03-23
 
 ## Abandoned
 

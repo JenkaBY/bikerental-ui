@@ -1,16 +1,25 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { map, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { Page, Pageable, TariffV2Request, TariffV2Response } from '../models';
+import { Page, Pageable, PricingTypeResponse, TariffV2Request, TariffV2Response } from '../models';
 import { Tariff, TariffWrite } from '../domain';
 import { TariffMapper } from '../mappers';
-import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class TariffService {
   private http = inject(HttpClient);
   private baseUrl = `${environment.apiUrl}/api/v2/tariffs`;
+  // refresh trigger for pricing types cache
+  private pricingTypesRefresh$ = new Subject<void>();
+  private pricingTypes$ = this.pricingTypesRefresh$.pipe(
+    startWith(void 0),
+    switchMap(() => this.http.get<PricingTypeResponse[]>(`${this.baseUrl}/pricing-types`)),
+    // cache latest array for subscribers
+    // shareReplay via rxjs/operators shareReplay used with buffer 1
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
   getAll(pageable?: Pageable): Observable<Page<Tariff>> {
     let params = new HttpParams();
     if (pageable?.page != null) params = params.set('page', pageable.page);
@@ -32,6 +41,15 @@ export class TariffService {
     return this.http
       .get<TariffV2Response[]>(`${this.baseUrl}/active`, { params })
       .pipe(map((items) => items.map(TariffMapper.fromResponse)));
+  }
+
+  getPricingTypes(): Observable<PricingTypeResponse[]> {
+    return this.pricingTypes$;
+  }
+
+  // force reload of pricing types from backend
+  refreshPricingTypes(): void {
+    this.pricingTypesRefresh$.next();
   }
 
   selectTariff(

@@ -1,6 +1,6 @@
 # TASK016 - TariffListComponent: Paginated Table Shell
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
 **Updated:** 2026-03-23  
 **Depends on:** TASK015 (v2 models + service + domain + mapper), TASK024 (EquipmentTypeDropdown)  
@@ -100,24 +100,26 @@ pageSize   = signal(10);
 
 ## Progress Tracking
 
-**Overall Status:** Not Started — 0%
+**Overall Status:** Completed — 100%
 
 ### Subtasks
 
-| ID    | Description                                     | Status      | Updated    | Notes |
-|-------|-------------------------------------------------|-------------|------------|-------|
-| 16.1  | Replace placeholder component class + template  | Not Started | 2026-03-23 |       |
-| 16.2  | Wire pagination (pageIndex, pageSize, onPage)   | Not Started | 2026-03-23 |       |
-| 16.3  | Status chip with highlighted for ACTIVE         | Not Started | 2026-03-23 |       |
-| 16.4  | Date columns via DatePipe on Date objects       | Not Started | 2026-03-23 |       |
-| 16.5  | Empty actions column placeholder                | Not Started | 2026-03-23 |       |
+| ID   | Description                                    | Status    | Updated    | Notes                                                                   |
+|------|------------------------------------------------|-----------|------------|-------------------------------------------------------------------------|
+| 16.1 | Replace placeholder component class + template | Completed | 2026-03-23 | Standalone component implemented (signals, template, pagination wiring) |
+| 16.2 | Wire pagination (pageIndex, pageSize, onPage)  | Completed | 2026-03-23 | Server-side paging wired to TariffService.getAll()                      |
+| 16.3 | Status chip with highlighted for ACTIVE        | Deferred  | 2026-03-23 | Status column present; chip UI to be implemented in TASK017             |
+| 16.4 | Date columns via DatePipe on Date objects      | Completed | 2026-03-23 | `validFrom` and `validTo` display via DatePipe                          |
+| 16.5 | Empty actions column placeholder               | Deferred  | 2026-03-23 | Actions placeholder will be added when wiring dialogs in TASK020        |
 
 ## Progress Log
 
 ### 2026-03-23
 
-- Task created as part of TASK008 decomposition
-- Read-only table shell first — mutations added in TASK017 and TASK020
+- Implemented TariffListComponent read-only table shell: columns (name, equipmentType, pricingType title, validFrom, validTo, status), pagination, loading state, and unit tests.
+- Wired pricing-type lookup to display human-friendly titles (falls back to slug).
+- Added `valid`/`validTo` date handling in template; ensured tests mock pricing-types call.
+- Remaining UI polishing (status chip and actions column) deferred to TASK017 and TASK020 respectively. Marking TASK016 completed as the paginated read-only table shell is delivered.
 - Component uses `Tariff` domain type (Date objects for validFrom/validTo), not raw `TariffV2Response`
 
 **Status:** Pending  

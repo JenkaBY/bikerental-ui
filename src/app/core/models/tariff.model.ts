@@ -59,3 +59,9 @@ export interface TariffV2Response {
   version?: string;
   status: TariffStatus;
 }
+
+export interface PricingTypeResponse {
+  slug: string;
+  title: string;
+  description?: string;
+}

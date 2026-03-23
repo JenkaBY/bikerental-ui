@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { TariffService } from './tariff.service';
-import { Page, TariffSelectionResponse, TariffV2Response } from '../models';
+import { Page, PricingTypeResponse, TariffSelectionResponse, TariffV2Response } from '../models';
 import { Tariff, TariffSelection, TariffWrite } from '../domain';
 
 const BASE_URL = 'http://localhost:8080/api/v2/tariffs';
@@ -147,5 +147,43 @@ describe('TariffService', () => {
     expect(req.request.method).toBe('PATCH');
     req.flush(mockTariff);
     expect(result?.id).toBe(mockTariff.id);
+  });
+
+  it('getPricingTypes makes GET to /pricing-types and returns array', () => {
+    const mockTypes: PricingTypeResponse[] = [
+      { slug: 'FLAT_HOURLY', title: 'Flat hourly', description: 'Flat hourly pricing' },
+    ];
+    let result: PricingTypeResponse[] | undefined;
+    service.getPricingTypes().subscribe((r) => (result = r));
+    const req = httpMock.expectOne(`${BASE_URL}/pricing-types`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockTypes);
+    expect(result).toEqual(mockTypes);
+  });
+
+  it('getPricingTypes is cached and refreshPricingTypes forces reload', () => {
+    const first: PricingTypeResponse[] = [{ slug: 'FLAT_HOURLY', title: '' }];
+    const second: PricingTypeResponse[] = [{ slug: 'DEGRESSIVE_HOURLY', title: '' }];
+
+    let firstResult: PricingTypeResponse[] | undefined;
+    service.getPricingTypes().subscribe((r) => (firstResult = r));
+    const req1 = httpMock.expectOne(`${BASE_URL}/pricing-types`);
+    req1.flush(first);
+    expect(firstResult).toEqual(first);
+
+    // subscribe again - should return cached value without new http request
+    let cachedResult: PricingTypeResponse[] | undefined;
+    service.getPricingTypes().subscribe((r) => (cachedResult = r));
+    // no additional requests expected
+    httpMock.expectNone(`${BASE_URL}/pricing-types`);
+    expect(cachedResult).toEqual(first);
+
+    // force refresh
+    service.refreshPricingTypes();
+    const req2 = httpMock.expectOne(`${BASE_URL}/pricing-types`);
+    req2.flush(second);
+    let refreshed: PricingTypeResponse[] | undefined;
+    service.getPricingTypes().subscribe((r) => (refreshed = r));
+    expect(refreshed).toEqual(second);
   });
 });
