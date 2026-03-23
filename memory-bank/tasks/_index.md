@@ -5,14 +5,17 @@
 ```
 TASK001 → TASK000 (health indicator core — complete)
         → TASK013
-        → TASK003 → TASK005, TASK006, TASK007, TASK008 (parent)
+        → TASK003 → TASK005 (complete) → TASK023 (EquipmentType domain + mapper + shareReplay cache)
+                                              └── TASK024 (EquipmentTypeDropdown, ControlValueAccessor)
+                                                    └── TASK018 (TariffDialogData: tariff only, dropdown self-loads)
+                    TASK006, TASK007, TASK008 (parent)
                          └── TASK015 (v2 models + domain Tariff/TariffWrite + TariffMapper)
                                ├── TASK016 (list — uses Tariff domain type)
                                │     ├── TASK017 (toggleStatus(row: Tariff))
-                               │     └── TASK020 (openEditDialog(tariff: Tariff)) ←─ TASK018 (dialog, TariffWrite)
-                               │           │                                               └── TASK019 (params)
-                               │           └── TASK021 (list tests — mock Page<Tariff>)
-                               └── TASK022 (dialog tests — mock Tariff with Date) ←── TASK019
+                               │     └── TASK020 (openEditDialog(tariff: Tariff)) ←─ TASK018
+                               │           │                              (data:{tariff} no types)
+                               │           └── TASK021 (list tests)
+                               └── TASK022 (dialog tests — stubs EquipmentTypeDropdown) ←── TASK019
                     → TASK009
         → TASK004 → TASK010, TASK011 → TASK012
         → TASK002 (auth added last — all pages accessible by default, no auth guards)
@@ -33,6 +36,8 @@ _None_
 - [TASK020] Wire TariffDialog into TariffList (create + edit buttons). Depends on: TASK016, TASK018, TASK019 (blocks: TASK021, TASK022)
 - [TASK021] Unit tests: TariffListComponent. Depends on: TASK016, TASK017, TASK020
 - [TASK022] Unit tests: TariffDialogComponent. Depends on: TASK018, TASK019, TASK020
+- [TASK023] EquipmentType domain model + mapper — `EquipmentType`/`EquipmentTypeWrite`/`EquipmentTypeUpdate` in `core/domain/`; `EquipmentTypeMapper` in `core/mappers/`; `shareReplay(1)` cache on `getAll()`; refactor service + list + dialog components to domain types. Depends on: TASK005 (completed), TASK015 (blocks: TASK024)
+- [TASK024] EquipmentTypeDropdownComponent — standalone shared dropdown in `shared/components/`; `ControlValueAccessor`; loads types from cached `EquipmentTypeService.getAll()`; displays `name`, binds `slug`; i18n label. Depends on: TASK023 (blocks: TASK018)
 - [TASK009] Admin: Customers, Rental History, Payment History, Users Placeholder — 4 pages. Depends on: TASK003
 - [TASK010] Operator: Active Rentals Dashboard — Mobile card list with auto-refresh. Depends on: TASK004
 - [TASK011] Operator: Rental Creation Flow — 4-step mobile stepper + shared QR scanner component. Depends on: TASK004

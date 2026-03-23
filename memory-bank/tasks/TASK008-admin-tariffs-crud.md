@@ -35,29 +35,31 @@ UI Form
 ### Subtask dependency chain
 
 ```
-TASK015 (service + v2 models + domain Tariff/TariffWrite + TariffMapper)
-  ├── TASK016 (list table shell — uses Tariff domain type)
-  │     ├── TASK017 (status toggle — toggleStatus(row: Tariff))
-  │     └── TASK020 (dialog wiring — openEditDialog(tariff: Tariff))
-  │           │         ↑ also depends on TASK018 + TASK019
-  │           └── TASK021 (list tests — mock Page<Tariff>)
-  └── TASK018 (dialog base form — TariffDialogData.tariff: Tariff, builds TariffWrite)
-        └── TASK019 (pricing params — extends TariffWrite.params)
-              └── TASK022 (dialog tests — mock Tariff with Date objects)
+TASK005 (complete) → TASK023 (EquipmentType domain + mapper)
+                           └──────────────────────────────────────────────────────┐
+TASK015 (v2 API models + domain Tariff/TariffWrite + TariffMapper)               │
+  ├── TASK016 (list table shell — uses Tariff domain type)                        │
+  │     ├── TASK017 (status toggle — toggleStatus(row: Tariff))                  │
+  │     └── TASK020 (dialog wiring) ←─ TASK018 (dialog base form, TariffWrite) ←─┘
+  │           │                              └── TASK019 (pricing params)
+  │           └── TASK021 (list tests — mock Page<Tariff>, EquipmentType[])
+  └── TASK022 (dialog tests — mock Tariff with Date, EquipmentType[]) ←── TASK019
 ```
 
 ### Subtask index
 
-| Task    | Title                                              | Depends on                |
-|---------|----------------------------------------------------|---------------------------|
-| TASK015 | v2 API models + Tariff domain + TariffMapper       | TASK003                   |
-| TASK016 | TariffListComponent — paginated table shell        | TASK015                   |
-| TASK017 | TariffListComponent — status toggle                | TASK016                   |
-| TASK018 | TariffDialogComponent — base form (TariffWrite)    | TASK015                   |
-| TASK019 | TariffDialogComponent — pricing params             | TASK018                   |
-| TASK020 | Wire TariffDialog into TariffList                  | TASK016, TASK018, TASK019 |
-| TASK021 | Unit tests: TariffListComponent                    | TASK016, TASK017, TASK020 |
-| TASK022 | Unit tests: TariffDialogComponent                  | TASK018, TASK019, TASK020 |
+| Task    | Title                                                  | Depends on                        |
+|---------|--------------------------------------------------------|-----------------------------------|
+| TASK023 | EquipmentType domain model + mapper + shareReplay      | TASK005 (done), TASK015           |
+| TASK024 | EquipmentTypeDropdownComponent (shared, CVA, cached)   | TASK023                           |
+| TASK015 | v2 API models + Tariff domain + TariffMapper           | TASK003                           |
+| TASK016 | TariffListComponent — paginated table shell            | TASK015                           |
+| TASK017 | TariffListComponent — status toggle                    | TASK016                           |
+| TASK018 | TariffDialogComponent — base form (TariffWrite)        | TASK015, TASK024                  |
+| TASK019 | TariffDialogComponent — pricing params                 | TASK018                           |
+| TASK020 | Wire TariffDialog into TariffList                      | TASK016, TASK018, TASK019         |
+| TASK021 | Unit tests: TariffListComponent                        | TASK016, TASK017, TASK020         |
+| TASK022 | Unit tests: TariffDialogComponent                      | TASK018, TASK019, TASK020         |
 
 ## API (updated to v2)
 
