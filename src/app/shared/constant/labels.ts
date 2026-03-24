@@ -40,4 +40,25 @@ export class Labels {
   static readonly Deactivate = $localize`Deactivate`;
   static readonly StatusChanged = $localize`Status changed`;
   static readonly ErrorOccurred = $localize`Error occurred`;
+  static readonly Tariff = $localize`Tariff`;
+  static readonly Tariffs = $localize`Tariffs`;
+  static readonly CreateTariff = $localize`Create Tariff`;
+  static readonly EditTariff = $localize`Edit Tariff`;
+  static readonly PricingType = $localize`Pricing Type`;
+  static readonly ValidFrom = $localize`Valid From`;
+  static readonly ValidTo = $localize`Valid To`;
+  static readonly NoEndDate = $localize`No end date`;
+  static readonly EquipmentType = $localize`Equipment Type`;
+  static readonly Saved = $localize`Saved`;
+
+  static readonly FirstHourPrice = $localize`First Hour Price`;
+  static readonly HourlyDiscount = $localize`Hourly Discount`;
+  static readonly MinimumHourlyPrice = $localize`Minimum Hourly Price`;
+  static readonly HourlyPrice = $localize`Hourly Price`;
+  static readonly DailyPrice = $localize`Daily Price`;
+  static readonly OvertimeHourlyPrice = $localize`Overtime Hourly Price`;
+  static readonly IssuanceFee = $localize`Issuance Fee`;
+  static readonly MinimumDurationMinutes = $localize`Minimum Duration (min)`;
+  static readonly MinimumDurationSurcharge = $localize`Minimum Duration Surcharge`;
+  static readonly NoAdditionalParams = $localize`No additional parameters required`;
 }
