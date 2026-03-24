@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -97,8 +104,8 @@ const minimumHourlyPriceValidator: ValidatorFn = (
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.PricingType }}</mat-label>
           <mat-select formControlName="pricingType">
-            @for (pt of pricingTypes(); track pt) {
-              <mat-option [value]="pt">{{ pt }}</mat-option>
+            @for (pt of pricingTypeSlugs(); track pt) {
+              <mat-option [value]="pt">{{ pricingTypeTitles()[pt] || pt }}</mat-option>
             }
           </mat-select>
           @if (form.controls.pricingType.hasError('required')) {
@@ -129,19 +136,29 @@ const minimumHourlyPriceValidator: ValidatorFn = (
             @case ('DEGRESSIVE_HOURLY') {
               <app-degressive-hourly-params
                 [group]="form.controls.params"
+                [description]="selectedPricingDescription()"
               ></app-degressive-hourly-params>
             }
             @case ('FLAT_HOURLY') {
-              <app-flat-hourly-params [group]="form.controls.params"></app-flat-hourly-params>
+              <app-flat-hourly-params
+                [group]="form.controls.params"
+                [description]="selectedPricingDescription()"
+              ></app-flat-hourly-params>
             }
             @case ('DAILY') {
-              <app-daily-params [group]="form.controls.params"></app-daily-params>
+              <app-daily-params
+                [group]="form.controls.params"
+                [description]="selectedPricingDescription()"
+              ></app-daily-params>
             }
             @case ('FLAT_FEE') {
-              <app-flat-fee-params [group]="form.controls.params"></app-flat-fee-params>
+              <app-flat-fee-params
+                [group]="form.controls.params"
+                [description]="selectedPricingDescription()"
+              ></app-flat-fee-params>
             }
             @case ('SPECIAL') {
-              <app-special-params></app-special-params>
+              <app-special-params [description]="selectedPricingDescription()"></app-special-params>
             }
           }
         </div>
@@ -166,7 +183,16 @@ export class TariffDialogComponent {
   saving = signal(false);
 
   // pricing types are loaded from the backend via TariffService.getPricingTypes()
-  readonly pricingTypes = signal<PricingType[]>([]);
+  // keep both the slug list (for option values) and a slug->title map for display
+  readonly pricingTypeSlugs = signal<PricingType[]>([]);
+  readonly pricingTypeTitles = signal<Record<string, string>>({});
+  readonly pricingTypeDescriptions = signal<Record<string, string | undefined>>({});
+  readonly selectedPricing = signal<PricingType | null>(this.data?.tariff?.pricingType ?? null);
+  readonly selectedPricingDescription = computed(() => {
+    const sel = this.selectedPricing();
+    if (!sel) return undefined;
+    return this.pricingTypeDescriptions()[sel];
+  });
   form = new FormGroup({
     name: new FormControl(this.data?.tariff?.name ?? '', [
       Validators.required,
@@ -206,13 +232,21 @@ export class TariffDialogComponent {
         const slugs: PricingType[] = (types || []).map(
           (t: unknown) => (t as { slug: string }).slug as PricingType,
         );
-        this.pricingTypes.set(slugs);
+        this.pricingTypeSlugs.set(slugs);
+        // Titles and descriptions are provided by UI-side Labels (for translation)
+        this.pricingTypeTitles.set(Labels.PricingTypeTitles as Record<string, string>);
+        this.pricingTypeDescriptions.set(
+          Labels.PricingTypeDescriptions as Record<string, string | undefined>,
+        );
       });
 
     const pricingControl = this.form.controls.pricingType;
     (pricingControl as AbstractControl).valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((t) => this.applyParamValidators(t as PricingType));
+      .subscribe((t) => {
+        this.selectedPricing.set(t as PricingType);
+        this.applyParamValidators(t as PricingType);
+      });
 
     if (this.data?.tariff) {
       const p = (this.data.tariff as Partial<Tariff>)?.params ?? {};
@@ -253,6 +287,8 @@ export class TariffDialogComponent {
         p['firstHourPrice'].setValidators([Validators.required, Validators.min(0.01)]);
         p['hourlyDiscount'].setValidators([Validators.required, Validators.min(0.01)]);
         p['minimumHourlyPrice'].setValidators([Validators.required, Validators.min(0.01)]);
+        p['minimumDurationMinutes'].setValidators([Validators.required, Validators.min(1)]);
+        p['minimumDurationSurcharge'].setValidators([Validators.required, Validators.min(0.01)]);
         paramsGroup.setValidators(minimumHourlyPriceValidator);
         break;
       case 'FLAT_HOURLY':
@@ -260,6 +296,7 @@ export class TariffDialogComponent {
         break;
       case 'DAILY':
         p['dailyPrice'].setValidators([Validators.required, Validators.min(0.01)]);
+        p['overtimeHourlyPrice'].setValidators([Validators.required, Validators.min(0.01)]);
         break;
       case 'FLAT_FEE':
         p['issuanceFee'].setValidators([Validators.required, Validators.min(0)]);

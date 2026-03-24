@@ -45,6 +45,21 @@ export class Labels {
   static readonly CreateTariff = $localize`Create Tariff`;
   static readonly EditTariff = $localize`Edit Tariff`;
   static readonly PricingType = $localize`Pricing Type`;
+  static readonly PricingTypeTitles: Record<string, string> = {
+    DEGRESSIVE_HOURLY: $localize`Degressive hourly`,
+    FLAT_HOURLY: $localize`Flat hourly`,
+    DAILY: $localize`Daily`,
+    FLAT_FEE: $localize`Flat fee`,
+    SPECIAL: $localize`Special`,
+  };
+
+  static readonly PricingTypeDescriptions: Record<string, string> = {
+    DEGRESSIVE_HOURLY: $localize`Price decreases over time after the first hour, with configurable minimums.`,
+    FLAT_HOURLY: $localize`Flat hourly rate charged for each started hour.`,
+    DAILY: $localize`Daily rate with additional overtime hourly charge for extra time.`,
+    FLAT_FEE: $localize`One-time flat fee for issuance with optional minimum duration surcharge.`,
+    SPECIAL: $localize`Special pricing rules; parameters not required or are configured elsewhere.`,
+  };
   static readonly ValidFrom = $localize`Valid From`;
   static readonly ValidTo = $localize`Valid To`;
   static readonly NoEndDate = $localize`No end date`;

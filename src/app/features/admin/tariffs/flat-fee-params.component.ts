@@ -13,6 +13,9 @@ import { FormErrorMessages } from '../../../shared/validators/form-error-message
   imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
   template: `
     <div [formGroup]="group()" class="col-span-2 grid grid-cols-2 gap-4">
+      @if (description()) {
+        <div class="col-span-2 text-sm text-slate-500">{{ description() }}</div>
+      }
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>{{ labels.IssuanceFee }}</mat-label>
         <input matInput type="number" min="0" step="0.01" formControlName="issuanceFee" />
@@ -53,6 +56,7 @@ import { FormErrorMessages } from '../../../shared/validators/form-error-message
 })
 export class FlatFeeParamsComponent {
   readonly group = input.required<FormGroup>();
+  readonly description = input<string | undefined>('');
   readonly labels = Labels;
   readonly errors = FormErrorMessages;
 }
