@@ -1,8 +1,8 @@
 # TASK021 - Unit Tests: TariffListComponent
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
-**Updated:** 2026-03-23  
+**Updated:** 2026-03-24  
 **Depends on:** TASK016 (table shell), TASK017 (status toggle), TASK020 (dialog wiring)  
 **Blocks:** None  
 **Parent:** TASK008
@@ -95,17 +95,17 @@ TestBed.configureTestingModule({
 
 ## Progress Tracking
 
-**Overall Status:** Not Started — 0%
+**Overall Status:** Completed — 100%
 
 ### Subtasks
 
-| ID    | Description                                            | Status      | Updated    | Notes |
-|-------|--------------------------------------------------------|-------------|------------|-------|
-| 21.1  | TestBed setup + mocks (Tariff domain mocks)            | Not Started | 2026-03-23 |       |
-| 21.2  | Rendering tests (table rows, loading spinner, DatePipe)| Not Started | 2026-03-23 |       |
-| 21.3  | Pagination tests (page event → reload)                 | Not Started | 2026-03-23 |       |
-| 21.4  | Status toggle tests (activate, deactivate, error)      | Not Started | 2026-03-23 |       |
-| 21.5  | Dialog open / close + reload tests                     | Not Started | 2026-03-23 |       |
+| ID   | Description                                             | Status   | Updated    | Notes |
+|------|---------------------------------------------------------|----------|------------|-------|
+| 21.1 | TestBed setup + mocks (Tariff domain mocks)             | Complete | 2026-03-24 |       |
+| 21.2 | Rendering tests (table rows, loading spinner, DatePipe) | Complete | 2026-03-24 |       |
+| 21.3 | Pagination tests (page event → reload)                  | Complete | 2026-03-24 |       |
+| 21.4 | Status toggle tests (activate, deactivate, error)       | Complete | 2026-03-24 |       |
+| 21.5 | Dialog open / close + reload tests                      | Complete | 2026-03-24 |       |
 
 ## Progress Log
 
@@ -114,3 +114,13 @@ TestBed.configureTestingModule({
 - Task created as part of TASK008 decomposition
 - Follow equipment-list.component.spec.ts patterns for consistency
 - Mock data uses `Tariff` domain type with `Date` objects — confirms domain isolation works
+
+### 2026-03-24
+
+- Implemented full test suite in `tariff-list.component.spec.ts` covering all TASK021 cases.
+- Fixed root cause of dialog mock shadowing: removed `MatDialogModule` from `TariffListComponent`
+  component `imports` (not needed in template; was providing real `MatDialog` at component-level
+  injector, shadowing the TestBed mock — same pattern as `EquipmentTypeListComponent`).
+- Also added `tariff-dialog.component.spec.ts` with 6 tests: update/create dispatch, dialog close
+  on success, error snackbar, and create vs update mode distinction.
+- All 59 test files, 343 tests pass.

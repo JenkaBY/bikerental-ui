@@ -134,3 +134,11 @@ These small infra and import fixes were made to ensure UI components render corr
 
 - Completed [TASK017] TariffListComponent status toggle: slide-toggle in Status column, per-row pending state, active/inactive colors with hover override, snackbar messages, and unit tests added. Updated task files and index.
 
+### 2026-03-24
+
+- Completed Tariff dialog work:
+  - [TASK018] TariffDialogComponent base form (name, description, equipment type dropdown, pricingType, validFrom/validTo) — implemented create/edit modes, prefill from `Tariff` domain, save wiring to `TariffService` and snackbar on errors.
+  - [TASK019] Dynamic pricing params section — implemented `params` FormGroup with validators per `PricingType`, cross-field validator for degressive hourly, dynamic required wiring, and inclusion of `params` in `TariffWrite` on save.
+  - [TASK020] Wired dialog into `TariffListComponent` (create + edit). Dialog `afterClosed()` triggers list reload on truthy result; added unit tests for create/edit flows and snackbar behavior.
+- Unit tests updated — no regressions reported locally; new dialog/list tests added for the tariff flows.
+

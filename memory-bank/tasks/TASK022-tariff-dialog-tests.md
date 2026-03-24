@@ -1,8 +1,8 @@
 # TASK022 - Unit Tests: TariffDialogComponent
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
-**Updated:** 2026-03-23  
+**Updated:** 2026-03-24  
 **Depends on:** TASK018 (base form), TASK019 (pricing params), TASK020 (dialog wiring)  
 **Blocks:** None  
 **Parent:** TASK008
@@ -135,18 +135,18 @@ For edit mode tests, override `MAT_DIALOG_DATA` with `{ tariff: mockTariff }` (n
 
 ## Progress Tracking
 
-**Overall Status:** Not Started — 0%
+**Overall Status:** Completed — 100%
 
 ### Subtasks
 
-| ID    | Description                                              | Status      | Updated    | Notes |
-|-------|----------------------------------------------------------|-------------|------------|-------|
-| 22.1  | TestBed setup + mocks (Tariff domain mocks)              | Not Started | 2026-03-23 |       |
-| 22.2  | Create mode tests + TariffWrite assertion                | Not Started | 2026-03-23 |       |
-| 22.3  | Edit mode pre-fill tests (from Tariff, Date objects)     | Not Started | 2026-03-23 |       |
-| 22.4  | PricingType switching → validator tests                  | Not Started | 2026-03-23 |       |
-| 22.5  | Validation error display tests                           | Not Started | 2026-03-23 |       |
-| 22.6  | Error handling spec (tariff-dialog.error.spec.ts)        | Not Started | 2026-03-23 |       |
+| ID   | Description                                          | Status   | Updated    | Notes |
+|------|------------------------------------------------------|----------|------------|-------|
+| 22.1 | TestBed setup + mocks (Tariff domain mocks)          | Complete | 2026-03-24 |       |
+| 22.2 | Create mode tests + TariffWrite assertion            | Complete | 2026-03-24 |       |
+| 22.3 | Edit mode pre-fill tests (from Tariff, Date objects) | Complete | 2026-03-24 |       |
+| 22.4 | PricingType switching → validator tests              | Complete | 2026-03-24 |       |
+| 22.5 | Validation error display tests                       | Complete | 2026-03-24 |       |
+| 22.6 | Error handling spec (tariff-dialog.error.spec.ts)    | Complete | 2026-03-24 |       |
 
 ## Progress Log
 
@@ -157,3 +157,17 @@ For edit mode tests, override `MAT_DIALOG_DATA` with `{ tariff: mockTariff }` (n
 - Split into main spec + error spec following project convention
 - Mock data uses `Tariff` (domain) not `TariffV2Response` — confirms correct layer separation
 - Save assertions check `TariffWrite` (domain) not `TariffV2Request` — mapper is tested separately
+
+### 2026-03-24
+
+- Implemented full test suite in two files:
+  - `tariff-dialog.component.spec.ts` — 39 tests across 6 describe blocks: create mode, edit
+    mode, pricing type switching, cross-field validator (minimumExceedsFirst), param min
+    constraints, and top-level form validation.
+  - `tariff-dialog.error.spec.ts` — 5 tests for save error scenarios (create/update failure,
+    saving signal reset, fallback message when error has no `.message` property).
+- Used `overrideComponent` to swap `EquipmentTypeDropdownComponent` with a `ControlValueAccessor`
+  stub to avoid real HTTP calls in unit tests.
+- Used `TestBed.resetTestingModule()` in `beforeEach` to ensure test isolation across
+  `describe` blocks using the `async setup()` call-per-test pattern.
+- All 60 test files, 382 tests pass.

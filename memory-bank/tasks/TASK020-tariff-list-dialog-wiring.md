@@ -1,8 +1,8 @@
 # TASK020 - Wire TariffDialog into TariffList (Create + Edit)
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
-**Updated:** 2026-03-23  
+**Updated:** 2026-03-24  
 **Depends on:** TASK016 (table shell), TASK018 (base dialog), TASK019 (pricing params)  
 **Blocks:** TASK021, TASK022  
 **Parent:** TASK008
@@ -116,3 +116,15 @@ openEditDialog(tariff: Tariff): void {
 - Wiring is the last feature step before tests (TASK021, TASK022)
 - `TariffDialogData` has no `types[]` — `EquipmentTypeDropdown` (TASK024) self-loads from cached service
 - `TariffListComponent` no longer injects `EquipmentTypeService` (simplified from earlier design)
+
+### 2026-03-24
+
+- Implemented wiring: added `openCreateDialog()` and `openEditDialog(tariff)` to `TariffListComponent`, injected `MatDialog` via `inject()`, added Create button and Edit icon in the template, and wired dialog `afterClosed()` to show `Labels.Saved` snackbar and reload the list via `load()` on truthy result.
+- Added unit tests to `tariff-list.component.spec.ts` that mock `MatDialog` and verify both create/edit flows, snackbar behavior, and list reload.
+- Updated task status to Completed and updated memory-bank progress.
+
+### 2026-03-24 (additional)
+
+- Adjusted TariffList presentation: show pricing-type title (UI-localized) in table; pricing descriptions are shown in dialog as helper text only.
+- Added green styling for ACTIVE status toggle and updated toggle behavior to trigger activate/deactivate via `TariffService`.
+
