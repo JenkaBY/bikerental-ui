@@ -26,9 +26,6 @@ TASK001 → TASK000 (health indicator core — complete)
 
 ## Pending
 - [TASK008] Admin: Tariffs CRUD — **Parent tracker** for TASK015–TASK022. Depends on: TASK003
-- [TASK021] Unit tests: TariffListComponent. Depends on: TASK016, TASK017, TASK020
-- [TASK022] Unit tests: TariffDialogComponent. Depends on: TASK018, TASK019, TASK020
-- [TASK024] EquipmentTypeDropdownComponent — standalone shared dropdown in `shared/components/`; `ControlValueAccessor`; loads types from cached `EquipmentTypeService.getAll()`; displays `name`, binds `slug`; i18n label. Depends on: TASK023 (blocks: TASK018)
 - [TASK009] Admin: Customers, Rental History, Payment History, Users Placeholder — 4 pages. Depends on: TASK003
 - [TASK010] Operator: Active Rentals Dashboard — Mobile card list with auto-refresh. Depends on: TASK004
 - [TASK011] Operator: Rental Creation Flow — 4-step mobile stepper + shared QR scanner component. Depends on: TASK004
@@ -53,8 +50,11 @@ TASK001 → TASK000 (health indicator core — complete)
 
 - [TASK017] TariffListComponent — status toggle (activate/deactivate). Completed on 2026-03-23
 - [TASK020] Wire TariffDialog into TariffList (create + edit buttons) — Completed on 2026-03-24
+- [TASK021] Unit tests: TariffListComponent — Completed on 2026-03-24
+- [TASK022] Unit tests: TariffDialogComponent — Completed on 2026-03-24
 - [TASK018] TariffDialogComponent — base form (name, type, dates). Completed on 2026-03-24
 - [TASK019] TariffDialogComponent — dynamic pricing params section. Completed on 2026-03-24
+- [TASK024] EquipmentTypeDropdownComponent — standalone shared dropdown in `shared/components/`; `ControlValueAccessor`; loads types from cached `EquipmentTypeService.getAll()`; displays `name`, binds `slug`; i18n label. Depends on: TASK023 (blocks: TASK018)
 
 ## Abandoned
 

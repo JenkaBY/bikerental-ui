@@ -13,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EquipmentTypeService, TariffService } from '../../../core/api';
 import { Tariff } from '../../../core/domain';
 import { Labels } from '../../../shared/constant/labels';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.component';
 
 @Component({
@@ -27,7 +27,6 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
     MatIconModule,
     MatTooltipModule,
     MatButtonModule,
-    MatDialogModule,
     MatSlideToggleModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
