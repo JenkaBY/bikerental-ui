@@ -1,8 +1,8 @@
 # TASK018 - TariffDialogComponent: Base Form
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
-**Updated:** 2026-03-23  
+**Updated:** 2026-03-24  
 **Depends on:** TASK015 (v2 models + service + domain + mapper), TASK023 (EquipmentType domain), TASK024 (EquipmentTypeDropdown)  
 **Blocks:** TASK019, TASK020, TASK022  
 **Parent:** TASK008
@@ -231,3 +231,12 @@ save(): void {
 - Dialog uses `Tariff` (domain) for read, `TariffWrite` (domain) for write — never touches raw API types
 - `TariffDialogData` no longer contains `types[]` — `EquipmentTypeDropdown` (TASK024) owns type loading
 - All labels must use `$localize` via `Labels` class — full list of new entries documented above
+
+### 2026-03-24
+
+- Implemented `TariffDialogComponent` base form (create + edit modes): name, description, equipmentTypeSlug (via `app-equipment-type-dropdown`), pricingType select, validFrom, validTo and save/cancel actions.
+- Prefill in edit mode from provided `data.tariff` (domain `Tariff`) and build `TariffWrite` on save; dialog closes with `true` on successful create/update.
+- All visible strings moved to `Labels` and use `$localize` for extraction; the PricingType select uses UI-side localized titles.
+- Integrated `MatDialogRef`, `MAT_DIALOG_DATA`, `TariffService` and `MatSnackBar` handling for save success/error flows.
+- Added initial unit tests for dialog open/close wiring (dialog closes with true -> list reload) and base form behaviors.
+

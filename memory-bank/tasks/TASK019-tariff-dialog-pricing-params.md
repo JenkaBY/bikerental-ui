@@ -1,8 +1,8 @@
 # TASK019 - TariffDialogComponent: Dynamic Pricing Params Section
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-03-23  
-**Updated:** 2026-03-23  
+**Updated:** 2026-03-24  
 **Depends on:** TASK018 (base form)  
 **Blocks:** TASK020, TASK022  
 **Parent:** TASK008
@@ -341,3 +341,12 @@ get params() { return this.form.controls.params.controls; }
 - Dialog never builds `TariffV2Request` — `TariffWrite` is passed to service which maps internally
 - **Correction**: `SPECIAL` pricing type has no params fields — sends `params: {}`; `price` control removed from FormGroup; `requiredFields.SPECIAL = []`; `@case ('SPECIAL')` renders no inputs
 - **Field constraints added**: `min` validators always present on controls; `required` added dynamically via `applyParamValidators`; cross-field validator (`minimumHourlyPrice ≤ firstHourPrice`) on `params` FormGroup for `DEGRESSIVE_HOURLY`
+
+### 2026-03-24
+
+- Implemented dynamic pricing params section in `TariffDialogComponent`.
+- Added `params` FormGroup with all 9 controls and min validators; implemented `applyParamValidators()` to add `required` and cross-field validators depending on selected `pricingType`.
+- For `DEGRESSIVE_HOURLY`, additionally made `minimumDurationMinutes` and `minimumDurationSurcharge` required (as requested) and added UI fields in `DegressiveHourlyParamsComponent` for these controls.
+- Pricing type descriptions are supplied by UI-side `Labels` and passed into params components as helper text.
+- Updated `save()` to include `params` when building `TariffWrite` and call `TariffService.create/update` accordingly.
+
