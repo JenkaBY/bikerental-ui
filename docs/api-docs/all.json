@@ -49,7 +49,7 @@
     }
   ],
   "paths": {
-    "/api/v2/tariffs/{id}": {
+    "/api/tariffs/{id}": {
       "get": {
         "tags": ["Tariffs"],
         "summary": "Get V2 tariff by ID",
@@ -134,131 +134,6 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/TariffV2Response"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tariff not found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/tariffs/{id}": {
-      "get": {
-        "tags": ["Tariffs"],
-        "summary": "Get tariff by ID",
-        "operationId": "getTariffById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Tariff ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "exclusiveMinimum": 0
-            },
-            "example": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tariff found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TariffResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tariff not found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["Tariffs"],
-        "summary": "Update tariff",
-        "description": "Replaces all fields of an existing tariff",
-        "operationId": "updateTariff",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Tariff ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "exclusiveMinimum": 0
-            },
-            "example": 1
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TariffRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Tariff updated",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TariffResponse"
                 }
               }
             }
@@ -658,7 +533,7 @@
         }
       }
     },
-    "/api/v2/tariffs": {
+    "/api/tariffs": {
       "get": {
         "tags": ["Tariffs"],
         "summary": "Get all V2 tariffs (paginated)",
@@ -744,7 +619,7 @@
         }
       }
     },
-    "/api/v2/tariffs/calculate": {
+    "/api/tariffs/calculate": {
       "post": {
         "tags": ["Tariffs"],
         "summary": "Calculate rental cost for multiple equipment items",
@@ -804,103 +679,6 @@
         }
       }
     },
-    "/api/tariffs": {
-      "get": {
-        "tags": ["Tariffs"],
-        "summary": "Get all tariffs",
-        "description": "Returns a paginated list of all tariffs",
-        "operationId": "getAllTariffs",
-        "parameters": [
-          {
-            "name": "arg0",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/Pageable"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tariff page returned",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageTariffResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Tariffs"],
-        "summary": "Create tariff",
-        "operationId": "createTariff",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TariffRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Tariff created",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TariffResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Tariff conflict",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/rentals": {
       "get": {
         "tags": ["Rentals"],
@@ -915,7 +693,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["DRAFT", "ACTIVE", "COMPLETED", "CANCELLED"]
+              "enum": ["DRAFT", "ACTIVE", "COMPLETED", "CANCELLED", "DEBT"]
             },
             "example": "ACTIVE"
           },
@@ -1050,78 +828,6 @@
         }
       }
     },
-    "/api/rentals/{id}/prepayments": {
-      "post": {
-        "tags": ["Rentals"],
-        "summary": "Record prepayment for rental",
-        "operationId": "recordPrepayment",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Rental ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "example": 1
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RecordPrepaymentRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Prepayment recorded",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/PrepaymentResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Rental not found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/rentals/return": {
       "post": {
         "tags": ["Rentals"],
@@ -1222,17 +928,16 @@
         }
       }
     },
-    "/api/payments": {
+    "/api/finance/withdrawals": {
       "post": {
         "tags": ["Finance"],
-        "summary": "Record payment",
-        "description": "Records a payment against a rental",
-        "operationId": "recordPayment",
+        "summary": "Record a fund withdrawal for a customer",
+        "operationId": "recordWithdrawal",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RecordPaymentRequest"
+                "$ref": "#/components/schemas/RecordWithdrawalRequest"
               }
             }
           },
@@ -1240,11 +945,11 @@
         },
         "responses": {
           "201": {
-            "description": "Payment recorded",
+            "description": "Withdrawal recorded",
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/RecordPaymentResponse"
+                  "$ref": "#/components/schemas/TransactionResponse"
                 }
               }
             }
@@ -1260,7 +965,145 @@
             }
           },
           "404": {
-            "description": "Rental not found",
+            "description": "Customer finance account not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Insufficient available balance",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/finance/deposits": {
+      "post": {
+        "tags": ["Finance"],
+        "summary": "Record a fund deposit for a customer",
+        "operationId": "recordDeposit",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordDepositRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Deposit recorded",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer finance account not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/finance/adjustments": {
+      "post": {
+        "tags": ["Finance"],
+        "summary": "Apply a manual balance adjustment to a customer wallet",
+        "operationId": "applyAdjustment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustmentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Adjustment applied",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer finance account not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Insufficient wallet balance",
             "content": {
               "*/*": {
                 "schema": {
@@ -1706,7 +1549,7 @@
         }
       }
     },
-    "/api/v2/tariffs/{id}/deactivate": {
+    "/api/tariffs/{id}/deactivate": {
       "patch": {
         "tags": ["Tariffs"],
         "summary": "Deactivate V2 tariff",
@@ -1758,7 +1601,7 @@
         }
       }
     },
-    "/api/v2/tariffs/{id}/activate": {
+    "/api/tariffs/{id}/activate": {
       "patch": {
         "tags": ["Tariffs"],
         "summary": "Activate V2 tariff",
@@ -1783,114 +1626,6 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/TariffV2Response"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tariff not found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/tariffs/{id}/deactivate": {
-      "patch": {
-        "tags": ["Tariffs"],
-        "summary": "Deactivate tariff",
-        "description": "Marks a tariff as inactive; it will no longer be selected for new rentals",
-        "operationId": "deactivateTariff",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Tariff ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "exclusiveMinimum": 0
-            },
-            "example": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tariff deactivated",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TariffResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tariff not found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/tariffs/{id}/activate": {
-      "patch": {
-        "tags": ["Tariffs"],
-        "summary": "Activate tariff",
-        "description": "Marks a tariff as active so it can be used for rental pricing",
-        "operationId": "activateTariff",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Tariff ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "exclusiveMinimum": 0
-            },
-            "example": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tariff activated",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TariffResponse"
                 }
               }
             }
@@ -2063,7 +1798,7 @@
         }
       }
     },
-    "/api/v2/tariffs/selection": {
+    "/api/tariffs/selection": {
       "get": {
         "tags": ["Tariffs"],
         "summary": "Select cheapest V2 tariff for equipment type and duration. For debug purpose",
@@ -2135,7 +1870,7 @@
         }
       }
     },
-    "/api/v2/tariffs/pricing-types": {
+    "/api/tariffs/pricing-types": {
       "get": {
         "tags": ["Tariffs"],
         "summary": "Get all pricing types with localized title and description",
@@ -2167,7 +1902,7 @@
         }
       }
     },
-    "/api/v2/tariffs/active": {
+    "/api/tariffs/active": {
       "get": {
         "tags": ["Tariffs"],
         "summary": "Get active V2 tariffs by equipment type",
@@ -2210,125 +1945,62 @@
         }
       }
     },
-    "/api/tariffs/selection": {
+    "/api/finance/customers/{customerId}/transactions": {
       "get": {
-        "tags": ["Tariffs"],
-        "summary": "Select best tariff for rental",
-        "description": "Returns the most cost-effective tariff for the given equipment type, duration and date",
-        "operationId": "selectTariff",
+        "tags": ["Finance"],
+        "summary": "Retrieve paginated transaction history for a customer",
+        "operationId": "getTransactionHistory",
         "parameters": [
           {
-            "name": "equipmentType",
-            "in": "query",
-            "description": "Equipment type slug",
+            "name": "customerId",
+            "in": "path",
+            "description": "Customer UUID",
             "required": true,
             "schema": {
               "type": "string",
-              "minLength": 1
-            },
-            "example": "bike"
+              "format": "uuid"
+            }
           },
           {
-            "name": "durationMinutes",
+            "name": "arg1",
             "in": "query",
-            "description": "Rental duration in minutes",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32",
-              "exclusiveMinimum": 0
-            },
-            "example": 120
+              "$ref": "#/components/schemas/TransactionHistoryFilterParams"
+            }
           },
           {
-            "name": "rentalDate",
+            "name": "arg2",
             "in": "query",
-            "description": "Rental date (ISO date, defaults to today)",
-            "required": false,
+            "required": true,
             "schema": {
-              "type": "string",
-              "format": "date"
-            },
-            "example": "2026-06-01"
+              "$ref": "#/components/schemas/Pageable"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Tariff selected",
+            "description": "Transaction history retrieved",
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/TariffSelectionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid parameters",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/Page"
                 }
               }
             }
           },
           "404": {
-            "description": "No suitable tariff found",
+            "description": "Customer finance account not found",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/tariffs/active": {
-      "get": {
-        "tags": ["Tariffs"],
-        "summary": "Get active tariffs by equipment type",
-        "operationId": "getActiveTariffsByEquipmentType",
-        "parameters": [
-          {
-            "name": "equipmentType",
-            "in": "query",
-            "description": "Equipment type slug",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "bike"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Active tariffs returned",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TariffResponse"
-                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid equipment type",
+            "description": "Invalid request parameters",
             "content": {
               "*/*": {
                 "schema": {
@@ -2350,16 +2022,16 @@
         }
       }
     },
-    "/api/payments/{id}": {
+    "/api/finance/customers/{customerId}/balances": {
       "get": {
         "tags": ["Finance"],
-        "summary": "Get payment by ID",
-        "operationId": "getById",
+        "summary": "Retrieve customer account balances",
+        "operationId": "getBalances",
         "parameters": [
           {
-            "name": "id",
+            "name": "customerId",
             "in": "path",
-            "description": "Payment UUID",
+            "description": "Customer UUID",
             "required": true,
             "schema": {
               "type": "string",
@@ -2369,74 +2041,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Payment found",
+            "description": "Account balances retrieved",
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentResponse"
+                  "$ref": "#/components/schemas/CustomerAccountBalancesResponse"
                 }
               }
             }
           },
           "404": {
-            "description": "Payment not found",
+            "description": "Customer finance account not found",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/payments/by-rental/{rentalId}": {
-      "get": {
-        "tags": ["Finance"],
-        "summary": "Get payments by rental ID",
-        "description": "Returns all payments associated with a rental",
-        "operationId": "getByRental",
-        "parameters": [
-          {
-            "name": "rentalId",
-            "in": "path",
-            "description": "Rental ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "exclusiveMinimum": 0
-            },
-            "example": 42
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Payments returned",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaymentResponse"
-                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid rental ID",
+            "description": "Invalid customer UUID format",
             "content": {
               "*/*": {
                 "schema": {
@@ -2700,155 +2325,6 @@
           "properties": {
             "type": "object",
             "additionalProperties": {}
-          }
-        }
-      },
-      "TariffRequest": {
-        "type": "object",
-        "description": "Request body for creating or updating a tariff",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Tariff name",
-            "example": "Standard Bike Rental",
-            "maxLength": 200,
-            "minLength": 0
-          },
-          "description": {
-            "type": "string",
-            "description": "Description",
-            "maxLength": 1000,
-            "minLength": 0
-          },
-          "equipmentTypeSlug": {
-            "type": "string",
-            "description": "Equipment type slug this tariff applies to",
-            "example": "bike"
-          },
-          "basePrice": {
-            "type": "number",
-            "description": "Base price (entry fee)",
-            "example": "50.00",
-            "minimum": 0
-          },
-          "halfHourPrice": {
-            "type": "number",
-            "description": "Price per 30 minutes",
-            "example": "100.00",
-            "minimum": 0
-          },
-          "hourPrice": {
-            "type": "number",
-            "description": "Price per hour",
-            "example": "180.00",
-            "minimum": 0
-          },
-          "dayPrice": {
-            "type": "number",
-            "description": "Price per day",
-            "example": "900.00",
-            "minimum": 0
-          },
-          "hourDiscountedPrice": {
-            "type": "number",
-            "description": "Discounted price per hour (e.g. for bulk hours)",
-            "example": "150.00",
-            "minimum": 0
-          },
-          "validFrom": {
-            "type": "string",
-            "format": "date",
-            "description": "Date from which the tariff is valid",
-            "example": "2026-01-01"
-          },
-          "validTo": {
-            "type": "string",
-            "format": "date",
-            "description": "Date until which the tariff is valid (null = indefinite)",
-            "example": "2026-12-31"
-          },
-          "status": {
-            "type": "string",
-            "description": "Tariff status",
-            "enum": ["ACTIVE", "INACTIVE"]
-          }
-        },
-        "required": [
-          "basePrice",
-          "dayPrice",
-          "halfHourPrice",
-          "hourDiscountedPrice",
-          "hourPrice",
-          "name",
-          "status",
-          "validFrom"
-        ]
-      },
-      "TariffResponse": {
-        "type": "object",
-        "description": "Tariff details",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Tariff ID",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "description": "Tariff name",
-            "example": "Standard Bike Rental"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description"
-          },
-          "equipmentTypeSlug": {
-            "type": "string",
-            "description": "Equipment type slug",
-            "example": "bike"
-          },
-          "basePrice": {
-            "type": "number",
-            "description": "Base price",
-            "example": "50.00"
-          },
-          "halfHourPrice": {
-            "type": "number",
-            "description": "Price per 30 minutes",
-            "example": "100.00"
-          },
-          "hourPrice": {
-            "type": "number",
-            "description": "Price per hour",
-            "example": "180.00"
-          },
-          "dayPrice": {
-            "type": "number",
-            "description": "Price per day",
-            "example": "900.00"
-          },
-          "hourDiscountedPrice": {
-            "type": "number",
-            "description": "Discounted price per hour",
-            "example": "150.00"
-          },
-          "validFrom": {
-            "type": "string",
-            "format": "date",
-            "description": "Valid from date",
-            "example": "2026-01-01"
-          },
-          "validTo": {
-            "type": "string",
-            "format": "date",
-            "description": "Valid to date (null = indefinite)",
-            "example": "2026-12-31"
-          },
-          "status": {
-            "type": "string",
-            "description": "Tariff status",
-            "enum": ["ACTIVE", "INACTIVE"]
           }
         }
       },
@@ -3145,9 +2621,7 @@
           },
           "discountPercent": {
             "type": "integer",
-            "format": "int32",
-            "maximum": 100,
-            "minimum": 0
+            "format": "int32"
           },
           "specialTariffId": {
             "type": "integer",
@@ -3296,9 +2770,32 @@
             "format": "int64",
             "description": "Optional tariff ID; auto-selected if not provided",
             "example": 5
+          },
+          "operatorId": {
+            "type": "string",
+            "description": "Operator identifier",
+            "example": "operator-1",
+            "minLength": 1
+          },
+          "specialTariffId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of a SPECIAL-type V2 tariff; mutually exclusive with discountPercent",
+            "example": 99
+          },
+          "specialPrice": {
+            "type": "number",
+            "description": "Operator-provided fixed total; required when specialTariffId is set",
+            "example": 15
+          },
+          "discountPercent": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Discount percentage applied to the non-special subtotal (0-100); ignored when specialTariffId is set",
+            "example": 10
           }
         },
-        "required": ["customerId", "duration"]
+        "required": ["customerId", "duration", "operatorId"]
       },
       "EquipmentItemResponse": {
         "type": "object",
@@ -3393,67 +2890,12 @@
           "estimatedCost": {
             "type": "number",
             "description": "Estimated rental cost",
-            "example": "200.00"
+            "example": 200
           },
           "finalCost": {
             "type": "number",
             "description": "Final rental cost (null until returned)",
-            "example": "250.00"
-          }
-        }
-      },
-      "RecordPrepaymentRequest": {
-        "type": "object",
-        "description": "Request body for recording a prepayment against a rental",
-        "properties": {
-          "amount": {
-            "type": "number",
-            "description": "Prepayment amount",
-            "example": "200.00",
-            "minimum": 0.01
-          },
-          "paymentMethod": {
-            "type": "string",
-            "description": "Payment method (e.g. CASH, CARD)",
-            "enum": ["CASH", "CARD", "ELECTRONIC"]
-          },
-          "operatorId": {
-            "type": "string",
-            "description": "Operator identifier",
-            "example": "operator-1",
-            "minLength": 1
-          }
-        },
-        "required": ["amount", "operatorId", "paymentMethod"]
-      },
-      "PrepaymentResponse": {
-        "type": "object",
-        "description": "Prepayment confirmation",
-        "properties": {
-          "paymentId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Payment UUID"
-          },
-          "amount": {
-            "type": "number",
-            "description": "Amount paid",
-            "example": "200.00"
-          },
-          "paymentMethod": {
-            "type": "string",
-            "description": "Payment method",
-            "enum": ["CASH", "CARD", "ELECTRONIC"]
-          },
-          "receiptNumber": {
-            "type": "string",
-            "description": "Receipt number",
-            "example": "RCP-20260228-001"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when payment was recorded"
+            "example": 250
           }
         }
       },
@@ -3486,7 +2928,14 @@
           "paymentMethod": {
             "type": "string",
             "description": "Payment method for any additional charge",
-            "enum": ["CASH", "CARD", "ELECTRONIC"]
+            "enum": [
+              "CARD",
+              "CASH",
+              "BANK_TRANSFER",
+              "WALLET",
+              "INTERNAL_TRANSFER",
+              "CARD_TERMINAL"
+            ]
           },
           "operatorId": {
             "type": "string",
@@ -3497,84 +2946,6 @@
         },
         "required": ["operatorId"]
       },
-      "CostBreakdown": {
-        "type": "object",
-        "description": "Detailed cost breakdown",
-        "properties": {
-          "equipmentId": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Equipment ID",
-            "example": 1
-          },
-          "baseCost": {
-            "type": "number",
-            "description": "Base cost for planned duration",
-            "example": "200.00"
-          },
-          "overtimeCost": {
-            "type": "number",
-            "description": "Overtime cost",
-            "example": "50.00"
-          },
-          "totalCost": {
-            "type": "number",
-            "description": "Total cost",
-            "example": "250.00"
-          },
-          "actualMinutes": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Actual rental duration in minutes",
-            "example": 130
-          },
-          "billableMinutes": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Billable minutes (after forgiveness applied)",
-            "example": 125
-          },
-          "plannedMinutes": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Planned duration in minutes",
-            "example": 120
-          },
-          "overtimeMinutes": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Overtime minutes",
-            "example": 10
-          },
-          "forgivenessApplied": {
-            "type": "boolean",
-            "description": "Whether forgiveness rule was applied"
-          },
-          "calculationMessage": {
-            "type": "string",
-            "description": "Human-readable calculation message"
-          }
-        }
-      },
-      "PaymentInfoResponse": {
-        "type": "object",
-        "properties": {
-          "amount": {
-            "type": "number"
-          },
-          "paymentMethod": {
-            "type": "string",
-            "enum": ["CASH", "CARD", "ELECTRONIC"]
-          },
-          "receiptNumber": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
       "RentalReturnResponse": {
         "type": "object",
         "description": "Result of equipment return operation",
@@ -3583,73 +2954,164 @@
             "$ref": "#/components/schemas/RentalResponse",
             "description": "Updated rental details"
           },
-          "costs": {
-            "type": "array",
-            "description": "Cost breakdown for the rental",
-            "items": {
-              "$ref": "#/components/schemas/CostBreakdown"
-            }
-          },
-          "additionalPayment": {
-            "type": "number",
-            "description": "Additional payment charged at return (0 if prepayment covered all)",
-            "example": "50.00"
-          },
-          "paymentInfo": {
-            "$ref": "#/components/schemas/PaymentInfoResponse",
-            "description": "Payment info for the additional charge"
+          "settlement": {
+            "$ref": "#/components/schemas/SettlementResponse",
+            "description": "Settlement transaction related to rental return"
           }
         }
       },
-      "RecordPaymentRequest": {
+      "SettlementResponse": {
         "type": "object",
-        "description": "Request body for recording a payment",
+        "description": "Settlement response containing capture transaction references, optional release transaction reference and the timestamp when the settlement was recorded",
         "properties": {
-          "rentalId": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Rental ID the payment is for",
-            "example": 42
+          "captureTransactionRefs": {
+            "type": "array",
+            "description": "List of capture transaction UUIDs",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Capture transaction reference (UUID)"
+            }
+          },
+          "releaseTransactionRef": {
+            "type": ["string", "null"],
+            "format": "uuid",
+            "description": "Release transaction reference (UUID). Present when a release transaction was created."
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the settlement was recorded",
+            "example": "2023-08-01T12:34:56Z"
+          }
+        }
+      },
+      "RecordWithdrawalRequest": {
+        "type": "object",
+        "description": "Request body for recording a fund withdrawal",
+        "properties": {
+          "idempotencyKey": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated UUID sent with every request to ensure exactly-once submission",
+            "example": "018e2cc3-0000-7000-8000-000000000099"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Customer UUID",
+            "example": "018e2cc3-0000-7000-8000-000000000001"
           },
           "amount": {
             "type": "number",
-            "description": "Payment amount",
-            "example": "500.00",
+            "description": "Withdrawal amount",
+            "example": 30,
             "minimum": 0.01
-          },
-          "paymentType": {
-            "type": "string",
-            "description": "Payment type (e.g. PREPAYMENT, FINAL)",
-            "enum": ["PREPAYMENT", "ADDITIONAL_PAYMENT", "REFUND", "CHANGE"]
           },
           "paymentMethod": {
             "type": "string",
-            "description": "Payment method (e.g. CASH, CARD)",
-            "enum": ["CASH", "CARD", "ELECTRONIC"]
+            "description": "Payout method (CASH, CARD_TERMINAL, BANK_TRANSFER)",
+            "enum": [
+              "CARD",
+              "CASH",
+              "BANK_TRANSFER",
+              "WALLET",
+              "INTERNAL_TRANSFER",
+              "CARD_TERMINAL"
+            ]
           },
           "operatorId": {
             "type": "string",
             "description": "Operator identifier",
-            "example": "operator-1"
+            "example": "operator-1",
+            "minLength": 1
           }
         },
-        "required": ["amount", "paymentMethod", "paymentType"]
+        "required": ["amount", "customerId", "idempotencyKey", "operatorId", "paymentMethod"]
       },
-      "RecordPaymentResponse": {
+      "TransactionResponse": {
         "type": "object",
-        "description": "Result of recording a payment",
+        "description": "Unified transaction response for deposits and adjustments",
         "properties": {
-          "paymentId": {
+          "transactionId": {
             "type": "string",
             "format": "uuid",
-            "description": "Payment UUID"
+            "description": "Transaction UUID"
           },
-          "receiptNumber": {
+          "recordedAt": {
             "type": "string",
-            "description": "Receipt number",
-            "example": "RCP-20260228-001"
+            "format": "date-time",
+            "description": "Timestamp when the transaction was recorded"
           }
         }
+      },
+      "RecordDepositRequest": {
+        "type": "object",
+        "description": "Request body for recording a fund deposit",
+        "properties": {
+          "idempotencyKey": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-generated UUID sent with every request to ensure exactly-once submission",
+            "example": "018e2cc3-0000-7000-8000-000000000099"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Customer UUID",
+            "example": "018e2cc3-0000-7000-8000-000000000001"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Deposit amount",
+            "example": 50,
+            "minimum": 0.01
+          },
+          "paymentMethod": {
+            "type": "string",
+            "description": "Payment method (CASH, CARD_TERMINAL, BANK_TRANSFER)",
+            "enum": [
+              "CARD",
+              "CASH",
+              "BANK_TRANSFER",
+              "WALLET",
+              "INTERNAL_TRANSFER",
+              "CARD_TERMINAL"
+            ]
+          },
+          "operatorId": {
+            "type": "string",
+            "description": "Operator identifier",
+            "example": "operator-1",
+            "minLength": 1
+          }
+        },
+        "required": ["amount", "customerId", "idempotencyKey", "operatorId", "paymentMethod"]
+      },
+      "AdjustmentRequest": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "operatorId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": ["amount", "customerId", "idempotencyKey", "operatorId", "reason"]
       },
       "EquipmentTypeRequest": {
         "type": "object",
@@ -3824,56 +3286,6 @@
           }
         }
       },
-      "PageTariffResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TariffResponse"
-            }
-          },
-          "totalItems": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "pageRequest": {
-            "$ref": "#/components/schemas/PageRequest"
-          }
-        }
-      },
-      "TariffSelectionResponse": {
-        "type": "object",
-        "description": "Result of tariff selection for a rental",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Tariff ID",
-            "example": 3
-          },
-          "name": {
-            "type": "string",
-            "description": "Tariff name",
-            "example": "Standard Bike Rental"
-          },
-          "equipmentType": {
-            "type": "string",
-            "description": "Equipment type slug",
-            "example": "bike"
-          },
-          "price": {
-            "type": "number",
-            "description": "Price for the selected period",
-            "example": "180.00"
-          },
-          "period": {
-            "type": "string",
-            "description": "Matched tariff period (e.g. HOUR, HALF_HOUR, DAY)",
-            "enum": ["HALF_HOUR", "HOUR", "DAY"]
-          }
-        }
-      },
       "PageRentalSummaryResponse": {
         "type": "object",
         "properties": {
@@ -3939,50 +3351,60 @@
           }
         }
       },
-      "PaymentResponse": {
+      "TransactionHistoryFilterParams": {
         "type": "object",
-        "description": "Payment record",
         "properties": {
-          "id": {
+          "fromDate": {
             "type": "string",
-            "format": "uuid",
-            "description": "Payment UUID"
+            "format": "date"
           },
-          "rentalId": {
+          "toDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "sourceType": {
+            "type": "string",
+            "enum": ["RENTAL"]
+          }
+        }
+      },
+      "Page": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "totalItems": {
             "type": "integer",
-            "format": "int64",
-            "description": "Rental ID",
-            "example": 42
+            "format": "int64"
           },
-          "amount": {
+          "pageRequest": {
+            "$ref": "#/components/schemas/PageRequest"
+          }
+        }
+      },
+      "CustomerAccountBalancesResponse": {
+        "type": "object",
+        "description": "Customer account balance breakdown",
+        "properties": {
+          "walletBalance": {
             "type": "number",
-            "description": "Amount",
-            "example": "500.00"
+            "description": "Available (spendable) wallet balance",
+            "example": 120
           },
-          "paymentType": {
-            "type": "string",
-            "description": "Payment type",
-            "example": "PREPAYMENT"
+          "holdBalance": {
+            "type": "number",
+            "description": "Reserved (held) balance for active rentals",
+            "example": 30
           },
-          "paymentMethod": {
-            "type": "string",
-            "description": "Payment method",
-            "example": "CASH"
-          },
-          "createdAt": {
+          "lastUpdatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp when payment was recorded"
-          },
-          "operatorId": {
-            "type": "string",
-            "description": "Operator identifier",
-            "example": "operator-1"
-          },
-          "receiptNumber": {
-            "type": "string",
-            "description": "Receipt number",
-            "example": "RCP-20260228-001"
+            "description": "Timestamp of the most recent ledger mutation (UTC ISO-8601)"
           }
         }
       },
