@@ -76,4 +76,42 @@ export class Labels {
   static readonly MinimumDurationMinutes = $localize`Minimum Duration (min)`;
   static readonly MinimumDurationSurcharge = $localize`Minimum Duration Surcharge`;
   static readonly NoAdditionalParams = $localize`No additional parameters required`;
+
+  static readonly Customers = $localize`Customers`;
+  static readonly CreateCustomer = $localize`Create Customer`;
+  static readonly EditCustomer = $localize`Edit Customer`;
+  static readonly Phone = $localize`Phone`;
+  static readonly FirstName = $localize`First Name`;
+  static readonly LastName = $localize`Last Name`;
+  static readonly Email = $localize`Email`;
+  static readonly BirthDate = $localize`Birth Date`;
+  static readonly Comments = $localize`Comments`;
+  static readonly SearchByPhone = $localize`Search by phone (min. 4 digits)`;
+  static readonly CustomersNotFound = $localize`No customers found`;
+
+  static readonly RentalHistory = $localize`Rental History`;
+  static readonly RentalId = $localize`Rental ID`;
+  static readonly CustomerId = $localize`Customer ID`;
+  static readonly EquipmentUid = $localize`Equipment UID`;
+  static readonly StartedAt = $localize`Started At`;
+  static readonly ExpectedReturn = $localize`Expected Return`;
+  static readonly OverdueMinutes = $localize`Overdue (min)`;
+  static readonly EditRental = $localize`Edit Rental`;
+  static readonly AllStatuses = $localize`All Statuses`;
+
+  static readonly PaymentHistory = $localize`Payment History`;
+  static readonly SearchByRentalId = $localize`Search by Rental ID`;
+  static readonly Amount = $localize`Amount`;
+  static readonly PaymentType = $localize`Payment Type`;
+  static readonly PaymentMethod = $localize`Payment Method`;
+  static readonly Operator = $localize`Operator`;
+  static readonly ReceiptNumber = $localize`Receipt Number`;
+  static readonly CreatedAt = $localize`Created At`;
+  static readonly Search = $localize`Search`;
+  static readonly PaymentsNotFound = $localize`No payments found`;
+
+  static readonly Users = $localize`Users`;
+  static readonly Username = $localize`Username`;
+  static readonly Role = $localize`Role`;
+  static readonly UsersPlaceholderMessage = $localize`User management will be available after the authorization API is implemented.`;
 }

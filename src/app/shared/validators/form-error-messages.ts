@@ -14,4 +14,10 @@ export class FormErrorMessages {
   static readonly mustBeNonNegative = $localize`Value must be zero or greater`;
   static readonly mustBeAtLeastOne = $localize`Value must be at least 1`;
   static readonly minimumExceedsFirstHour = $localize`Cannot exceed first hour price`;
+  static readonly phoneRequired = $localize`Phone is required`;
+  static readonly phonePattern = $localize`Enter a valid phone number`;
+  static readonly firstNameRequired = $localize`First name is required`;
+  static readonly lastNameRequired = $localize`Last name is required`;
+  static readonly emailInvalid = $localize`Enter a valid email address`;
+  static readonly birthDateFuture = $localize`Birth date must be in the past`;
 }
