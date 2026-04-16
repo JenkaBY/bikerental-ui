@@ -132,7 +132,7 @@ pageSize   = signal(10);
 ## Original Request
 
 Replace the placeholder `TariffListComponent` with a real standalone `OnPush` component that renders a
-paginated `mat-table` of tariffs fetched from `GET /api/v2/tariffs`. No action buttons yet — this task
+paginated `mat-table` of tariffs fetched from `GET /api/tariffs`. No action buttons yet — this task
 delivers the read-only table shell with correct columns, pagination, loading spinner, and signal-based state.
 
 ## Thought Process

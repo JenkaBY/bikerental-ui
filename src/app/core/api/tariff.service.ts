@@ -10,7 +10,7 @@ import { TariffMapper } from '../mappers';
 @Injectable({ providedIn: 'root' })
 export class TariffService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.apiUrl}/api/v2/tariffs`;
+  private baseUrl = `${environment.apiUrl}/api/tariffs`;
   // refresh trigger for pricing types cache
   private pricingTypesRefresh$ = new Subject<void>();
   private pricingTypes$ = this.pricingTypesRefresh$.pipe(

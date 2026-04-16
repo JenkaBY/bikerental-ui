@@ -63,18 +63,18 @@ TASK015 (v2 API models + domain Tariff/TariffWrite + TariffMapper)              
 
 ## API (updated to v2)
 
-Base URL: `/api/v2/tariffs`
+Base URL: `/api/tariffs`
 
-| Method | Path                             | Description             |
-|--------|----------------------------------|-------------------------|
-| GET    | `/api/v2/tariffs`                | Paginated list          |
-| POST   | `/api/v2/tariffs`                | Create tariff           |
-| GET    | `/api/v2/tariffs/{id}`           | Get by ID               |
-| PUT    | `/api/v2/tariffs/{id}`           | Update tariff           |
-| PATCH  | `/api/v2/tariffs/{id}/activate`  | Activate                |
-| PATCH  | `/api/v2/tariffs/{id}/deactivate`| Deactivate              |
-| GET    | `/api/v2/tariffs/active`         | Active by equipment type|
-| GET    | `/api/v2/tariffs/selection`      | Tariff selection        |
+| Method | Path                           | Description              |
+|--------|--------------------------------|--------------------------|
+| GET    | `/api/tariffs`                 | Paginated list           |
+| POST   | `/api/tariffs`                 | Create tariff            |
+| GET    | `/api/tariffs/{id}`            | Get by ID                |
+| PUT    | `/api/tariffs/{id}`            | Update tariff            |
+| PATCH  | `/api/tariffs/{id}/activate`   | Activate                 |
+| PATCH  | `/api/tariffs/{id}/deactivate` | Deactivate               |
+| GET    | `/api/tariffs/active`          | Active by equipment type |
+| GET    | `/api/tariffs/selection`       | Tariff selection         |
 
 ## v2 Model Overview
 
@@ -119,7 +119,7 @@ Base URL: `/api/v2/tariffs`
 ### 2026-03-23
 
 - Decomposed into 8 subtasks (TASK015–TASK022)
-- Updated all subtask descriptions to use `/api/v2/tariffs`
+- Updated all subtask descriptions to use `/api/tariffs`
 - v2 model schema differs significantly from v1: `pricingType` enum + `PricingParams` object replaces flat price fields
 - Added mapper/domain layer: `core/domain/tariff.model.ts` (`Tariff`, `TariffWrite`) + `core/mappers/tariff.mapper.ts` (`TariffMapper`)
 - `status` is no longer set in the create/edit form — controlled via activate/deactivate toggle only
