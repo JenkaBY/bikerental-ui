@@ -17,15 +17,25 @@ TASK001 → TASK000 (health indicator core — complete)
                                │           └── TASK021 (list tests)
                                └── TASK022 (dialog tests — stubs EquipmentTypeDropdown) ←── TASK019
                     → TASK009
+                    → TASK009 (abandoned → split into TASK025–028)
+                    → TASK025 (customers list + dialog)
+                    → TASK026 (rental history + edit dialog)
+                    → TASK027 (payment history)
+                    → TASK028 (users placeholder)
         → TASK004 → TASK010, TASK011 → TASK012
         → TASK002 (auth added last — all pages accessible by default, no auth guards)
 ```
 
 ## In Progress
 
+- [TASK025] Admin: Customers Page — CustomerListComponent + CustomerDialogComponent. Depends on: TASK003
+- [TASK026] Admin: Rental History Page — paginated list + filters + edit dialog. Depends on: TASK003
+- [TASK027] Admin: Payment History Page — search by rental ID. Depends on: TASK003
+- [TASK028] Admin: Users Placeholder Page — static mock. Depends on: TASK003
 
 ## Pending
-- [TASK008] Admin: Tariffs CRUD — **Parent tracker** for TASK015–TASK022. Depends on: TASK003
+
+- [TASK029] - OpenAPI Generator Setup (ng-openapi-gen)
 - [TASK009] Admin: Customers, Rental History, Payment History, Users Placeholder — 4 pages. Depends on: TASK003
 - [TASK010] Operator: Active Rentals Dashboard — Mobile card list with auto-refresh. Depends on: TASK004
 - [TASK011] Operator: Rental Creation Flow — 4-step mobile stepper + shared QR scanner component. Depends on: TASK004
@@ -55,7 +65,8 @@ TASK001 → TASK000 (health indicator core — complete)
 - [TASK018] TariffDialogComponent — base form (name, type, dates). Completed on 2026-03-24
 - [TASK019] TariffDialogComponent — dynamic pricing params section. Completed on 2026-03-24
 - [TASK024] EquipmentTypeDropdownComponent — standalone shared dropdown in `shared/components/`; `ControlValueAccessor`; loads types from cached `EquipmentTypeService.getAll()`; displays `name`, binds `slug`; i18n label. Depends on: TASK023 (blocks: TASK018)
+- [TASK008] Admin: Tariffs CRUD — **Parent tracker** for TASK015–TASK022. Depends on: TASK003
 
 ## Abandoned
 
-_None_
+- [TASK009] Admin: Customers, Rental History, Payment History, Users Placeholder — Superseded by TASK025–TASK028 on 2026-03-24
