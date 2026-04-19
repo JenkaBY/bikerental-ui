@@ -134,7 +134,6 @@ Execute tasks in dependency order:
 
 - Angular 21 project scaffolded with `ng new bikerental-ui`
 - `package.json` dependencies confirmed: Angular 21, RxJS 7.8, Vitest for testing
-- `docs/api-docs/all.json` populated with full OpenAPI spec from the backend
 - `docs/main-flow.md` and `docs/main-flow-diagram.mermaid` document the business flow
 - Memory bank initialized and fully updated with two-module architecture
 - 12 tasks defined (TASK001–TASK012) covering foundation → auth → admin → operator

@@ -43,7 +43,7 @@ Backend JSON  →  core/models/   →  core/mappers/  →  core/domain/  →  Co
 
 All visible text must use Angular's `$localize` — never raw string literals in templates or TS.
 
-- **Repeated UI labels** → add to `shared/constant/labels.ts` as `Labels.Xyz = $localize\`...\``
+- **UI labels** → add to `shared/constant/labels.ts` as `Labels.Xyz = $localize\`...\``
 - **Form validation messages** → add to `shared/validators/form-error-messages.ts` as `FormErrorMessages.xyzRequired`
 - Extract after adding strings: `npm run i18n:extract`
 
@@ -89,7 +89,6 @@ await TestBed.configureTestingModule({
 |------|---------|
 | `memory-bank/systemPatterns.md` | Full architecture, component tree, API integration patterns |
 | `memory-bank/tasks/_index.md` | All task IDs, statuses, and dependency chain |
-| `docs/api-docs/all.json` | Full OpenAPI spec for the backend (`http://localhost:8080`) |
 | `src/app/core/models/` | Raw API `*Request`/`*Response` types |
 | `src/app/core/domain/` | UI domain objects (what components use) |
 | `src/app/shared/constant/labels.ts` | i18n label constants |

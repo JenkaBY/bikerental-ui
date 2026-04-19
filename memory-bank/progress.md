@@ -11,7 +11,6 @@
 - `app.routes.ts` with lazy-loaded admin/operator routes (no auth guards — pages accessible by default)
 - `app.config.ts` with `provideRouter`, `provideHttpClient`, global `errorInterceptor`, `provideAppInitializer` for health poller; `APP_BRAND` token provided
 - `app.tokens.ts`: `BRAND` constant + `APP_BRAND: InjectionToken<string>`
-- `docs/api-docs/all.json` — full OpenAPI spec available for reference
 - Business flow documented in `docs/main-flow.md`
 - Memory bank fully initialized and updated
 - 12 tasks created with detailed implementation plans
