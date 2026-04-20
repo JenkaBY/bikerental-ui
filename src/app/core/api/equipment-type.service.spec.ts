@@ -2,8 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { EquipmentTypeService } from './equipment-type.service';
-import { EquipmentTypeResponse } from '../models';
-import { EquipmentType, EquipmentTypeWrite } from '../domain';
+import { EquipmentType, EquipmentTypeResponse, EquipmentTypeWrite } from '../models';
 
 const BASE_URL = 'http://localhost:8080/api/equipment-types';
 const mockType: EquipmentTypeResponse = { slug: 'bike', name: 'Bike', description: 'A bicycle' };

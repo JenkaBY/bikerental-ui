@@ -3,8 +3,15 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { map, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { Page, Pageable, PricingTypeResponse, TariffV2Request, TariffV2Response } from '../models';
-import { Tariff, TariffWrite } from '../domain';
+import {
+  Page,
+  Pageable,
+  PricingTypeResponse,
+  Tariff,
+  TariffV2Request,
+  TariffV2Response,
+  TariffWrite,
+} from '../models';
 import { TariffMapper } from '../mappers';
 
 @Injectable({ providedIn: 'root' })
@@ -56,7 +63,7 @@ export class TariffService {
     equipmentType: string,
     durationMinutes: number,
     rentalDate?: string,
-  ): Observable<import('../domain').TariffSelection> {
+  ): Observable<import('../models').TariffSelection> {
     let params = new HttpParams()
       .set('equipmentType', equipmentType)
       .set('durationMinutes', durationMinutes);

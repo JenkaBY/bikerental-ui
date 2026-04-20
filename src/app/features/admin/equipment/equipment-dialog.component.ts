@@ -18,8 +18,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentService } from '../../../core/api';
-import { EquipmentRequest, EquipmentResponse, EquipmentStatusResponse } from '../../../core/models';
-import { EquipmentType } from '../../../core/domain';
+import {
+  EquipmentRequest,
+  EquipmentResponse,
+  EquipmentStatusResponse,
+  EquipmentType,
+} from '../../../core/models';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
 import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
 import { Labels } from '../../../shared/constant/labels';

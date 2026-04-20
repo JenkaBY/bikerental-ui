@@ -65,3 +65,31 @@ export interface PricingTypeResponse {
   title: string;
   description?: string;
 }
+
+export interface Tariff {
+  id: number;
+  name: string;
+  description?: string;
+  equipmentType: string;
+  pricingType: PricingType;
+  params: PricingParams;
+  validFrom: Date;
+  validTo?: Date;
+  status: TariffStatus;
+}
+
+export interface TariffWrite {
+  name: string;
+  description?: string;
+  equipmentTypeSlug: string;
+  pricingType: PricingType;
+  params: PricingParams;
+  validFrom: Date;
+  validTo?: Date;
+}
+
+export interface TariffSelection {
+  tariff: Tariff;
+  totalCost: number;
+  calculationBreakdown: BreakdownCostDetails;
+}

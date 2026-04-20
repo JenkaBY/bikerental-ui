@@ -22,11 +22,11 @@ Each subtask has its own dedicated task file.
 Backend API
   └── TariffV2Response  (core/models/)
         └── TariffMapper.fromResponse()  (core/mappers/)
-              └── Tariff  (core/domain/)
+              └── Tariff  (core/models/)
                     └── TariffListComponent, TariffDialogComponent  (features/admin/tariffs/)
 
 UI Form
-  └── TariffWrite  (core/domain/)
+  └── TariffWrite  (core/models/)
         └── TariffMapper.toRequest()  (core/mappers/)
               └── TariffV2Request  (core/models/)
                     └── Backend API
@@ -121,7 +121,7 @@ Base URL: `/api/tariffs`
 - Decomposed into 8 subtasks (TASK015–TASK022)
 - Updated all subtask descriptions to use `/api/tariffs`
 - v2 model schema differs significantly from v1: `pricingType` enum + `PricingParams` object replaces flat price fields
-- Added mapper/domain layer: `core/domain/tariff.model.ts` (`Tariff`, `TariffWrite`) + `core/mappers/tariff.mapper.ts` (`TariffMapper`)
+- Added mapper/models layer: `core/models/tariff.model.ts` (`Tariff`, `TariffWrite`) + `core/mappers/tariff.mapper.ts` (`TariffMapper`)
 - `status` is no longer set in the create/edit form — controlled via activate/deactivate toggle only
 - All UI components work exclusively with `Tariff` / `TariffWrite` domain types — never with raw API types
 - Architecture: `Backend → TariffV2Response → TariffMapper → Tariff → UI` / `UI → TariffWrite → TariffMapper → TariffV2Request → Backend`

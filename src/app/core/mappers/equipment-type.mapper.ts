@@ -1,5 +1,10 @@
-import { EquipmentTypeRequest, EquipmentTypeResponse, EquipmentTypeUpdateRequest } from '../models';
-import { EquipmentType, EquipmentTypeWrite } from '../domain';
+import {
+  EquipmentType,
+  EquipmentTypeRequest,
+  EquipmentTypeResponse,
+  EquipmentTypeUpdateRequest,
+  EquipmentTypeWrite,
+} from '../models';
 
 export class EquipmentTypeMapper {
   static fromResponse(r: EquipmentTypeResponse): EquipmentType {

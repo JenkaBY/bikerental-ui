@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TariffDialogComponent } from './tariff-dialog.component';
 import { EquipmentTypeDropdownComponent } from '../../../shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
 import { TariffService } from '../../../core/api';
-import { Tariff } from '../../../core/domain';
+import { Tariff } from '../../../core/models';
 
 @Component({
   selector: 'app-equipment-type-dropdown',

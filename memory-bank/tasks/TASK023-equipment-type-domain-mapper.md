@@ -40,7 +40,7 @@ interface EquipmentTypeUpdateRequest  { name?, description? }
 interface EquipmentTypeResponse       { slug, name, description? }
 ```
 
-### Domain types (new — core/domain/equipment-type.model.ts)
+### Domain types (new — core/models/equipment-type.model.ts)
 
 ```typescript
 export interface EquipmentType {       // read — what list/selects display
@@ -113,7 +113,8 @@ update(write: EquipmentTypeWrite): Observable<EquipmentType> {
 ### Component changes
 
 **`EquipmentTypeListComponent`**:
-- `types = signal<EquipmentType[]>([])` — import from `core/domain/`
+
+- `types = signal<EquipmentType[]>([])` — import from `core/models/`
 - `loadTypes()` receives `EquipmentType[]` directly
 - `openEditDialog(type: EquipmentType)` — parameter type changes from `EquipmentTypeResponse` to `EquipmentType`
 - `EquipmentTypeDialogData.type?: EquipmentType` (reflects dialog change below)
@@ -134,7 +135,7 @@ update(write: EquipmentTypeWrite): Observable<EquipmentType> {
 
 ### Files to create
 
-1. **`src/app/core/domain/equipment-type.model.ts`**
+1. **`src/app/core/models/equipment-type.model.ts`**
    - `EquipmentType` + `EquipmentTypeWrite` interfaces (no `EquipmentTypeUpdate` — single write type)
 
 2. **`src/app/core/mappers/equipment-type.mapper.ts`**
@@ -142,17 +143,19 @@ update(write: EquipmentTypeWrite): Observable<EquipmentType> {
 
 ### Files to modify
 
-3. **`src/app/core/domain/index.ts`** — add `export * from './equipment-type.model'`
+3. **`src/app/core/models/index.ts`** — add `export * from './equipment-type.model'`
 
 4. **`src/app/core/mappers/index.ts`** — add `export * from './equipment-type.mapper'`
 
 5. **`src/app/core/api/equipment-type.service.ts`**
-   - Import `EquipmentType`, `EquipmentTypeWrite` from `core/domain` (no `EquipmentTypeUpdate`)
+
+- Import `EquipmentType`, `EquipmentTypeWrite` from `core/models` (no `EquipmentTypeUpdate`)
    - Import `EquipmentTypeMapper` from `core/mappers`
    - `update(write: EquipmentTypeWrite)` — extracts `write.slug` as path param internally
 
 6. **`src/app/features/admin/equipment-types/equipment-type-list.component.ts`**
-   - Change import: `EquipmentType` from `core/domain` (remove `EquipmentTypeResponse` from `core/models`)
+
+- Change import: `EquipmentType` from `core/models` (remove `EquipmentTypeResponse` from `core/models`)
    - Update `types` signal type and `openEditDialog` parameter type
 
 7. **`src/app/features/admin/equipment-types/equipment-type-dialog.component.ts`**
@@ -177,24 +180,24 @@ update(write: EquipmentTypeWrite): Observable<EquipmentType> {
 
 ### Subtasks
 
-| ID    | Description                                                  | Status      | Updated    | Notes |
-|-------|--------------------------------------------------------------|-------------|------------|-------|
-| 23.1  | Create EquipmentType + EquipmentTypeWrite in core/domain/ (no EquipmentTypeUpdate) | Not Started | 2026-03-23 | single write type covers both create and update |
-| 23.2  | Create EquipmentTypeMapper in core/mappers/                  | Not Started | 2026-03-23 | toCreateRequest + toUpdateRequest both accept EquipmentTypeWrite |
-| 23.3  | Update domain/index.ts + mappers/index.ts exports            | Not Started | 2026-03-23 |       |
-| 23.4  | Update EquipmentTypeService (domain types + mapper)          | Not Started | 2026-03-23 | update(write) uses write.slug as path param |
-| 23.5  | Update EquipmentTypeListComponent (EquipmentType signal)     | Not Started | 2026-03-23 |       |
-| 23.6  | Update EquipmentTypeDialogComponent (single EquipmentTypeWrite for create + update) | Not Started | 2026-03-23 | getRawValue() gives slug even when disabled |
-| 23.7  | Update equipment-type.service.spec.ts                        | Not Started | 2026-03-23 |       |
-| 23.8  | Update equipment-type-list/dialog component specs            | Not Started | 2026-03-23 |       |
-| 23.9  | Update TariffDialogData.types: EquipmentType[] (TASK018 prerequisite) | Not Started | 2026-03-23 | superseded: types removed from dialog data in TASK024 |
-| 23.10 | Add `shareReplay(1)` lazy cache to `EquipmentTypeService.getAll()`     | Not Started | 2026-03-23 | required by TASK024 EquipmentTypeDropdown |
+| ID    | Description                                                                         | Status      | Updated    | Notes                                                            |
+|-------|-------------------------------------------------------------------------------------|-------------|------------|------------------------------------------------------------------|
+| 23.1  | Create EquipmentType + EquipmentTypeWrite in core/models/ (no EquipmentTypeUpdate)  | Not Started | 2026-03-23 | single write type covers both create and update                  |
+| 23.2  | Create EquipmentTypeMapper in core/mappers/                                         | Not Started | 2026-03-23 | toCreateRequest + toUpdateRequest both accept EquipmentTypeWrite |
+| 23.3  | Update domain/index.ts + mappers/index.ts exports                                   | Not Started | 2026-03-23 |                                                                  |
+| 23.4  | Update EquipmentTypeService (domain types + mapper)                                 | Not Started | 2026-03-23 | update(write) uses write.slug as path param                      |
+| 23.5  | Update EquipmentTypeListComponent (EquipmentType signal)                            | Not Started | 2026-03-23 |                                                                  |
+| 23.6  | Update EquipmentTypeDialogComponent (single EquipmentTypeWrite for create + update) | Not Started | 2026-03-23 | getRawValue() gives slug even when disabled                      |
+| 23.7  | Update equipment-type.service.spec.ts                                               | Not Started | 2026-03-23 |                                                                  |
+| 23.8  | Update equipment-type-list/dialog component specs                                   | Not Started | 2026-03-23 |                                                                  |
+| 23.9  | Update TariffDialogData.types: EquipmentType[] (TASK018 prerequisite)               | Not Started | 2026-03-23 | superseded: types removed from dialog data in TASK024            |
+| 23.10 | Add `shareReplay(1)` lazy cache to `EquipmentTypeService.getAll()`                  | Not Started | 2026-03-23 | required by TASK024 EquipmentTypeDropdown                        |
 
 ### Updated Subtasks
 
 | ID    | Description                                                        | Status    | Updated    | Notes                                                                                                  |
 |-------|--------------------------------------------------------------------|-----------|------------|--------------------------------------------------------------------------------------------------------|
-| 23.1  | Create EquipmentType + EquipmentTypeWrite in core/domain/          | Completed | 2026-03-23 | Added `src/app/core/domain/equipment-type.model.ts` and exported in `core/domain/index.ts`             |
+| 23.1  | Create EquipmentType + EquipmentTypeWrite in core/models/          | Completed | 2026-03-23 | Added `src/app/core/models/equipment-type.model.ts` and exported in `core/models/index.ts`             |
 | 23.2  | Create EquipmentTypeMapper in core/mappers/                        | Completed | 2026-03-23 | Added `src/app/core/mappers/equipment-type.mapper.ts` and `core/mappers/index.ts`                      |
 | 23.3  | Update domain/index.ts + mappers/index.ts exports                  | Completed | 2026-03-23 | Exports added                                                                                          |
 | 23.4  | Update EquipmentTypeService (domain types + mapper)                | Completed | 2026-03-23 | Modified `src/app/core/api/equipment-type.service.ts` to use domain types and mapper; added lazy cache |
@@ -220,7 +223,7 @@ update(write: EquipmentTypeWrite): Observable<EquipmentType> {
 
 ### 2026-03-23 (Completed)
 
-- Implemented `EquipmentType` (domain) and `EquipmentTypeWrite` in `src/app/core/domain/equipment-type.model.ts` and exported via `core/domain/index.ts`.
+- Implemented `EquipmentType` (domain) and `EquipmentTypeWrite` in `src/app/core/models/equipment-type.model.ts` and exported via `core/models/index.ts`.
 - Implemented `EquipmentTypeMapper` in `src/app/core/mappers/equipment-type.mapper.ts` and exported via `core/mappers/index.ts`.
 - Refactored `src/app/core/api/equipment-type.service.ts` to return domain types, use the mapper internally, and introduce a refreshable cached observable for `getAll()` using a `refresh$` Subject + `startWith` + `switchMap` and `shareReplay(1)`. `create()` and `update()` now trigger a cache refresh after successful responses.
 - Updated `equipment-type-list.component.ts` and `equipment-type-dialog.component.ts` to consume domain types and the new service signatures. The dialog builds a `EquipmentTypeWrite` from `form.getRawValue()` and coerces an empty description to `undefined` to match API expectations.

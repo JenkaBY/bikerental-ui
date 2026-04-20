@@ -34,7 +34,7 @@ Both lazy routes point to the same component class. The component is unaware of 
 
 ### 1. Domain + model layer
 
-**`core/domain/customer.model.ts`** — add/update:
+**`core/models/customer.model.ts`** — add/update:
 
 ```typescript
 export interface Customer {
@@ -48,7 +48,7 @@ export interface Customer {
 }
 ```
 
-**`core/domain/finance.model.ts`** — new file:
+**`core/models/finance.model.ts`** — new file:
 
 ```typescript
 export interface CustomerAccountBalances {
@@ -97,7 +97,7 @@ export interface TransactionResponse {
 }
 ```
 
-Export all new types from `core/domain/index.ts` and `core/models/index.ts`.
+Export all new types from `core/models/index.ts` and `core/models/index.ts`.
 
 ### 2. Mappers
 
@@ -118,7 +118,11 @@ Export both mappers from `core/mappers/index.ts`.
 **`core/api/customer.service.ts`** — add stub:
 
 ```typescript
-getById(id: string): Observable<Customer> {
+getById(id
+:
+string
+):
+Observable < Customer > {
   // TODO: GET /api/customers/:id — replace EMPTY when backend implements
   return EMPTY;
 }
@@ -127,6 +131,7 @@ getById(id: string): Observable<Customer> {
 **`core/api/finance.service.ts`** — new file:
 
 ```typescript
+
 @Injectable({ providedIn: 'root' })
 export class FinanceService {
   private http = inject(HttpClient);
@@ -166,11 +171,14 @@ export class FinanceService {
 ```typescript
 {
   path: 'customers/:id',
-  loadComponent: () =>
+    loadComponent
+:
+  () =>
     import('../customers/customer-detail/customer-detail.component').then(
       m => m.CustomerDetailComponent,
     ),
-},
+}
+,
 ```
 
 **`features/operator/operator.routes.ts`** — add child:
@@ -178,12 +186,20 @@ export class FinanceService {
 ```typescript
 {
   path: 'customers/:id',
-  loadComponent: () =>
+    loadComponent
+:
+  () =>
     import('../customers/customer-detail/customer-detail.component').then(
       m => m.CustomerDetailComponent,
     ),
-  data: { showEdit: false },
-},
+    data
+:
+  {
+    showEdit: false
+  }
+,
+}
+,
 ```
 
 Both resolve at:
@@ -273,19 +289,32 @@ router.navigate(['/operator/customers', customer.id], { state: { customer } });
 Add to `shared/constant/labels.ts`:
 
 ```typescript
-static readonly CustomerDetails = $localize`Customer Details`;
-static readonly Back = $localize`Back`;
-static readonly ViewDetails = $localize`View Details`;
-static readonly WalletBalance = $localize`Wallet Balance`;
-static readonly HoldBalance = $localize`Hold Balance`;
-static readonly LastUpdated = $localize`Last updated`;
-static readonly NoRentals = $localize`No rentals found`;
-static readonly NoTransactions = $localize`No transactions found`;
-static readonly NoPayments = $localize`No payments found`;
-static readonly ProfileUnavailable = $localize`Profile not available — open from the customers list`;
-static readonly RentalsTab = $localize`Rentals`;
-static readonly TransactionsTab = $localize`Transactions`;
-static readonly PaymentsTab = $localize`Payments`;
+static readonly
+CustomerDetails = $localize`Customer Details`;
+static readonly
+Back = $localize`Back`;
+static readonly
+ViewDetails = $localize`View Details`;
+static readonly
+WalletBalance = $localize`Wallet Balance`;
+static readonly
+HoldBalance = $localize`Hold Balance`;
+static readonly
+LastUpdated = $localize`Last updated`;
+static readonly
+NoRentals = $localize`No rentals found`;
+static readonly
+NoTransactions = $localize`No transactions found`;
+static readonly
+NoPayments = $localize`No payments found`;
+static readonly
+ProfileUnavailable = $localize`Profile not available — open from the customers list`;
+static readonly
+RentalsTab = $localize`Rentals`;
+static readonly
+TransactionsTab = $localize`Transactions`;
+static readonly
+PaymentsTab = $localize`Payments`;
 ```
 
 ### 9. Update TASK025

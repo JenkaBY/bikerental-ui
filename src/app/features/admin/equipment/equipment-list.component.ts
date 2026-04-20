@@ -19,8 +19,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { EquipmentService, EquipmentStatusService, EquipmentTypeService } from '../../../core/api';
-import { EquipmentResponse, EquipmentStatusResponse, Page, Pageable } from '../../../core/models';
-import { EquipmentType } from '../../../core/domain';
+import {
+  EquipmentResponse,
+  EquipmentStatusResponse,
+  EquipmentType,
+  Page,
+  Pageable,
+} from '../../../core/models';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
 import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
 import { Labels } from '../../../shared/constant/labels';

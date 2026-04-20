@@ -11,7 +11,7 @@
 
 Replace the placeholder `TariffListComponent` with a real standalone `OnPush` component that renders a
 paginated `mat-table` of tariffs fetched from `TariffService.getAll()`. The component uses the **`Tariff`
-domain object** (from `core/domain/`) — never the raw `TariffV2Response`. No action buttons yet — this task
+domain object** (from `core/models/`) — never the raw `TariffV2Response`. No action buttons yet — this task
 delivers the read-only table shell with correct columns, pagination, loading spinner, and signal-based state.
 
 ## Thought Process
@@ -20,7 +20,7 @@ Start with a read-only shell so the table layout is verified independently befor
 dialog). This makes each incremental step testable in isolation.
 
 The `TariffService` (after TASK015) already returns `Observable<Page<Tariff>>` — so the component never
-touches API types; it only works with `Tariff` (from `core/domain/`).
+touches API types; it only works with `Tariff` (from `core/models/`).
 
 ### Columns
 
@@ -37,7 +37,7 @@ touches API types; it only works with `Tariff` (from `core/domain/`).
 ### Signals
 
 ```typescript
-tariffs    = signal<Tariff[]>([]);    // imported from core/domain
+tariffs = signal<Tariff[]>([]);    // imported from core/models
 totalItems = signal(0);
 loading    = signal(false);
 pageIndex  = signal(0);
@@ -87,7 +87,7 @@ pageSize   = signal(10);
 
 1. **`src/app/features/admin/tariffs/tariff-list.component.ts`** — replace placeholder:
    - `standalone: true`, `ChangeDetectionStrategy.OnPush`
-   - Import `Tariff` from `../../../core/domain` — **not** from `core/models`
+   - Import `Tariff` from `../../../core/models` — **not** from `core/models`
    - Imports: `MatCardModule`, `MatTableModule`, `MatPaginatorModule`, `MatChipsModule`,
      `MatProgressSpinnerModule`, `DatePipe`, `CommonModule`
    - Inject: `TariffService`, `DestroyRef`
@@ -155,7 +155,7 @@ dialog). This makes each incremental step testable in isolation.
 ### Signals
 
 ```typescript
-tariffs    = signal<Tariff[]>([]);    // imported from core/domain — NOT TariffV2Response
+tariffs = signal<Tariff[]>([]);    // imported from core/models — NOT TariffV2Response
 totalItems = signal(0);
 loading    = signal(false);
 pageIndex  = signal(0);

@@ -1,49 +1,49 @@
-// @ts-check
-const eslint = require('@eslint/js');
-const { defineConfig } = require('eslint/config');
-const tseslint = require('typescript-eslint');
-const angular = require('angular-eslint');
-const prettier = require('eslint-config-prettier');
-const prettierPlugin = require('eslint-plugin-prettier');
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import angular from 'angular-eslint';
+import prettier from 'eslint-config-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
 
-module.exports = defineConfig({
-  ignorePatterns: ['src/app/core/api/generated/**'],
-  overrides: [
-    {
-      files: ['**/*.ts'],
-      extends: [
-        eslint.configs.recommended,
-        tseslint.configs.recommended,
-        tseslint.configs.stylistic,
-        angular.configs.tsRecommended,
-        prettier,
+export default tseslint.config(
+  {
+    ignores: ['src/app/core/api/generated/**'],
+  },
+  {
+    files: ['**/*.ts'],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      ...tseslint.configs.stylistic,
+      ...angular.configs.tsRecommended,
+      prettier,
+    ],
+    processor: angular.processInlineTemplates,
+    plugins: {
+      prettier: prettierPlugin,
+    },
+    rules: {
+      'prettier/prettier': 'error',
+      '@angular-eslint/directive-selector': [
+        'error',
+        {
+          type: 'attribute',
+          prefix: 'app',
+          style: 'camelCase',
+        },
       ],
-      plugins: { prettier: prettierPlugin },
-      processor: angular.processInlineTemplates,
-      rules: {
-        'prettier/prettier': 'error',
-        '@angular-eslint/directive-selector': [
-          'error',
-          {
-            type: 'attribute',
-            prefix: 'app',
-            style: 'camelCase',
-          },
-        ],
-        '@angular-eslint/component-selector': [
-          'error',
-          {
-            type: 'element',
-            prefix: 'app',
-            style: 'kebab-case',
-          },
-        ],
-      },
+      '@angular-eslint/component-selector': [
+        'error',
+        {
+          type: 'element',
+          prefix: 'app',
+          style: 'kebab-case',
+        },
+      ],
     },
-    {
-      files: ['**/*.html'],
-      extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
-      rules: {},
-    },
-  ],
-});
+  },
+  {
+    files: ['**/*.html'],
+    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
+    rules: {},
+  },
+);

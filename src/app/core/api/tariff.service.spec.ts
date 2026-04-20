@@ -2,8 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { TariffService } from './tariff.service';
-import { Page, PricingTypeResponse, TariffSelectionResponse, TariffV2Response } from '../models';
-import { Tariff, TariffSelection, TariffWrite } from '../domain';
+import {
+  Page,
+  PricingTypeResponse,
+  Tariff,
+  TariffSelection,
+  TariffSelectionResponse,
+  TariffV2Response,
+  TariffWrite,
+} from '../models';
 
 const BASE_URL = 'http://localhost:8080/api/tariffs';
 const mockTariff: TariffV2Response = {

@@ -11,7 +11,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EquipmentTypeService, TariffService } from '../../../core/api';
-import { Tariff } from '../../../core/domain';
+import { Tariff } from '../../../core/models';
 import { Labels } from '../../../shared/constant/labels';
 import { MatDialog } from '@angular/material/dialog';
 import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.component';

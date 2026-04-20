@@ -20,14 +20,14 @@ npm run i18n:extract   # extract $localize strings to src/locale/messages.xlf
 ## Three-Layer Data Pipeline (enforced)
 
 ```
-Backend JSON  →  core/models/   →  core/mappers/  →  core/domain/  →  Components
+Backend JSON  →  core/models/   →  core/mappers/  →  core/models/  →  Components
  *Response         (API types)     fromResponse()     Tariff, …       import only from here
  *Request                          toRequest()
 ```
 
 - `core/models/` — raw API shapes only; consumed exclusively by `core/api/` services and `core/mappers/`
 - `core/mappers/` — pure static classes: `XyzMapper.fromResponse(r)` / `XyzMapper.toRequest(w)`
-- `core/domain/` — clean UI objects with `Date` fields; the **only** types components/dialogs import
+- `core/models/` — clean UI objects with `Date` fields; the **only** types components/dialogs import
 - Services in `core/api/` apply the mapper internally; their public signatures always use domain types
 
 ## Angular Patterns
@@ -85,15 +85,15 @@ await TestBed.configureTestingModule({
 
 ## Key Files
 
-| Path | Purpose |
-|------|---------|
-| `memory-bank/systemPatterns.md` | Full architecture, component tree, API integration patterns |
-| `memory-bank/tasks/_index.md` | All task IDs, statuses, and dependency chain |
-| `src/app/core/models/` | Raw API `*Request`/`*Response` types |
-| `src/app/core/domain/` | UI domain objects (what components use) |
-| `src/app/shared/constant/labels.ts` | i18n label constants |
-| `src/app/shared/validators/form-error-messages.ts` | i18n form error constants |
-| `src/app/app.config.ts` | Application providers (HTTP client, interceptors, locale) |
+| Path                                               | Purpose                                                     |
+|----------------------------------------------------|-------------------------------------------------------------|
+| `memory-bank/systemPatterns.md`                    | Full architecture, component tree, API integration patterns |
+| `memory-bank/tasks/_index.md`                      | All task IDs, statuses, and dependency chain                |
+| `src/app/core/models/`                             | Raw API `*Request`/`*Response` types                        |
+| `src/app/core/models/`                             | UI domain objects (what components use)                     |
+| `src/app/shared/constant/labels.ts`                | i18n label constants                                        |
+| `src/app/shared/validators/form-error-messages.ts` | i18n form error constants                                   |
+| `src/app/app.config.ts`                            | Application providers (HTTP client, interceptors, locale)   |
 
 ## Constraints
 

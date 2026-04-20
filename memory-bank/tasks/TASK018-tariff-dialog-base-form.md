@@ -13,7 +13,7 @@ Create `TariffDialogComponent` with a reactive form covering the non-pricing fie
 name, description, equipmentTypeSlug, pricingType, validFrom, validTo.
 
 The dialog must support both **create** and **edit** modes. It works exclusively with the **`Tariff`
-domain type** (from `core/domain/`) for edit mode pre-fill, and produces a **`TariffWrite`** domain object
+domain type** (from `core/models/`) for edit mode pre-fill, and produces a **`TariffWrite`** domain object
 that is passed to `TariffService.create()` / `TariffService.update()`. The service handles the API
 conversion internally — the dialog never builds a `TariffV2Request`.
 
@@ -35,7 +35,7 @@ for edit pre-fill:
 
 ```typescript
 export interface TariffDialogData {
-  tariff?: Tariff;   // undefined → create mode; Tariff from core/domain/
+  tariff?: Tariff;   // undefined → create mode; Tariff from core/models/
 }
 ```
 
@@ -183,9 +183,9 @@ save(): void {
 
 1. **`src/app/features/admin/tariffs/tariff-dialog.component.ts`** (new):
    - Standalone, `OnPush`
-   - Import `Tariff`, `TariffWrite` from `core/domain`
+   - Import `Tariff`, `TariffWrite` from `core/models`
    - Import `EquipmentTypeDropdownComponent` from `shared/components/equipment-type-dropdown`
-   - Import `PricingType` from `core/domain` (re-exported from `core/models` if needed)
+   - Import `PricingType` from `core/models` (re-exported from `core/models` if needed)
    - Imports: `ReactiveFormsModule`, `MatDialogModule`, `MatFormFieldModule`, `MatInputModule`,
      `MatSelectModule`, `MatDatepickerModule`, `MatNativeDateModule`, `MatButtonModule`,
      `SaveButtonComponent`, `CancelButtonComponent`, **`EquipmentTypeDropdownComponent`**

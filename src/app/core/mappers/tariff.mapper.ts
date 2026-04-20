@@ -1,5 +1,4 @@
-import { TariffV2Request, TariffV2Response } from '../models';
-import { Tariff, TariffWrite } from '../domain';
+import { Tariff, TariffV2Request, TariffV2Response, TariffWrite } from '../models';
 import { toIsoDate } from '../../shared/utils/date.util';
 
 export class TariffMapper {

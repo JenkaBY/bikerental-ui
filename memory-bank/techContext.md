@@ -127,7 +127,7 @@ bikerental-ui/
 - **any**: Avoid using `any` type; prefer strict typing and interfaces from OpenAPI spec
 - **Labels** Use constants(`shared/constant/labels`) for repeated strings (e.g. column names, button text) to ensure consistency and ease i18n
 - **FormErrorMessages** Use constants(`shared/validators/form-error-messages`) for messages related to form validation errors to ensure consistency across forms and ease i18n
-- **Mapper / Domain separation**: Components import **only from `core/domain/`**; never from `core/models/`.
+- **Mapper / Domain separation**: Components import **only from `core/models/`**; never from `core/models/`.
   All API response/request types stay within `core/api/` services and `core/mappers/`. Mappers are pure
   static classes — `fromResponse(r): Domain` and `toRequest(w): Request`. Services apply the mapper
   internally so their public API surface is always domain types.
@@ -166,7 +166,7 @@ npm run generate:api   # runs: ng-openapi -c src/config/openapi.config.ts
 
 1. **Import generated models** from `core/api/generated/models` inside `core/api/` services and `core/mappers/` only.
 2. **Inject generated services** inside hand-written `core/api/` wrapper services to perform HTTP calls — never call `HttpClient` directly for endpoints covered by the spec.
-3. **Components** still import only from `core/domain/` — the mapper layer insulates them from generated types.
+3. **Components** still import only from `core/models/` — the mapper layer insulates them from generated types.
 4. **Do not edit** files inside `core/api/generated/` — they are overwritten on every regeneration.
 5. **Do not add** new hand-written types to `core/models/` — use `core/api/generated/models/` instead. Legacy `core/models/` files will be removed incrementally as services are migrated (TASK029).
 

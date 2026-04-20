@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType, EquipmentTypeWrite } from '../../../core/domain';
+import { EquipmentType, EquipmentTypeWrite } from '../../../core/models';
 import {
   EquipmentTypeDialogComponent,
   EquipmentTypeDialogData,

@@ -26,7 +26,7 @@ Customers page: paginated list with search by ≥4 digits of the phone number, p
 - 25.3 Add new i18n labels to `labels.ts` and error messages to `form-error-messages.ts`
 - 25.4 Unit tests for list + dialog
 - 25.5 CustomerDetailComponent — profile card, balance card, Rentals tab, Payments tab + 3 service stubs
-  - Customer domain model + AccountBalance domain model (`core/domain/customer.model.ts`)
+  - Customer domain model + AccountBalance domain model (`core/models/customer.model.ts`)
   - AccountBalanceResponse (`core/models/customer.model.ts`)
   - CustomerMapper (`core/mappers/customer.mapper.ts`)
   - CustomerService.getById() — real implementation using `GET /api/customers/{id}` + getBalance() stub
