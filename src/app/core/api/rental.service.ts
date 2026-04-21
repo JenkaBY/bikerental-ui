@@ -2,19 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Page } from '@ui-models';
 import {
   CreateRentalRequest,
-  Page,
   Pageable,
-  PrepaymentResponse,
-  RecordPrepaymentRequest,
   RentalResponse,
-  RentalReturnResponse,
-  RentalStatus,
   RentalSummaryResponse,
   RentalUpdateJsonPatchRequest,
-  ReturnEquipmentRequest,
-} from '../models';
+} from '@api-models';
 
 @Injectable({ providedIn: 'root' })
 export class RentalService {
@@ -22,7 +17,7 @@ export class RentalService {
   private baseUrl = `${environment.apiUrl}/api/rentals`;
 
   search(
-    status?: RentalStatus,
+    status?: string,
     customerId?: string,
     equipmentUid?: string,
     pageable?: Pageable,
@@ -51,13 +46,5 @@ export class RentalService {
 
   update(id: number, request: RentalUpdateJsonPatchRequest): Observable<RentalResponse> {
     return this.http.patch<RentalResponse>(`${this.baseUrl}/${id}`, request);
-  }
-
-  recordPrepayment(id: number, request: RecordPrepaymentRequest): Observable<PrepaymentResponse> {
-    return this.http.post<PrepaymentResponse>(`${this.baseUrl}/${id}/prepayments`, request);
-  }
-
-  returnEquipment(request: ReturnEquipmentRequest): Observable<RentalReturnResponse> {
-    return this.http.post<RentalReturnResponse>(`${this.baseUrl}/return`, request);
   }
 }

@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { EquipmentType, EquipmentTypeResponse, EquipmentTypeWrite } from '../models';
+import { EquipmentTypeResponse } from '@api-models';
+import { EquipmentType, EquipmentTypeWrite } from '@ui-models';
 import { EquipmentTypeMapper } from '../mappers';
 
 @Injectable({ providedIn: 'root' })

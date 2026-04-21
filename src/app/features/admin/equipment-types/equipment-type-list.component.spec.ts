@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { of, Subject, throwError } from 'rxjs';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType } from '../../../core/models';
+import { EquipmentType } from '@ui-models';
 import { EquipmentTypeListComponent } from './equipment-type-list.component';
 
 const mockTypes: EquipmentType[] = [

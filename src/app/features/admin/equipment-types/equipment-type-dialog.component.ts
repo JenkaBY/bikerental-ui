@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType, EquipmentTypeWrite } from '../../../core/models';
+import { EquipmentType, EquipmentTypeWrite } from '@ui-models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { EquipmentTypeDropdownComponent } from './equipment-type-dropdown.component';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType } from '../../../core/models';
+import { EquipmentType } from '@ui-models';
 
 const mockTypes: EquipmentType[] = [
   { slug: 'bike', name: 'Bike' },

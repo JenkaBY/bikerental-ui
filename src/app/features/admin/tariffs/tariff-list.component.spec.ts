@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, Subject, throwError } from 'rxjs';
 import { EquipmentTypeService, TariffService } from '../../../core/api';
-import { Page, Tariff } from '../../../core/models';
+import { Page, Tariff } from '@ui-models';
 import { Labels } from '../../../shared/constant/labels';
 import { TariffListComponent } from './tariff-list.component';
 import { TariffDialogComponent } from './tariff-dialog.component';

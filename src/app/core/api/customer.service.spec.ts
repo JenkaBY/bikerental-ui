@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { CustomerService } from './customer.service';
-import { CustomerRequest, CustomerResponse, CustomerSearchResponse } from '../models';
+import { CustomerRequest, CustomerResponse, CustomerSearchResponse } from '@api-models';
 
 const BASE_URL = 'http://localhost:8080/api/customers';
 const mockCustomer: CustomerResponse = {

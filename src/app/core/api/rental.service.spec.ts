@@ -2,19 +2,24 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { RentalService } from './rental.service';
+import { Page } from '@ui-models';
 import {
   CreateRentalRequest,
-  Page,
-  PrepaymentResponse,
-  RecordPrepaymentRequest,
   RentalResponse,
   RentalSummaryResponse,
   RentalUpdateJsonPatchRequest,
-  ReturnEquipmentRequest,
-} from '../models';
+} from '@api-models';
 
 const BASE_URL = 'http://localhost:8080/api/rentals';
-const mockRental: RentalResponse = { id: 1, status: 'ACTIVE' };
+const mockRental: RentalResponse = {
+  id: 1,
+  status: 'ACTIVE',
+  startedAt: new Date(),
+  customerId: 's',
+  estimatedCost: 1,
+  equipmentItems: [],
+  plannedDurationMinutes: 60,
+};
 const mockSummary: RentalSummaryResponse = { id: 1, status: 'ACTIVE' };
 const mockPage: Page<RentalSummaryResponse> = { items: [mockSummary], totalItems: 1 };
 
@@ -61,7 +66,12 @@ describe('RentalService', () => {
   });
 
   it('create makes POST to base URL', () => {
-    const request: CreateRentalRequest = { customerId: 'c-1', equipmentId: 1, duration: 'PT1H' };
+    const request: CreateRentalRequest = {
+      customerId: 'c-1',
+      equipmentIds: [1],
+      duration: 60,
+      operatorId: 'op-1',
+    };
     service.create(request).subscribe();
     const req = httpMock.expectOne(BASE_URL);
     expect(req.request.method).toBe('POST');
@@ -84,32 +94,5 @@ describe('RentalService', () => {
     const req = httpMock.expectOne(`${BASE_URL}/1`);
     expect(req.request.method).toBe('PATCH');
     req.flush(mockRental);
-  });
-
-  it('recordPrepayment makes POST to /rentals/:id/prepayments', () => {
-    const request: RecordPrepaymentRequest = {
-      amount: 100,
-      paymentMethod: 'CASH',
-      operatorId: 'op-1',
-    };
-    const mockPrep: PrepaymentResponse = {
-      paymentId: 'p-1',
-      receiptNumber: 'R-1',
-      amount: 100,
-      paymentMethod: 'CASH',
-      createdAt: '2026-01-01T10:00:00Z',
-    };
-    service.recordPrepayment(1, request).subscribe();
-    const req = httpMock.expectOne(`${BASE_URL}/1/prepayments`);
-    expect(req.request.method).toBe('POST');
-    req.flush(mockPrep);
-  });
-
-  it('returnEquipment makes POST to /rentals/return', () => {
-    const request: ReturnEquipmentRequest = { rentalId: 1, paymentMethod: 'CASH' };
-    service.returnEquipment(request).subscribe();
-    const req = httpMock.expectOne(`${BASE_URL}/return`);
-    expect(req.request.method).toBe('POST');
-    req.flush({});
   });
 });

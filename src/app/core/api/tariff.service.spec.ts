@@ -2,15 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { TariffService } from './tariff.service';
-import {
-  Page,
-  PricingTypeResponse,
-  Tariff,
-  TariffSelection,
-  TariffSelectionResponse,
-  TariffV2Response,
-  TariffWrite,
-} from '../models';
+import { Page, Tariff, TariffSelection, TariffWrite } from '@ui-models';
+import { PricingTypeResponse, TariffSelectionV2Response, TariffV2Response } from '@api-models';
 
 const BASE_URL = 'http://localhost:8080/api/tariffs';
 const mockTariff: TariffV2Response = {
@@ -20,10 +13,10 @@ const mockTariff: TariffV2Response = {
   description: undefined,
   pricingType: 'FLAT_HOURLY',
   params: { hourlyPrice: 100 },
-  validFrom: '2026-01-01',
+  validFrom: '2026-01-01' as unknown as Date,
   status: 'ACTIVE',
 };
-const mockPage: Page<TariffV2Response> = { items: [mockTariff], totalItems: 1 };
+const mockPage = { items: [mockTariff], totalItems: 1 };
 const validWrite: TariffWrite = {
   name: 'Hourly',
   equipmentTypeSlug: 'bike',
@@ -85,7 +78,7 @@ describe('TariffService', () => {
   });
 
   it('selectTariff makes GET with required params', () => {
-    const mockSel: TariffSelectionResponse = {
+    const mockSel: TariffSelectionV2Response = {
       tariff: mockTariff,
       totalCost: 100,
       calculationBreakdown: { message: 'ok', breakdownPatternCode: 'FLAT' },
@@ -102,7 +95,7 @@ describe('TariffService', () => {
   });
 
   it('selectTariff appends rentalDate when provided', () => {
-    const mockSel2: TariffSelectionResponse = {
+    const mockSel2: TariffSelectionV2Response = {
       tariff: mockTariff,
       totalCost: 0,
       calculationBreakdown: { message: 'ok', breakdownPatternCode: 'FLAT' },
@@ -169,8 +162,10 @@ describe('TariffService', () => {
   });
 
   it('getPricingTypes is cached and refreshPricingTypes forces reload', () => {
-    const first: PricingTypeResponse[] = [{ slug: 'FLAT_HOURLY', title: '' }];
-    const second: PricingTypeResponse[] = [{ slug: 'DEGRESSIVE_HOURLY', title: '' }];
+    const first: PricingTypeResponse[] = [{ slug: 'FLAT_HOURLY', title: '', description: '' }];
+    const second: PricingTypeResponse[] = [
+      { slug: 'DEGRESSIVE_HOURLY', title: '', description: '' },
+    ];
 
     let firstResult: PricingTypeResponse[] | undefined;
     service.getPricingTypes().subscribe((r) => (firstResult = r));

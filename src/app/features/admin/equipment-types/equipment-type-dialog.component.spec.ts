@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType } from '../../../core/models';
+import { EquipmentType } from '@ui-models';
 import {
   EquipmentTypeDialogComponent,
   EquipmentTypeDialogData,

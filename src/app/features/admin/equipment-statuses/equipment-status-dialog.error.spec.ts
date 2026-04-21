@@ -5,9 +5,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { EquipmentStatusService } from '../../../core/api';
 import { EquipmentStatusDialogComponent } from './equipment-status-dialog.component';
-import { EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentStatusResponse } from '@api-models';
 
-const allStatuses: EquipmentStatusResponse[] = [{ slug: 'available', name: 'Available' }];
+const allStatuses: EquipmentStatusResponse[] = [
+  { slug: 'available', name: 'Available', allowedTransitions: [] },
+];
 
 function makeService(err: unknown) {
   return {

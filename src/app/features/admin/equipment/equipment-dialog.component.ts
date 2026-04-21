@@ -18,12 +18,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentService } from '../../../core/api';
-import {
-  EquipmentRequest,
-  EquipmentResponse,
-  EquipmentStatusResponse,
-  EquipmentType,
-} from '../../../core/models';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
 import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
 import { Labels } from '../../../shared/constant/labels';
@@ -31,6 +25,8 @@ import { FormErrorMessages } from '../../../shared/validators/form-error-message
 import { formatDate } from '@angular/common';
 import { parseDate, toIsoDate } from '../../../shared/utils/date.util';
 import { EquipmentTypeDropdownComponent } from '../../../shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
+import { EquipmentRequest, EquipmentResponse, EquipmentStatusResponse } from '@api-models';
+import { EquipmentType } from '@ui-models';
 
 export interface EquipmentDialogData {
   equipment?: EquipmentResponse;
@@ -166,7 +162,7 @@ export class EquipmentDialogComponent implements OnInit {
     statusSlug: new FormControl(this.data?.equipment?.status ?? ''),
     model: new FormControl(this.data?.equipment?.model ?? '', [Validators.maxLength(200)]),
     commissionedAt: new FormControl({
-      value: parseDate(this.data?.equipment?.commissionedAt ?? null),
+      value: parseDate((this.data?.equipment?.commissionedAt as unknown as string) ?? null),
       disabled: !this.data?.equipment?.id,
     }),
     condition: new FormControl(this.data?.equipment?.condition ?? ''),
@@ -183,7 +179,9 @@ export class EquipmentDialogComponent implements OnInit {
     const allowed = new Set(current?.allowedTransitions ?? []);
 
     // include current status itself plus any statuses allowed from it
-    return this.data.statuses.filter((s) => s.slug === currentStatusSlug || allowed.has(s.slug));
+    return this.data.statuses.filter(
+      (s) => s.slug === currentStatusSlug || allowed.has(s.slug ?? ''),
+    );
   }
 
   get currentStatusName(): string {
@@ -235,7 +233,9 @@ export class EquipmentDialogComponent implements OnInit {
       typeSlug: raw.typeSlug || undefined,
       statusSlug: raw.statusSlug || undefined,
       model: raw.model || undefined,
-      commissionedAt: raw.commissionedAt ? toIsoDate(raw.commissionedAt) : undefined,
+      commissionedAt: raw.commissionedAt
+        ? (toIsoDate(raw.commissionedAt) as unknown as Date)
+        : undefined,
       condition: raw.condition || undefined,
     };
 

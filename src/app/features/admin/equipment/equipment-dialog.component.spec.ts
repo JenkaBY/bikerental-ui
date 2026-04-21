@@ -9,7 +9,7 @@ import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialo
 import { EquipmentService } from '../../../core/api';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { EquipmentResponse, EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentResponse, EquipmentStatusResponse } from '@api-models';
 
 describe('EquipmentDialogComponent', () => {
   let fixture: ComponentFixture<EquipmentDialogComponent>;
@@ -172,7 +172,7 @@ describe('EquipmentDialogComponent', () => {
       status: 'available',
       model: 'M',
       condition: 'ok',
-      commissionedAt: '2020-06-15',
+      commissionedAt: '2020-06-15' as unknown as Date,
     };
 
     const data: EquipmentDialogData = { equipment: existing, types: [], statuses: [] };

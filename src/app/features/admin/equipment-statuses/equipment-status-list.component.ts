@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentStatusResponse } from '@api-models';
 import {
   EquipmentStatusDialogComponent,
   EquipmentStatusDialogData,
@@ -114,7 +114,9 @@ export class EquipmentStatusListComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (statuses) => {
-          const sorted = (statuses ?? []).slice().sort((a, b) => a.slug.localeCompare(b.slug));
+          const sorted = (statuses ?? [])
+            .slice()
+            .sort((a, b) => (a.slug ?? '').localeCompare(b.slug ?? ''));
           this.statuses.set(sorted);
           this.loading.set(false);
         },

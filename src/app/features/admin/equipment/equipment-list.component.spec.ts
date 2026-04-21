@@ -5,7 +5,8 @@ import { vi } from 'vitest';
 import { EquipmentListComponent } from './equipment-list.component';
 import { EquipmentService, EquipmentStatusService, EquipmentTypeService } from '../../../core/api';
 import { MatDialog } from '@angular/material/dialog';
-import { EquipmentResponse, Page } from '../../../core/models';
+import { Page } from '@ui-models';
+import { EquipmentResponse } from '@api-models';
 
 describe('EquipmentListComponent', () => {
   let fixture: ComponentFixture<EquipmentListComponent>;
@@ -118,7 +119,7 @@ describe('EquipmentListComponent', () => {
     const sampleTypes = [{ slug: 'bike', name: 'Bike' }];
     const sampleStatuses = [{ slug: 'available', name: 'Available' }];
     const samplePage: Page<EquipmentResponse> = {
-      items: [{ id: 1, uid: '1', serialNumber: 'SN' }],
+      items: [{ id: 1, uid: '1', serialNumber: 'SN', type: 's', status: 'RENTED', model: '' }],
       totalItems: 1,
     };
 
@@ -246,7 +247,14 @@ describe('EquipmentListComponent', () => {
 
     fixture.detectChanges();
 
-    const sample: EquipmentResponse = { id: 1, uid: '1', serialNumber: 'S1' };
+    const sample: EquipmentResponse = {
+      id: 1,
+      uid: '1',
+      serialNumber: 'S1',
+      type: 's',
+      status: 'RENTED',
+      model: '',
+    };
 
     // initial load may have occurred multiple times depending on environment
     const initialCallsEdit = asSpy(equipmentService.search).mock.calls.length;

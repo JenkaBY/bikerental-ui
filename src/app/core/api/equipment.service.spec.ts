@@ -2,10 +2,18 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { EquipmentService } from './equipment.service';
-import { EquipmentRequest, EquipmentResponse, Page } from '../models';
+import { Page } from '@ui-models';
+import { EquipmentRequest, EquipmentResponse } from '@api-models';
 
 const BASE_URL = 'http://localhost:8080/api/equipments';
-const mockEquipment: EquipmentResponse = { id: 1, serialNumber: 'SN-001', uid: 'UID-001' };
+const mockEquipment: EquipmentResponse = {
+  id: 1,
+  serialNumber: 'SN-001',
+  uid: 'UID-001',
+  model: '',
+  type: '',
+  status: '',
+};
 const mockPage: Page<EquipmentResponse> = { items: [mockEquipment], totalItems: 1 };
 
 describe('EquipmentService', () => {

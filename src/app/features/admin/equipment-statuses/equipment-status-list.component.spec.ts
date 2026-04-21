@@ -2,13 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { of, Subject, throwError } from 'rxjs';
 import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentStatusResponse } from '@api-models';
 import { EquipmentStatusListComponent } from './equipment-status-list.component';
 
 const mockStatuses: EquipmentStatusResponse[] = [
   { slug: 'available', name: 'Available', allowedTransitions: ['rented'] },
   { slug: 'rented', name: 'Rented', allowedTransitions: ['available', 'maintenance'] },
-  { slug: 'maintenance', name: 'Maintenance' },
+  { slug: 'maintenance', name: 'Maintenance', allowedTransitions: [] },
 ];
 
 function makeService(statuses: EquipmentStatusResponse[] = mockStatuses) {
@@ -104,9 +104,9 @@ describe('EquipmentStatusListComponent', () => {
 
   it('should sort statuses by slug ascending', async () => {
     const unsorted: EquipmentStatusResponse[] = [
-      { slug: 'rented', name: 'Rented' },
-      { slug: 'available', name: 'Available' },
-      { slug: 'maintenance', name: 'Maintenance' },
+      { slug: 'rented', name: 'Rented', allowedTransitions: [] },
+      { slug: 'available', name: 'Available', allowedTransitions: [] },
+      { slug: 'maintenance', name: 'Maintenance', allowedTransitions: [] },
     ];
     await setup(unsorted);
     expect(component.statuses().map((s) => s.slug)).toEqual(['available', 'maintenance', 'rented']);

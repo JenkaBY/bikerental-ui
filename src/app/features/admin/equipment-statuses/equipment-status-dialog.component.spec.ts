@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentStatusResponse } from '@api-models';
 import {
   EquipmentStatusDialogComponent,
   EquipmentStatusDialogData,
@@ -18,8 +18,8 @@ const existingStatus: EquipmentStatusResponse = {
 
 const allStatuses: EquipmentStatusResponse[] = [
   existingStatus,
-  { slug: 'rented', name: 'Rented' },
-  { slug: 'maintenance', name: 'Maintenance' },
+  { slug: 'rented', name: 'Rented', allowedTransitions: [] },
+  { slug: 'maintenance', name: 'Maintenance', allowedTransitions: [] },
 ];
 
 function makeService() {

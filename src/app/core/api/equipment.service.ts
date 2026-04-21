@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { EquipmentRequest, EquipmentResponse, Page, Pageable } from '../models';
+import { Page } from '@ui-models';
+import { EquipmentRequest, EquipmentResponse, Pageable } from '@api-models';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentService {

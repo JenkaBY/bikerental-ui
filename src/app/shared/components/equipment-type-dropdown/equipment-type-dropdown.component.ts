@@ -12,7 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType } from '../../../core/models';
+import { EquipmentType } from '@ui-models';
 
 @Component({
   selector: 'app-equipment-type-dropdown',

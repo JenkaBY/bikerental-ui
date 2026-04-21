@@ -2,10 +2,14 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { EquipmentStatusService } from './equipment-status.service';
-import { EquipmentStatusRequest, EquipmentStatusResponse } from '../models';
+import { EquipmentStatusRequest, EquipmentStatusResponse } from '@api-models';
 
 const BASE_URL = 'http://localhost:8080/api/equipment-statuses';
-const mockStatus: EquipmentStatusResponse = { slug: 'available', name: 'Available' };
+const mockStatus: EquipmentStatusResponse = {
+  slug: 'available',
+  name: 'Available',
+  allowedTransitions: [],
+};
 
 describe('EquipmentStatusService', () => {
   let service: EquipmentStatusService;

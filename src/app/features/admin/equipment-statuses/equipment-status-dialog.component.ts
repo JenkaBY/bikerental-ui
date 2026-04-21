@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusRequest, EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentStatusRequest, EquipmentStatusResponse } from '@api-models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
@@ -133,7 +133,7 @@ export class EquipmentStatusDialogComponent {
     if (this.isCreateMode()) {
       operation$ = this.service.create({ slug: slug ?? '', ...request });
     } else {
-      operation$ = this.service.update(this.data.status!.slug, request);
+      operation$ = this.service.update(this.data.status!.slug ?? '', request);
     }
 
     operation$.subscribe({

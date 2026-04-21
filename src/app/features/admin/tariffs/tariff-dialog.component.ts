@@ -26,7 +26,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { TariffService } from '../../../core/api';
-import { PricingType, Tariff, TariffWrite } from '../../../core/models';
+import { PricingType, Tariff, TariffWrite } from '@ui-models';
 import { EquipmentTypeDropdownComponent } from '../../../shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
 import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
