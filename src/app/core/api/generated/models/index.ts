@@ -35,16 +35,16 @@ export interface TariffV2Request {
 
 /** V2 Tariff details */
 export interface TariffV2Response {
-  id?: number;
-  name?: string;
+  id: number;
+  name: string;
   description?: string;
-  equipmentType?: string;
-  pricingType?: 'DEGRESSIVE_HOURLY' | 'FLAT_HOURLY' | 'DAILY' | 'FLAT_FEE' | 'SPECIAL';
-  params?: PricingParams;
-  validFrom?: Date;
+  equipmentType: string;
+  pricingType: 'DEGRESSIVE_HOURLY' | 'FLAT_HOURLY' | 'DAILY' | 'FLAT_FEE' | 'SPECIAL';
+  params: PricingParams;
+  validFrom: Date;
   validTo?: Date;
   version?: string;
-  status?: 'ACTIVE' | 'INACTIVE';
+  status: 'ACTIVE' | 'INACTIVE';
 }
 
 export interface ProblemDetail {
@@ -77,17 +77,17 @@ export interface EquipmentRequest {
 /** Equipment record */
 export interface EquipmentResponse {
   /** Internal ID */
-  id?: number;
+  id: number;
   /** Serial number */
-  serialNumber?: string;
+  serialNumber: string;
   /** UID tag */
-  uid?: string;
+  uid: string;
   /** Equipment type slug */
-  type?: string;
+  type: string;
   /** Equipment status slug */
-  status?: string;
+  status: string;
   /** Model name */
-  model?: string;
+  model: string;
   /** Commissioned date */
   commissionedAt?: Date;
   /** Condition */
@@ -105,9 +105,9 @@ export interface EquipmentTypeUpdateRequest {
 /** Equipment type */
 export interface EquipmentTypeResponse {
   /** Slug identifier */
-  slug?: string;
+  slug: string;
   /** Display name */
-  name?: string;
+  name: string;
   /** Description */
   description?: string;
 }
@@ -125,13 +125,13 @@ export interface EquipmentStatusUpdateRequest {
 /** Equipment status with allowed transitions */
 export interface EquipmentStatusResponse {
   /** Slug identifier */
-  slug?: string;
+  slug: string;
   /** Display name */
-  name?: string;
+  name: string;
   /** Description */
   description?: string;
   /** Status slugs this status can transition to */
-  allowedTransitions?: Array<string>;
+  allowedTransitions: Array<string>;
 }
 
 /** Request body for creating or updating a customer profile */
@@ -153,9 +153,9 @@ export interface CustomerRequest {
 /** Full customer profile */
 export interface CustomerResponse {
   /** Customer UUID */
-  id?: string;
+  id: string;
   /** Phone number */
-  phone?: string;
+  phone: string;
   /** First name */
   firstName?: string;
   /** Last name */
@@ -192,34 +192,34 @@ export interface BreakdownCostDetails {
 
 /** Rental cost calculation result */
 export interface CostCalculationResponse {
-  equipmentBreakdowns?: Array<EquipmentCostBreakdownResponse>;
+  equipmentBreakdowns: Array<EquipmentCostBreakdownResponse>;
   /** cost without discount applied */
-  subtotal?: number;
+  subtotal: number;
   discount?: DiscountDetailResponse;
   /** cost with discount applied */
-  totalCost?: number;
-  effectiveDurationMinutes?: number;
+  totalCost: number;
+  effectiveDurationMinutes: number;
   estimate?: boolean;
   specialPricingApplied?: boolean;
 }
 
 /** Discount applied */
 export interface DiscountDetailResponse {
-  percent?: number;
-  amount?: number;
+  percent: number;
+  amount: number;
 }
 
 /** Per-equipment cost breakdown */
 export interface EquipmentCostBreakdownResponse {
-  equipmentType?: string;
-  tariffId?: number;
-  tariffName?: string;
-  pricingType?: string;
-  itemCost?: number;
-  billedDurationMinutes?: number;
+  equipmentType: string;
+  tariffId: number;
+  tariffName: string;
+  pricingType: string;
+  itemCost: number;
+  billedDurationMinutes: number;
   overtimeMinutes?: number;
   forgivenMinutes?: number;
-  calculationBreakdown?: BreakdownCostDetails;
+  calculationBreakdown: BreakdownCostDetails;
 }
 
 /** Request body for creating a rental via Fast Path */
@@ -245,41 +245,41 @@ export interface CreateRentalRequest {
 /** Equipment item within rental */
 export interface EquipmentItemResponse {
   /** Equipment ID */
-  equipmentId?: number;
+  equipmentId: number;
   /** Equipment UID */
   equipmentUid?: string;
   /** Estimated cost for this equipment (optional) */
-  estimatedCost?: number;
+  estimatedCost: number;
   /** Final cost for this equipment (optional) */
   finalCost?: number;
   /** Tariff ID */
   tariffId?: number;
   /** Status rental equipment */
-  status?: string;
+  status: string;
 }
 
 /** Full rental details */
 export interface RentalResponse {
   /** Rental ID */
-  id?: number;
+  id: number;
   /** Customer UUID */
-  customerId?: string;
+  customerId: string;
   /** List of equipment items in this rental */
-  equipmentItems?: Array<EquipmentItemResponse>;
+  equipmentItems: Array<EquipmentItemResponse>;
   /** Rental status */
-  status?: string;
+  status: string;
   /** Rental start time */
-  startedAt?: Date;
+  startedAt: Date;
   /** Expected return time */
   expectedReturnAt?: Date;
   /** Actual return time (null if not returned) */
   actualReturnAt?: Date;
   /** Planned duration in minutes */
-  plannedDurationMinutes?: number;
+  plannedDurationMinutes: number;
   /** Actual duration in minutes (null until returned) */
   actualDurationMinutes?: number;
   /** Estimated rental cost */
-  estimatedCost?: number;
+  estimatedCost: number;
   /** Final rental cost (null until returned) */
   finalCost?: number;
 }
@@ -307,7 +307,7 @@ export interface ReturnEquipmentRequest {
 /** Result of equipment return operation */
 export interface RentalReturnResponse {
   /** Updated rental details */
-  rental?: RentalResponse;
+  rental: RentalResponse;
   /** Settlement transaction related to rental return */
   settlement?: SettlementResponse;
 }
@@ -315,11 +315,11 @@ export interface RentalReturnResponse {
 /** Settlement response containing capture transaction references, optional release transaction reference and the timestamp when the settlement was recorded */
 export interface SettlementResponse {
   /** List of capture transaction UUIDs */
-  captureTransactionRefs?: Array<string>;
+  captureTransactionRefs: Array<string>;
   /** Release transaction reference (UUID). Present when a release transaction was created. */
   releaseTransactionRef?: string | null;
   /** Timestamp when the settlement was recorded */
-  recordedAt?: Date;
+  recordedAt: Date;
 }
 
 /** Request body for recording a fund withdrawal */
@@ -345,9 +345,9 @@ export interface RecordWithdrawalRequest {
 /** Unified transaction response for deposits and adjustments */
 export interface TransactionResponse {
   /** Transaction UUID */
-  transactionId?: string;
+  transactionId: string;
   /** Timestamp when the transaction was recorded */
-  recordedAt?: Date;
+  recordedAt: Date;
 }
 
 /** Request body for recording a fund deposit */
@@ -431,21 +431,21 @@ export interface PageTariffV2Response {
 /** Selected V2 tariff with cost for the given duration */
 export interface TariffSelectionV2Response {
   /** Selected tariff */
-  tariff?: TariffV2Response;
+  tariff: TariffV2Response;
   /** Total cost */
-  totalCost?: number;
+  totalCost: number;
   /** Calculation breakdown */
-  calculationBreakdown?: BreakdownCostDetails;
+  calculationBreakdown: BreakdownCostDetails;
 }
 
 /** Pricing type with localized title and description */
 export interface PricingTypeResponse {
   /** Enum slug */
-  slug?: string;
+  slug: string;
   /** Localized title */
-  title?: string;
+  title: string;
   /** Localized description */
-  description?: string;
+  description: string;
 }
 
 export interface PageRentalSummaryResponse {
@@ -488,11 +488,11 @@ export interface Page {
 /** Customer account balance breakdown */
 export interface CustomerAccountBalancesResponse {
   /** Available (spendable) wallet balance */
-  walletBalance?: number;
+  walletBalance: number;
   /** Reserved (held) balance for active rentals */
-  holdBalance?: number;
+  holdBalance: number;
   /** Timestamp of the most recent ledger mutation (UTC ISO-8601) */
-  lastUpdatedAt?: Date;
+  lastUpdatedAt: Date;
 }
 
 export interface PageEquipmentResponse {
@@ -504,9 +504,9 @@ export interface PageEquipmentResponse {
 /** Compact customer info returned in search results */
 export interface CustomerSearchResponse {
   /** Customer UUID */
-  id?: string;
+  id: string;
   /** Phone number */
-  phone?: string;
+  phone: string;
   /** First name */
   firstName?: string;
   /** Last name */
