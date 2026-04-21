@@ -87,7 +87,7 @@ pageSize   = signal(10);
 
 1. **`src/app/features/admin/tariffs/tariff-list.component.ts`** — replace placeholder:
    - `standalone: true`, `ChangeDetectionStrategy.OnPush`
-   - Import `Tariff` from `../../../core/models` — **not** from `core/models`
+   - Import `Tariff` from `@ui-models` — **not** from `core/models`
    - Imports: `MatCardModule`, `MatTableModule`, `MatPaginatorModule`, `MatChipsModule`,
      `MatProgressSpinnerModule`, `DatePipe`, `CommonModule`
    - Inject: `TariffService`, `DestroyRef`

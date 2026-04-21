@@ -21,8 +21,7 @@ src/app/
 │   │   ├── equipment-type.service.ts
 │   │   ├── equipment-status.service.ts
 │   │   ├── tariff.service.ts          # Returns Tariff (domain), accepts TariffWrite
-│   │   ├── rental.service.ts
-│   │   └── payment.service.ts
+│   │   └── rental.service.ts
 │   ├── models/                        # API-level types: raw Request/Response shapes from backend
 │   │   ├── customer.model.ts
 │   │   ├── equipment.model.ts
@@ -373,7 +372,7 @@ Single `POST /api/rentals` with full payload → creates ACTIVE rental immediate
 1. `POST /api/rentals/draft` → creates DRAFT
 2. `PATCH /api/rentals/{id}` (JSON Patch) → fill customer, equipment, duration
 3. `PATCH /api/rentals/{id}` with `status=ACTIVE` → activate rental
-4. `POST /api/rentals/{id}/prepayments` → record payment
+4. `POST /api/finance/deposits` → record payment
 
 ### Return Flow
 

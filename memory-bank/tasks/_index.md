@@ -24,6 +24,7 @@ TASK001 → TASK000 (health indicator core — complete)
                     → TASK028 (users placeholder)
         → TASK004 → TASK010, TASK011 → TASK012
         → TASK002 (auth added last — all pages accessible by default, no auth guards)
+TASK029 → TASK030 (migrate hand-written API models to generated — complete)
 ```
 
 ## In Progress
@@ -66,6 +67,7 @@ TASK001 → TASK000 (health indicator core — complete)
 - [TASK019] TariffDialogComponent — dynamic pricing params section. Completed on 2026-03-24
 - [TASK024] EquipmentTypeDropdownComponent — standalone shared dropdown in `shared/components/`; `ControlValueAccessor`; loads types from cached `EquipmentTypeService.getAll()`; displays `name`, binds `slug`; i18n label. Depends on: TASK023 (blocks: TASK018)
 - [TASK008] Admin: Tariffs CRUD — **Parent tracker** for TASK015–TASK022. Depends on: TASK003
+- [TASK030] Migrate core/models to use generated API models — Completed on 2026-04-20
 
 ## Abandoned
 
