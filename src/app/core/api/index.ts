@@ -1,4 +1,3 @@
-export { CustomerService } from './customer.service';
 export { EquipmentService } from './equipment.service';
 export { EquipmentTypeService } from './equipment-type.service';
 export { EquipmentStatusService } from './equipment-status.service';
