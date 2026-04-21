@@ -1,29 +1,33 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { EquipmentTypeDropdownComponent } from './equipment-type-dropdown.component';
-import { EquipmentTypeService } from '../../../core/api';
+import { EquipmentTypeStore } from '@store.equipment-type.store';
 import { EquipmentType } from '@ui-models';
 
 const mockTypes: EquipmentType[] = [
-  { slug: 'bike', name: 'Bike' },
-  { slug: 'scooter', name: 'Scooter' },
+  { slug: 'bike', name: 'Bike', isForSpecialTariff: false },
+  { slug: 'scooter', name: 'Scooter', isForSpecialTariff: false },
 ];
 
-function makeService(types: EquipmentType[] = mockTypes) {
-  return { getAll: vi.fn().mockReturnValue(of(types)) };
+function makeStore(types: EquipmentType[] = mockTypes) {
+  return {
+    types: vi.fn().mockReturnValue(types),
+    loading: vi.fn().mockReturnValue(false),
+    load: vi.fn().mockReturnValue(of(undefined)),
+  };
 }
 
 describe('EquipmentTypeDropdownComponent', () => {
   let fixture: ComponentFixture<EquipmentTypeDropdownComponent>;
   let component: EquipmentTypeDropdownComponent;
-  let service: ReturnType<typeof makeService>;
+  let store: ReturnType<typeof makeStore>;
 
   async function setup(types: EquipmentType[] = mockTypes) {
-    service = makeService(types);
+    store = makeStore(types);
 
     await TestBed.configureTestingModule({
       imports: [EquipmentTypeDropdownComponent],
-      providers: [{ provide: EquipmentTypeService, useValue: service }],
+      providers: [{ provide: EquipmentTypeStore, useValue: store }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EquipmentTypeDropdownComponent);
@@ -34,7 +38,7 @@ describe('EquipmentTypeDropdownComponent', () => {
   it('should create and load types', async () => {
     await setup();
     expect(component).toBeTruthy();
-    expect(service.getAll).toHaveBeenCalledOnce();
+    expect(store.load).toHaveBeenCalledOnce();
     expect(component.types().length).toBe(mockTypes.length);
   });
 

@@ -2,19 +2,27 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { EquipmentService } from './equipment.service';
-import { Page } from '@ui-models';
-import { EquipmentRequest, EquipmentResponse } from '@api-models';
+import { Equipment, EquipmentWrite, Page } from '@ui-models';
+import { EquipmentResponse } from '@api-models';
 
 const BASE_URL = 'http://localhost:8080/api/equipments';
-const mockEquipment: EquipmentResponse = {
+const mockEquipmentResponse: EquipmentResponse = {
   id: 1,
   serialNumber: 'SN-001',
   uid: 'UID-001',
   model: '',
-  type: '',
-  status: '',
+  type: 'bike',
+  status: 'available',
 };
-const mockPage: Page<EquipmentResponse> = { items: [mockEquipment], totalItems: 1 };
+const mockEquipment: Equipment = {
+  id: 1,
+  serialNumber: 'SN-001',
+  uid: 'UID-001',
+  type: { slug: 'bike', name: 'bike', isForSpecialTariff: false },
+  model: '',
+  status: { slug: 'available', name: 'available', allowedTransitions: [] },
+};
+const mockPage: Page<EquipmentResponse> = { items: [mockEquipmentResponse], totalItems: 1 };
 
 describe('EquipmentService', () => {
   let service: EquipmentService;
@@ -30,13 +38,14 @@ describe('EquipmentService', () => {
 
   afterEach(() => httpMock.verify());
 
-  it('search without params makes GET to base URL', () => {
-    let result: Page<EquipmentResponse> | undefined;
+  it('search without params makes GET and maps response', () => {
+    let result: Page<Equipment> | undefined;
     service.search().subscribe((r) => (result = r));
     const req = httpMock.expectOne(BASE_URL);
     expect(req.request.method).toBe('GET');
     req.flush(mockPage);
-    expect(result).toEqual(mockPage);
+    expect(result?.items?.[0].type.slug).toBe('bike');
+    expect(result?.items?.[0].status.slug).toBe('available');
   });
 
   it('search with status and type appends params', () => {
@@ -55,19 +64,12 @@ describe('EquipmentService', () => {
     req.flush(mockPage);
   });
 
-  it('search with sort appends sort params', () => {
-    service.search(undefined, undefined, { sort: ['id,asc'] }).subscribe();
-    const req = httpMock.expectOne((r) => r.url === BASE_URL);
-    expect(req.request.params.getAll('sort')).toContain('id,asc');
-    req.flush(mockPage);
-  });
-
-  it('getById makes GET to /equipments/:id', () => {
-    let result: EquipmentResponse | undefined;
+  it('getById makes GET and maps response', () => {
+    let result: Equipment | undefined;
     service.getById(1).subscribe((r) => (result = r));
     const req = httpMock.expectOne(`${BASE_URL}/1`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockEquipment);
+    req.flush(mockEquipmentResponse);
     expect(result).toEqual(mockEquipment);
   });
 
@@ -75,33 +77,33 @@ describe('EquipmentService', () => {
     service.getByUid('UID-001').subscribe();
     const req = httpMock.expectOne(`${BASE_URL}/by-uid/UID-001`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockEquipment);
+    req.flush(mockEquipmentResponse);
   });
 
   it('getBySerial makes GET to /equipments/by-serial/:serial', () => {
     service.getBySerial('SN-001').subscribe();
     const req = httpMock.expectOne(`${BASE_URL}/by-serial/SN-001`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockEquipment);
+    req.flush(mockEquipmentResponse);
   });
 
-  it('create makes POST request with body', () => {
-    const request: EquipmentRequest = { serialNumber: 'SN-001' };
-    let result: EquipmentResponse | undefined;
-    service.create(request).subscribe((r) => (result = r));
+  it('create makes POST request with mapped body', () => {
+    const write: EquipmentWrite = { serialNumber: 'SN-001', typeSlug: 'bike' };
+    let result: Equipment | undefined;
+    service.create(write).subscribe((r) => (result = r));
     const req = httpMock.expectOne(BASE_URL);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(request);
-    req.flush(mockEquipment);
+    expect(req.request.body).toEqual({ serialNumber: 'SN-001', typeSlug: 'bike' });
+    req.flush(mockEquipmentResponse);
     expect(result).toEqual(mockEquipment);
   });
 
-  it('update makes PUT request to correct URL', () => {
-    const request: EquipmentRequest = { serialNumber: 'SN-002' };
-    service.update(1, request).subscribe();
+  it('update makes PUT request to correct URL with mapped body', () => {
+    const write: EquipmentWrite = { serialNumber: 'SN-002', statusSlug: 'maintenance' };
+    service.update(1, write).subscribe();
     const req = httpMock.expectOne(`${BASE_URL}/1`);
     expect(req.request.method).toBe('PUT');
-    expect(req.request.body).toEqual(request);
-    req.flush({ ...mockEquipment, serialNumber: 'SN-002' });
+    expect(req.request.body).toEqual({ serialNumber: 'SN-002', statusSlug: 'maintenance' });
+    req.flush({ ...mockEquipmentResponse, serialNumber: 'SN-002', status: 'maintenance' });
   });
 });

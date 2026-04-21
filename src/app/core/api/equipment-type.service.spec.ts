@@ -7,7 +7,12 @@ import { EquipmentType, EquipmentTypeWrite } from '@ui-models';
 
 const BASE_URL = 'http://localhost:8080/api/equipment-types';
 const mockType: EquipmentTypeResponse = { slug: 'bike', name: 'Bike', description: 'A bicycle' };
-const mockDomain: EquipmentType = { slug: 'bike', name: 'Bike', description: 'A bicycle' };
+const mockDomain: EquipmentType = {
+  slug: 'bike',
+  name: 'Bike',
+  description: 'A bicycle',
+  isForSpecialTariff: false,
+};
 
 describe('EquipmentTypeService', () => {
   let service: EquipmentTypeService;

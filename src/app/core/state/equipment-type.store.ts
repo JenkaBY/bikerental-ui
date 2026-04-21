@@ -6,6 +6,11 @@ import { EquipmentType, EquipmentTypeWrite } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentTypeStore {
+  TYPE_CONFIG: Record<string, Partial<EquipmentType>> = {
+    SPECIAL: { isForSpecialTariff: true },
+    ANY: { isForSpecialTariff: true },
+  };
+  DEFAULT_CONFIG: Partial<EquipmentType> = { isForSpecialTariff: false };
   private service = inject(EquipmentTypeService);
 
   private readonly _types = signal<EquipmentType[]>([]);
@@ -13,6 +18,7 @@ export class EquipmentTypeStore {
   private readonly _saving = signal(false);
 
   readonly types = computed(() => this._types());
+  readonly typesForEquipment = computed(() => this._types().filter((t) => !t.isForSpecialTariff));
   readonly loading = computed(() => this._loading());
   readonly saving = computed(() => this._saving());
 
@@ -52,6 +58,8 @@ export class EquipmentTypeStore {
   }
 
   private sortedBySlug(types: EquipmentType[]): EquipmentType[] {
-    return types.slice().sort((a, b) => a.slug.localeCompare(b.slug));
+    return types
+      .map((t) => ({ ...t, ...(this.TYPE_CONFIG[t.slug] || this.DEFAULT_CONFIG) }))
+      .sort((a, b) => a.slug.localeCompare(b.slug));
   }
 }

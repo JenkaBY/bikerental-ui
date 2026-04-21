@@ -7,7 +7,12 @@ import { EquipmentType, EquipmentTypeWrite } from '../models';
 
 export class EquipmentTypeMapper {
   static fromResponse(r: EquipmentTypeResponse): EquipmentType {
-    return { slug: r.slug ?? '', name: r.name ?? '', description: r.description };
+    return {
+      slug: r.slug,
+      name: r.name,
+      description: r.description,
+      isForSpecialTariff: false,
+    };
   }
 
   static toCreateRequest(w: EquipmentTypeWrite): EquipmentTypeRequest {

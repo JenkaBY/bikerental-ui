@@ -6,8 +6,8 @@ import { EquipmentType } from '@ui-models';
 import { EquipmentTypeListComponent } from './equipment-type-list.component';
 
 const mockTypes: EquipmentType[] = [
-  { slug: 'bike', name: 'Bike', description: 'A bicycle' },
-  { slug: 'scooter', name: 'Scooter' },
+  { slug: 'bike', name: 'Bike', description: 'A bicycle', isForSpecialTariff: false },
+  { slug: 'scooter', name: 'Scooter', isForSpecialTariff: false },
 ];
 
 function makeStore(types: EquipmentType[] = mockTypes, loading = false) {

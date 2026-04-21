@@ -1,18 +1,16 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
+  computed,
   forwardRef,
   inject,
-  OnInit,
+  input,
   signal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType } from '@ui-models';
+import { EquipmentTypeStore } from '@store.equipment-type.store';
 
 @Component({
   selector: 'app-equipment-type-dropdown',
@@ -36,7 +34,7 @@ import { EquipmentType } from '@ui-models';
         (blur)="onTouched()"
       >
         @if (loading()) {
-          <mat-option disabled i18n>Loading…</mat-option>
+          <mat-option disabled i18n>Loading...</mat-option>
         }
         @for (t of types(); track t.slug) {
           <mat-option [value]="t.slug">{{ t.name }}</mat-option>
@@ -45,42 +43,23 @@ import { EquipmentType } from '@ui-models';
     </mat-form-field>
   `,
 })
-export class EquipmentTypeDropdownComponent implements ControlValueAccessor, OnInit {
-  private service = inject(EquipmentTypeService);
-  private destroyRef = inject(DestroyRef);
+export class EquipmentTypeDropdownComponent implements ControlValueAccessor {
+  private store = inject(EquipmentTypeStore);
 
   private _value = signal<string | null>(null);
   readonly value = this._value.asReadonly();
 
-  readonly types = signal<EquipmentType[]>([]);
-  readonly loading = signal(false);
+  readonly loading = this.store.loading;
   readonly isDisabled = signal(false);
+  readonly showAll = input(true);
+  readonly types = computed(() => {
+    return this.showAll() ? this.store.types() : this.store.typesForEquipment();
+  });
 
   private onChange: (v: string | null) => void = () => void 0;
   onTouched: () => void = () => void 0;
 
   readonly label = $localize`Equipment Type`;
-
-  ngOnInit(): void {
-    this.load();
-  }
-
-  private load(): void {
-    this.loading.set(true);
-    this.service
-      .getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (list: EquipmentType[]) => {
-          const sorted = (list ?? [])
-            .slice()
-            .sort((a: EquipmentType, b: EquipmentType) => a.name.localeCompare(b.name));
-          this.types.set(sorted);
-          this.loading.set(false);
-        },
-        error: () => this.loading.set(false),
-      });
-  }
 
   onSelect(slug: string | null): void {
     this._value.set(slug ?? null);

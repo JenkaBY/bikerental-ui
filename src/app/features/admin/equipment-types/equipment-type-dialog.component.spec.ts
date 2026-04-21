@@ -13,6 +13,7 @@ const existingType: EquipmentType = {
   slug: 'bike',
   name: 'Bike',
   description: 'A bicycle',
+  isForSpecialTariff: false,
 };
 
 function makeStore() {

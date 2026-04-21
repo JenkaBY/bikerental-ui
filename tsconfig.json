@@ -17,7 +17,8 @@
     "baseUrl": "./",
     "paths": {
       "@api-models": ["src/app/core/api/generated/models/index.ts"],
-      "@ui-models": ["src/app/core/models/index.ts"]
+      "@ui-models": ["src/app/core/models/index.ts"],
+      "@store.*": ["src/app/core/state/*"]
     }
   },
   "angularCompilerOptions": {
