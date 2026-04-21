@@ -3,6 +3,7 @@ import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import { EquipmentTypeService } from '../api';
 import { EquipmentType, EquipmentTypeWrite } from '../models';
+import { EquipmentTypeMapper } from '../mappers';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentTypeStore {
@@ -25,6 +26,7 @@ export class EquipmentTypeStore {
   load(): Observable<void> {
     this._loading.set(true);
     return this.service.getAll().pipe(
+      map((responses) => responses.map(EquipmentTypeMapper.fromResponse)),
       tap((types) => {
         this._types.set(this.sortedBySlug(types));
         this._loading.set(false);
@@ -39,7 +41,8 @@ export class EquipmentTypeStore {
 
   create(write: EquipmentTypeWrite): Observable<EquipmentType> {
     this._saving.set(true);
-    return this.service.create(write).pipe(
+    return this.service.create(EquipmentTypeMapper.toCreateRequest(write)).pipe(
+      map(EquipmentTypeMapper.fromResponse),
       tap((created) => {
         this._types.set(this.sortedBySlug([...this._types(), created]));
       }),
@@ -49,7 +52,8 @@ export class EquipmentTypeStore {
 
   update(write: EquipmentTypeWrite): Observable<EquipmentType> {
     this._saving.set(true);
-    return this.service.update(write).pipe(
+    return this.service.update(write.slug, EquipmentTypeMapper.toUpdateRequest(write)).pipe(
+      map(EquipmentTypeMapper.fromResponse),
       tap((updated) => {
         this._types.set(this._types().map((t) => (t.slug === updated.slug ? updated : t)));
       }),

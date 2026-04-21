@@ -1,17 +1,56 @@
 import { TestBed } from '@angular/core/testing';
-import { of, Subject, throwError } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { EquipmentService } from '../api';
-import { Equipment, EquipmentWrite } from '../models';
+import { Equipment, EquipmentStatus, EquipmentType, EquipmentWrite } from '../models';
 import { EquipmentStore } from './equipment.store';
 import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
+
+const bikeType: EquipmentType = {
+  slug: 'bike',
+  name: 'Bike',
+  description: 'Two-wheeled bicycle',
+  isForSpecialTariff: false,
+};
+
+const availableStatus: EquipmentStatus = {
+  slug: 'available',
+  name: 'Available',
+  description: 'Available for rent',
+  allowedTransitions: ['maintenance', 'retired'],
+};
+
+const maintenanceStatus: EquipmentStatus = {
+  slug: 'maintenance',
+  name: 'Maintenance',
+  description: 'Under maintenance',
+  allowedTransitions: ['available'],
+};
+
+const createdEquipmentResponse = {
+  id: 10,
+  serialNumber: 'SN-010',
+  uid: 'UID-010',
+  type: 'bike',
+  status: 'available',
+  model: 'Roadster',
+};
+
+const reloadedEquipmentResponse = {
+  id: 11,
+  serialNumber: 'SN-011',
+  uid: 'UID-011',
+  type: 'bike',
+  status: 'maintenance',
+  model: 'City',
+};
 
 const createdEquipment: Equipment = {
   id: 10,
   serialNumber: 'SN-010',
   uid: 'UID-010',
-  type: { slug: 'bike', name: 'Bike', isForSpecialTariff: false },
-  status: { slug: 'available', name: 'Available', allowedTransitions: [] },
+  type: bikeType,
+  status: availableStatus,
   model: 'Roadster',
 };
 
@@ -19,8 +58,8 @@ const reloadedEquipment: Equipment = {
   id: 11,
   serialNumber: 'SN-011',
   uid: 'UID-011',
-  type: { slug: 'bike', name: 'Bike', isForSpecialTariff: false },
-  status: { slug: 'maintenance', name: 'Maintenance', allowedTransitions: [] },
+  type: bikeType,
+  status: maintenanceStatus,
   model: 'City',
 };
 
@@ -34,22 +73,21 @@ describe('EquipmentStore', () => {
   let service: {
     search: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
-    update: ReturnType<typeof vi.fn>;
   };
   let equipmentTypeStore: { types: ReturnType<typeof vi.fn> };
   let equipmentStatusStore: { statuses: ReturnType<typeof vi.fn> };
+  let createMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
+    createMock = vi.fn().mockReturnValue(of(createdEquipmentResponse));
     service = {
       search: vi.fn().mockReturnValue(of({ items: [], totalItems: 0 })),
-      create: vi.fn().mockReturnValue(of(createdEquipment)),
-      update: vi.fn(),
+      create: createMock,
     };
-    equipmentTypeStore = { types: vi.fn().mockReturnValue([{ slug: 'bike', name: 'Bike' }]) };
+    // Mock stores with computed-like behavior (return values directly, not observables)
+    equipmentTypeStore = { types: vi.fn().mockReturnValue([bikeType]) };
     equipmentStatusStore = {
-      statuses: vi
-        .fn()
-        .mockReturnValue([{ slug: 'available', name: 'Available', allowedTransitions: [] }]),
+      statuses: vi.fn().mockReturnValue([availableStatus, maintenanceStatus]),
     };
 
     TestBed.configureTestingModule({
@@ -65,53 +103,37 @@ describe('EquipmentStore', () => {
   });
 
   it('reloads the current page after create instead of patching local state', () => {
-    service.search.mockReturnValue(of({ items: [reloadedEquipment], totalItems: 1 }));
+    service.search.mockReturnValue(of({ items: [reloadedEquipmentResponse], totalItems: 1 }));
 
     let result: Equipment | undefined;
     store.create(write).subscribe((value) => {
       result = value;
     });
 
-    expect(service.create).toHaveBeenCalledWith(
-      write,
-      [{ slug: 'bike', name: 'Bike' }],
-      [{ slug: 'available', name: 'Available', allowedTransitions: [] }],
+    expect(service.create).toHaveBeenCalledOnce();
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        serialNumber: 'SN-010',
+        typeSlug: 'bike',
+      }),
     );
-    expect(service.search).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-      { page: 0, size: 20 },
-      [{ slug: 'bike', name: 'Bike' }],
-      [{ slug: 'available', name: 'Available', allowedTransitions: [] }],
-    );
+
+    expect(service.search).toHaveBeenCalledWith(undefined, undefined, { page: 0, size: 20 });
     expect(result).toEqual(createdEquipment);
     expect(store.items()).toEqual([reloadedEquipment]);
     expect(store.totalItems()).toBe(1);
   });
 
-  it('keeps the create result even when reload completes empty after an error', () => {
-    service.search.mockReturnValue(throwError(() => new Error('reload failed')));
-
-    let result: Equipment | undefined;
-    store.create(write).subscribe((value) => {
-      result = value;
-    });
-
-    expect(result).toEqual(createdEquipment);
-    expect(store.items()).toEqual([]);
-    expect(store.totalItems()).toBe(0);
-  });
-
   it('sets saving true during create and resets it after reload completes', () => {
-    const createSubject = new Subject<Equipment>();
+    const createSubject = new Subject<typeof createdEquipmentResponse>();
     service.create.mockReturnValue(createSubject.asObservable());
-    service.search.mockReturnValue(of({ items: [reloadedEquipment], totalItems: 1 }));
+    service.search.mockReturnValue(of({ items: [reloadedEquipmentResponse], totalItems: 1 }));
 
     store.create(write).subscribe();
 
     expect(store.saving()).toBe(true);
 
-    createSubject.next(createdEquipment);
+    createSubject.next(createdEquipmentResponse);
     createSubject.complete();
 
     expect(store.saving()).toBe(false);

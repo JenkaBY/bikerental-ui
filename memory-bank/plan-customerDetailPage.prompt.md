@@ -34,7 +34,7 @@ Both lazy routes point to the same component class. The component is unaware of 
 
 ### 1. Domain + model layer
 
-**`core/models/customer.model.ts`** — add/update:
+**`core/api/generated/models/customer.model.ts`** — add/update:
 
 ```typescript
 export interface Customer {
@@ -67,7 +67,7 @@ export interface Transaction {
 }
 ```
 
-**`core/models/customer.model.ts`** — add:
+**`core/api/generated/models/customer.model.ts`** — add:
 
 ```typescript
 export interface CustomerAccountBalancesResponse {
@@ -77,7 +77,7 @@ export interface CustomerAccountBalancesResponse {
 }
 ```
 
-**`core/models/finance.model.ts`** — new file:
+**`core/api/generated/models/finance.model.ts`** — new file:
 
 ```typescript
 export interface TransactionHistoryFilterParams {

@@ -5,6 +5,7 @@ import { EquipmentService } from '../api';
 import { Equipment, EquipmentWrite, Page } from '@ui-models';
 import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
+import { EquipmentMapper } from '../mappers';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentStore {
@@ -34,17 +35,15 @@ export class EquipmentStore {
     const types = this.equipmentTypeStore.types();
     const statuses = this.equipmentStatusStore.statuses();
     return this.service
-      .search(
-        this._filterStatus(),
-        this._filterType(),
-        {
-          page: this._pageIndex(),
-          size: this._pageSize(),
-        },
-        types,
-        statuses,
-      )
+      .search(this._filterStatus(), this._filterType(), {
+        page: this._pageIndex(),
+        size: this._pageSize(),
+      })
       .pipe(
+        map((page) => ({
+          ...page,
+          items: page.items.map((item) => EquipmentMapper.fromResponse(item, types, statuses)),
+        })),
         tap((page) => this._page.set(page)),
         map(() => undefined as void),
         finalize(() => this._loading.set(false)),
@@ -71,7 +70,8 @@ export class EquipmentStore {
     this._saving.set(true);
     const types = this.equipmentTypeStore.types();
     const statuses = this.equipmentStatusStore.statuses();
-    return this.service.create(write, types, statuses).pipe(
+    return this.service.create(EquipmentMapper.toRequest(write)).pipe(
+      map((response) => EquipmentMapper.fromResponse(response, types, statuses)),
       switchMap((created) =>
         this.load().pipe(
           map(() => created),
@@ -86,7 +86,8 @@ export class EquipmentStore {
     this._saving.set(true);
     const types = this.equipmentTypeStore.types();
     const statuses = this.equipmentStatusStore.statuses();
-    return this.service.update(id, write, types, statuses).pipe(
+    return this.service.update(id, EquipmentMapper.toRequest(write)).pipe(
+      map((response) => EquipmentMapper.fromResponse(response, types, statuses)),
       tap((updated) => {
         this._page.update((p) => ({
           ...p,

@@ -16,7 +16,6 @@ src/app/
 │   │   ├── auth.guard.ts
 │   │   └── role.guard.ts
 │   ├── api/                           # HTTP API client services (one per domain)
-│   │   ├── customer.service.ts        # Returns domain objects (via mapper)
 │   │   ├── equipment.service.ts
 │   │   ├── equipment-type.service.ts
 │   │   ├── equipment-status.service.ts

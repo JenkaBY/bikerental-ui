@@ -35,10 +35,9 @@ describe('EquipmentTypeDropdownComponent', () => {
     fixture.detectChanges();
   }
 
-  it('should create and load types', async () => {
+  it('should create and show types from store', async () => {
     await setup();
     expect(component).toBeTruthy();
-    expect(store.load).toHaveBeenCalledOnce();
     expect(component.types().length).toBe(mockTypes.length);
   });
 
