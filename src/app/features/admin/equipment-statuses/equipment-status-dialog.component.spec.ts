@@ -2,27 +2,27 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
-import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusResponse } from '@api-models';
+import { EquipmentStatusStore } from '../../../core/state/equipment-status.store';
+import { EquipmentStatus } from '@ui-models';
 import {
   EquipmentStatusDialogComponent,
   EquipmentStatusDialogData,
 } from './equipment-status-dialog.component';
 
-const existingStatus: EquipmentStatusResponse = {
+const existingStatus: EquipmentStatus = {
   slug: 'available',
   name: 'Available',
   description: 'Bike is available',
   allowedTransitions: ['rented'],
 };
 
-const allStatuses: EquipmentStatusResponse[] = [
+const allStatuses: EquipmentStatus[] = [
   existingStatus,
   { slug: 'rented', name: 'Rented', allowedTransitions: [] },
   { slug: 'maintenance', name: 'Maintenance', allowedTransitions: [] },
 ];
 
-function makeService() {
+function makeStore() {
   return {
     create: vi.fn().mockReturnValue(of(existingStatus)),
     update: vi.fn().mockReturnValue(of(existingStatus)),
@@ -38,14 +38,14 @@ function makeSnackBar() {
 }
 
 async function setup(data: EquipmentStatusDialogData = { statuses: allStatuses }) {
-  const service = makeService();
+  const store = makeStore();
   const dialogRef = makeDialogRef();
   const snackBar = makeSnackBar();
 
   await TestBed.configureTestingModule({
     imports: [EquipmentStatusDialogComponent],
     providers: [
-      { provide: EquipmentStatusService, useValue: service },
+      { provide: EquipmentStatusStore, useValue: store },
       { provide: MatDialogRef, useValue: dialogRef },
       { provide: MAT_DIALOG_DATA, useValue: data },
       { provide: MatSnackBar, useValue: snackBar },
@@ -57,7 +57,7 @@ async function setup(data: EquipmentStatusDialogData = { statuses: allStatuses }
   );
   fixture.detectChanges();
 
-  return { fixture, component: fixture.componentInstance, service, dialogRef, snackBar };
+  return { fixture, component: fixture.componentInstance, store, dialogRef, snackBar };
 }
 
 describe('EquipmentStatusDialogComponent — create mode', () => {
@@ -84,19 +84,19 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
     expect(component.transitionOptions).toHaveLength(allStatuses.length);
   });
 
-  it('should mark form touched and not call service when form is invalid', async () => {
-    const { component, service } = await setup();
+  it('should mark form touched and not call store when form is invalid', async () => {
+    const { component, store } = await setup();
     component.save();
-    expect(service.create).not.toHaveBeenCalled();
+    expect(store.create).not.toHaveBeenCalled();
     expect(component.form.touched).toBe(true);
   });
 
-  it('should call service.create on valid submit', async () => {
-    const { component, service, dialogRef } = await setup();
+  it('should call store.create on valid submit', async () => {
+    const { component, store, dialogRef } = await setup();
     component.form.controls.slug.setValue('new-status');
     component.form.controls.name.setValue('New Status');
     component.save();
-    expect(service.create).toHaveBeenCalledWith({
+    expect(store.create).toHaveBeenCalledWith({
       slug: 'new-status',
       name: 'New Status',
       description: undefined,
@@ -106,23 +106,23 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
   });
 
   it('should include allowedTransitions in create request', async () => {
-    const { component, service } = await setup();
+    const { component, store } = await setup();
     component.form.controls.slug.setValue('new-status');
     component.form.controls.name.setValue('New Status');
     component.form.controls.allowedTransitions.setValue(['rented', 'maintenance']);
     component.save();
-    expect(service.create).toHaveBeenCalledWith(
+    expect(store.create).toHaveBeenCalledWith(
       expect.objectContaining({ allowedTransitions: ['rented', 'maintenance'] }),
     );
   });
 
   it('should include description in create request when provided', async () => {
-    const { component, service } = await setup();
+    const { component, store } = await setup();
     component.form.controls.slug.setValue('new-status');
     component.form.controls.name.setValue('New Status');
     component.form.controls.description.setValue('A description');
     component.save();
-    expect(service.create).toHaveBeenCalledWith(
+    expect(store.create).toHaveBeenCalledWith(
       expect.objectContaining({ description: 'A description' }),
     );
   });
@@ -142,8 +142,8 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
   });
 
   it('should show snackbar and reset saving on error', async () => {
-    const { component, service, snackBar } = await setup();
-    service.create.mockReturnValue(throwError(() => new Error('Server error')));
+    const { component, store, snackBar } = await setup();
+    store.create.mockReturnValue(throwError(() => new Error('Server error')));
     component.form.controls.slug.setValue('new-status');
     component.form.controls.name.setValue('New Status');
     component.save();
@@ -182,32 +182,32 @@ describe('EquipmentStatusDialogComponent — edit mode', () => {
     expect(slugs).toContain('maintenance');
   });
 
-  it('should call service.update with original slug', async () => {
-    const { component, service, dialogRef } = await setup({
+  it('should call store.update with original slug', async () => {
+    const { component, store, dialogRef } = await setup({
       status: existingStatus,
       statuses: allStatuses,
     });
     component.form.controls.name.setValue('Updated Available');
     component.save();
-    expect(service.update).toHaveBeenCalledWith(
+    expect(store.update).toHaveBeenCalledWith(
       'available',
       expect.objectContaining({ name: 'Updated Available' }),
     );
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
 
-  it('should not call service.create in edit mode', async () => {
-    const { component, service } = await setup({ status: existingStatus, statuses: allStatuses });
+  it('should not call store.create in edit mode', async () => {
+    const { component, store } = await setup({ status: existingStatus, statuses: allStatuses });
     component.form.controls.name.setValue('Updated Available');
     component.save();
-    expect(service.create).not.toHaveBeenCalled();
+    expect(store.create).not.toHaveBeenCalled();
   });
 
   it('should include updated allowedTransitions in update request', async () => {
-    const { component, service } = await setup({ status: existingStatus, statuses: allStatuses });
+    const { component, store } = await setup({ status: existingStatus, statuses: allStatuses });
     component.form.controls.allowedTransitions.setValue(['maintenance']);
     component.save();
-    expect(service.update).toHaveBeenCalledWith(
+    expect(store.update).toHaveBeenCalledWith(
       'available',
       expect.objectContaining({ allowedTransitions: ['maintenance'] }),
     );

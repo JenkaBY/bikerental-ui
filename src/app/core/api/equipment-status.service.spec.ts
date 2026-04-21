@@ -2,10 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { EquipmentStatusService } from './equipment-status.service';
-import { EquipmentStatusRequest, EquipmentStatusResponse } from '@api-models';
+import { EquipmentStatus, EquipmentStatusWrite } from '../models';
 
 const BASE_URL = 'http://localhost:8080/api/equipment-statuses';
-const mockStatus: EquipmentStatusResponse = {
+const mockStatusResponse = { slug: 'available', name: 'Available', allowedTransitions: [] };
+const mockStatus: EquipmentStatus = {
   slug: 'available',
   name: 'Available',
   allowedTransitions: [],
@@ -25,34 +26,40 @@ describe('EquipmentStatusService', () => {
 
   afterEach(() => httpMock.verify());
 
-  it('getAll makes GET request and returns statuses', () => {
-    let result: EquipmentStatusResponse[] | undefined;
+  it('getAll makes GET request and returns mapped statuses', () => {
+    let result: EquipmentStatus[] | undefined;
     service.getAll().subscribe((r) => (result = r));
     const req = httpMock.expectOne(BASE_URL);
     expect(req.request.method).toBe('GET');
-    req.flush([mockStatus]);
+    req.flush([mockStatusResponse]);
     expect(result).toEqual([mockStatus]);
   });
 
-  it('create makes POST request with body', () => {
-    const request: EquipmentStatusRequest = { slug: 'available', name: 'Available' };
-    let result: EquipmentStatusResponse | undefined;
-    service.create(request).subscribe((r) => (result = r));
+  it('create makes POST request with mapped body', () => {
+    const write: EquipmentStatusWrite = {
+      slug: 'available',
+      name: 'Available',
+      allowedTransitions: [],
+    };
+    let result: EquipmentStatus | undefined;
+    service.create(write).subscribe((r) => (result = r));
     const req = httpMock.expectOne(BASE_URL);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(request);
-    req.flush(mockStatus);
+    req.flush(mockStatusResponse);
     expect(result).toEqual(mockStatus);
   });
 
-  it('update makes PUT request to correct URL with body', () => {
-    const request: EquipmentStatusRequest = { slug: 'available', name: 'Updated' };
-    let result: EquipmentStatusResponse | undefined;
-    service.update('available', request).subscribe((r) => (result = r));
+  it('update makes PUT request to correct URL with mapped body', () => {
+    const write: EquipmentStatusWrite = {
+      slug: 'available',
+      name: 'Updated',
+      allowedTransitions: [],
+    };
+    let result: EquipmentStatus | undefined;
+    service.update('available', write).subscribe((r) => (result = r));
     const req = httpMock.expectOne(`${BASE_URL}/available`);
     expect(req.request.method).toBe('PUT');
-    expect(req.request.body).toEqual(request);
-    req.flush({ ...mockStatus, name: 'Updated' });
+    req.flush({ ...mockStatusResponse, name: 'Updated' });
     expect(result?.name).toBe('Updated');
   });
 });

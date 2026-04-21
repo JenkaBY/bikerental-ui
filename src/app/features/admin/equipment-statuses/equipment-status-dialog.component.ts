@@ -6,8 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusRequest, EquipmentStatusResponse } from '@api-models';
+import { EquipmentStatusStore } from '../../../core/state/equipment-status.store';
+import { EquipmentStatus, EquipmentStatusWrite } from '@ui-models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
@@ -15,8 +15,8 @@ import { CancelButtonComponent } from '../../../shared/components/cancel-button/
 import { Labels } from '../../../shared/constant/labels';
 
 export interface EquipmentStatusDialogData {
-  status?: EquipmentStatusResponse;
-  statuses: EquipmentStatusResponse[];
+  status?: EquipmentStatus;
+  statuses: EquipmentStatus[];
 }
 
 @Component({
@@ -92,7 +92,7 @@ export interface EquipmentStatusDialogData {
 export class EquipmentStatusDialogComponent {
   private dialogRef = inject(MatDialogRef<EquipmentStatusDialogComponent>);
   readonly data = inject<EquipmentStatusDialogData>(MAT_DIALOG_DATA);
-  private service = inject(EquipmentStatusService);
+  private store = inject(EquipmentStatusStore);
   private snackBar = inject(MatSnackBar);
 
   readonly labels = Labels;
@@ -109,7 +109,7 @@ export class EquipmentStatusDialogComponent {
     allowedTransitions: new FormControl<string[]>(this.data?.status?.allowedTransitions ?? []),
   });
 
-  get transitionOptions(): EquipmentStatusResponse[] {
+  get transitionOptions(): EquipmentStatus[] {
     const selfSlug = this.data?.status?.slug;
     return selfSlug ? this.data.statuses.filter((s) => s.slug !== selfSlug) : this.data.statuses;
   }
@@ -123,7 +123,8 @@ export class EquipmentStatusDialogComponent {
     this.saving.set(true);
 
     const { slug, name, description, allowedTransitions } = this.form.getRawValue();
-    const request: EquipmentStatusRequest = {
+    const write: EquipmentStatusWrite = {
+      slug: slug ?? '',
       name: name ?? '',
       description: description || undefined,
       allowedTransitions: allowedTransitions ?? [],
@@ -131,9 +132,9 @@ export class EquipmentStatusDialogComponent {
 
     let operation$;
     if (this.isCreateMode()) {
-      operation$ = this.service.create({ slug: slug ?? '', ...request });
+      operation$ = this.store.create(write);
     } else {
-      operation$ = this.service.update(this.data.status!.slug ?? '', request);
+      operation$ = this.store.update(this.data.status!.slug, write);
     }
 
     operation$.subscribe({

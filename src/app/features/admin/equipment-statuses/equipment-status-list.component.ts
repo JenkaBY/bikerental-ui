@@ -1,21 +1,15 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusResponse } from '@api-models';
+import { EquipmentStatusStore } from '../../../core/state/equipment-status.store';
+import { EquipmentStatus } from '@ui-models';
 import {
   EquipmentStatusDialogComponent,
   EquipmentStatusDialogData,
@@ -31,6 +25,7 @@ import {
     MatIconModule,
     MatTooltipModule,
     MatChipsModule,
+    MatProgressBarModule,
   ],
   template: `
     <mat-card>
@@ -45,7 +40,11 @@ import {
           </button>
         </div>
 
-        <table mat-table [dataSource]="statuses()" class="w-full">
+        @if (store.loading()) {
+          <mat-progress-bar mode="indeterminate" />
+        }
+
+        <table mat-table [dataSource]="store.statuses()" class="w-full">
           <ng-container matColumnDef="slug">
             <th mat-header-cell *matHeaderCellDef i18n>Slug</th>
             <td mat-cell *matCellDef="let row">{{ row.slug }}</td>
@@ -94,62 +93,27 @@ import {
   `,
 })
 export class EquipmentStatusListComponent implements OnInit {
-  private service = inject(EquipmentStatusService);
+  readonly store = inject(EquipmentStatusStore);
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
-
-  statuses = signal<EquipmentStatusResponse[]>([]);
-  loading = signal(false);
 
   readonly displayedColumns = ['slug', 'name', 'description', 'allowedTransitions', 'actions'];
 
   ngOnInit(): void {
-    this.loadStatuses();
-  }
-
-  loadStatuses(): void {
-    this.loading.set(true);
-    this.service
-      .getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (statuses) => {
-          const sorted = (statuses ?? [])
-            .slice()
-            .sort((a, b) => (a.slug ?? '').localeCompare(b.slug ?? ''));
-          this.statuses.set(sorted);
-          this.loading.set(false);
-        },
-        error: () => this.loading.set(false),
-      });
+    this.store.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   openCreateDialog(): void {
-    const ref = this.dialog.open<
+    this.dialog.open<EquipmentStatusDialogComponent, EquipmentStatusDialogData, boolean>(
       EquipmentStatusDialogComponent,
-      EquipmentStatusDialogData,
-      boolean
-    >(EquipmentStatusDialogComponent, {
-      data: { statuses: this.statuses() },
-      disableClose: true,
-      autoFocus: true,
-    });
-    ref.afterClosed().subscribe((result) => {
-      if (result) this.loadStatuses();
-    });
+      { data: { statuses: this.store.statuses() }, disableClose: true, autoFocus: true },
+    );
   }
 
-  openEditDialog(status: EquipmentStatusResponse): void {
-    const ref = this.dialog.open<
+  openEditDialog(status: EquipmentStatus): void {
+    this.dialog.open<EquipmentStatusDialogComponent, EquipmentStatusDialogData, boolean>(
       EquipmentStatusDialogComponent,
-      EquipmentStatusDialogData,
-      boolean
-    >(EquipmentStatusDialogComponent, {
-      data: { status, statuses: this.statuses() },
-      autoFocus: 'first-tabbable',
-    });
-    ref.afterClosed().subscribe((result) => {
-      if (result) this.loadStatuses();
-    });
+      { data: { status, statuses: this.store.statuses() }, autoFocus: 'first-tabbable' },
+    );
   }
 }
