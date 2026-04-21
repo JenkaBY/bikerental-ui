@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -97,7 +97,7 @@ export class EquipmentStatusDialogComponent {
 
   readonly labels = Labels;
   readonly errors = FormErrorMessages;
-  saving = signal(false);
+  readonly saving = this.store.saving;
 
   form = new FormGroup({
     slug: new FormControl(
@@ -120,8 +120,6 @@ export class EquipmentStatusDialogComponent {
       return;
     }
 
-    this.saving.set(true);
-
     const { slug, name, description, allowedTransitions } = this.form.getRawValue();
     const write: EquipmentStatusWrite = {
       slug: slug ?? '',
@@ -130,12 +128,9 @@ export class EquipmentStatusDialogComponent {
       allowedTransitions: allowedTransitions ?? [],
     };
 
-    let operation$;
-    if (this.isCreateMode()) {
-      operation$ = this.store.create(write);
-    } else {
-      operation$ = this.store.update(this.data.status!.slug, write);
-    }
+    const operation$ = this.isCreateMode()
+      ? this.store.create(write)
+      : this.store.update(this.data.status!.slug, write);
 
     operation$.subscribe({
       next: () => {
@@ -146,7 +141,6 @@ export class EquipmentStatusDialogComponent {
         this.dialogRef.close(true);
       },
       error: () => {
-        this.saving.set(false);
         this.snackBar.open($localize`Failed to save equipment status`, this.labels.Close, {
           duration: 4000,
         });

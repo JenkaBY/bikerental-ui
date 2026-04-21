@@ -24,6 +24,7 @@ const allStatuses: EquipmentStatus[] = [
 
 function makeStore() {
   return {
+    saving: vi.fn().mockReturnValue(false),
     create: vi.fn().mockReturnValue(of(existingStatus)),
     update: vi.fn().mockReturnValue(of(existingStatus)),
   };
@@ -148,7 +149,6 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
     component.form.controls.name.setValue('New Status');
     component.save();
     expect(snackBar.open).toHaveBeenCalled();
-    expect(component.saving()).toBe(false);
   });
 
   it('should show success snackbar on successful create', async () => {

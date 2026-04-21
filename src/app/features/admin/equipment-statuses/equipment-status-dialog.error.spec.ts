@@ -13,6 +13,7 @@ const allStatuses: EquipmentStatus[] = [
 
 function makeStore(err: unknown) {
   return {
+    saving: vi.fn().mockReturnValue(false),
     create: vi.fn().mockReturnValue(throwError(() => err)),
     update: vi.fn(),
   };
@@ -70,8 +71,7 @@ describe('EquipmentStatusDialogComponent error handling', () => {
     component.form.controls.slug.setValue('available');
     component.form.controls.name.setValue('Available');
 
-    expect(component.saving()).toBe(false);
     component.save();
-    expect(component.saving()).toBe(false);
+    expect(snack.open).toHaveBeenCalled();
   });
 });

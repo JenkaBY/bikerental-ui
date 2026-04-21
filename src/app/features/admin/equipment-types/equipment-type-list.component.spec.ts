@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { of, Subject, throwError } from 'rxjs';
-import { EquipmentTypeService } from '../../../core/api';
+import { MatDialog } from '@angular/material/dialog';
+import { of } from 'rxjs';
+import { EquipmentTypeStore } from '../../../core/state/equipment-type.store';
 import { EquipmentType } from '@ui-models';
 import { EquipmentTypeListComponent } from './equipment-type-list.component';
 
@@ -10,31 +10,32 @@ const mockTypes: EquipmentType[] = [
   { slug: 'scooter', name: 'Scooter' },
 ];
 
-function makeService(types: EquipmentType[] = mockTypes) {
-  return { getAll: vi.fn().mockReturnValue(of(types)) };
+function makeStore(types: EquipmentType[] = mockTypes, loading = false) {
+  return {
+    types: () => types,
+    loading: () => loading,
+    load: vi.fn().mockReturnValue(of(undefined)),
+  };
 }
 
-function makeDialog(afterClosed = new Subject<boolean | undefined>()) {
-  const ref = { afterClosed: () => afterClosed } as unknown as MatDialogRef<unknown>;
-  return { open: vi.fn().mockReturnValue(ref) };
+function makeDialog() {
+  return { open: vi.fn() };
 }
 
 describe('EquipmentTypeListComponent', () => {
   let fixture: ComponentFixture<EquipmentTypeListComponent>;
   let component: EquipmentTypeListComponent;
-  let service: ReturnType<typeof makeService>;
+  let store: ReturnType<typeof makeStore>;
   let dialog: ReturnType<typeof makeDialog>;
-  let dialogAfterClosed: Subject<boolean | undefined>;
 
   async function setup(types: EquipmentType[] = mockTypes) {
-    service = makeService(types);
-    dialogAfterClosed = new Subject();
-    dialog = makeDialog(dialogAfterClosed);
+    store = makeStore(types);
+    dialog = makeDialog();
 
     await TestBed.configureTestingModule({
       imports: [EquipmentTypeListComponent],
       providers: [
-        { provide: EquipmentTypeService, useValue: service },
+        { provide: EquipmentTypeStore, useValue: store },
         { provide: MatDialog, useValue: dialog },
       ],
     }).compileComponents();
@@ -49,15 +50,9 @@ describe('EquipmentTypeListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load types on init', async () => {
+  it('should call store.load on init', async () => {
     await setup();
-    expect(service.getAll).toHaveBeenCalledOnce();
-    expect(component.types()).toEqual(mockTypes);
-  });
-
-  it('should set loading false after load completes', async () => {
-    await setup();
-    expect(component.loading()).toBe(false);
+    expect(store.load).toHaveBeenCalledOnce();
   });
 
   it('should render table rows for each type', async () => {
@@ -67,16 +62,35 @@ describe('EquipmentTypeListComponent', () => {
     expect(rows.length).toBe(mockTypes.length);
   });
 
-  it('should open dialog without data on create', async () => {
+  it('should show progress bar when loading', async () => {
+    store = makeStore(mockTypes, true);
+    dialog = makeDialog();
+    await TestBed.configureTestingModule({
+      imports: [EquipmentTypeListComponent],
+      providers: [
+        { provide: EquipmentTypeStore, useValue: store },
+        { provide: MatDialog, useValue: dialog },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(EquipmentTypeListComponent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('mat-progress-bar')).toBeTruthy();
+  });
+
+  it('should hide progress bar when not loading', async () => {
+    await setup();
+    expect(fixture.nativeElement.querySelector('mat-progress-bar')).toBeNull();
+  });
+
+  it('should open create dialog with empty data', async () => {
     await setup();
     component.openCreateDialog();
-    expect(dialog.open).toHaveBeenCalled();
+    expect(dialog.open).toHaveBeenCalledOnce();
     const callArgs = dialog.open.mock.calls[0];
-    // second arg is MatDialogConfig — ensure data is empty for create
     expect(callArgs[1]).toMatchObject({ data: {} });
   });
 
-  it('should open dialog with type data on edit', async () => {
+  it('should open edit dialog with type data', async () => {
     await setup();
     component.openEditDialog(mockTypes[0]);
     expect(dialog.open).toHaveBeenCalledOnce();
@@ -84,49 +98,10 @@ describe('EquipmentTypeListComponent', () => {
     expect(callArgs[1]).toMatchObject({ data: { type: mockTypes[0] } });
   });
 
-  it('should reload types when dialog closes with true', async () => {
+  it('should not call store.load again after opening dialogs', async () => {
     await setup();
     component.openCreateDialog();
-    service.getAll.mockReturnValue(of(mockTypes));
-    dialogAfterClosed.next(true);
-    expect(service.getAll).toHaveBeenCalledTimes(2);
-  });
-
-  it('should not reload types when dialog closes with undefined', async () => {
-    await setup();
-    component.openCreateDialog();
-    dialogAfterClosed.next(undefined);
-    expect(service.getAll).toHaveBeenCalledOnce();
-  });
-
-  it('should sort types by slug ascending', async () => {
-    const unsorted: EquipmentType[] = [
-      { slug: 'scooter', name: 'Scooter' },
-      { slug: 'bike', name: 'Bike' },
-      { slug: 'moped', name: 'Moped' },
-    ];
-    await setup(unsorted);
-    expect(component.types().map((t) => t.slug)).toEqual(['bike', 'moped', 'scooter']);
-  });
-
-  it('should set loading false and keep empty types on error', async () => {
-    service = { getAll: vi.fn().mockReturnValue(throwError(() => new Error('Network error'))) };
-    dialogAfterClosed = new Subject();
-    dialog = makeDialog(dialogAfterClosed);
-
-    await TestBed.configureTestingModule({
-      imports: [EquipmentTypeListComponent],
-      providers: [
-        { provide: EquipmentTypeService, useValue: service },
-        { provide: MatDialog, useValue: dialog },
-      ],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(EquipmentTypeListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-
-    expect(component.loading()).toBe(false);
-    expect(component.types()).toEqual([]);
+    component.openEditDialog(mockTypes[0]);
+    expect(store.load).toHaveBeenCalledOnce();
   });
 });

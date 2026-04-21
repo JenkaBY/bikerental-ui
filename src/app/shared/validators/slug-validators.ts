@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 
-export const SLUG_PATTERN = /^[A-Z0-9-_]+$/;
+export const SLUG_PATTERN = /^[a-zA-Z0-9-_]+$/;
 
 export const SlugValidators = [
   Validators.required,

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EquipmentTypeService } from '../../../core/api';
+import { EquipmentTypeStore } from '../../../core/state/equipment-type.store';
 import { EquipmentType, EquipmentTypeWrite } from '@ui-models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
@@ -80,11 +80,11 @@ export interface EquipmentTypeDialogData {
 export class EquipmentTypeDialogComponent {
   private dialogRef = inject(MatDialogRef<EquipmentTypeDialogComponent>);
   readonly data = inject<EquipmentTypeDialogData>(MAT_DIALOG_DATA);
-  private service = inject(EquipmentTypeService);
+  private store = inject(EquipmentTypeStore);
+  readonly saving = this.store.saving;
   private snackBar = inject(MatSnackBar);
 
   readonly errors = FormErrorMessages;
-  saving = signal(false);
   readonly labels = Labels;
 
   form = new FormGroup({
@@ -102,24 +102,16 @@ export class EquipmentTypeDialogComponent {
       return;
     }
 
-    this.saving.set(true);
-
-    const raw = this.form.getRawValue() as EquipmentTypeWrite; // includes disabled slug in edit mode
+    const raw = this.form.getRawValue() as EquipmentTypeWrite;
     const write: EquipmentTypeWrite = {
       slug: raw.slug,
       name: raw.name,
       description: raw.description || undefined,
     };
-    let operation$;
-    if (this.isCreateMode()) {
-      operation$ = this.service.create(write);
-    } else {
-      operation$ = this.service.update(write);
-    }
+    const operation$ = this.isCreateMode() ? this.store.create(write) : this.store.update(write);
 
     operation$.subscribe({
       next: () => {
-        // Show success toast for create or update
         const message = this.isCreateMode()
           ? $localize`Equipment type created`
           : $localize`Equipment type updated`;
@@ -127,7 +119,6 @@ export class EquipmentTypeDialogComponent {
         this.dialogRef.close(true);
       },
       error: () => {
-        this.saving.set(false);
         this.snackBar.open($localize`Failed to save equipment type`, $localize`Close`, {
           duration: 4000,
         });
