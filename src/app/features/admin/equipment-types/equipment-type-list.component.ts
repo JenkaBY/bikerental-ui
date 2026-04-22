@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -79,16 +78,11 @@ import {
     </mat-card>
   `,
 })
-export class EquipmentTypeListComponent implements OnInit {
+export class EquipmentTypeListComponent {
   readonly store = inject(EquipmentTypeStore);
   private dialog = inject(MatDialog);
-  private destroyRef = inject(DestroyRef);
 
   readonly displayedColumns = ['slug', 'name', 'description', 'actions'];
-
-  ngOnInit(): void {
-    this.store.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-  }
 
   openCreateDialog(): void {
     this.dialog.open<EquipmentTypeDialogComponent, EquipmentTypeDialogData, boolean>(

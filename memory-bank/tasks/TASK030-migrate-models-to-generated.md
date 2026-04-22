@@ -2,7 +2,7 @@
 
 **Status:** Completed  
 **Added:** 2026-04-20  
-**Updated:** 2026-04-20
+**Updated:** 2026-04-22
 
 ## Original Request
 
@@ -37,8 +37,8 @@ Goal: raw API shapes come exclusively from generated models; UI domain types sta
 
 ### What Stayed in `core/models/`
 
-- `Tariff`, `TariffWrite`, `TariffSelection` — UI domain types
-- `PricingType` — type alias
+- `Tariff`, `TariffWrite` — UI domain types
+- `PricingTypeSlug` — type alias
 - `EquipmentType`, `EquipmentTypeWrite` — UI domain types
 - `Page<T>` — generic wrapper (no generated equivalent)
 - `RentalStatus`, `PatchOp`, `PaymentMethod` — type aliases
@@ -98,6 +98,17 @@ Casts used in mappers and dialogs:
 | 30.11 | Run tests and fix regressions              | Complete | 2026-04-20 | 410/410 tests pass                        |
 
 ## Progress Log
+
+### 2026-04-22
+
+- Follow-up migration work completed for remaining handwritten-service usages in stateful consumers.
+- `src/app/core/state/equipment-type.store.ts` now uses generated `EquipmentTypesService`.
+- `src/app/core/state/equipment-status.store.ts` now uses generated `EquipmentStatusesService`.
+- `src/app/core/state/equipment.store.ts` now uses generated `EquipmentService`, with store calls updated to `searchEquipments()`, `createEquipment()`, and `updateEquipment()`.
+- `src/app/core/state/equipment.store.spec.ts` was updated to assert the generated equipment service method names/signatures.
+- `src/app/features/admin/tariffs/tariff-list.component.ts` and its spec were updated to use generated `EquipmentTypesService` because the wrapper service is no longer available.
+- Fixed a surfaced regression in `EquipmentTypeDialogComponent` by normalizing empty `description` values to `undefined` before save.
+- Verification: targeted equipment-store and equipment-list tests passed; final full suite passed with 375/375 tests green.
 
 ### 2026-04-20
 

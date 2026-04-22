@@ -66,7 +66,7 @@ TASK029 → TASK030 (migrate hand-written API models to generated — complete)
 - [TASK018] TariffDialogComponent — base form (name, type, dates). Completed on 2026-03-24
 - [TASK019] TariffDialogComponent — dynamic pricing params section. Completed on 2026-03-24
 - [TASK024] EquipmentTypeDropdownComponent — standalone shared dropdown in `shared/components/`; `ControlValueAccessor`; loads types from cached `EquipmentTypeService.getAll()`; displays `name`, binds `slug`; i18n label. Depends on: TASK023 (blocks: TASK018)
-- [TASK008] Admin: Tariffs CRUD — **Parent tracker** for TASK015–TASK022. Depends on: TASK003
+- [TASK008] Admin: Tariffs CRUD — Parent tracker for TASK015–TASK022; store-driven tariff list and pricing-type lookup preload finalized on 2026-04-22. Depends on: TASK003
 - [TASK030] Migrate core/models to use generated API models — Completed on 2026-04-20
 
 ## Abandoned

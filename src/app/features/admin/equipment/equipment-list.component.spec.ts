@@ -124,7 +124,7 @@ describe('EquipmentListComponent', () => {
     expect(store.setFilterStatus as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(
       'available',
     );
-    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(2);
+    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(1);
   });
 
   it('should set filter and reload equipment on type filter change', async () => {
@@ -136,7 +136,7 @@ describe('EquipmentListComponent', () => {
     component.onFilterTypeChange('bike');
 
     expect(store.setFilterType as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledWith('bike');
-    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(2);
+    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(1);
   });
 
   it('should update page and reload equipment on page change', async () => {
@@ -148,7 +148,7 @@ describe('EquipmentListComponent', () => {
     component.onPageChange({ pageIndex: 1, pageSize: 20, length: 100 } as never);
 
     expect(store.setPage as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(1, 20);
-    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(2);
+    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(1);
   });
 
   it('should open create dialog and reload when dialog closed with true', async () => {

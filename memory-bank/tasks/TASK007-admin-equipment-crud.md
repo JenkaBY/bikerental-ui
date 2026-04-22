@@ -2,7 +2,7 @@
 
 **Status:** Completed  
 **Added:** 2026-02-28  
-**Updated:** 2026-03-11  
+**Updated:** 2026-04-22  
 **Depends on:** TASK003 (also TASK005, TASK006 for type/status dropdowns data)  
 **Blocks:** None
 
@@ -91,6 +91,19 @@ All planned components, dialog, services integration and tests were implemented 
 - Populated filter dropdowns from `EquipmentTypeService` and `EquipmentStatusService` and wired re-fetch on filter change.
 - Added unit tests for list behavior (filter+paginator triggers) and dialog form validation/save flows.
 - Verified UI flows manually in the running app (navigate to Admin → Equipment) and executed test suite locally. All relevant tests pass.
+
+### 2026-04-22
+
+- Refactored filter reload ownership from `EquipmentListComponent` into `EquipmentStore`.
+- `EquipmentStore.setFilterStatus()` and `EquipmentStore.setFilterType()` now reset page index and trigger reload internally.
+- `EquipmentStore.setPage()` now also triggers reload internally.
+- `EquipmentListComponent` no longer calls `loadEquipment()` after filter updates.
+- `EquipmentListComponent.onPageChange()` now only delegates paging state update to the store.
+- Updated tests:
+  - `equipment-list.component.spec.ts` now asserts no extra component-level `store.load()` call after filter change.
+  - `equipment-list.component.spec.ts` now asserts no extra component-level `store.load()` call after page change.
+  - `equipment.store.spec.ts` now verifies filter setters trigger reload with page reset to `0`, and `setPage()` triggers reload with requested page/size.
+- Verification: targeted equipment tests passed; full suite passed with 378/378 tests green.
 
 Implementation is complete and the task is now closed. If you want, I can open a PR with the changes or run the full test suite and provide the test output.
 

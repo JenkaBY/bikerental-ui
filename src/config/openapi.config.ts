@@ -7,6 +7,9 @@ const config: GeneratorConfig = {
     dateType: 'Date',
     enumStyle: 'enum',
     generateServices: true,
+    responseTypeMapping: {
+      'application/json': 'json',
+    },
   },
 };
 

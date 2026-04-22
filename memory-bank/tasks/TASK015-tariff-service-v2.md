@@ -2,7 +2,7 @@
 
 **Status:** Completed  
 **Added:** 2026-03-23  
-**Updated:** 2026-03-23  
+**Updated:** 2026-04-22  
 **Depends on:** TASK003 (admin shell complete)  
 **Blocks:** TASK016, TASK017, TASK018, TASK019, TASK020, TASK021, TASK022  
 **Parent:** TASK008
@@ -48,7 +48,7 @@ UI Components → TariffWrite → TariffMapper.toRequest() → TariffV2Request �
 
 ## New API type shapes (core/models/)
 
-**`PricingType`** — `'DEGRESSIVE_HOURLY' | 'FLAT_HOURLY' | 'DAILY' | 'FLAT_FEE' | 'SPECIAL'`
+**`PricingTypeSlug`** — `'DEGRESSIVE_HOURLY' | 'FLAT_HOURLY' | 'DAILY' | 'FLAT_FEE' | 'SPECIAL'`
 
 **`PricingParams`** — all fields optional, relevant subset populated per type:
 - `DEGRESSIVE_HOURLY`: `firstHourPrice`, `hourlyDiscount`, `minimumHourlyPrice`
@@ -66,14 +66,14 @@ UI Components → TariffWrite → TariffMapper.toRequest() → TariffV2Request �
 
 ```typescript
 // core/models/tariff.model.ts
-import { PricingParams, PricingType, TariffStatus } from '../models';
+import { PricingParams, PricingTypeSlug, TariffStatus } from '../models';
 
 export interface Tariff {
   id: number;
   name: string;
   description?: string;
   equipmentType?: string;
-  pricingType: PricingType;
+  pricingType: PricingTypeSlug;
   params: PricingParams;
   validFrom: Date;       // Date object — NOT an ISO string
   validTo?: Date;
@@ -85,7 +85,7 @@ export interface TariffWrite {
   name: string;
   description?: string;
   equipmentTypeSlug?: string;
-  pricingType: PricingType;
+  pricingType: PricingTypeSlug;
   params: PricingParams;
   validFrom: Date;
   validTo?: Date;
@@ -171,24 +171,24 @@ deactivate(id: number): Observable<Tariff>                  // PATCH → fromRes
 
 ### Subtasks
 
-| ID   | Description                                                  | Status      | Updated    | Notes |
-|------|--------------------------------------------------------------|-------------|------------|-------|
-| 15.1 | Add PricingType + PricingParams to tariff.model.ts (models/) | Not Started | 2026-03-23 |       |
-| 15.2 | Add TariffV2Request + TariffV2Response                       | Not Started | 2026-03-23 |       |
-| 15.3 | Export new API types from models/index.ts                    | Not Started | 2026-03-23 |       |
-| 15.4 | Create Tariff + TariffWrite in core/models/tariff.model.ts   | Not Started | 2026-03-23 |       |
-| 15.5 | Create core/models/index.ts                                  | Not Started | 2026-03-23 |       |
-| 15.6 | Create TariffMapper in core/mappers/tariff.mapper.ts         | Not Started | 2026-03-23 |       |
-| 15.7 | Create core/mappers/index.ts                                 | Not Started | 2026-03-23 |       |
-| 15.8 | Update TariffService: baseUrl + domain types + mapper        | Not Started | 2026-03-23 |       |
-| 15.9 | Update tariff.service.spec.ts                                | Not Started | 2026-03-23 |       |
+| ID   | Description                                                      | Status      | Updated    | Notes                  |
+|------|------------------------------------------------------------------|-------------|------------|------------------------|
+| 15.1 | Add PricingTypeSlug + PricingParams to tariff.model.ts (models/) | Not Started | 2026-04-22 | Alias rename follow-up |
+| 15.2 | Add TariffV2Request + TariffV2Response                           | Not Started | 2026-03-23 |                        |
+| 15.3 | Export new API types from models/index.ts                        | Not Started | 2026-03-23 |                        |
+| 15.4 | Create Tariff + TariffWrite in core/models/tariff.model.ts       | Not Started | 2026-03-23 |                        |
+| 15.5 | Create core/models/index.ts                                      | Not Started | 2026-03-23 |                        |
+| 15.6 | Create TariffMapper in core/mappers/tariff.mapper.ts             | Not Started | 2026-03-23 |                        |
+| 15.7 | Create core/mappers/index.ts                                     | Not Started | 2026-03-23 |                        |
+| 15.8 | Update TariffService: baseUrl + domain types + mapper            | Not Started | 2026-03-23 |                        |
+| 15.9 | Update tariff.service.spec.ts                                    | Not Started | 2026-03-23 |                        |
 
 ## Progress Log
 
 
 ### 2026-03-23
 
-- Implemented v2 API types in `src/app/core/models/tariff.model.ts` (`PricingType`, `PricingParams`, `TariffV2Request`, `TariffV2Response`).
+- Implemented v2 API types in `src/app/core/models/tariff.model.ts` (`PricingTypeSlug`, `PricingParams`, `TariffV2Request`, `TariffV2Response`).
 - Created domain models `Tariff` and `TariffWrite` in `src/app/core/models/tariff.model.ts` and exported via `core/models/index.ts`.
 - Implemented `TariffMapper` in `src/app/core/mappers/tariff.mapper.ts` (fromResponse / toRequest) using `toIsoDate()` for dates; exported via `core/mappers/index.ts`.
 - Updated `TariffService` (`src/app/core/api/tariff.service.ts`) to use base URL `/api/tariffs`, return domain types (`Tariff`, `TariffSelection`), and apply mapper conversions internally.
@@ -199,4 +199,12 @@ Notes:
 
 - Legacy v1 types (`TariffRequest`/`TariffResponse`) were preserved in `core/models/tariff.model.ts` for backward compatibility where needed.
 - The `selectTariff` endpoint now maps `TariffSelectionResponse` (v2) to domain `TariffSelection` (`tariff: Tariff`, `totalCost`, `calculationBreakdown`).
+
+### 2026-04-22
+
+- Replaced tariff status string union with `TariffStatus` enum in `src/app/core/models/tariff.model.ts`.
+- Renamed the tariff pricing slug union from `PricingType` to `PricingTypeSlug` and updated dependent store/dialog typings.
+- Added `TariffStatus.isActive(status)` helper and used it in tariff list template/logic for status checks.
+- Updated `TariffMapper.fromResponse()` to emit enum values (`TariffStatus.ACTIVE`/`TariffStatus.INACTIVE`).
+- Verified with tariff feature suite: `npm test -- --include "src/app/features/admin/tariffs/**/*.spec.ts"` → 101/101 passing.
 

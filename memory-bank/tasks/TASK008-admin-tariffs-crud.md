@@ -1,8 +1,8 @@
 # TASK008 - Admin: Tariffs CRUD (Parent Tracker)
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-02-28  
-**Updated:** 2026-03-23  
+**Updated:** 2026-04-22  
 **Depends on:** TASK003  
 **Blocks:** None
 
@@ -95,20 +95,20 @@ Base URL: `/api/tariffs`
 
 ## Progress Tracking
 
-**Overall Status:** Not Started — 0%
+**Overall Status:** Completed — 100%
 
 ### Subtasks
 
-| ID      | Description                                  | Status      | Updated    | Notes |
-|---------|----------------------------------------------|-------------|------------|-------|
-| TASK015 | Update TariffService & Models to v2 API      | Not Started | 2026-03-23 | See TASK015 file |
-| TASK016 | TariffListComponent — table shell            | Not Started | 2026-03-23 | See TASK016 file |
-| TASK017 | TariffListComponent — status toggle          | Not Started | 2026-03-23 | See TASK017 file |
-| TASK018 | TariffDialogComponent — base form            | Not Started | 2026-03-23 | See TASK018 file |
-| TASK019 | TariffDialogComponent — pricing params       | Not Started | 2026-03-23 | See TASK019 file |
-| TASK020 | Wire dialog into list                        | Not Started | 2026-03-23 | See TASK020 file |
-| TASK021 | Unit tests: TariffListComponent              | Not Started | 2026-03-23 | See TASK021 file |
-| TASK022 | Unit tests: TariffDialogComponent            | Not Started | 2026-03-23 | See TASK022 file |
+| ID      | Description                             | Status    | Updated    | Notes                                  |
+|---------|-----------------------------------------|-----------|------------|----------------------------------------|
+| TASK015 | Update TariffService & Models to v2 API | Completed | 2026-03-23 | See TASK015 file                       |
+| TASK016 | TariffListComponent — table shell       | Completed | 2026-04-22 | Store-driven follow-up completed       |
+| TASK017 | TariffListComponent — status toggle     | Completed | 2026-03-23 | See TASK017 file                       |
+| TASK018 | TariffDialogComponent — base form       | Completed | 2026-03-24 | See TASK018 file                       |
+| TASK019 | TariffDialogComponent — pricing params  | Completed | 2026-03-24 | See TASK019 file                       |
+| TASK020 | Wire dialog into list                   | Completed | 2026-03-24 | See TASK020 file                       |
+| TASK021 | Unit tests: TariffListComponent         | Completed | 2026-04-22 | Updated for TariffStore migration      |
+| TASK022 | Unit tests: TariffDialogComponent       | Completed | 2026-04-22 | Updated for EquipmentType domain shape |
 
 ## Progress Log
 
@@ -125,3 +125,18 @@ Base URL: `/api/tariffs`
 - `status` is no longer set in the create/edit form — controlled via activate/deactivate toggle only
 - All UI components work exclusively with `Tariff` / `TariffWrite` domain types — never with raw API types
 - Architecture: `Backend → TariffV2Response → TariffMapper → Tariff → UI` / `UI → TariffWrite → TariffMapper → TariffV2Request → Backend`
+
+### 2026-04-22
+
+- Migrated `TariffListComponent` to `TariffStore`, removing direct usage of the handwritten `TariffService` from the list component.
+- Updated `TariffStore` paging flow so `setPage(page, size)` triggers reload internally and the component binds directly to store signals.
+- Added `PricingTypeStore` in `core/state` to load and cache `PricingType[]` from `TariffsService.getPricingTypes()`.
+- Added `PricingType` domain model (`slug`, `title`, `description?`) in `core/models/tariff.model.ts` mirroring generated `PricingTypeResponse`.
+- Aligned write model contract so `TariffWrite.pricingType` is a slug string; `TariffMapper.toRequest()` now forwards it as request pricing type.
+- Updated `PricingTypeStore` to persist full `PricingType[]` records and derive slug list via computed state.
+- Extracted pricing type mapping into `core/mappers/pricing-type.mapper.ts` and updated `PricingTypeStore` to map via `PricingTypeMapper.fromResponse`.
+- Wired pricing type preload into app startup via `LookupInitializerFacade` and `app.config.ts` (`loadPricingType: true`).
+- Switched `TariffDialogComponent` pricing type options to read from the global lookup store.
+- Refined tariff domain enrichment in `TariffMapper.fromResponse()` so tariff rows carry an `EquipmentType` object rather than only a slug/name string fallback.
+- Aligned tariff dialog initialization and tests with `Tariff.equipmentType.slug`.
+- Validation: all tariff feature tests pass (`npm test -- --include "src/app/features/admin/tariffs/**/*.spec.ts"`) — 101 tests green.

@@ -5,11 +5,26 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TariffStore } from '@store.tariff.store';
+import { PricingTypeStore } from '@store.pricing-type.store';
 import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.component';
 import { EquipmentTypeDropdownComponent } from '../../../shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
-import { TariffService } from '../../../core/api';
-import { Tariff } from '@ui-models';
+import { Tariff, TariffStatus } from '@ui-models';
 import { Labels } from '../../../shared/constant/labels';
+
+function withTariffFlags(base: Omit<Tariff, 'isActive' | 'isSpecial'>): Tariff {
+  return {
+    ...base,
+    isActive: base.status === TariffStatus.ACTIVE,
+    isSpecial: base.pricingType.slug === 'SPECIAL',
+  };
+}
+
+const bicycleType = {
+  slug: 'bike',
+  name: 'Bicycle',
+  isForSpecialTariff: false,
+};
 
 @Component({
   selector: 'app-equipment-type-dropdown',
@@ -35,33 +50,59 @@ class EquipmentTypeDropdownStub implements ControlValueAccessor {
   }
 }
 
-const mockTariff: Tariff = {
+const mockTariff: Tariff = withTariffFlags({
   id: 1,
   name: 'Test Tariff',
-  equipmentType: 'bike',
-  pricingType: 'FLAT_HOURLY',
+  equipmentType: bicycleType,
+  pricingType: {
+    slug: 'FLAT_HOURLY',
+    title: 'Flat hourly',
+    description: 'Flat hourly rate',
+  },
   params: { hourlyPrice: 100 },
   validFrom: new Date('2026-01-01'),
-  status: 'ACTIVE',
-};
+  status: TariffStatus.ACTIVE,
+});
 
-function makeService() {
+function makeStore() {
   return {
+    saving: vi.fn().mockReturnValue(false),
     create: vi.fn().mockReturnValue(of(mockTariff)),
     update: vi.fn().mockReturnValue(of(mockTariff)),
-    getPricingTypes: vi.fn().mockReturnValue(of([])),
   };
 }
 
 async function setup(data: TariffDialogData = {}) {
-  const service = makeService();
+  const store = makeStore();
+  const pricingTypeStore = {
+    pricingTypes: vi.fn().mockReturnValue([
+      {
+        slug: 'DEGRESSIVE_HOURLY',
+        title: 'Degressive hourly',
+        description: Labels.PricingTypeDescriptions['DEGRESSIVE_HOURLY'],
+      },
+      {
+        slug: 'FLAT_HOURLY',
+        title: 'Flat hourly',
+        description: Labels.PricingTypeDescriptions['FLAT_HOURLY'],
+      },
+      { slug: 'DAILY', title: 'Daily', description: Labels.PricingTypeDescriptions['DAILY'] },
+      {
+        slug: 'FLAT_FEE',
+        title: 'Flat fee',
+        description: Labels.PricingTypeDescriptions['FLAT_FEE'],
+      },
+      { slug: 'SPECIAL', title: 'Special', description: Labels.PricingTypeDescriptions['SPECIAL'] },
+    ]),
+  };
   const dialogRef = { close: vi.fn() };
   const snackBar = { open: vi.fn() };
 
   await TestBed.configureTestingModule({
     imports: [TariffDialogComponent],
     providers: [
-      { provide: TariffService, useValue: service },
+      { provide: TariffStore, useValue: store },
+      { provide: PricingTypeStore, useValue: pricingTypeStore },
       { provide: MatDialogRef, useValue: dialogRef },
       { provide: MAT_DIALOG_DATA, useValue: data },
       { provide: MatSnackBar, useValue: snackBar },
@@ -76,7 +117,7 @@ async function setup(data: TariffDialogData = {}) {
   const fixture: ComponentFixture<TariffDialogComponent> =
     TestBed.createComponent(TariffDialogComponent);
   fixture.detectChanges();
-  return { fixture, component: fixture.componentInstance, service, dialogRef, snackBar };
+  return { fixture, component: fixture.componentInstance, store, dialogRef, snackBar };
 }
 
 function params(component: TariffDialogComponent): Record<string, FormControl> {
@@ -121,9 +162,9 @@ describe('TariffDialogComponent — create mode', () => {
   });
 
   it('does not call create() when form is invalid', async () => {
-    const { component, service } = await setup();
+    const { component, store } = await setup();
     component.save();
-    expect(service.create).not.toHaveBeenCalled();
+    expect(store.create).not.toHaveBeenCalled();
   });
 
   it('marks form as touched when save is attempted with invalid form', async () => {
@@ -132,29 +173,29 @@ describe('TariffDialogComponent — create mode', () => {
     expect(component.form.touched).toBe(true);
   });
 
-  it('calls create() with correct TariffWrite on valid FLAT_HOURLY save', async () => {
-    const { component, service } = await setup();
+  it('calls createTariff() with correct TariffWrite request on valid FLAT_HOURLY save', async () => {
+    const { component, store } = await setup();
     component.form.controls.name.setValue('My Tariff');
     switchTo(component, 'FLAT_HOURLY');
     component.form.controls.validFrom.setValue(new Date('2026-01-01'));
     params(component)['hourlyPrice'].setValue(10);
     component.save();
 
-    expect(service.create).toHaveBeenCalledOnce();
-    const write = service.create.mock.calls[0][0];
+    expect(store.create).toHaveBeenCalledOnce();
+    const write = store.create.mock.calls[0][0];
     expect(write.name).toBe('My Tariff');
     expect(write.pricingType).toBe('FLAT_HOURLY');
     expect(write.params.hourlyPrice).toBe(10);
   });
 
   it('sends empty params object for SPECIAL pricing type', async () => {
-    const { component, service } = await setup();
+    const { component, store } = await setup();
     component.form.controls.name.setValue('Special Tariff');
     switchTo(component, 'SPECIAL');
     component.form.controls.validFrom.setValue(new Date('2026-01-01'));
     component.save();
 
-    const write = service.create.mock.calls[0][0];
+    const write = store.create.mock.calls[0][0];
     expect(write.params).toEqual({});
   });
 
@@ -170,14 +211,14 @@ describe('TariffDialogComponent — create mode', () => {
   });
 
   it('saving signal is false after successful create', async () => {
-    const { component } = await setup();
+    const { component, store } = await setup();
     component.form.controls.name.setValue('My Tariff');
     switchTo(component, 'FLAT_HOURLY');
     component.form.controls.validFrom.setValue(new Date('2026-01-01'));
     params(component)['hourlyPrice'].setValue(10);
     component.save();
 
-    expect(component.saving()).toBe(false);
+    expect(store.saving()).toBe(false);
   });
 });
 
@@ -199,7 +240,7 @@ describe('TariffDialogComponent — edit mode', () => {
 
   it('pre-fills pricingType from tariff', async () => {
     const { component } = await setup({ tariff: mockTariff });
-    expect(component.form.controls.pricingType.value).toBe(mockTariff.pricingType);
+    expect(component.form.controls.pricingType.value).toBe(mockTariff.pricingType.slug);
   });
 
   it('pre-fills validFrom as a Date from tariff', async () => {
@@ -215,13 +256,13 @@ describe('TariffDialogComponent — edit mode', () => {
     expect(params(component)['hourlyPrice'].value).toBe(100);
   });
 
-  it('calls update() with correct id on save', async () => {
-    const { component, service } = await setup({ tariff: mockTariff });
+  it('calls updateTariff() with correct id on save', async () => {
+    const { component, store } = await setup({ tariff: mockTariff });
     component.form.controls.name.setValue('Updated');
     component.save();
 
-    expect(service.update).toHaveBeenCalledOnce();
-    expect(service.update.mock.calls[0][0]).toBe(mockTariff.id);
+    expect(store.update).toHaveBeenCalledOnce();
+    expect(store.update.mock.calls[0][0]).toBe(mockTariff.id);
   });
 
   it('closes dialog with true after successful update', async () => {
@@ -231,9 +272,9 @@ describe('TariffDialogComponent — edit mode', () => {
   });
 
   it('does not call create() in edit mode', async () => {
-    const { component, service } = await setup({ tariff: mockTariff });
+    const { component, store } = await setup({ tariff: mockTariff });
     component.save();
-    expect(service.create).not.toHaveBeenCalled();
+    expect(store.create).not.toHaveBeenCalled();
   });
 });
 
@@ -434,8 +475,9 @@ describe('TariffDialogComponent — form field validation', () => {
 
   it('selectedPricingDescription computed reflects pricingTypeDescriptions', async () => {
     const { component } = await setup();
-    component.pricingTypeDescriptions.set({ FLAT_HOURLY: 'A flat hourly rate.' });
     switchTo(component, 'FLAT_HOURLY');
-    expect(component.selectedPricingDescription()).toBe('A flat hourly rate.');
+    expect(component.selectedPricingDescription()).toBe(
+      Labels.PricingTypeDescriptions['FLAT_HOURLY'],
+    );
   });
 });

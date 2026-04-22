@@ -122,6 +122,37 @@
 
 ## Recent Implementation Notes
 
+### 2026-04-22
+
+- Migrated `src/app/features/admin/tariffs/tariff-list.component.ts` from the handwritten `TariffService` to `TariffStore`.
+- Added `src/app/core/state/pricing-type.store.ts` to centralize `PricingType[]` lookup state loaded from `TariffsService.getPricingTypes()`.
+- Renamed the tariff domain slug union from `PricingType` to `PricingTypeSlug` and updated lookup/dialog typings to match.
+- Added `PricingType` UI model (`slug`, `title`, `description?`) in `src/app/core/models/tariff.model.ts` aligned with generated `PricingTypeResponse`.
+- Updated `TariffWrite.pricingType` to `string` (slug write contract), while `Tariff.pricingType` stays object-based for UI reads.
+- Refactored `PricingTypeStore` to keep full `PricingType[]` objects and expose computed slug list for form bindings.
+- Extracted pricing type mapping into `src/app/core/mappers/pricing-type.mapper.ts` and wired `PricingTypeStore` to use `PricingTypeMapper.fromResponse`.
+- Extended lookup bootstrap flow (`LookupInitializerFacade` + `app.config.ts`) to preload pricing types during app startup.
+- Updated `src/app/features/admin/tariffs/tariff-dialog.component.ts` to consume pricing type options from `PricingTypeStore` instead of fetching them directly.
+- Tariff list UI state is now store-driven: `items`, `loading`, `totalItems`, current page, and page size all bind to `TariffStore` signals.
+- Moved tariff page-change reload behavior to store level: `TariffStore.setPage(page, size)` now updates both paging signals and triggers reload internally.
+- Updated tariff status toggles to use `TariffStore.activate()` / `deactivate()`.
+- Aligned tariff domain mapping so `Tariff.equipmentType` is an `EquipmentType` object resolved in `TariffMapper.fromResponse()` with a default fallback when lookup data is unavailable.
+- Replaced the tariff status string union with a `TariffStatus` enum and added `TariffStatus.isActive(status)` for shared ACTIVE checks in component logic and tests.
+- Updated tariff dialog and tariff list specs to use the typed `EquipmentType` domain shape.
+- Verification: targeted tariff test suite passed — **101/101 tests green across 8 tariff spec files**.
+
+- Migrated `src/app/core/state/equipment-type.store.ts` from the removed handwritten `EquipmentTypeService` wrapper to generated `EquipmentTypesService`.
+- Migrated `src/app/core/state/equipment-status.store.ts` from handwritten `EquipmentStatusService` to generated `EquipmentStatusesService`.
+- Migrated `src/app/core/state/equipment.store.ts` from handwritten `EquipmentService` to generated `EquipmentService`, updating store calls to `searchEquipments()`, `createEquipment()`, and `updateEquipment()`.
+- Moved filter-change reload behavior for equipment list to store level: `EquipmentStore.setFilterStatus()` and `EquipmentStore.setFilterType()` now trigger reload internally, and `EquipmentListComponent` no longer invokes `loadEquipment()` for filter changes.
+- Moved page-change reload behavior to store level: `EquipmentStore.setPage()` now triggers reload internally, and `EquipmentListComponent.onPageChange()` no longer calls `loadEquipment()`.
+- Updated `src/app/core/state/equipment.store.spec.ts` to mock the generated equipment service API.
+- Added filter behavior tests in `equipment.store.spec.ts` and adjusted `equipment-list.component.spec.ts` expectations.
+- Added pagination behavior tests in `equipment.store.spec.ts` and adjusted `equipment-list.component.spec.ts` expectations.
+- Updated `src/app/features/admin/tariffs/tariff-list.component.ts` and its spec to use generated `EquipmentTypesService` because the old `EquipmentTypeService` wrapper is no longer present.
+- Normalized empty `description` values to `undefined` in `src/app/features/admin/equipment-types/equipment-type-dialog.component.ts` to keep form payloads stable and tests aligned.
+- Verification: targeted `equipment.store` and equipment list tests passed, then full suite passed with **378/378 tests green (61 files)**.
+
 ### 2026-03-11
 
 - Added `MatIconModule` to `src/app/features/admin/equipment/equipment-dialog.component.ts` imports so datepicker toggles and icon buttons render inside the dialog.

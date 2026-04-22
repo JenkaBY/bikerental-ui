@@ -29,7 +29,7 @@ src/app/
 │   │   ├── tariff.model.ts            # TariffV2Request, TariffV2Response, PricingParams, PricingType, Tariff (Date fields), TariffWrite (for create/update)
 │   │   ├── rental.model.ts
 │   │   ├── payment.model.ts
-│   │   └── common.model.ts           # ProblemDetail, Pageable, PageRequest, Page<T>
+│   │   └── common.model.ts           # ProblemDetail, PageRequest, Page<T>
 │   ├── domain/                        # Clean UI domain objects (what components use)
 │   │   └── index.ts
 │   ├── mappers/                       # Converters: Response → Domain, Domain → Request

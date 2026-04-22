@@ -188,8 +188,6 @@ export class EquipmentListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.equipmentTypeStore.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    this.equipmentStatusStore.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     this.loadEquipment();
   }
 
@@ -199,21 +197,18 @@ export class EquipmentListComponent implements OnInit {
 
   onFilterStatusChange(value: string | undefined): void {
     this.store.setFilterStatus(value);
-    this.loadEquipment();
   }
 
   onFilterTypeChange(value: string | undefined): void {
     this.store.setFilterType(value);
-    this.loadEquipment();
   }
 
   onPageChange(event: PageEvent): void {
     this.store.setPage(event.pageIndex ?? 0, event.pageSize ?? this.store.pageSize());
-    this.loadEquipment();
   }
 
   openCreateDialog(): void {
-    const ref = this.dialog.open<EquipmentDialogComponent, EquipmentDialogData, boolean>(
+    this.dialog.open<EquipmentDialogComponent, EquipmentDialogData, boolean>(
       EquipmentDialogComponent,
       {
         data: {
@@ -224,13 +219,10 @@ export class EquipmentListComponent implements OnInit {
         autoFocus: true,
       },
     );
-    ref.afterClosed().subscribe((r) => {
-      if (r) this.loadEquipment();
-    });
   }
 
   openEditDialog(e: Equipment): void {
-    const ref = this.dialog.open<EquipmentDialogComponent, EquipmentDialogData, boolean>(
+    this.dialog.open<EquipmentDialogComponent, EquipmentDialogData, boolean>(
       EquipmentDialogComponent,
       {
         data: {
@@ -241,8 +233,5 @@ export class EquipmentListComponent implements OnInit {
         autoFocus: 'first-tabbable',
       },
     );
-    ref.afterClosed().subscribe((r) => {
-      if (r) this.loadEquipment();
-    });
   }
 }

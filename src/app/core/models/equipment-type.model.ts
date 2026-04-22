@@ -12,3 +12,10 @@ export interface EquipmentTypeWrite {
   name?: string;
   description?: string;
 }
+
+export const FALLBACK_EQUIPMENT_TYPE: EquipmentType = {
+  slug: 'MUST_NOT_BE_DISPLAYED',
+  name: 'Call to developer!',
+  description: 'Must not be anywhere',
+  isForSpecialTariff: false,
+};

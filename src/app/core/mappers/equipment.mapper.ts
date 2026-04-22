@@ -32,7 +32,7 @@ export class EquipmentMapper {
   static toRequest(w: EquipmentWrite): EquipmentRequest {
     return {
       serialNumber: w.serialNumber,
-      uid: w.uid,
+      uid: w.uid || '',
       typeSlug: w.typeSlug,
       statusSlug: w.statusSlug,
       model: w.model,

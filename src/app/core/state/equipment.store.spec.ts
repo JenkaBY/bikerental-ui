@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
-import { EquipmentService } from '../api';
 import { Equipment, EquipmentStatus, EquipmentType, EquipmentWrite } from '../models';
+import { EquipmentService } from '../api/generated';
 import { EquipmentStore } from './equipment.store';
 import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
@@ -71,8 +71,8 @@ const write: EquipmentWrite = {
 describe('EquipmentStore', () => {
   let store: EquipmentStore;
   let service: {
-    search: ReturnType<typeof vi.fn>;
-    create: ReturnType<typeof vi.fn>;
+    searchEquipments: ReturnType<typeof vi.fn>;
+    createEquipment: ReturnType<typeof vi.fn>;
   };
   let equipmentTypeStore: { types: ReturnType<typeof vi.fn> };
   let equipmentStatusStore: { statuses: ReturnType<typeof vi.fn> };
@@ -81,8 +81,8 @@ describe('EquipmentStore', () => {
   beforeEach(() => {
     createMock = vi.fn().mockReturnValue(of(createdEquipmentResponse));
     service = {
-      search: vi.fn().mockReturnValue(of({ items: [], totalItems: 0 })),
-      create: createMock,
+      searchEquipments: vi.fn().mockReturnValue(of({ items: [], totalItems: 0 })),
+      createEquipment: createMock,
     };
     // Mock stores with computed-like behavior (return values directly, not observables)
     equipmentTypeStore = { types: vi.fn().mockReturnValue([bikeType]) };
@@ -103,14 +103,16 @@ describe('EquipmentStore', () => {
   });
 
   it('reloads the current page after create instead of patching local state', () => {
-    service.search.mockReturnValue(of({ items: [reloadedEquipmentResponse], totalItems: 1 }));
+    service.searchEquipments.mockReturnValue(
+      of({ items: [reloadedEquipmentResponse], totalItems: 1 }),
+    );
 
     let result: Equipment | undefined;
     store.create(write).subscribe((value) => {
       result = value;
     });
 
-    expect(service.create).toHaveBeenCalledOnce();
+    expect(service.createEquipment).toHaveBeenCalledOnce();
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({
         serialNumber: 'SN-010',
@@ -118,7 +120,11 @@ describe('EquipmentStore', () => {
       }),
     );
 
-    expect(service.search).toHaveBeenCalledWith(undefined, undefined, { page: 0, size: 20 });
+    expect(service.searchEquipments).toHaveBeenCalledWith(
+      { page: 0, size: 20 },
+      undefined,
+      undefined,
+    );
     expect(result).toEqual(createdEquipment);
     expect(store.items()).toEqual([reloadedEquipment]);
     expect(store.totalItems()).toBe(1);
@@ -126,8 +132,10 @@ describe('EquipmentStore', () => {
 
   it('sets saving true during create and resets it after reload completes', () => {
     const createSubject = new Subject<typeof createdEquipmentResponse>();
-    service.create.mockReturnValue(createSubject.asObservable());
-    service.search.mockReturnValue(of({ items: [reloadedEquipmentResponse], totalItems: 1 }));
+    service.createEquipment.mockReturnValue(createSubject.asObservable());
+    service.searchEquipments.mockReturnValue(
+      of({ items: [reloadedEquipmentResponse], totalItems: 1 }),
+    );
 
     store.create(write).subscribe();
 
@@ -137,5 +145,43 @@ describe('EquipmentStore', () => {
     createSubject.complete();
 
     expect(store.saving()).toBe(false);
+  });
+
+  it('reloads from first page when status filter changes', () => {
+    service.searchEquipments.mockReturnValue(of({ items: [], totalItems: 0 }));
+
+    store.setPage(3, 50);
+    store.setFilterStatus('available');
+
+    expect(service.searchEquipments).toHaveBeenLastCalledWith(
+      { page: 0, size: 50 },
+      'available',
+      undefined,
+    );
+  });
+
+  it('reloads from first page when type filter changes', () => {
+    service.searchEquipments.mockReturnValue(of({ items: [], totalItems: 0 }));
+
+    store.setPage(2, 25);
+    store.setFilterType('bike');
+
+    expect(service.searchEquipments).toHaveBeenLastCalledWith(
+      { page: 0, size: 25 },
+      undefined,
+      'bike',
+    );
+  });
+
+  it('reloads with requested page and size when page changes', () => {
+    service.searchEquipments.mockReturnValue(of({ items: [], totalItems: 0 }));
+
+    store.setPage(4, 10);
+
+    expect(service.searchEquipments).toHaveBeenLastCalledWith(
+      { page: 4, size: 10 },
+      undefined,
+      undefined,
+    );
   });
 });

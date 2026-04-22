@@ -1,13 +1,13 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
-import { EquipmentStatusService } from '../api';
+import { EquipmentStatusesService } from '../api/generated';
 import { EquipmentStatus, EquipmentStatusWrite } from '../models';
 import { EquipmentStatusMapper } from '../mappers';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentStatusStore {
-  private service = inject(EquipmentStatusService);
+  private service = inject(EquipmentStatusesService);
 
   private readonly _statuses = signal<EquipmentStatus[]>([]);
   private readonly _loading = signal(false);
@@ -19,15 +19,14 @@ export class EquipmentStatusStore {
 
   load(): Observable<void> {
     this._loading.set(true);
-    return this.service.getAll().pipe(
+    return this.service.getAllEquipmentStatuses().pipe(
       map((responses) => responses.map(EquipmentStatusMapper.fromResponse)),
       tap((statuses) => {
         this._statuses.set(this.sortedBySlug(statuses));
-        this._loading.set(false);
       }),
       map(() => undefined),
+      finalize(() => this._loading.set(false)),
       catchError(() => {
-        this._loading.set(false);
         return EMPTY;
       }),
     );

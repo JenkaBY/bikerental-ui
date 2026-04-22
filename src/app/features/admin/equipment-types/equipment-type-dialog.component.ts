@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EquipmentTypeStore } from '../../../core/state/equipment-type.store';
+import { EquipmentTypeStore } from '@store.equipment-type.store';
 import { EquipmentType, EquipmentTypeWrite } from '@ui-models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
@@ -32,7 +32,7 @@ export interface EquipmentTypeDialogData {
   template: `
     <h2 mat-dialog-title>
       @if (data.type) {
-        <span>{{ labels.Edit }}</span>
+        <span i18n>{{ labels.Edit }}</span>
       } @else {
         <span i18n>{{ labels.Create }}</span>
       }
@@ -102,11 +102,11 @@ export class EquipmentTypeDialogComponent {
       return;
     }
 
-    const raw = this.form.getRawValue() as EquipmentTypeWrite;
+    const value = this.form.getRawValue();
     const write: EquipmentTypeWrite = {
-      slug: raw.slug,
-      name: raw.name,
-      description: raw.description || undefined,
+      slug: value.slug ?? '',
+      name: value.name ?? '',
+      description: value.description || undefined,
     };
     const operation$ = this.isCreateMode() ? this.store.create(write) : this.store.update(write);
 

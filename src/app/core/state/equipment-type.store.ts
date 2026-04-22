@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
-import { EquipmentTypeService } from '../api';
+import { EquipmentTypesService } from '../api/generated';
 import { EquipmentType, EquipmentTypeWrite } from '../models';
 import { EquipmentTypeMapper } from '../mappers';
 
@@ -12,7 +12,7 @@ export class EquipmentTypeStore {
     ANY: { isForSpecialTariff: true },
   };
   DEFAULT_CONFIG: Partial<EquipmentType> = { isForSpecialTariff: false };
-  private service = inject(EquipmentTypeService);
+  private service = inject(EquipmentTypesService);
 
   private readonly _types = signal<EquipmentType[]>([]);
   private readonly _loading = signal(false);
@@ -25,15 +25,14 @@ export class EquipmentTypeStore {
 
   load(): Observable<void> {
     this._loading.set(true);
-    return this.service.getAll().pipe(
+    return this.service.getAllEquipmentTypes().pipe(
       map((responses) => responses.map(EquipmentTypeMapper.fromResponse)),
       tap((types) => {
         this._types.set(this.sortedBySlug(types));
-        this._loading.set(false);
       }),
       map(() => undefined as void),
+      finalize(() => this._loading.set(false)),
       catchError(() => {
-        this._loading.set(false);
         return EMPTY;
       }),
     );

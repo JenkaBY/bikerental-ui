@@ -185,7 +185,7 @@ save(): void {
    - Standalone, `OnPush`
    - Import `Tariff`, `TariffWrite` from `core/models`
    - Import `EquipmentTypeDropdownComponent` from `shared/components/equipment-type-dropdown`
-   - Import `PricingType` from `core/models` (re-exported from `core/models` if needed)
+   - Import `PricingTypeSlug` from `core/models` (re-exported from `core/models` if needed)
    - Imports: `ReactiveFormsModule`, `MatDialogModule`, `MatFormFieldModule`, `MatInputModule`,
      `MatSelectModule`, `MatDatepickerModule`, `MatNativeDateModule`, `MatButtonModule`,
      `SaveButtonComponent`, `CancelButtonComponent`, **`EquipmentTypeDropdownComponent`**
@@ -193,7 +193,7 @@ save(): void {
    - Export `TariffDialogData` interface (contains only `tariff?: Tariff` — no `types`)
    - `saving = signal(false)`
    - `get isEdit()` helper
-   - `readonly pricingTypes: PricingType[]` constant array
+   - `readonly pricingTypes: PricingTypeSlug[]` constant array
    - `readonly labels = Labels` — all template strings via Labels
 
 ### Files to modify

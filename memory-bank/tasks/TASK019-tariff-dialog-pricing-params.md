@@ -87,7 +87,7 @@ const minimumHourlyPriceValidator: ValidatorFn = (group: AbstractControl): Valid
 ### Dynamic validator wiring
 
 ```typescript
-private applyParamValidators(type: PricingType): void {
+private applyParamValidators(type: PricingTypeSlug): void {
   const paramsGroup = this.form.controls.params;
   const p = paramsGroup.controls;
 

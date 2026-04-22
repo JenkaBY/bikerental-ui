@@ -1,15 +1,15 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, defaultIfEmpty, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { EquipmentService } from '../api';
 import { Equipment, EquipmentWrite, Page } from '@ui-models';
+import { EquipmentService as GeneratedEquipmentService } from '../api/generated';
 import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
 import { EquipmentMapper } from '../mappers';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentStore {
-  private service = inject(EquipmentService);
+  private service = inject(GeneratedEquipmentService);
   private equipmentTypeStore = inject(EquipmentTypeStore);
   private equipmentStatusStore = inject(EquipmentStatusStore);
 
@@ -35,14 +35,21 @@ export class EquipmentStore {
     const types = this.equipmentTypeStore.types();
     const statuses = this.equipmentStatusStore.statuses();
     return this.service
-      .search(this._filterStatus(), this._filterType(), {
-        page: this._pageIndex(),
-        size: this._pageSize(),
-      })
+      .searchEquipments(
+        {
+          page: this._pageIndex(),
+          size: this._pageSize(),
+        },
+        this._filterStatus(),
+        this._filterType(),
+      )
       .pipe(
         map((page) => ({
           ...page,
-          items: page.items.map((item) => EquipmentMapper.fromResponse(item, types, statuses)),
+          items: (page.items ?? []).map((item) =>
+            EquipmentMapper.fromResponse(item, types, statuses),
+          ),
+          totalItems: page.totalItems ?? 0,
         })),
         tap((page) => this._page.set(page)),
         map(() => undefined as void),
@@ -54,23 +61,26 @@ export class EquipmentStore {
   setFilterStatus(status: string | undefined): void {
     this._filterStatus.set(status);
     this._pageIndex.set(0);
+    this.load().subscribe();
   }
 
   setFilterType(type: string | undefined): void {
     this._filterType.set(type);
     this._pageIndex.set(0);
+    this.load().subscribe();
   }
 
   setPage(pageIndex: number, pageSize: number): void {
     this._pageIndex.set(pageIndex);
     this._pageSize.set(pageSize);
+    this.load().subscribe();
   }
 
   create(write: EquipmentWrite): Observable<Equipment> {
     this._saving.set(true);
     const types = this.equipmentTypeStore.types();
     const statuses = this.equipmentStatusStore.statuses();
-    return this.service.create(EquipmentMapper.toRequest(write)).pipe(
+    return this.service.createEquipment(EquipmentMapper.toRequest(write)).pipe(
       map((response) => EquipmentMapper.fromResponse(response, types, statuses)),
       switchMap((created) =>
         this.load().pipe(
@@ -86,7 +96,7 @@ export class EquipmentStore {
     this._saving.set(true);
     const types = this.equipmentTypeStore.types();
     const statuses = this.equipmentStatusStore.statuses();
-    return this.service.update(id, EquipmentMapper.toRequest(write)).pipe(
+    return this.service.updateEquipment(id, EquipmentMapper.toRequest(write)).pipe(
       map((response) => EquipmentMapper.fromResponse(response, types, statuses)),
       tap((updated) => {
         this._page.update((p) => ({

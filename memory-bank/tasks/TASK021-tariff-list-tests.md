@@ -2,7 +2,7 @@
 
 **Status:** Completed  
 **Added:** 2026-03-23  
-**Updated:** 2026-03-24  
+**Updated:** 2026-04-22  
 **Depends on:** TASK016 (table shell), TASK017 (status toggle), TASK020 (dialog wiring)  
 **Blocks:** None  
 **Parent:** TASK008
@@ -124,3 +124,10 @@ TestBed.configureTestingModule({
 - Also added `tariff-dialog.component.spec.ts` with 6 tests: update/create dispatch, dialog close
   on success, error snackbar, and create vs update mode distinction.
 - All 59 test files, 343 tests pass.
+
+### 2026-04-22
+
+- Updated tariff list test fixtures and assertions to use `TariffStatus` enum values instead of raw string literals.
+- Updated status-check assertions to align with `TariffStatus.isActive(...)` usage in `TariffListComponent`.
+- Re-validated tariff feature tests: 101/101 passing across 8 tariff spec files.
+
