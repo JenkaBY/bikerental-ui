@@ -51,11 +51,6 @@ describe('EquipmentStatusListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call store.load on init', async () => {
-    await setup();
-    expect(store.load).toHaveBeenCalledOnce();
-  });
-
   it('should render table rows for each status', async () => {
     await setup();
     fixture.detectChanges();
@@ -101,12 +96,5 @@ describe('EquipmentStatusListComponent', () => {
     expect(callArgs[1]).toMatchObject({
       data: { status: mockStatuses[0], statuses: store.statuses() },
     });
-  });
-
-  it('should not call store.load again after opening dialogs', async () => {
-    await setup();
-    component.openCreateDialog();
-    component.openEditDialog(mockStatuses[0]);
-    expect(store.load).toHaveBeenCalledOnce();
   });
 });

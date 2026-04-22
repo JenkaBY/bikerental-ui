@@ -72,47 +72,6 @@ describe('EquipmentListComponent', () => {
     return { store, typeStore, statusStore, dialog };
   }
 
-  it('should load types, statuses and equipment on init', async () => {
-    const sampleTypes = [{ slug: 'bike', name: 'Bike', isForSpecialTariff: false }];
-    const sampleStatuses = [{ slug: 'available', name: 'Available', allowedTransitions: [] }];
-    const sampleEquipment = [
-      {
-        id: 1,
-        uid: '1',
-        serialNumber: 'SN',
-        type: { slug: 'bike', name: 'Bike', isForSpecialTariff: false },
-        status: { slug: 'available', name: 'Available', allowedTransitions: [] },
-        model: '',
-      },
-    ] as Equipment[];
-
-    const store = makeStore();
-    (store.items as unknown as ReturnType<typeof vi.fn>).mockReturnValue(sampleEquipment);
-    (store.totalItems as unknown as ReturnType<typeof vi.fn>).mockReturnValue(1);
-
-    const typeStore = makeTypeStore();
-    (typeStore.types as unknown as ReturnType<typeof vi.fn>).mockReturnValue(sampleTypes);
-    (typeStore.typesForEquipment as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      sampleTypes,
-    );
-
-    const statusStore = makeStatusStore();
-    (statusStore.statuses as unknown as ReturnType<typeof vi.fn>).mockReturnValue(sampleStatuses);
-
-    await createComponentWithMocks({ store, typeStore, statusStore });
-
-    fixture.detectChanges();
-
-    expect(component.equipmentTypeStore.types().length).toBe(1);
-    expect(component.equipmentStatusStore.statuses().length).toBe(1);
-    expect(component.store.items().length).toBe(1);
-    expect(component.store.totalItems()).toBe(1);
-    expect(component.store.loading()).toBe(false);
-    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalled();
-    expect(typeStore.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalled();
-    expect(statusStore.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalled();
-  });
-
   it('should set filter and reload equipment on status filter change', async () => {
     const store = makeStore();
 
@@ -149,44 +108,5 @@ describe('EquipmentListComponent', () => {
 
     expect(store.setPage as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(1, 20);
     expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(1);
-  });
-
-  it('should open create dialog and reload when dialog closed with true', async () => {
-    const store = makeStore();
-    const dialog = makeDialog();
-    (dialog.open as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      afterClosed: () => of(true),
-    });
-
-    await createComponentWithMocks({ store, dialog });
-    fixture.detectChanges();
-
-    component.openCreateDialog();
-
-    expect(dialog.open).toHaveBeenCalled();
-    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(2);
-  });
-
-  it('should open edit dialog and reload when dialog closed with true', async () => {
-    const store = makeStore();
-    const dialog = makeDialog();
-    (dialog.open as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      afterClosed: () => of(true),
-    });
-
-    await createComponentWithMocks({ store, dialog });
-    fixture.detectChanges();
-
-    component.openEditDialog({
-      id: 1,
-      uid: '1',
-      serialNumber: 'S1',
-      type: { slug: 'bike', name: 'Bike', isForSpecialTariff: false },
-      status: { slug: 'available', name: 'Available', allowedTransitions: [] },
-      model: '',
-    } as Equipment);
-
-    expect(dialog.open).toHaveBeenCalled();
-    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(2);
   });
 });

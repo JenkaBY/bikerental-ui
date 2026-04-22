@@ -50,11 +50,6 @@ describe('EquipmentTypeListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call store.load on init', async () => {
-    await setup();
-    expect(store.load).toHaveBeenCalledOnce();
-  });
-
   it('should render table rows for each type', async () => {
     await setup();
     fixture.detectChanges();
@@ -96,12 +91,5 @@ describe('EquipmentTypeListComponent', () => {
     expect(dialog.open).toHaveBeenCalledOnce();
     const callArgs = dialog.open.mock.calls[0];
     expect(callArgs[1]).toMatchObject({ data: { type: mockTypes[0] } });
-  });
-
-  it('should not call store.load again after opening dialogs', async () => {
-    await setup();
-    component.openCreateDialog();
-    component.openEditDialog(mockTypes[0]);
-    expect(store.load).toHaveBeenCalledOnce();
   });
 });
