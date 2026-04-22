@@ -3,10 +3,11 @@ import { SLUG_PATTERN, SlugValidators } from './slug-validators';
 
 describe('SlugValidators', () => {
   it('pattern constant matches expected slugs', () => {
-    expect(SLUG_PATTERN.test('bike')).toBe(true);
-    expect(SLUG_PATTERN.test('bike-123')).toBe(true);
-    expect(SLUG_PATTERN.test('bike_123')).toBe(true);
-    expect(SLUG_PATTERN.test('Bike')).toBe(true); // uppercase not allowed
+    expect(SLUG_PATTERN.test('BIKE')).toBe(true);
+    expect(SLUG_PATTERN.test('BIKE-123')).toBe(true);
+    expect(SLUG_PATTERN.test('BIKE_123')).toBe(true);
+    expect(SLUG_PATTERN.test('bike')).toBe(false);
+    expect(SLUG_PATTERN.test('Bike')).toBe(false);
     expect(SLUG_PATTERN.test('with space')).toBe(false);
     expect(SLUG_PATTERN.test('with$symbol')).toBe(false);
   });
@@ -19,7 +20,7 @@ describe('SlugValidators', () => {
     control.setValue('a'.repeat(51));
     expect(control.hasError('maxlength')).toBe(true);
 
-    control.setValue('valid-slug_123');
+    control.setValue('VALID-SLUG_123');
     expect(control.valid).toBe(true);
   });
 });

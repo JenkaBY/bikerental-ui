@@ -44,7 +44,7 @@ export interface EquipmentStatusDialogData {
       <form [formGroup]="form" class="flex flex-col gap-4 min-w-100 pt-1">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.Slug }}</mat-label>
-          <input matInput formControlName="slug" placeholder="e.g. available" />
+          <input matInput formControlName="slug" placeholder="e.g. AVAILABLE" />
           @if (form.controls.slug.hasError('required')) {
             <mat-error>{{ errors.slugRequired }}</mat-error>
           }

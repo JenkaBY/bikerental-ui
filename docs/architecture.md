@@ -114,8 +114,8 @@ The following pages are implemented within `shared-lib/src/lib/features/` and im
 - **Tasks:** Lint, Test, Build.
 - **Deployment Strategy:** - Build both `admin-app` and `operator-app`.
   - Deploy to **GitHub Pages** simultaneously.
-  - **URL Structure:** - `https://jenkaby.github.io/bike-rental/admin/`
-    - `https://jenkaby.github.io/bike-rental/operator/`
+    - **URL Structure:** - `https://jenkaby.github.io/bike-rental/admin/`
+      - `https://jenkaby.github.io/bike-rental/operator/`
 
 ---
 

@@ -42,7 +42,7 @@ describe('EquipmentStatusDialogComponent error handling', () => {
     const fixture = TestBed.createComponent(EquipmentStatusDialogComponent);
     const component = fixture.componentInstance;
 
-    component.form.controls.slug.setValue('available');
+    component.form.controls.slug.setValue('AVAILABLE');
     component.form.controls.name.setValue('Available');
 
     component.save();
@@ -68,7 +68,7 @@ describe('EquipmentStatusDialogComponent error handling', () => {
 
     const fixture = TestBed.createComponent(EquipmentStatusDialogComponent);
     const component = fixture.componentInstance;
-    component.form.controls.slug.setValue('available');
+    component.form.controls.slug.setValue('AVAILABLE');
     component.form.controls.name.setValue('Available');
 
     component.save();

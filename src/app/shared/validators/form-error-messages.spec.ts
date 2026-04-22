@@ -7,6 +7,7 @@ describe('FormErrorMessages', () => {
 
   it('should expose slugPattern message', () => {
     expect(FormErrorMessages.slugPattern).toBeTruthy();
+    expect(FormErrorMessages.slugPattern).toContain('uppercase');
   });
 
   it('should expose slugMaxLength message', () => {

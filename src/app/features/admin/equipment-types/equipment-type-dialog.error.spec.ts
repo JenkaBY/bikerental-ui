@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { throwError } from 'rxjs';
 import { EquipmentTypeDialogComponent } from './equipment-type-dialog.component';
-import { EquipmentTypeStore } from '../../../core/state/equipment-type.store';
+import { EquipmentTypeStore } from '@store.equipment-type.store';
 import { HttpErrorResponse } from '@angular/common/http';
 
 function makeStore(err: unknown) {
@@ -37,7 +37,7 @@ describe('EquipmentTypeDialogComponent error handling', () => {
     const fixture = TestBed.createComponent(EquipmentTypeDialogComponent);
     const component = fixture.componentInstance;
 
-    component.form.controls.slug.setValue('bike');
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
 
     component.save();
@@ -62,7 +62,7 @@ describe('EquipmentTypeDialogComponent error handling', () => {
 
     const fixture = TestBed.createComponent(EquipmentTypeDialogComponent);
     const component = fixture.componentInstance;
-    component.form.controls.slug.setValue('bike');
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
 
     component.save();

@@ -94,11 +94,11 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
 
   it('should call store.create on valid submit', async () => {
     const { component, store, dialogRef } = await setup();
-    component.form.controls.slug.setValue('new-status');
+    component.form.controls.slug.setValue('NEW-STATUS');
     component.form.controls.name.setValue('New Status');
     component.save();
     expect(store.create).toHaveBeenCalledWith({
-      slug: 'new-status',
+      slug: 'NEW-STATUS',
       name: 'New Status',
       description: undefined,
       allowedTransitions: [],
@@ -108,7 +108,7 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
 
   it('should include allowedTransitions in create request', async () => {
     const { component, store } = await setup();
-    component.form.controls.slug.setValue('new-status');
+    component.form.controls.slug.setValue('NEW-STATUS');
     component.form.controls.name.setValue('New Status');
     component.form.controls.allowedTransitions.setValue(['rented', 'maintenance']);
     component.save();
@@ -119,7 +119,7 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
 
   it('should include description in create request when provided', async () => {
     const { component, store } = await setup();
-    component.form.controls.slug.setValue('new-status');
+    component.form.controls.slug.setValue('NEW-STATUS');
     component.form.controls.name.setValue('New Status');
     component.form.controls.description.setValue('A description');
     component.save();
@@ -137,7 +137,7 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
 
   it('should fail slug validation when exceeding maxLength', async () => {
     const { component } = await setup();
-    component.form.controls.slug.setValue('a'.repeat(51));
+    component.form.controls.slug.setValue('A'.repeat(51));
     component.form.controls.slug.updateValueAndValidity();
     expect(component.form.controls.slug.hasError('maxlength')).toBe(true);
   });
@@ -145,7 +145,7 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
   it('should show snackbar and reset saving on error', async () => {
     const { component, store, snackBar } = await setup();
     store.create.mockReturnValue(throwError(() => new Error('Server error')));
-    component.form.controls.slug.setValue('new-status');
+    component.form.controls.slug.setValue('NEW-STATUS');
     component.form.controls.name.setValue('New Status');
     component.save();
     expect(snackBar.open).toHaveBeenCalled();
@@ -153,7 +153,7 @@ describe('EquipmentStatusDialogComponent — create mode', () => {
 
   it('should show success snackbar on successful create', async () => {
     const { component, snackBar } = await setup();
-    component.form.controls.slug.setValue('new-status');
+    component.form.controls.slug.setValue('NEW-STATUS');
     component.form.controls.name.setValue('New Status');
     component.save();
     expect(snackBar.open).toHaveBeenCalled();

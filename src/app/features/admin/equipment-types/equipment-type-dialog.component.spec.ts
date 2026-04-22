@@ -82,11 +82,11 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
 
   it('should call store.create on valid submit', async () => {
     const { component, store, dialogRef } = await setup();
-    component.form.controls.slug.setValue('bike');
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
     component.save();
     expect(store.create).toHaveBeenCalledWith({
-      slug: 'bike',
+      slug: 'BIKE',
       name: 'Bike',
       description: undefined,
     });
@@ -95,12 +95,12 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
 
   it('should include description in create request when provided', async () => {
     const { component, store } = await setup();
-    component.form.controls.slug.setValue('bike');
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
     component.form.controls.description.setValue('A bicycle');
     component.save();
     expect(store.create).toHaveBeenCalledWith({
-      slug: 'bike',
+      slug: 'BIKE',
       name: 'Bike',
       description: 'A bicycle',
     });
@@ -115,7 +115,7 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
 
   it('should fail slug validation when exceeding maxLength', async () => {
     const { component } = await setup();
-    component.form.controls.slug.setValue('a'.repeat(51));
+    component.form.controls.slug.setValue('A'.repeat(51));
     component.form.controls.slug.updateValueAndValidity();
     expect(component.form.controls.slug.hasError('maxlength')).toBe(true);
   });
@@ -123,7 +123,7 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
   it('should show snackbar and reset saving on error', async () => {
     const { component, store, snackBar } = await setup();
     store.create.mockReturnValue(throwError(() => new Error('Server error')));
-    component.form.controls.slug.setValue('bike');
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
     component.save();
     expect(snackBar.open).toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
 
   it('should show success snackbar on successful create', async () => {
     const { component, snackBar } = await setup();
-    component.form.controls.slug.setValue('bike');
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
     component.save();
     expect(snackBar.open).toHaveBeenCalled();
