@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -10,8 +17,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EquipmentTypeService, TariffService } from '../../../core/api';
-import { Tariff } from '../../../core/domain';
+import { Tariff } from '@ui-models';
+import { TariffStore } from '@store.tariff.store';
 import { Labels } from '../../../shared/constant/labels';
 import { MatDialog } from '@angular/material/dialog';
 import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.component';
@@ -72,9 +79,7 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
               >
                 {{ Labels.EquipmentType }}
               </th>
-              <td mat-cell *matCellDef="let row">
-                {{ equipmentTypeNames()[row.equipmentType] || row.equipmentType }}
-              </td>
+              <td mat-cell *matCellDef="let row">{{ row.equipmentType.name }}</td>
             </ng-container>
 
             <!-- Pricing Type -->
@@ -87,7 +92,7 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
                 {{ Labels.PricingType }}
               </th>
               <td mat-cell *matCellDef="let row">
-                {{ pricingTypeTitles()[row.pricingType] }}
+                {{ row.pricingType.title }}
               </td>
             </ng-container>
 
@@ -98,7 +103,7 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
                 *matHeaderCellDef
                 class="bg-slate-50 font-semibold text-slate-700"
               >
-                {{ 'Valid From' }}
+                {{ Labels.ValidFrom }}
               </th>
               <td mat-cell *matCellDef="let row">{{ row.validFrom | date }}</td>
             </ng-container>
@@ -110,7 +115,7 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
                 *matHeaderCellDef
                 class="bg-slate-50 font-semibold text-slate-700"
               >
-                {{ 'Valid To' }}
+                {{ Labels.ValidTo }}
               </th>
               <td mat-cell *matCellDef="let row">{{ row.validTo ? (row.validTo | date) : '' }}</td>
             </ng-container>
@@ -121,19 +126,19 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
                 *matHeaderCellDef
                 class="bg-slate-50 font-semibold text-slate-700"
               >
-                {{ 'Status' }}
+                {{ Labels.Status }}
               </th>
               <td
                 mat-cell
                 *matCellDef="let row"
-                [ngClass]="row.status === 'ACTIVE' ? 'bg-green-100' : 'bg-yellow-100'"
+                [ngClass]="row.isActive ? 'bg-green-100' : 'bg-yellow-100'"
               >
                 <mat-slide-toggle
-                  [checked]="row.status === 'ACTIVE'"
+                  [checked]="row.isActive"
                   (change)="toggleStatus(row)"
                   [disabled]="toggling()[row.id]"
                   [aria-label]="row.name"
-                  [class.checked-green]="row.status === 'ACTIVE'"
+                  [class.checked-green]="row.isActive"
                 ></mat-slide-toggle>
               </td>
             </ng-container>
@@ -155,6 +160,7 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
             <tr
               mat-row
               *matRowDef="let row; columns: displayedColumns"
+              [attr.data-row-id]="row.id"
               class="hover:bg-slate-200 transition-colors"
             ></tr>
           </table>
@@ -180,22 +186,19 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
     </mat-card>
   `,
 })
-export class TariffListComponent {
-  private tariffService = inject(TariffService);
+export class TariffListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private snackBar = inject(MatSnackBar);
+  private store = inject(TariffStore);
+  private dialog = inject(MatDialog);
 
-  items = signal<Tariff[]>([]);
-  totalItems = signal<number>(0);
-  loading = signal(false);
-  page = signal(0);
-  pageSize = signal(10);
-  pageSizeOptions = [5, 10, 25];
+  readonly items = this.store.tariffs;
+  readonly totalItems = this.store.totalItems;
+  readonly loading = this.store.loading;
+  readonly page = this.store.currentPage;
+  readonly pageSize = this.store.pageSize;
+  readonly pageSizeOptions = [5, 10, 25];
 
-  pricingTypeTitles = signal<Record<string, string>>({});
-  pricingTypeDescriptions = signal<Record<string, string | undefined>>({});
-  readonly equipmentTypeNames = signal<Record<string, string>>({});
-  // per-row pending state while toggle request is in-flight
   toggling = signal<Record<number, boolean>>({});
   protected readonly Labels = Labels;
 
@@ -209,56 +212,16 @@ export class TariffListComponent {
     'actions',
   ];
 
-  private dialog = inject(MatDialog);
-
-  constructor() {
-    // load equipment type names for slug -> name mapping
-    const equipmentTypeService = inject(EquipmentTypeService);
-    equipmentTypeService
-      .getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((types) => {
-        const map: Record<string, string> = {};
-        (types || []).forEach((t: { slug: string; name: string }) => {
-          map[t.slug] = t.name;
-        });
-        this.equipmentTypeNames.set(map);
-      });
-    // populate pricing type titles lookup (fallback to slug when title missing)
-    this.tariffService
-      .getPricingTypes()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        // we rely on UI Labels for translated titles/descriptions
-        this.pricingTypeTitles.set(Labels.PricingTypeTitles as Record<string, string>);
-        this.pricingTypeDescriptions.set(
-          Labels.PricingTypeDescriptions as Record<string, string | undefined>,
-        );
-      });
-
+  ngOnInit(): void {
     this.load();
   }
 
-  load() {
-    this.loading.set(true);
-    this.tariffService
-      .getAll({ page: this.page(), size: this.pageSize() })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((p) => {
-        this.items.set(p.items ?? []);
-        this.totalItems.set(p.totalItems ?? this.items().length);
-        this.loading.set(false);
-      });
+  load(): void {
+    this.store.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
-  onPage(e: PageEvent) {
-    this.page.set(e.pageIndex);
-    this.pageSize.set(e.pageSize);
-    this.load();
-  }
-
-  refresh() {
-    this.load();
+  onPage(e: PageEvent): void {
+    this.store.setPage(e.pageIndex, e.pageSize);
   }
 
   openCreateDialog(): void {
@@ -268,11 +231,9 @@ export class TariffListComponent {
         width: '680px',
       })
       .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
         if (result) {
           this.snackBar.open(Labels.Saved, Labels.Close, { duration: 3000 });
-          this.load();
         }
       });
   }
@@ -284,11 +245,9 @@ export class TariffListComponent {
         width: '680px',
       })
       .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
         if (result) {
           this.snackBar.open(Labels.Saved, Labels.Close, { duration: 3000 });
-          this.load();
         }
       });
   }
@@ -296,21 +255,17 @@ export class TariffListComponent {
   toggleStatus(row: Tariff) {
     if (!row || row.id == null) return;
     const id = row.id;
-    const isActive = row.status === 'ACTIVE';
 
-    // set pending
     this.toggling.update((s) => ({ ...s, [id]: true }));
 
-    const call$ = isActive ? this.tariffService.deactivate(id) : this.tariffService.activate(id);
-    call$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (updated) => {
-        // update single item in the items signal
-        this.items.update((arr) => arr.map((it) => (it.id === id ? updated : it)));
+    const call$ = row.isActive ? this.store.deactivate(id) : this.store.activate(id);
+    call$.subscribe({
+      next: () => {
         this.snackBar.open(Labels.StatusChanged ?? Labels.Close, Labels.Close, { duration: 3000 });
         this.toggling.update((s) => ({ ...s, [id]: false }));
       },
       error: (err) => {
-        const msg = err?.message ?? Labels.ErrorOccurred ?? $localize`Error occurred`;
+        const msg = err?.message ?? Labels.ErrorOccurred;
         this.snackBar.open(msg, Labels.Close, { duration: 4000 });
         this.toggling.update((s) => ({ ...s, [id]: false }));
       },

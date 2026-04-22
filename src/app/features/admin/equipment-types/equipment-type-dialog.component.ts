@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType, EquipmentTypeWrite } from '../../../core/domain';
+import { EquipmentTypeStore } from '@store.equipment-type.store';
+import { EquipmentType, EquipmentTypeWrite } from '@ui-models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
@@ -32,7 +32,7 @@ export interface EquipmentTypeDialogData {
   template: `
     <h2 mat-dialog-title>
       @if (data.type) {
-        <span>{{ labels.Edit }}</span>
+        <span i18n>{{ labels.Edit }}</span>
       } @else {
         <span i18n>{{ labels.Create }}</span>
       }
@@ -41,7 +41,7 @@ export interface EquipmentTypeDialogData {
       <form [formGroup]="form" class="flex flex-col gap-4 min-w-100 pt-1">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.Slug }}</mat-label>
-          <input matInput formControlName="slug" placeholder="e.g. bike" />
+          <input matInput formControlName="slug" placeholder="e.g. BIKE" />
           @if (form.controls.slug.hasError('required')) {
             <mat-error>{{ errors.slugRequired }}</mat-error>
           }
@@ -80,11 +80,11 @@ export interface EquipmentTypeDialogData {
 export class EquipmentTypeDialogComponent {
   private dialogRef = inject(MatDialogRef<EquipmentTypeDialogComponent>);
   readonly data = inject<EquipmentTypeDialogData>(MAT_DIALOG_DATA);
-  private service = inject(EquipmentTypeService);
+  private store = inject(EquipmentTypeStore);
+  readonly saving = this.store.saving;
   private snackBar = inject(MatSnackBar);
 
   readonly errors = FormErrorMessages;
-  saving = signal(false);
   readonly labels = Labels;
 
   form = new FormGroup({
@@ -102,24 +102,16 @@ export class EquipmentTypeDialogComponent {
       return;
     }
 
-    this.saving.set(true);
-
-    const raw = this.form.getRawValue() as EquipmentTypeWrite; // includes disabled slug in edit mode
+    const value = this.form.getRawValue();
     const write: EquipmentTypeWrite = {
-      slug: raw.slug,
-      name: raw.name,
-      description: raw.description || undefined,
+      slug: value.slug ?? '',
+      name: value.name ?? '',
+      description: value.description || undefined,
     };
-    let operation$;
-    if (this.isCreateMode()) {
-      operation$ = this.service.create(write);
-    } else {
-      operation$ = this.service.update(write);
-    }
+    const operation$ = this.isCreateMode() ? this.store.create(write) : this.store.update(write);
 
     operation$.subscribe({
       next: () => {
-        // Show success toast for create or update
         const message = this.isCreateMode()
           ? $localize`Equipment type created`
           : $localize`Equipment type updated`;
@@ -127,7 +119,6 @@ export class EquipmentTypeDialogComponent {
         this.dialogRef.close(true);
       },
       error: () => {
-        this.saving.set(false);
         this.snackBar.open($localize`Failed to save equipment type`, $localize`Close`, {
           duration: 4000,
         });

@@ -23,7 +23,6 @@ You are a senior developer working on a **Angular** project using Node 24, TypeS
 
 Additional documentation to read as context requires:
 
-- `docs/api-docs/all.json` - json file with all API endpoints and details in api-docs format
 - `docs/main-flow-diagram.mermaid` - main flow diagram
 
 To be more efficient, you can also read the following files for apply your external skills properly:

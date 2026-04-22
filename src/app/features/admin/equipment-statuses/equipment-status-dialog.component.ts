@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -6,8 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusRequest, EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentStatusStore } from '../../../core/state/equipment-status.store';
+import { EquipmentStatus, EquipmentStatusWrite } from '@ui-models';
 import { FormErrorMessages } from '../../../shared/validators/form-error-messages';
 import { SlugValidators } from '../../../shared/validators/slug-validators';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
@@ -15,8 +15,8 @@ import { CancelButtonComponent } from '../../../shared/components/cancel-button/
 import { Labels } from '../../../shared/constant/labels';
 
 export interface EquipmentStatusDialogData {
-  status?: EquipmentStatusResponse;
-  statuses: EquipmentStatusResponse[];
+  status?: EquipmentStatus;
+  statuses: EquipmentStatus[];
 }
 
 @Component({
@@ -44,7 +44,7 @@ export interface EquipmentStatusDialogData {
       <form [formGroup]="form" class="flex flex-col gap-4 min-w-100 pt-1">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.Slug }}</mat-label>
-          <input matInput formControlName="slug" placeholder="e.g. available" />
+          <input matInput formControlName="slug" placeholder="e.g. AVAILABLE" />
           @if (form.controls.slug.hasError('required')) {
             <mat-error>{{ errors.slugRequired }}</mat-error>
           }
@@ -92,12 +92,12 @@ export interface EquipmentStatusDialogData {
 export class EquipmentStatusDialogComponent {
   private dialogRef = inject(MatDialogRef<EquipmentStatusDialogComponent>);
   readonly data = inject<EquipmentStatusDialogData>(MAT_DIALOG_DATA);
-  private service = inject(EquipmentStatusService);
+  private store = inject(EquipmentStatusStore);
   private snackBar = inject(MatSnackBar);
 
   readonly labels = Labels;
   readonly errors = FormErrorMessages;
-  saving = signal(false);
+  readonly saving = this.store.saving;
 
   form = new FormGroup({
     slug: new FormControl(
@@ -109,7 +109,7 @@ export class EquipmentStatusDialogComponent {
     allowedTransitions: new FormControl<string[]>(this.data?.status?.allowedTransitions ?? []),
   });
 
-  get transitionOptions(): EquipmentStatusResponse[] {
+  get transitionOptions(): EquipmentStatus[] {
     const selfSlug = this.data?.status?.slug;
     return selfSlug ? this.data.statuses.filter((s) => s.slug !== selfSlug) : this.data.statuses;
   }
@@ -120,21 +120,17 @@ export class EquipmentStatusDialogComponent {
       return;
     }
 
-    this.saving.set(true);
-
     const { slug, name, description, allowedTransitions } = this.form.getRawValue();
-    const request: EquipmentStatusRequest = {
+    const write: EquipmentStatusWrite = {
+      slug: slug ?? '',
       name: name ?? '',
       description: description || undefined,
       allowedTransitions: allowedTransitions ?? [],
     };
 
-    let operation$;
-    if (this.isCreateMode()) {
-      operation$ = this.service.create({ slug: slug ?? '', ...request });
-    } else {
-      operation$ = this.service.update(this.data.status!.slug, request);
-    }
+    const operation$ = this.isCreateMode()
+      ? this.store.create(write)
+      : this.store.update(this.data.status!.slug, write);
 
     operation$.subscribe({
       next: () => {
@@ -145,7 +141,6 @@ export class EquipmentStatusDialogComponent {
         this.dialogRef.close(true);
       },
       error: () => {
-        this.saving.set(false);
         this.snackBar.open($localize`Failed to save equipment status`, this.labels.Close, {
           duration: 4000,
         });

@@ -1,10 +1,11 @@
 # TASK009 - Admin: Customers, Rental History, Payment History, Users Placeholder
 
-**Status:** Pending  
+**Status:** Abandoned  
 **Added:** 2026-02-28  
-**Updated:** 2026-02-28  
+**Updated:** 2026-03-24  
 **Depends on:** TASK003  
-**Blocks:** None
+**Blocks:** None  
+**Superseded by:** TASK025, TASK026, TASK027, TASK028
 
 ## Original Request
 

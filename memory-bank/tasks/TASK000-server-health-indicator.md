@@ -66,7 +66,6 @@ Statuses: `UP` → green, `DOWN` → red, `OUT_OF_SERVICE` → yellow, unavailab
 
 ### API Version
 
-From `docs/api-docs/all.json` we can see: `info.version = "commit: 70b3114"`.
 The version is taken from `/actuator/info` (Spring Boot convention):
 
 ```json

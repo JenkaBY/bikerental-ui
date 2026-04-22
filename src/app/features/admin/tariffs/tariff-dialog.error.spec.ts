@@ -5,10 +5,26 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TariffStore } from '@store.tariff.store';
+import { PricingTypeStore } from '@store.pricing-type.store';
 import { TariffDialogComponent } from './tariff-dialog.component';
 import { EquipmentTypeDropdownComponent } from '../../../shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
-import { TariffService } from '../../../core/api';
-import { Tariff } from '../../../core/domain';
+import { Tariff, TariffStatus } from '@ui-models';
+import { Labels } from '../../../shared/constant/labels';
+
+function withTariffFlags(base: Omit<Tariff, 'isActive' | 'isSpecial'>): Tariff {
+  return {
+    ...base,
+    isActive: base.status === 'ACTIVE',
+    isSpecial: base.pricingType.slug === 'SPECIAL',
+  };
+}
+
+const bicycleType = {
+  slug: 'bike',
+  name: 'Bicycle',
+  isForSpecialTariff: false,
+};
 
 @Component({
   selector: 'app-equipment-type-dropdown',
@@ -34,24 +50,25 @@ class DropdownStub implements ControlValueAccessor {
   }
 }
 
-const tariffFixture: Tariff = {
+const tariffFixture: Tariff = withTariffFlags({
   id: 7,
   name: 'Existing',
-  equipmentType: 'bike',
-  pricingType: 'FLAT_HOURLY',
+  equipmentType: bicycleType,
+  pricingType: {
+    slug: 'FLAT_HOURLY',
+    title: 'Flat hourly',
+    description: 'Flat hourly rate',
+  },
   params: { hourlyPrice: 50 },
   validFrom: new Date('2026-01-01'),
-  status: 'ACTIVE',
-};
+  status: TariffStatus.ACTIVE,
+});
 
-function makeService(mode: 'create-error' | 'update-error', err: unknown) {
+function makeStore(mode: 'create-error' | 'update-error', err: unknown) {
   return {
+    saving: vi.fn().mockReturnValue(false),
     create: mode === 'create-error' ? vi.fn().mockReturnValue(throwError(() => err)) : vi.fn(),
     update: mode === 'update-error' ? vi.fn().mockReturnValue(throwError(() => err)) : vi.fn(),
-    getPricingTypes: vi.fn().mockReturnValue({
-      subscribe: () => void 0,
-      pipe: () => ({ subscribe: () => void 0 }),
-    }),
   };
 }
 
@@ -60,14 +77,36 @@ async function setupError(
   err: unknown,
   dialogData: object = {},
 ) {
-  const service = makeService(mode, err);
+  const store = makeStore(mode, err);
+  const pricingTypeStore = {
+    pricingTypes: vi.fn().mockReturnValue([
+      {
+        slug: 'DEGRESSIVE_HOURLY',
+        title: 'Degressive hourly',
+        description: Labels.PricingTypeDescriptions['DEGRESSIVE_HOURLY'],
+      },
+      {
+        slug: 'FLAT_HOURLY',
+        title: 'Flat hourly',
+        description: Labels.PricingTypeDescriptions['FLAT_HOURLY'],
+      },
+      { slug: 'DAILY', title: 'Daily', description: Labels.PricingTypeDescriptions['DAILY'] },
+      {
+        slug: 'FLAT_FEE',
+        title: 'Flat fee',
+        description: Labels.PricingTypeDescriptions['FLAT_FEE'],
+      },
+      { slug: 'SPECIAL', title: 'Special', description: Labels.PricingTypeDescriptions['SPECIAL'] },
+    ]),
+  };
   const dialogRef = { close: vi.fn() };
   const snackBar = { open: vi.fn() };
 
   await TestBed.configureTestingModule({
     imports: [TariffDialogComponent],
     providers: [
-      { provide: TariffService, useValue: service },
+      { provide: TariffStore, useValue: store },
+      { provide: PricingTypeStore, useValue: pricingTypeStore },
       { provide: MatDialogRef, useValue: dialogRef },
       { provide: MAT_DIALOG_DATA, useValue: dialogData },
       { provide: MatSnackBar, useValue: snackBar },
@@ -82,7 +121,7 @@ async function setupError(
   const fixture = TestBed.createComponent(TariffDialogComponent);
   const component = fixture.componentInstance;
   fixture.detectChanges();
-  return { component, dialogRef, snackBar, service };
+  return { component, dialogRef, snackBar, store };
 }
 
 function fillFlatHourly(component: TariffDialogComponent) {
@@ -114,12 +153,12 @@ describe('TariffDialogComponent — error handling', () => {
 
   it('resets saving signal to false after create() error', async () => {
     const err = new Error('fail');
-    const { component } = await setupError('create-error', err);
+    const { component, store } = await setupError('create-error', err);
 
     fillFlatHourly(component);
     component.save();
 
-    expect(component.saving()).toBe(false);
+    expect(store.saving()).toBe(false);
   });
 
   it('shows snackbar with error message when update() fails', async () => {
@@ -140,11 +179,11 @@ describe('TariffDialogComponent — error handling', () => {
 
   it('resets saving signal to false after update() error', async () => {
     const err = new Error('fail');
-    const { component } = await setupError('update-error', err, { tariff: tariffFixture });
+    const { component, store } = await setupError('update-error', err, { tariff: tariffFixture });
 
     component.save();
 
-    expect(component.saving()).toBe(false);
+    expect(store.saving()).toBe(false);
   });
 
   it('shows fallback message when error has no message property', async () => {

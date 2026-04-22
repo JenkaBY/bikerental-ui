@@ -1,8 +1,8 @@
 # TASK008 - Admin: Tariffs CRUD (Parent Tracker)
 
-**Status:** Pending  
+**Status:** Completed  
 **Added:** 2026-02-28  
-**Updated:** 2026-03-23  
+**Updated:** 2026-04-22  
 **Depends on:** TASK003  
 **Blocks:** None
 
@@ -22,11 +22,11 @@ Each subtask has its own dedicated task file.
 Backend API
   └── TariffV2Response  (core/models/)
         └── TariffMapper.fromResponse()  (core/mappers/)
-              └── Tariff  (core/domain/)
+              └── Tariff  (core/models/)
                     └── TariffListComponent, TariffDialogComponent  (features/admin/tariffs/)
 
 UI Form
-  └── TariffWrite  (core/domain/)
+  └── TariffWrite  (core/models/)
         └── TariffMapper.toRequest()  (core/mappers/)
               └── TariffV2Request  (core/models/)
                     └── Backend API
@@ -63,18 +63,18 @@ TASK015 (v2 API models + domain Tariff/TariffWrite + TariffMapper)              
 
 ## API (updated to v2)
 
-Base URL: `/api/v2/tariffs`
+Base URL: `/api/tariffs`
 
-| Method | Path                             | Description             |
-|--------|----------------------------------|-------------------------|
-| GET    | `/api/v2/tariffs`                | Paginated list          |
-| POST   | `/api/v2/tariffs`                | Create tariff           |
-| GET    | `/api/v2/tariffs/{id}`           | Get by ID               |
-| PUT    | `/api/v2/tariffs/{id}`           | Update tariff           |
-| PATCH  | `/api/v2/tariffs/{id}/activate`  | Activate                |
-| PATCH  | `/api/v2/tariffs/{id}/deactivate`| Deactivate              |
-| GET    | `/api/v2/tariffs/active`         | Active by equipment type|
-| GET    | `/api/v2/tariffs/selection`      | Tariff selection        |
+| Method | Path                           | Description              |
+|--------|--------------------------------|--------------------------|
+| GET    | `/api/tariffs`                 | Paginated list           |
+| POST   | `/api/tariffs`                 | Create tariff            |
+| GET    | `/api/tariffs/{id}`            | Get by ID                |
+| PUT    | `/api/tariffs/{id}`            | Update tariff            |
+| PATCH  | `/api/tariffs/{id}/activate`   | Activate                 |
+| PATCH  | `/api/tariffs/{id}/deactivate` | Deactivate               |
+| GET    | `/api/tariffs/active`          | Active by equipment type |
+| GET    | `/api/tariffs/selection`       | Tariff selection         |
 
 ## v2 Model Overview
 
@@ -95,20 +95,20 @@ Base URL: `/api/v2/tariffs`
 
 ## Progress Tracking
 
-**Overall Status:** Not Started — 0%
+**Overall Status:** Completed — 100%
 
 ### Subtasks
 
-| ID      | Description                                  | Status      | Updated    | Notes |
-|---------|----------------------------------------------|-------------|------------|-------|
-| TASK015 | Update TariffService & Models to v2 API      | Not Started | 2026-03-23 | See TASK015 file |
-| TASK016 | TariffListComponent — table shell            | Not Started | 2026-03-23 | See TASK016 file |
-| TASK017 | TariffListComponent — status toggle          | Not Started | 2026-03-23 | See TASK017 file |
-| TASK018 | TariffDialogComponent — base form            | Not Started | 2026-03-23 | See TASK018 file |
-| TASK019 | TariffDialogComponent — pricing params       | Not Started | 2026-03-23 | See TASK019 file |
-| TASK020 | Wire dialog into list                        | Not Started | 2026-03-23 | See TASK020 file |
-| TASK021 | Unit tests: TariffListComponent              | Not Started | 2026-03-23 | See TASK021 file |
-| TASK022 | Unit tests: TariffDialogComponent            | Not Started | 2026-03-23 | See TASK022 file |
+| ID      | Description                             | Status    | Updated    | Notes                                  |
+|---------|-----------------------------------------|-----------|------------|----------------------------------------|
+| TASK015 | Update TariffService & Models to v2 API | Completed | 2026-03-23 | See TASK015 file                       |
+| TASK016 | TariffListComponent — table shell       | Completed | 2026-04-22 | Store-driven follow-up completed       |
+| TASK017 | TariffListComponent — status toggle     | Completed | 2026-03-23 | See TASK017 file                       |
+| TASK018 | TariffDialogComponent — base form       | Completed | 2026-03-24 | See TASK018 file                       |
+| TASK019 | TariffDialogComponent — pricing params  | Completed | 2026-03-24 | See TASK019 file                       |
+| TASK020 | Wire dialog into list                   | Completed | 2026-03-24 | See TASK020 file                       |
+| TASK021 | Unit tests: TariffListComponent         | Completed | 2026-04-22 | Updated for TariffStore migration      |
+| TASK022 | Unit tests: TariffDialogComponent       | Completed | 2026-04-22 | Updated for EquipmentType domain shape |
 
 ## Progress Log
 
@@ -119,9 +119,27 @@ Base URL: `/api/v2/tariffs`
 ### 2026-03-23
 
 - Decomposed into 8 subtasks (TASK015–TASK022)
-- Updated all subtask descriptions to use `/api/v2/tariffs`
+- Updated all subtask descriptions to use `/api/tariffs`
 - v2 model schema differs significantly from v1: `pricingType` enum + `PricingParams` object replaces flat price fields
-- Added mapper/domain layer: `core/domain/tariff.model.ts` (`Tariff`, `TariffWrite`) + `core/mappers/tariff.mapper.ts` (`TariffMapper`)
+- Added mapper/models layer: `core/models/tariff.model.ts` (`Tariff`, `TariffWrite`) + `core/mappers/tariff.mapper.ts` (`TariffMapper`)
 - `status` is no longer set in the create/edit form — controlled via activate/deactivate toggle only
 - All UI components work exclusively with `Tariff` / `TariffWrite` domain types — never with raw API types
 - Architecture: `Backend → TariffV2Response → TariffMapper → Tariff → UI` / `UI → TariffWrite → TariffMapper → TariffV2Request → Backend`
+
+### 2026-04-22
+
+- Migrated `TariffListComponent` to `TariffStore`, removing direct usage of the handwritten `TariffService` from the list component.
+- Updated `TariffStore` paging flow so `setPage(page, size)` triggers reload internally and the component binds directly to store signals.
+- Added `PricingTypeStore` in `core/state` to load and cache `PricingType[]` from `TariffsService.getPricingTypes()`.
+- Added `PricingType` domain model (`slug`, `title`, `description?`) in `core/models/tariff.model.ts` mirroring generated `PricingTypeResponse`.
+- Aligned write model contract so `TariffWrite.pricingType` is a slug string; `TariffMapper.toRequest()` now forwards it as request pricing type.
+- Updated `PricingTypeStore` to persist full `PricingType[]` records and derive slug list via computed state.
+- Extracted pricing type mapping into `core/mappers/pricing-type.mapper.ts` and updated `PricingTypeStore` to map via `PricingTypeMapper.fromResponse`.
+- Wired pricing type preload into app startup via `LookupInitializerFacade` and `app.config.ts` (`loadPricingType: true`).
+- Switched `TariffDialogComponent` pricing type options to read from the global lookup store.
+- Refined tariff domain enrichment in `TariffMapper.fromResponse()` so tariff rows carry an `EquipmentType` object rather than only a slug/name string fallback.
+- Aligned tariff dialog initialization and tests with `Tariff.equipmentType.slug`.
+- Validation: all tariff feature tests pass (`npm test -- --include "src/app/features/admin/tariffs/**/*.spec.ts"`) — 101 tests green.
+- Added `src/app/core/state/tariff.store.spec.ts` with unit coverage for `load`, `setPage`, `create`, `update`, `activate`, and `deactivate`.
+- Tariff store tests now assert lookup-enriched mapping, create-triggered reload with page reset to `0`, and `saving`/`loading` signal transitions across write and read flows.
+- Validation: `npm test -- --include "src/app/core/state/**/*.spec.ts"` passed with 28/28 tests green across 5 state store spec files.

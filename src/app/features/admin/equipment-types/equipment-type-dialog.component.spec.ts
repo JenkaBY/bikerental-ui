@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
-import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType } from '../../../core/domain';
+import { EquipmentTypeStore } from '../../../core/state/equipment-type.store';
+import { EquipmentType } from '@ui-models';
 import {
   EquipmentTypeDialogComponent,
   EquipmentTypeDialogData,
@@ -13,10 +13,12 @@ const existingType: EquipmentType = {
   slug: 'bike',
   name: 'Bike',
   description: 'A bicycle',
+  isForSpecialTariff: false,
 };
 
-function makeService() {
+function makeStore() {
   return {
+    saving: vi.fn().mockReturnValue(false),
     create: vi.fn().mockReturnValue(of(existingType)),
     update: vi.fn().mockReturnValue(of(existingType)),
   };
@@ -31,14 +33,14 @@ function makeSnackBar() {
 }
 
 async function setup(data: EquipmentTypeDialogData = {}) {
-  const service = makeService();
+  const store = makeStore();
   const dialogRef = makeDialogRef();
   const snackBar = makeSnackBar();
 
   await TestBed.configureTestingModule({
     imports: [EquipmentTypeDialogComponent],
     providers: [
-      { provide: EquipmentTypeService, useValue: service },
+      { provide: EquipmentTypeStore, useValue: store },
       { provide: MatDialogRef, useValue: dialogRef },
       { provide: MAT_DIALOG_DATA, useValue: data },
       { provide: MatSnackBar, useValue: snackBar },
@@ -50,7 +52,7 @@ async function setup(data: EquipmentTypeDialogData = {}) {
   );
   fixture.detectChanges();
 
-  return { fixture, component: fixture.componentInstance, service, dialogRef, snackBar };
+  return { fixture, component: fixture.componentInstance, store, dialogRef, snackBar };
 }
 
 describe('EquipmentTypeDialogComponent — create mode', () => {
@@ -71,20 +73,20 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
     expect(component.form.controls.description.value).toBe('');
   });
 
-  it('should mark form touched and not call service when form is invalid', async () => {
-    const { component, service } = await setup();
+  it('should mark form touched and not call store when form is invalid', async () => {
+    const { component, store } = await setup();
     component.save();
-    expect(service.create).not.toHaveBeenCalled();
+    expect(store.create).not.toHaveBeenCalled();
     expect(component.form.touched).toBe(true);
   });
 
-  it('should call service.create on valid submit', async () => {
-    const { component, service, dialogRef } = await setup();
-    component.form.controls.slug.setValue('bike');
+  it('should call store.create on valid submit', async () => {
+    const { component, store, dialogRef } = await setup();
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
     component.save();
-    expect(service.create).toHaveBeenCalledWith({
-      slug: 'bike',
+    expect(store.create).toHaveBeenCalledWith({
+      slug: 'BIKE',
       name: 'Bike',
       description: undefined,
     });
@@ -92,13 +94,13 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
   });
 
   it('should include description in create request when provided', async () => {
-    const { component, service } = await setup();
-    component.form.controls.slug.setValue('bike');
+    const { component, store } = await setup();
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
     component.form.controls.description.setValue('A bicycle');
     component.save();
-    expect(service.create).toHaveBeenCalledWith({
-      slug: 'bike',
+    expect(store.create).toHaveBeenCalledWith({
+      slug: 'BIKE',
       name: 'Bike',
       description: 'A bicycle',
     });
@@ -113,24 +115,23 @@ describe('EquipmentTypeDialogComponent — create mode', () => {
 
   it('should fail slug validation when exceeding maxLength', async () => {
     const { component } = await setup();
-    component.form.controls.slug.setValue('a'.repeat(51));
+    component.form.controls.slug.setValue('A'.repeat(51));
     component.form.controls.slug.updateValueAndValidity();
     expect(component.form.controls.slug.hasError('maxlength')).toBe(true);
   });
 
   it('should show snackbar and reset saving on error', async () => {
-    const { component, service, snackBar } = await setup();
-    service.create.mockReturnValue(throwError(() => new Error('Server error')));
-    component.form.controls.slug.setValue('bike');
+    const { component, store, snackBar } = await setup();
+    store.create.mockReturnValue(throwError(() => new Error('Server error')));
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
     component.save();
     expect(snackBar.open).toHaveBeenCalled();
-    expect(component.saving()).toBe(false);
   });
 
   it('should show success snackbar on successful create', async () => {
     const { component, snackBar } = await setup();
-    component.form.controls.slug.setValue('bike');
+    component.form.controls.slug.setValue('BIKE');
     component.form.controls.name.setValue('Bike');
     component.save();
     expect(snackBar.open).toHaveBeenCalled();
@@ -150,21 +151,21 @@ describe('EquipmentTypeDialogComponent — edit mode', () => {
     expect(component.form.controls.slug.disabled).toBe(true);
   });
 
-  it('should call service.update with original slug', async () => {
-    const { component, service, dialogRef } = await setup({ type: existingType });
+  it('should call store.update with original slug', async () => {
+    const { component, store, dialogRef } = await setup({ type: existingType });
     component.form.controls.name.setValue('Updated Bike');
     component.save();
-    expect(service.update).toHaveBeenCalledWith(
+    expect(store.update).toHaveBeenCalledWith(
       expect.objectContaining({ slug: 'bike', name: 'Updated Bike' }),
     );
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
 
-  it('should not call service.create in edit mode', async () => {
-    const { component, service } = await setup({ type: existingType });
+  it('should not call store.create in edit mode', async () => {
+    const { component, store } = await setup({ type: existingType });
     component.form.controls.name.setValue('Updated Bike');
     component.save();
-    expect(service.create).not.toHaveBeenCalled();
+    expect(store.create).not.toHaveBeenCalled();
   });
 
   it('should show success snackbar on successful update', async () => {

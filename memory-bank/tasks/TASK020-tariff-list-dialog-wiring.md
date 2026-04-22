@@ -14,7 +14,7 @@ Connect `TariffDialogComponent` into `TariffListComponent`:
 - **Edit** icon button in the actions column opens dialog pre-filled with the row tariff (edit mode)
 - On dialog close with `true` result: reload the tariff list and show snackbar "Saved"
 
-All types used in the wiring are **domain types** from `core/domain/`. `TariffListComponent` does
+All types used in the wiring are **domain types** from `core/models/`. `TariffListComponent` does
 **not** need to load or pass equipment types — `EquipmentTypeDropdownComponent` (TASK024) loads them
 from the cached service internally.
 
@@ -77,7 +77,7 @@ openEditDialog(tariff: Tariff): void {
 - `MatDialog` (inject)
 - `MatSnackBar` (inject, if not already added in TASK017)
 - `TariffDialogComponent`, `TariffDialogData`
-- `Tariff` from `core/domain/` (already imported from TASK016)
+- `Tariff` from `core/models/` (already imported from TASK016)
 - **No `EquipmentTypeService`** — `EquipmentTypeDropdown` self-loads types
 
 ## Implementation Plan

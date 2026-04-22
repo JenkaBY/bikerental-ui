@@ -116,6 +116,45 @@ Execute tasks in dependency order:
 
 ## Recent Changes
 
+- **2026-04-22**: Core state store test coverage expansion:
+  - Added `equipment-type.store.spec.ts` with load/create/update behavior coverage, including sorting/config enrichment, `typesForEquipment`, and loading/saving state transitions.
+  - Added `equipment-status.store.spec.ts` with load/create/update behavior coverage, including slug sorting, transition mapping, and loading/saving state transitions.
+  - Added `tariff.store.spec.ts` with paging/load/create/update/activate/deactivate coverage, including lookup-enriched mapping and write-path saving state transitions.
+  - Validation: `npm test -- --include "src/app/core/state/**/*.spec.ts"` passed with 28/28 tests green across 5 state store spec files.
+
+- **2026-04-22**: Tariff admin list store migration follow-up:
+  - `TariffWrite.pricingType` was switched to `string` to keep the write contract slug-based while `Tariff.pricingType` remains the richer `PricingType` domain object.
+  - `TariffMapper.toRequest()` now maps `TariffWrite.pricingType` directly into generated request `pricingType` with explicit type narrowing.
+  - Moved pricing type response conversion from `PricingTypeStore` into `core/mappers/pricing-type.mapper.ts` (`PricingTypeMapper.fromResponse`).
+  - `PricingTypeStore` now consumes `PricingTypeMapper` through the core mapper barrel (`core/mappers/index.ts`).
+  - Added `PricingType` domain model in `core/models/tariff.model.ts` with `slug`, `title`, and optional `description` fields matching `PricingTypeResponse`.
+  - `PricingTypeStore` now stores full `PricingType[]` objects from `TariffsService.getPricingTypes()` and derives `pricingTypeSlugs` as a computed signal.
+  - `TariffDialogComponent` now derives pricing labels/descriptions from store-provided pricing type models with `Labels` fallback.
+  - Added global `PricingTypeStore` in `core/state` backed by `TariffsService.getPricingTypes()` and wired it into `LookupInitializerFacade`.
+  - Startup bootstrap now preloads pricing types via `lookupFacade.init({ loadPricingType: true, ... })` in `app.config.ts`.
+  - `TariffDialogComponent` now reads pricing type options from the global store instead of calling `TariffsService.getPricingTypes()` directly.
+  - `TariffListComponent` now injects `TariffStore` instead of the handwritten `TariffService`.
+  - Tariff list state (`items`, `loading`, `totalItems`, page index, page size) now comes directly from store signals.
+  - Tariff list status toggles now call `TariffStore.activate()` / `deactivate()` instead of the handwritten wrapper service.
+  - `TariffStore.setPage(page, size)` now updates both paging signals and triggers reload internally, matching the store-driven equipment list pattern.
+  - `TariffMapper.fromResponse()` now accepts an optional equipment-type lookup list and maps `Tariff.equipmentType` to the domain `EquipmentType` object with a default fallback.
+  - `TariffStatus` is now an enum with `TariffStatus.isActive(status)` for reusable ACTIVE checks in UI logic and tests.
+  - `TariffDialogComponent` edit-mode form initialization was aligned with `Tariff.equipmentType.slug` after the tariff domain typing update.
+  - `tariff-list.component.spec.ts`, `tariff-dialog.component.spec.ts`, and `tariff-dialog.error.spec.ts` were updated to use `TariffStore` / `EquipmentType` domain objects.
+  - Validation: all tariff feature tests green — 101 tests across 8 tariff spec files.
+
+- **2026-04-22**: Generated API migration follow-up:
+  - `EquipmentTypeStore` now injects generated `EquipmentTypesService` and uses `getAllEquipmentTypes()`.
+  - `EquipmentStatusStore` now injects generated `EquipmentStatusesService` and uses `getAllEquipmentStatuses()`.
+  - `EquipmentStore` now injects generated `EquipmentService` and uses `searchEquipments()`, `createEquipment()`, and `updateEquipment()`.
+  - Equipment list filter reload was moved to store level: `EquipmentStore.setFilterStatus()` and `setFilterType()` now trigger reload internally, and `EquipmentListComponent` no longer calls `loadEquipment()` after filter updates.
+  - Equipment list page-change reload was moved to store level: `EquipmentStore.setPage()` now triggers reload internally, and `EquipmentListComponent.onPageChange()` only delegates paging state update.
+  - `equipment.store.spec.ts` was updated to mock the generated equipment service API.
+  - `equipment.store.spec.ts` now covers filter-triggered reload + page reset and page-triggered reload; `equipment-list.component.spec.ts` expectations were updated.
+  - `TariffListComponent` and its spec were updated to use generated `EquipmentTypesService` after removal of the handwritten equipment type wrapper.
+  - `EquipmentTypeDialogComponent` now coerces empty `description` values to `undefined` before save.
+  - Validation: full test suite green — 378 tests across 61 files.
+
 - **2026-03-09**: Shared shell component layer extracted and AdminLayoutComponent refactored:
   - `ShellComponent`, `SidebarComponent`, `AppToolbarComponent`, `AppBrandComponent`, `ButtonComponent`, `ToggleButtonComponent`, `LogoutButtonComponent` created
   - `APP_BRAND` injection token + `BRAND` constant added to `app.tokens.ts`; provided in `app.config.ts`
@@ -134,7 +173,6 @@ Execute tasks in dependency order:
 
 - Angular 21 project scaffolded with `ng new bikerental-ui`
 - `package.json` dependencies confirmed: Angular 21, RxJS 7.8, Vitest for testing
-- `docs/api-docs/all.json` populated with full OpenAPI spec from the backend
 - `docs/main-flow.md` and `docs/main-flow-diagram.mermaid` document the business flow
 - Memory bank initialized and fully updated with two-module architecture
 - 12 tasks defined (TASK001–TASK012) covering foundation → auth → admin → operator

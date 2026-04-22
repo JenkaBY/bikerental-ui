@@ -3,14 +3,17 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
-import { EquipmentStatusService } from '../../../core/api';
+import { EquipmentStatusStore } from '../../../core/state/equipment-status.store';
 import { EquipmentStatusDialogComponent } from './equipment-status-dialog.component';
-import { EquipmentStatusResponse } from '../../../core/models';
+import { EquipmentStatus } from '@ui-models';
 
-const allStatuses: EquipmentStatusResponse[] = [{ slug: 'available', name: 'Available' }];
+const allStatuses: EquipmentStatus[] = [
+  { slug: 'available', name: 'Available', allowedTransitions: [] },
+];
 
-function makeService(err: unknown) {
+function makeStore(err: unknown) {
   return {
+    saving: vi.fn().mockReturnValue(false),
     create: vi.fn().mockReturnValue(throwError(() => err)),
     update: vi.fn(),
   };
@@ -23,13 +26,13 @@ function makeSnackBar() {
 describe('EquipmentStatusDialogComponent error handling', () => {
   it('shows generic error message when HttpErrorResponse occurs', async () => {
     const err = new HttpErrorResponse({ status: 400, error: { detail: 'Slug already exists' } });
-    const service = makeService(err);
+    const store = makeStore(err);
     const snack = makeSnackBar();
 
     await TestBed.configureTestingModule({
       imports: [EquipmentStatusDialogComponent],
       providers: [
-        { provide: EquipmentStatusService, useValue: service },
+        { provide: EquipmentStatusStore, useValue: store },
         { provide: MatSnackBar, useValue: snack },
         { provide: MatDialogRef, useValue: { close: vi.fn() } },
         { provide: MAT_DIALOG_DATA, useValue: { statuses: allStatuses } },
@@ -39,7 +42,7 @@ describe('EquipmentStatusDialogComponent error handling', () => {
     const fixture = TestBed.createComponent(EquipmentStatusDialogComponent);
     const component = fixture.componentInstance;
 
-    component.form.controls.slug.setValue('available');
+    component.form.controls.slug.setValue('AVAILABLE');
     component.form.controls.name.setValue('Available');
 
     component.save();
@@ -50,13 +53,13 @@ describe('EquipmentStatusDialogComponent error handling', () => {
 
   it('resets saving flag on any error', async () => {
     const err = new HttpErrorResponse({ status: 500, error: 'Internal Server Error' });
-    const service = makeService(err);
+    const store = makeStore(err);
     const snack = makeSnackBar();
 
     await TestBed.configureTestingModule({
       imports: [EquipmentStatusDialogComponent],
       providers: [
-        { provide: EquipmentStatusService, useValue: service },
+        { provide: EquipmentStatusStore, useValue: store },
         { provide: MatSnackBar, useValue: snack },
         { provide: MatDialogRef, useValue: { close: vi.fn() } },
         { provide: MAT_DIALOG_DATA, useValue: { statuses: allStatuses } },
@@ -65,11 +68,10 @@ describe('EquipmentStatusDialogComponent error handling', () => {
 
     const fixture = TestBed.createComponent(EquipmentStatusDialogComponent);
     const component = fixture.componentInstance;
-    component.form.controls.slug.setValue('available');
+    component.form.controls.slug.setValue('AVAILABLE');
     component.form.controls.name.setValue('Available');
 
-    expect(component.saving()).toBe(false);
     component.save();
-    expect(component.saving()).toBe(false);
+    expect(snack.open).toHaveBeenCalled();
   });
 });

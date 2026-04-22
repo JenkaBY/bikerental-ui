@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -18,12 +11,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { EquipmentService, EquipmentStatusService, EquipmentTypeService } from '../../../core/api';
-import { EquipmentResponse, EquipmentStatusResponse, Page, Pageable } from '../../../core/models';
-import { EquipmentType } from '../../../core/domain';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
 import { TruncatePipe } from '../../../shared/pipes/truncate.pipe';
 import { Labels } from '../../../shared/constant/labels';
+import { Equipment } from '@ui-models';
+import { EquipmentStore } from '@store.equipment.store';
+import { EquipmentTypeStore } from '@store.equipment-type.store';
+import { EquipmentStatusStore } from '@store.equipment-status.store';
 
 @Component({
   selector: 'app-equipment-list',
@@ -56,19 +50,19 @@ import { Labels } from '../../../shared/constant/labels';
           </div>
         </div>
 
-        @if (loading()) {
+        @if (store.loading()) {
           <mat-spinner diameter="40"></mat-spinner>
         }
 
-        <table mat-table [dataSource]="equipment()" class="w-full">
+        <table mat-table [dataSource]="store.items()" class="w-full">
           <ng-container matColumnDef="uid">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.Uid }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.uid }}</td>
+            <td mat-cell *matCellDef="let equipment">{{ equipment.uid }}</td>
           </ng-container>
 
           <ng-container matColumnDef="serialNumber">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.SerialNumber }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.serialNumber }}</td>
+            <td mat-cell *matCellDef="let equipment">{{ equipment.serialNumber }}</td>
           </ng-container>
 
           <ng-container matColumnDef="type">
@@ -76,17 +70,17 @@ import { Labels } from '../../../shared/constant/labels';
               <mat-form-field appearance="outline" class="w-full">
                 <mat-label>{{ Labels.Type }}</mat-label>
                 <mat-select
-                  [value]="filterType()"
+                  [value]="store.filterType()"
                   (selectionChange)="onFilterTypeChange($event.value)"
                 >
                   <mat-option [value]="undefined">{{ Labels.All }}</mat-option>
-                  @for (t of types(); track t.slug) {
+                  @for (t of equipmentTypeStore.typesForEquipment(); track t.slug) {
                     <mat-option [value]="t.slug">{{ t.name }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
             </th>
-            <td mat-cell *matCellDef="let row">{{ row.type }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.type.name }}</td>
           </ng-container>
 
           <ng-container matColumnDef="status">
@@ -94,31 +88,31 @@ import { Labels } from '../../../shared/constant/labels';
               <mat-form-field appearance="outline" class="w-full">
                 <mat-label>{{ Labels.Status }}</mat-label>
                 <mat-select
-                  [value]="filterStatus()"
+                  [value]="store.filterStatus()"
                   (selectionChange)="onFilterStatusChange($event.value)"
                 >
                   <mat-option [value]="undefined">{{ Labels.All }}</mat-option>
-                  @for (s of statuses(); track s.slug) {
+                  @for (s of equipmentStatusStore.statuses(); track s.slug) {
                     <mat-option [value]="s.slug">{{ s.name }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
             </th>
-            <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.status.name }}</td>
           </ng-container>
 
           <ng-container matColumnDef="model">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.Model }}</th>
-            <td mat-cell *matCellDef="let row">
+            <td mat-cell *matCellDef="let equipment">
               <span
                 class="inline-block truncate"
-                [matTooltip]="row.model"
-                [matTooltipDisabled]="!row.model"
+                [matTooltip]="equipment.model"
+                [matTooltipDisabled]="!equipment.model"
                 matTooltipPosition="above"
                 matTooltipShowDelay="250"
-                [attr.aria-label]="row.model"
+                [attr.aria-label]="equipment.model"
               >
-                {{ row.model | truncate: 20 }}
+                {{ equipment.model | truncate: 20 }}
               </span>
             </td>
           </ng-container>
@@ -162,9 +156,9 @@ import { Labels } from '../../../shared/constant/labels';
         </table>
 
         <mat-paginator
-          [length]="totalItems()"
-          [pageIndex]="pageIndex()"
-          [pageSize]="pageSize()"
+          [length]="store.totalItems()"
+          [pageIndex]="store.pageIndex()"
+          [pageSize]="store.pageSize()"
           [pageSizeOptions]="[10, 20, 50]"
           (page)="onPageChange($event)"
           showFirstLastButtons
@@ -174,24 +168,13 @@ import { Labels } from '../../../shared/constant/labels';
   `,
 })
 export class EquipmentListComponent implements OnInit {
-  private service = inject(EquipmentService);
-  private typeService = inject(EquipmentTypeService);
-  private statusService = inject(EquipmentStatusService);
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
+  readonly store = inject(EquipmentStore);
+  readonly equipmentTypeStore = inject(EquipmentTypeStore);
+  readonly equipmentStatusStore = inject(EquipmentStatusStore);
 
-  // expose Labels constant so template expressions can reference it
   readonly Labels = Labels;
-
-  equipment = signal<EquipmentResponse[]>([]);
-  totalItems = signal(0);
-  loading = signal(false);
-  types = signal<EquipmentType[]>([]);
-  statuses = signal<EquipmentStatusResponse[]>([]);
-  filterStatus = signal<string | undefined>(undefined);
-  filterType = signal<string | undefined>(undefined);
-  pageIndex = signal(0);
-  pageSize = signal(20);
 
   readonly displayedColumns = [
     'uid',
@@ -205,83 +188,50 @@ export class EquipmentListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.loadTypes();
-    this.loadStatuses();
     this.loadEquipment();
-  }
-
-  private loadTypes(): void {
-    this.typeService
-      .getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (t) => this.types.set(t ?? []) });
-  }
-
-  private loadStatuses(): void {
-    this.statusService
-      .getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (s) => this.statuses.set(s ?? []) });
   }
 
   loadEquipment(): void {
-    this.loading.set(true);
-    const pageable: Pageable = { page: this.pageIndex(), size: this.pageSize() };
-    this.service
-      .search(this.filterStatus(), this.filterType(), pageable)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (page: Page<EquipmentResponse>) => {
-          this.equipment.set(page.items ?? []);
-          this.totalItems.set(page.totalItems ?? 0);
-          this.loading.set(false);
-        },
-        error: () => this.loading.set(false),
-      });
+    this.store.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   onFilterStatusChange(value: string | undefined): void {
-    this.filterStatus.set(value);
-    this.pageIndex.set(0);
-    this.loadEquipment();
+    this.store.setFilterStatus(value);
   }
 
   onFilterTypeChange(value: string | undefined): void {
-    this.filterType.set(value);
-    this.pageIndex.set(0);
-    this.loadEquipment();
+    this.store.setFilterType(value);
   }
 
   onPageChange(event: PageEvent): void {
-    this.pageIndex.set(event.pageIndex ?? 0);
-    this.pageSize.set(event.pageSize ?? this.pageSize());
-    this.loadEquipment();
+    this.store.setPage(event.pageIndex ?? 0, event.pageSize ?? this.store.pageSize());
   }
 
   openCreateDialog(): void {
-    const ref = this.dialog.open<EquipmentDialogComponent, EquipmentDialogData, boolean>(
+    this.dialog.open<EquipmentDialogComponent, EquipmentDialogData, boolean>(
       EquipmentDialogComponent,
       {
-        data: { types: this.types(), statuses: this.statuses() },
+        data: {
+          types: this.equipmentTypeStore.types(),
+          statuses: this.equipmentStatusStore.statuses(),
+        },
         disableClose: true,
         autoFocus: true,
       },
     );
-    ref.afterClosed().subscribe((r) => {
-      if (r) this.loadEquipment();
-    });
   }
 
-  openEditDialog(e: EquipmentResponse): void {
-    const ref = this.dialog.open<EquipmentDialogComponent, EquipmentDialogData, boolean>(
+  openEditDialog(e: Equipment): void {
+    this.dialog.open<EquipmentDialogComponent, EquipmentDialogData, boolean>(
       EquipmentDialogComponent,
       {
-        data: { equipment: e, types: this.types(), statuses: this.statuses() },
+        data: {
+          equipment: e,
+          types: this.equipmentTypeStore.types(),
+          statuses: this.equipmentStatusStore.statuses(),
+        },
         autoFocus: 'first-tabbable',
       },
     );
-    ref.afterClosed().subscribe((r) => {
-      if (r) this.loadEquipment();
-    });
   }
 }

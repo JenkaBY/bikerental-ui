@@ -1,20 +1,13 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { EquipmentTypeService } from '../../../core/api';
-import { EquipmentType, EquipmentTypeWrite } from '../../../core/domain';
+import { EquipmentTypeStore } from '../../../core/state/equipment-type.store';
+import { EquipmentType } from '@ui-models';
 import {
   EquipmentTypeDialogComponent,
   EquipmentTypeDialogData,
@@ -23,7 +16,14 @@ import {
 @Component({
   selector: 'app-equipment-type-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [
+    MatCardModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+  ],
   template: `
     <mat-card>
       <mat-card-header>
@@ -37,7 +37,11 @@ import {
           </button>
         </div>
 
-        <table mat-table [dataSource]="types()" class="w-full">
+        @if (store.loading()) {
+          <mat-progress-bar mode="indeterminate" />
+        }
+
+        <table mat-table [dataSource]="store.types()" class="w-full">
           <ng-container matColumnDef="slug">
             <th mat-header-cell *matHeaderCellDef i18n>Slug</th>
             <td mat-cell *matCellDef="let row">{{ row.slug }}</td>
@@ -74,55 +78,23 @@ import {
     </mat-card>
   `,
 })
-export class EquipmentTypeListComponent implements OnInit {
-  private service = inject(EquipmentTypeService);
+export class EquipmentTypeListComponent {
+  readonly store = inject(EquipmentTypeStore);
   private dialog = inject(MatDialog);
-  private destroyRef = inject(DestroyRef);
-
-  types = signal<EquipmentType[]>([]);
-  loading = signal(false);
 
   readonly displayedColumns = ['slug', 'name', 'description', 'actions'];
 
-  ngOnInit(): void {
-    this.loadTypes();
-  }
-
-  loadTypes(): void {
-    this.loading.set(true);
-    this.service
-      .getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (types) => {
-          this.types.set(types);
-          // sort by slug (ascending) before setting the signal so table always shows slug-sorted order
-          const sorted = (types ?? []).slice().sort((a, b) => a.slug.localeCompare(b.slug));
-          this.types.set(sorted);
-          this.loading.set(false);
-        },
-        error: () => this.loading.set(false),
-      });
-  }
-
   openCreateDialog(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = {} as EquipmentTypeWrite;
-    const ref = this.dialog.open(EquipmentTypeDialogComponent, dialogConfig);
-    ref.afterClosed().subscribe((result) => {
-      if (result) this.loadTypes();
-    });
+    this.dialog.open<EquipmentTypeDialogComponent, EquipmentTypeDialogData, boolean>(
+      EquipmentTypeDialogComponent,
+      { data: {}, disableClose: true, autoFocus: true },
+    );
   }
 
   openEditDialog(type: EquipmentType): void {
-    const ref = this.dialog.open<EquipmentTypeDialogComponent, EquipmentTypeDialogData, boolean>(
+    this.dialog.open<EquipmentTypeDialogComponent, EquipmentTypeDialogData, boolean>(
       EquipmentTypeDialogComponent,
       { data: { type }, autoFocus: 'first-tabbable' },
     );
-    ref.afterClosed().subscribe((result) => {
-      if (result) this.loadTypes();
-    });
   }
 }

@@ -19,7 +19,8 @@ The key unique aspect here is the dynamic pricing params: tests must verify that
 enables/disables the correct param fields and their `required` validators.
 
 Tests work with **domain types**:
-- `MAT_DIALOG_DATA.tariff` is a `Tariff` domain object (from `core/domain/`) — **not** `TariffV2Response`
+
+- `MAT_DIALOG_DATA.tariff` is a `Tariff` domain object (from `core/models/`) — **not** `TariffV2Response`
 - Service spy assertions verify that `TariffService.create(write: TariffWrite)` is called with a
   `TariffWrite` domain object — **not** `TariffV2Request`
 
@@ -78,10 +79,10 @@ The mapper (`TariffMapper`) is not tested here — it has its own unit tests in 
 ### Mock helpers
 
 ```typescript
-// EquipmentType from core/domain/ (after TASK023) — not EquipmentTypeResponse
+// EquipmentType from core/models/ (after TASK023) — not EquipmentTypeResponse
 const mockTypes: EquipmentType[] = [{ slug: 'bike', name: 'Bike' }];
 
-// Edit mode uses Tariff domain type (core/domain/) — Date objects, NOT ISO strings
+// Edit mode uses Tariff domain type (core/models/) — Date objects, NOT ISO strings
 const mockTariff: Tariff = {
   id: 1,
   name: 'T1',

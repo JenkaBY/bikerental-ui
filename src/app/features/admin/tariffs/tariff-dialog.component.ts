@@ -11,8 +11,6 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -24,10 +22,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
-import { TariffService } from '../../../core/api';
-import { Tariff, TariffWrite } from '../../../core/domain';
-import { PricingType } from '../../../core/models';
+import { FALLBACK_PRICING_TYPE, PricingTypeSlug, Tariff, TariffWrite } from '@ui-models';
+import { PricingTypeStore } from '@store.pricing-type.store';
+import { TariffStore } from '@store.tariff.store';
 import { EquipmentTypeDropdownComponent } from '../../../shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
 import { SaveButtonComponent } from '../../../shared/components/save-button/save-button.component';
 import { CancelButtonComponent } from '../../../shared/components/cancel-button/cancel-button.component';
@@ -42,18 +39,6 @@ import { SpecialParamsComponent } from './special-params.component';
 export interface TariffDialogData {
   tariff?: Tariff;
 }
-
-const minimumHourlyPriceValidator: ValidatorFn = (
-  group: AbstractControl,
-): ValidationErrors | null => {
-  const g = group as FormGroup & { controls: Record<string, AbstractControl> };
-  const first = g.controls['firstHourPrice']?.value as number | null;
-  const min = g.controls['minimumHourlyPrice']?.value as number | null;
-  if (first != null && min != null && min > first) {
-    return { minimumExceedsFirst: true };
-  }
-  return null;
-};
 
 @Component({
   selector: 'app-tariff-dialog',
@@ -104,8 +89,8 @@ const minimumHourlyPriceValidator: ValidatorFn = (
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.PricingType }}</mat-label>
           <mat-select formControlName="pricingType">
-            @for (pt of pricingTypeSlugs(); track pt) {
-              <mat-option [value]="pt">{{ pricingTypeTitles()[pt] || pt }}</mat-option>
+            @for (pt of this.pricingTypeStore.pricingTypes(); track pt) {
+              <mat-option [value]="pt.slug">{{ pt.title }}</mat-option>
             }
           </mat-select>
           @if (form.controls.pricingType.hasError('required')) {
@@ -173,26 +158,29 @@ const minimumHourlyPriceValidator: ValidatorFn = (
 export class TariffDialogComponent {
   private dialogRef = inject(MatDialogRef<TariffDialogComponent>);
   readonly data = inject<TariffDialogData>(MAT_DIALOG_DATA);
-  private tariffService = inject(TariffService);
+  private tariffStore = inject(TariffStore);
+  readonly pricingTypeStore = inject(PricingTypeStore);
   private snackBar = inject(MatSnackBar);
   private destroyRef = inject(DestroyRef);
 
   readonly labels = Labels;
   readonly errors = FormErrorMessages;
 
-  saving = signal(false);
+  readonly saving = computed(() => this.tariffStore.saving());
 
-  // pricing types are loaded from the backend via TariffService.getPricingTypes()
-  // keep both the slug list (for option values) and a slug->title map for display
-  readonly pricingTypeSlugs = signal<PricingType[]>([]);
-  readonly pricingTypeTitles = signal<Record<string, string>>({});
-  readonly pricingTypeDescriptions = signal<Record<string, string | undefined>>({});
-  readonly selectedPricing = signal<PricingType | null>(this.data?.tariff?.pricingType ?? null);
+  readonly selectedPricing = signal<PricingTypeSlug | null>(
+    this.data?.tariff?.pricingType.slug ?? null,
+  );
+
   readonly selectedPricingDescription = computed(() => {
     const sel = this.selectedPricing();
     if (!sel) return undefined;
-    return this.pricingTypeDescriptions()[sel];
+    return (
+      this.pricingTypeStore.pricingTypes().find((t) => t.slug === sel)?.description ||
+      FALLBACK_PRICING_TYPE.description
+    );
   });
+
   form = new FormGroup({
     name: new FormControl(this.data?.tariff?.name ?? '', [
       Validators.required,
@@ -201,8 +189,8 @@ export class TariffDialogComponent {
     description: new FormControl(this.data?.tariff?.description ?? '', [
       Validators.maxLength(1000),
     ]),
-    equipmentTypeSlug: new FormControl(this.data?.tariff?.equipmentType ?? ''),
-    pricingType: new FormControl(this.data?.tariff?.pricingType ?? '', [Validators.required]),
+    equipmentTypeSlug: new FormControl(this.data?.tariff?.equipmentType.slug ?? ''),
+    pricingType: new FormControl(this.data?.tariff?.pricingType.slug ?? '', [Validators.required]),
     validFrom: new FormControl(this.data?.tariff ? this.data.tariff.validFrom : null, [
       Validators.required,
     ]),
@@ -225,27 +213,12 @@ export class TariffDialogComponent {
   }
 
   constructor() {
-    this.tariffService
-      .getPricingTypes()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((types) => {
-        const slugs: PricingType[] = (types || []).map(
-          (t: unknown) => (t as { slug: string }).slug as PricingType,
-        );
-        this.pricingTypeSlugs.set(slugs);
-        // Titles and descriptions are provided by UI-side Labels (for translation)
-        this.pricingTypeTitles.set(Labels.PricingTypeTitles as Record<string, string>);
-        this.pricingTypeDescriptions.set(
-          Labels.PricingTypeDescriptions as Record<string, string | undefined>,
-        );
-      });
-
     const pricingControl = this.form.controls.pricingType;
     (pricingControl as AbstractControl).valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((t) => {
-        this.selectedPricing.set(t as PricingType);
-        this.applyParamValidators(t as PricingType);
+        this.selectedPricing.set(t as PricingTypeSlug);
+        this.applyParamValidators(t as PricingTypeSlug);
       });
 
     if (this.data?.tariff) {
@@ -261,11 +234,11 @@ export class TariffDialogComponent {
         minimumDurationMinutes: p.minimumDurationMinutes ?? null,
         minimumDurationSurcharge: p.minimumDurationSurcharge ?? null,
       });
-      this.applyParamValidators(this.form.controls.pricingType.value as PricingType);
+      this.applyParamValidators(this.form.controls.pricingType.value as PricingTypeSlug);
     }
   }
 
-  private applyParamValidators(type: PricingType | null | undefined): void {
+  private applyParamValidators(type: PricingTypeSlug | null | undefined): void {
     const paramsGroup = this.form.controls.params as FormGroup;
     const p = paramsGroup.controls as Record<string, AbstractControl>;
 
@@ -289,7 +262,15 @@ export class TariffDialogComponent {
         p['minimumHourlyPrice'].setValidators([Validators.required, Validators.min(0.01)]);
         p['minimumDurationMinutes'].setValidators([Validators.required, Validators.min(1)]);
         p['minimumDurationSurcharge'].setValidators([Validators.required, Validators.min(0.01)]);
-        paramsGroup.setValidators(minimumHourlyPriceValidator);
+        paramsGroup.setValidators((group) => {
+          const g = group as FormGroup & { controls: Record<string, AbstractControl> };
+          const first = g.controls['firstHourPrice']?.value as number | null;
+          const min = g.controls['minimumHourlyPrice']?.value as number | null;
+          if (first != null && min != null && min > first) {
+            return { minimumExceedsFirst: true };
+          }
+          return null;
+        });
         break;
       case 'FLAT_HOURLY':
         p['hourlyPrice'].setValidators([Validators.required, Validators.min(0.01)]);
@@ -317,14 +298,13 @@ export class TariffDialogComponent {
       return;
     }
 
-    this.saving.set(true);
     const v = this.form.getRawValue();
 
     const paramsValue = (v.params ?? {}) as Record<string, number | null | undefined>;
-    const pricingType = v.pricingType as PricingType;
+    const pricingTypeSlug = v.pricingType as PricingTypeSlug;
 
     const builtParams: Record<string, number | undefined> =
-      pricingType === 'SPECIAL'
+      pricingTypeSlug === 'SPECIAL'
         ? {}
         : {
             firstHourPrice: paramsValue['firstHourPrice'] ?? undefined,
@@ -341,25 +321,23 @@ export class TariffDialogComponent {
     const write: TariffWrite = {
       name: v.name!,
       description: v.description ?? undefined,
-      equipmentTypeSlug: v.equipmentTypeSlug ?? '',
-      pricingType: pricingType,
+      equipmentTypeSlug: v.equipmentTypeSlug!,
+      pricingType: pricingTypeSlug,
       params: builtParams,
       validFrom: v.validFrom!,
       validTo: v.validTo ?? undefined,
     };
 
-    const call$: Observable<Tariff> =
+    const call$ =
       this.data?.tariff && this.data.tariff.id != null
-        ? this.tariffService.update(this.data.tariff.id as number, write)
-        : this.tariffService.create(write);
+        ? this.tariffStore.update(this.data.tariff.id, write)
+        : this.tariffStore.create(write);
 
     call$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.saving.set(false);
         this.dialogRef.close(true);
       },
       error: (err: unknown) => {
-        this.saving.set(false);
         const msg =
           (err as unknown as { message?: string })?.message ?? $localize`Failed to save tariff`;
         this.snackBar.open(msg, this.labels.Close, { duration: 4000 });

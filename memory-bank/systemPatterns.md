@@ -16,24 +16,21 @@ src/app/
 │   │   ├── auth.guard.ts
 │   │   └── role.guard.ts
 │   ├── api/                           # HTTP API client services (one per domain)
-│   │   ├── customer.service.ts        # Returns domain objects (via mapper)
 │   │   ├── equipment.service.ts
 │   │   ├── equipment-type.service.ts
 │   │   ├── equipment-status.service.ts
 │   │   ├── tariff.service.ts          # Returns Tariff (domain), accepts TariffWrite
-│   │   ├── rental.service.ts
-│   │   └── payment.service.ts
+│   │   └── rental.service.ts
 │   ├── models/                        # API-level types: raw Request/Response shapes from backend
 │   │   ├── customer.model.ts
 │   │   ├── equipment.model.ts
 │   │   ├── equipment-type.model.ts
 │   │   ├── equipment-status.model.ts
-│   │   ├── tariff.model.ts            # TariffV2Request, TariffV2Response, PricingParams, PricingType
+│   │   ├── tariff.model.ts            # TariffV2Request, TariffV2Response, PricingParams, PricingType, Tariff (Date fields), TariffWrite (for create/update)
 │   │   ├── rental.model.ts
 │   │   ├── payment.model.ts
-│   │   └── common.model.ts           # ProblemDetail, Pageable, PageRequest, Page<T>
+│   │   └── common.model.ts           # ProblemDetail, PageRequest, Page<T>
 │   ├── domain/                        # Clean UI domain objects (what components use)
-│   │   ├── tariff.model.ts            # Tariff (Date fields), TariffWrite (for create/update)
 │   │   └── index.ts
 │   ├── mappers/                       # Converters: Response → Domain, Domain → Request
 │   │   ├── tariff.mapper.ts           # TariffMapper.fromResponse() / .toRequest()
@@ -90,14 +87,17 @@ src/app/
 ## Key Technical Decisions
 
 ### 1. Standalone Components
+
 All components are standalone (no NgModules). Imports declared per component. Uses `input()` / `output()` functions
 (not decorators) per Angular 21 best practices.
 
 ### 2. Angular Signals for State
+
 Local component state uses `signal()` and `computed()`. Cross-component state uses services with signals.
 `OnPush` change detection on all components.
 
 ### 3. Angular Material UI
+
 Material components used throughout: `mat-sidenav`, `mat-toolbar`, `mat-table`, `mat-paginator`, `mat-dialog`,
 `mat-stepper`, `mat-card`, `mat-form-field`, `mat-button-toggle`, `mat-snack-bar`, `mat-select`, `mat-datepicker`.
 
@@ -115,13 +115,13 @@ The application enforces a strict **three-layer conversion pipeline**:
 
 ```
 Backend ──► Response      ──► Mapper          ──► Domain       ──► UI Component
-            (core/models/)    (core/mappers/)     (core/domain/)
+            (core/models/)    (core/mappers/)     (core/models/)
 UI Component ──► Domain ──► Mapper ──► Request ──► Backend
 ```
 
 - **`core/models/`** — API-level types only: raw `*Response` / `*Request` shapes mirroring backend JSON.
   Components **must not** import from `core/models/` directly.
-- **`core/domain/`** — Clean UI domain objects. May use `Date` instead of ISO strings and derived fields.
+- **`core/models/`** — Clean UI domain objects. May use `Date` instead of ISO strings and derived fields.
   All components, dialogs, and templates exclusively use types from here.
 - **`core/mappers/`** — Pure, stateless classes with two static methods per domain:
   - `fromResponse(r: XyzResponse): Xyz` — converts API response → domain object
@@ -130,18 +130,26 @@ UI Component ──► Domain ──► Mapper ──► Request ──► Backe
   mapping is done internally via `.pipe(map(XyzMapper.fromResponse))` / `XyzMapper.toRequest(w)`.
 
 **Example — TariffService:**
+
 ```typescript
-getAll(): Observable<Page<Tariff>> {
+getAll()
+:
+Observable < Page < Tariff >> {
   return this.http.get<Page<TariffV2Response>>(this.baseUrl)
     .pipe(map(page => ({ items: page.items.map(TariffMapper.fromResponse), totalItems: page.totalItems })));
 }
-create(write: TariffWrite): Observable<Tariff> {
+create(write
+:
+TariffWrite
+):
+Observable < Tariff > {
   return this.http.post<TariffV2Response>(this.baseUrl, TariffMapper.toRequest(write))
     .pipe(map(TariffMapper.fromResponse));
 }
 ```
 
 ### 6. JWT Authentication
+
 - `AuthService` stores JWT in `localStorage`, exposes `currentUser` / `isAuthenticated` / `token` signals
 - `authInterceptor` attaches `Authorization: Bearer <token>` header to all API requests
 - On 401 response → `AuthService.logout()` → redirect to `/login`
@@ -149,18 +157,23 @@ create(write: TariffWrite): Observable<Tariff> {
 - Login endpoint will be `POST /api/auth/login` (future)
 
 ### 7. Role-Based Access Control
+
 Two roles: `ADMIN` and `OPERATOR`.
+
 - `/admin/**` routes protected by `roleGuard(['ADMIN'])`
 - `/operator/**` routes protected by `roleGuard(['OPERATOR', 'ADMIN'])` (admin can access operator too)
 - `/login` is public
 - `/` redirects based on role
 
 ### 8. Environment Configuration
+
 API base URL stored in Angular environment files:
+
 - `src/environments/environment.ts` → `apiUrl: 'http://localhost:8080'`
 - `src/environments/environment.prod.ts` → production URL
 
 ### 9. Error Handling
+
 Global HTTP error interceptor catches API errors and maps `ProblemDetail` responses to user-friendly messages.
 Components handle loading/error states using signals.
 
@@ -172,6 +185,7 @@ All UI labels extracted to `src/locale/messages.xlf` via `npm run i18n:extract`.
 Components must be reachable from `AppComponent` for the compiler to extract their `$localize` calls.
 
 ### 11. QR Code Scanning
+
 `html5-qrcode` library for reading QR codes from phone camera. Shared reusable component in
 `shared/components/qr-scanner/`. Used by operator module for equipment UID input and return flow.
 
@@ -199,19 +213,21 @@ The application strictly separates **API types** from **UI domain objects** thro
 
 #### Three layers in `core/`
 
-| Folder           | Purpose                                       | Who creates?          | Who consumes?       |
-|------------------|-----------------------------------------------|-----------------------|---------------------|
-| `core/models/`   | Raw API shapes: `*Request`, `*Response`       | Backend OpenAPI spec  | `core/api/` only    |
-| `core/mappers/`  | Stateless converter classes                   | Developer             | `core/api/` only    |
-| `core/domain/`   | Clean UI objects: `Tariff`, `TariffWrite`, …  | Developer             | Components, dialogs |
+| Folder          | Purpose                                      | Who creates?         | Who consumes?       |
+|-----------------|----------------------------------------------|----------------------|---------------------|
+| `core/models/`  | Raw API shapes: `*Request`, `*Response`      | Backend OpenAPI spec | `core/api/` only    |
+| `core/mappers/` | Stateless converter classes                  | Developer            | `core/api/` only    |
+| `core/models/`  | Clean UI objects: `Tariff`, `TariffWrite`, … | Developer            | Components, dialogs |
 
 #### Mapper class convention
 
 ```typescript
 // core/mappers/tariff.mapper.ts
 export class TariffMapper {
-  static fromResponse(r: TariffV2Response): Tariff { … }   // API → UI
-  static toRequest(w: TariffWrite): TariffV2Request { … }  // UI → API
+  static fromResponse(r: TariffV2Response): Tariff { …
+  }   // API → UI
+  static toRequest(w: TariffWrite): TariffV2Request { …
+  }  // UI → API
 }
 ```
 
@@ -220,11 +236,11 @@ export class TariffMapper {
 - Use `Date` objects for date/time fields (not ISO strings)
 - Write types (`*Write`) omit server-managed fields (`id`, `status`, `version`)
 - Shared enum/value types (`PricingType`, `TariffStatus`) may be re-exported from `core/models/` into
-  `core/domain/` if they are conceptually part of the domain (no transformation needed)
+  `core/models/` if they are conceptually part of the domain (no transformation needed)
 
 #### Enforcement rule
 
-Components and dialogs **import only from `core/domain/`**. If a component needs to display a date, it
+Components and dialogs **import only from `core/models/`**. If a component needs to display a date, it
 receives a `Date` (or formatted string from the domain object), never a raw ISO string from a Response type.
 
 ## Routing Strategy
@@ -252,12 +268,14 @@ All feature routes are lazy-loaded via `loadChildren` / `loadComponent`.
 ## Design Patterns in Use
 
 ### Repository / Service Pattern
+
 HTTP calls encapsulated in injectable services. Components never call `HttpClient` directly.
 
 ### Mapper Pattern (Backend ↔ Domain conversion)
+
 Each domain that fetches data from the API has a corresponding mapper class in `core/mappers/`. The
 service is the sole place where `fromResponse` / `toRequest` are called. Components only ever deal with
-clean domain types from `core/domain/`.
+clean domain types from `core/models/`.
 
 ```
 Read:   HTTP GET → *Response → Mapper.fromResponse() → Domain → Component
@@ -265,17 +283,21 @@ Write:  Component → Domain → Mapper.toRequest() → *Request → HTTP POST/P
 ```
 
 ### Smart / Dumb Component Split
+
 - **Smart (container) components**: inject services, manage state, handle navigation
 - **Dumb (presentational) components**: receive `input()`, emit `output()`, no service injection
 
 ### Reactive Forms
+
 Use Angular `ReactiveFormsModule` for all forms (customer search, rental creation, return input).
 
 ### Dialog Pattern (Admin)
+
 Admin CRUD uses `MatDialog` for create/edit forms. List component opens dialog, dialog calls service,
 returns result to list for refresh.
 
 ### Stepper Pattern (Operator)
+
 Rental creation uses `mat-vertical-stepper` (linear mode) with one child component per step.
 
 ## Component Relationships
@@ -341,21 +363,26 @@ Shared:
 ## API Integration Patterns
 
 ### Fast Path Rental
+
 Single `POST /api/rentals` with full payload → creates ACTIVE rental immediately.
 
 ### Draft Path Rental
+
 1. `POST /api/rentals/draft` → creates DRAFT
 2. `PATCH /api/rentals/{id}` (JSON Patch) → fill customer, equipment, duration
 3. `PATCH /api/rentals/{id}` with `status=ACTIVE` → activate rental
-4. `POST /api/rentals/{id}/prepayments` → record payment
+4. `POST /api/finance/deposits` → record payment
 
 ### Return Flow
+
 `POST /api/rentals/return` with `equipmentUid` or `equipmentId` → calculates cost, records additional payment,
 closes rental.
 
 ### Tariff Auto-Selection
+
 `GET /api/tariffs/selection?equipmentType=bike&durationMinutes=120` → returns best tariff for the combination.
 
 ### Authentication
+
 `POST /api/auth/login` (future) → returns JWT. Until then, mock implementation in `AuthService`.
 

@@ -1,41 +1,42 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { of, Subject, throwError } from 'rxjs';
-import { EquipmentStatusService } from '../../../core/api';
-import { EquipmentStatusResponse } from '../../../core/models';
+import { MatDialog } from '@angular/material/dialog';
+import { of } from 'rxjs';
+import { EquipmentStatusStore } from '../../../core/state/equipment-status.store';
+import { EquipmentStatus } from '@ui-models';
 import { EquipmentStatusListComponent } from './equipment-status-list.component';
 
-const mockStatuses: EquipmentStatusResponse[] = [
+const mockStatuses: EquipmentStatus[] = [
   { slug: 'available', name: 'Available', allowedTransitions: ['rented'] },
   { slug: 'rented', name: 'Rented', allowedTransitions: ['available', 'maintenance'] },
-  { slug: 'maintenance', name: 'Maintenance' },
+  { slug: 'maintenance', name: 'Maintenance', allowedTransitions: [] },
 ];
 
-function makeService(statuses: EquipmentStatusResponse[] = mockStatuses) {
-  return { getAll: vi.fn().mockReturnValue(of(statuses)) };
+function makeStore(statuses: EquipmentStatus[] = mockStatuses, loading = false) {
+  return {
+    statuses: () => statuses,
+    loading: () => loading,
+    load: vi.fn().mockReturnValue(of(undefined)),
+  };
 }
 
-function makeDialog(afterClosed = new Subject<boolean | undefined>()) {
-  const ref = { afterClosed: () => afterClosed } as unknown as MatDialogRef<unknown>;
-  return { open: vi.fn().mockReturnValue(ref) };
+function makeDialog() {
+  return { open: vi.fn() };
 }
 
 describe('EquipmentStatusListComponent', () => {
   let fixture: ComponentFixture<EquipmentStatusListComponent>;
   let component: EquipmentStatusListComponent;
-  let service: ReturnType<typeof makeService>;
+  let store: ReturnType<typeof makeStore>;
   let dialog: ReturnType<typeof makeDialog>;
-  let dialogAfterClosed: Subject<boolean | undefined>;
 
-  async function setup(statuses: EquipmentStatusResponse[] = mockStatuses) {
-    service = makeService(statuses);
-    dialogAfterClosed = new Subject();
-    dialog = makeDialog(dialogAfterClosed);
+  async function setup(statuses: EquipmentStatus[] = mockStatuses) {
+    store = makeStore(statuses);
+    dialog = makeDialog();
 
     await TestBed.configureTestingModule({
       imports: [EquipmentStatusListComponent],
       providers: [
-        { provide: EquipmentStatusService, useValue: service },
+        { provide: EquipmentStatusStore, useValue: store },
         { provide: MatDialog, useValue: dialog },
       ],
     }).compileComponents();
@@ -50,17 +51,6 @@ describe('EquipmentStatusListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load statuses on init', async () => {
-    await setup();
-    expect(service.getAll).toHaveBeenCalledOnce();
-    expect(component.statuses()).toHaveLength(mockStatuses.length);
-  });
-
-  it('should set loading false after load completes', async () => {
-    await setup();
-    expect(component.loading()).toBe(false);
-  });
-
   it('should render table rows for each status', async () => {
     await setup();
     fixture.detectChanges();
@@ -68,12 +58,33 @@ describe('EquipmentStatusListComponent', () => {
     expect(rows.length).toBe(mockStatuses.length);
   });
 
+  it('should show progress bar when loading', async () => {
+    store = makeStore(mockStatuses, true);
+    dialog = makeDialog();
+    await TestBed.configureTestingModule({
+      imports: [EquipmentStatusListComponent],
+      providers: [
+        { provide: EquipmentStatusStore, useValue: store },
+        { provide: MatDialog, useValue: dialog },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(EquipmentStatusListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('mat-progress-bar')).toBeTruthy();
+  });
+
+  it('should hide progress bar when not loading', async () => {
+    await setup();
+    expect(fixture.nativeElement.querySelector('mat-progress-bar')).toBeNull();
+  });
+
   it('should open create dialog with statuses list and no status entry', async () => {
     await setup();
     component.openCreateDialog();
-    expect(dialog.open).toHaveBeenCalled();
+    expect(dialog.open).toHaveBeenCalledOnce();
     const callArgs = dialog.open.mock.calls[0];
-    expect(callArgs[1]).toMatchObject({ data: { statuses: component.statuses() } });
+    expect(callArgs[1]).toMatchObject({ data: { statuses: store.statuses() } });
     expect(callArgs[1].data.status).toBeUndefined();
   });
 
@@ -83,53 +94,7 @@ describe('EquipmentStatusListComponent', () => {
     expect(dialog.open).toHaveBeenCalledOnce();
     const callArgs = dialog.open.mock.calls[0];
     expect(callArgs[1]).toMatchObject({
-      data: { status: mockStatuses[0], statuses: component.statuses() },
+      data: { status: mockStatuses[0], statuses: store.statuses() },
     });
-  });
-
-  it('should reload statuses when dialog closes with true', async () => {
-    await setup();
-    component.openCreateDialog();
-    service.getAll.mockReturnValue(of(mockStatuses));
-    dialogAfterClosed.next(true);
-    expect(service.getAll).toHaveBeenCalledTimes(2);
-  });
-
-  it('should not reload statuses when dialog closes with undefined', async () => {
-    await setup();
-    component.openCreateDialog();
-    dialogAfterClosed.next(undefined);
-    expect(service.getAll).toHaveBeenCalledOnce();
-  });
-
-  it('should sort statuses by slug ascending', async () => {
-    const unsorted: EquipmentStatusResponse[] = [
-      { slug: 'rented', name: 'Rented' },
-      { slug: 'available', name: 'Available' },
-      { slug: 'maintenance', name: 'Maintenance' },
-    ];
-    await setup(unsorted);
-    expect(component.statuses().map((s) => s.slug)).toEqual(['available', 'maintenance', 'rented']);
-  });
-
-  it('should set loading false and keep empty statuses on error', async () => {
-    service = { getAll: vi.fn().mockReturnValue(throwError(() => new Error('Network error'))) };
-    dialogAfterClosed = new Subject();
-    dialog = makeDialog(dialogAfterClosed);
-
-    await TestBed.configureTestingModule({
-      imports: [EquipmentStatusListComponent],
-      providers: [
-        { provide: EquipmentStatusService, useValue: service },
-        { provide: MatDialog, useValue: dialog },
-      ],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(EquipmentStatusListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-
-    expect(component.loading()).toBe(false);
-    expect(component.statuses()).toEqual([]);
   });
 });

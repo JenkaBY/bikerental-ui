@@ -13,7 +13,7 @@ Add activate / deactivate toggle buttons to the actions column of `TariffListCom
 shows a "Deactivate" icon button; an INACTIVE tariff shows an "Activate" icon button. Calling the action
 should refresh the list row and show a `MatSnackBar` confirmation.
 
-The component works exclusively with the **`Tariff` domain type** from `core/domain/`. After TASK015,
+The component works exclusively with the **`Tariff` domain type** from `core/models/`. After TASK015,
 `TariffService.activate(id)` and `TariffService.deactivate(id)` both return `Observable<Tariff>`.
 
 ## Thought Process
@@ -55,7 +55,11 @@ On error: show snackbar with error message.
 ### Method
 
 ```typescript
-toggleStatus(row: Tariff): void {   // Tariff from core/domain — not TariffV2Response
+toggleStatus(row
+:
+Tariff
+):
+void {   // Tariff from core/models — not TariffV2Response
   const call$ = row.status === 'ACTIVE'
     ? this.tariffService.deactivate(row.id)
     : this.tariffService.activate(row.id);
@@ -77,7 +81,7 @@ toggleStatus(row: Tariff): void {   // Tariff from core/domain — not TariffV2R
 1. **`src/app/features/admin/tariffs/tariff-list.component.ts`**
    - Add imports: `MatIconModule`, `MatTooltipModule`, `MatSnackBar`
    - Inject `MatSnackBar`
-   - `toggleStatus(row: Tariff)` — uses `Tariff` from `core/domain/` not `core/models/`
+   - `toggleStatus(row: Tariff)` — uses `Tariff` from `core/models/` not `core/models/`
    - Fill the `actions` column template with conditional toggle button
 
 2. **`src/app/shared/constant/labels.ts`**
