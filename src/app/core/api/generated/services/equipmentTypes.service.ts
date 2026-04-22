@@ -40,19 +40,19 @@ export class EquipmentTypesService {
     slug: string,
     equipmentTypeUpdateRequest: EquipmentTypeUpdateRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentTypeResponse>;
   update(
     slug: string,
     equipmentTypeUpdateRequest: EquipmentTypeUpdateRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentTypeResponse>>;
   update(
     slug: string,
     equipmentTypeUpdateRequest: EquipmentTypeUpdateRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentTypeResponse>>;
   update(
     slug: string,
@@ -76,7 +76,6 @@ export class EquipmentTypesService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -87,15 +86,15 @@ export class EquipmentTypesService {
 
   getAllEquipmentTypes(
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<Array<EquipmentTypeResponse>>;
   getAllEquipmentTypes(
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<Array<EquipmentTypeResponse>>>;
   getAllEquipmentTypes(
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<Array<EquipmentTypeResponse>>>;
   getAllEquipmentTypes(
     observe?: 'body' | 'events' | 'response',
@@ -113,7 +112,6 @@ export class EquipmentTypesService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -125,17 +123,17 @@ export class EquipmentTypesService {
   create(
     equipmentTypeRequest: EquipmentTypeRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentTypeResponse>;
   create(
     equipmentTypeRequest: EquipmentTypeRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentTypeResponse>>;
   create(
     equipmentTypeRequest: EquipmentTypeRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentTypeResponse>>;
   create(
     equipmentTypeRequest: EquipmentTypeRequest,
@@ -158,7 +156,6 @@ export class EquipmentTypesService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),

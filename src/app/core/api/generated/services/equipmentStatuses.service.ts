@@ -40,19 +40,19 @@ export class EquipmentStatusesService {
     slug: string,
     equipmentStatusUpdateRequest: EquipmentStatusUpdateRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentStatusResponse>;
   update(
     slug: string,
     equipmentStatusUpdateRequest: EquipmentStatusUpdateRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentStatusResponse>>;
   update(
     slug: string,
     equipmentStatusUpdateRequest: EquipmentStatusUpdateRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentStatusResponse>>;
   /** Updates name, description and allowed transitions for a status */
   update(
@@ -77,7 +77,6 @@ export class EquipmentStatusesService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -88,15 +87,15 @@ export class EquipmentStatusesService {
 
   getAllEquipmentStatuses(
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<Array<EquipmentStatusResponse>>;
   getAllEquipmentStatuses(
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<Array<EquipmentStatusResponse>>>;
   getAllEquipmentStatuses(
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<Array<EquipmentStatusResponse>>>;
   /** Returns all statuses with their allowed transitions */
   getAllEquipmentStatuses(
@@ -115,7 +114,6 @@ export class EquipmentStatusesService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -127,17 +125,17 @@ export class EquipmentStatusesService {
   create(
     equipmentStatusRequest: EquipmentStatusRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentStatusResponse>;
   create(
     equipmentStatusRequest: EquipmentStatusRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentStatusResponse>>;
   create(
     equipmentStatusRequest: EquipmentStatusRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentStatusResponse>>;
   create(
     equipmentStatusRequest: EquipmentStatusRequest,
@@ -160,7 +158,6 @@ export class EquipmentStatusesService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),

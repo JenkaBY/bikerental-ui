@@ -42,17 +42,17 @@ export class EquipmentService {
   getEquipmentById(
     id: number,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentResponse>;
   getEquipmentById(
     id: number,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentResponse>>;
   getEquipmentById(
     id: number,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentResponse>>;
   getEquipmentById(
     id: number,
@@ -71,7 +71,6 @@ export class EquipmentService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -84,19 +83,19 @@ export class EquipmentService {
     id: number,
     equipmentRequest: EquipmentRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentResponse>;
   updateEquipment(
     id: number,
     equipmentRequest: EquipmentRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentResponse>>;
   updateEquipment(
     id: number,
     equipmentRequest: EquipmentRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentResponse>>;
   /** Replaces all fields of an existing equipment record */
   updateEquipment(
@@ -121,7 +120,6 @@ export class EquipmentService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -135,21 +133,21 @@ export class EquipmentService {
     status?: string,
     type?: string,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<PageEquipmentResponse>;
   searchEquipments(
     arg2: Pageable,
     status?: string,
     type?: string,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageEquipmentResponse>>;
   searchEquipments(
     arg2: Pageable,
     status?: string,
     type?: string,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageEquipmentResponse>>;
   /** Returns paginated equipment list filtered by status and/or type */
   searchEquipments(
@@ -183,7 +181,6 @@ export class EquipmentService {
       observe: observe as any,
       headers,
       params,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -195,17 +192,17 @@ export class EquipmentService {
   createEquipment(
     equipmentRequest: EquipmentRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentResponse>;
   createEquipment(
     equipmentRequest: EquipmentRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentResponse>>;
   createEquipment(
     equipmentRequest: EquipmentRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentResponse>>;
   /** Registers a new piece of equipment in the catalog */
   createEquipment(
@@ -229,7 +226,6 @@ export class EquipmentService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -241,17 +237,17 @@ export class EquipmentService {
   getEquipmentByUid(
     uid: string,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentResponse>;
   getEquipmentByUid(
     uid: string,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentResponse>>;
   getEquipmentByUid(
     uid: string,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentResponse>>;
   getEquipmentByUid(
     uid: string,
@@ -270,7 +266,6 @@ export class EquipmentService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -282,17 +277,17 @@ export class EquipmentService {
   getEquipmentBySerial(
     serialNumber: string,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<EquipmentResponse>;
   getEquipmentBySerial(
     serialNumber: string,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<EquipmentResponse>>;
   getEquipmentBySerial(
     serialNumber: string,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentResponse>>;
   getEquipmentBySerial(
     serialNumber: string,
@@ -311,7 +306,6 @@ export class EquipmentService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),

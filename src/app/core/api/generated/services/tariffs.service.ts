@@ -46,17 +46,17 @@ export class TariffsService {
   getTariffById(
     id: number,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TariffV2Response>;
   getTariffById(
     id: number,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TariffV2Response>>;
   getTariffById(
     id: number,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TariffV2Response>>;
   getTariffById(
     id: number,
@@ -75,7 +75,6 @@ export class TariffsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -88,19 +87,19 @@ export class TariffsService {
     id: number,
     tariffV2Request: TariffV2Request,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TariffV2Response>;
   updateTariff(
     id: number,
     tariffV2Request: TariffV2Request,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TariffV2Response>>;
   updateTariff(
     id: number,
     tariffV2Request: TariffV2Request,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TariffV2Response>>;
   updateTariff(
     id: number,
@@ -124,7 +123,6 @@ export class TariffsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -136,17 +134,17 @@ export class TariffsService {
   getAllTariffs(
     arg0: Pageable,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<PageTariffV2Response>;
   getAllTariffs(
     arg0: Pageable,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageTariffV2Response>>;
   getAllTariffs(
     arg0: Pageable,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageTariffV2Response>>;
   getAllTariffs(
     arg0: Pageable,
@@ -171,7 +169,6 @@ export class TariffsService {
       observe: observe as any,
       headers,
       params,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -183,17 +180,17 @@ export class TariffsService {
   createTariff(
     tariffV2Request: TariffV2Request,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TariffV2Response>;
   createTariff(
     tariffV2Request: TariffV2Request,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TariffV2Response>>;
   createTariff(
     tariffV2Request: TariffV2Request,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TariffV2Response>>;
   createTariff(
     tariffV2Request: TariffV2Request,
@@ -216,7 +213,6 @@ export class TariffsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -228,17 +224,17 @@ export class TariffsService {
   calculateCost(
     costCalculationRequest: CostCalculationRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<CostCalculationResponse>;
   calculateCost(
     costCalculationRequest: CostCalculationRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<CostCalculationResponse>>;
   calculateCost(
     costCalculationRequest: CostCalculationRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<CostCalculationResponse>>;
   /** Supports normal mode (auto-select tariffs, apply discount) and SPECIAL mode (fixed group price) */
   calculateCost(
@@ -262,7 +258,6 @@ export class TariffsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -274,17 +269,17 @@ export class TariffsService {
   deactivateTariff(
     id: number,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TariffV2Response>;
   deactivateTariff(
     id: number,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TariffV2Response>>;
   deactivateTariff(
     id: number,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TariffV2Response>>;
   deactivateTariff(
     id: number,
@@ -303,7 +298,6 @@ export class TariffsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -315,17 +309,17 @@ export class TariffsService {
   activateTariff(
     id: number,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TariffV2Response>;
   activateTariff(
     id: number,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TariffV2Response>>;
   activateTariff(
     id: number,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TariffV2Response>>;
   activateTariff(
     id: number,
@@ -344,7 +338,6 @@ export class TariffsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -358,21 +351,21 @@ export class TariffsService {
     durationMinutes: number,
     rentalDate?: Date,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TariffSelectionV2Response>;
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
     rentalDate?: Date,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TariffSelectionV2Response>>;
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
     rentalDate?: Date,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TariffSelectionV2Response>>;
   selectTariff(
     equipmentType: string,
@@ -405,7 +398,6 @@ export class TariffsService {
       observe: observe as any,
       headers,
       params,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -416,15 +408,15 @@ export class TariffsService {
 
   getPricingTypes(
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<Array<PricingTypeResponse>>;
   getPricingTypes(
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<Array<PricingTypeResponse>>>;
   getPricingTypes(
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<Array<PricingTypeResponse>>>;
   getPricingTypes(
     observe?: 'body' | 'events' | 'response',
@@ -442,7 +434,6 @@ export class TariffsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -454,17 +445,17 @@ export class TariffsService {
   getActiveTariffs(
     equipmentType: string,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<Array<TariffV2Response>>;
   getActiveTariffs(
     equipmentType: string,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<Array<TariffV2Response>>>;
   getActiveTariffs(
     equipmentType: string,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<Array<TariffV2Response>>>;
   getActiveTariffs(
     equipmentType: string,
@@ -489,7 +480,6 @@ export class TariffsService {
       observe: observe as any,
       headers,
       params,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),

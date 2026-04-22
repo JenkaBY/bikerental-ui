@@ -48,7 +48,7 @@ export class RentalsService {
     customerId?: string,
     equipmentUid?: string,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<PageRentalSummaryResponse>;
   getRentals(
     arg3: Pageable,
@@ -56,7 +56,7 @@ export class RentalsService {
     customerId?: string,
     equipmentUid?: string,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageRentalSummaryResponse>>;
   getRentals(
     arg3: Pageable,
@@ -64,7 +64,7 @@ export class RentalsService {
     customerId?: string,
     equipmentUid?: string,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageRentalSummaryResponse>>;
   /** Returns a paginated list of rentals filtered by status, customer or equipment UID */
   getRentals(
@@ -102,7 +102,6 @@ export class RentalsService {
       observe: observe as any,
       headers,
       params,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -114,17 +113,17 @@ export class RentalsService {
   createRental(
     createRentalRequest: CreateRentalRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<RentalResponse>;
   createRental(
     createRentalRequest: CreateRentalRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<RentalResponse>>;
   createRental(
     createRentalRequest: CreateRentalRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalResponse>>;
   /** Creates an active rental in one step with all required data */
   createRental(
@@ -148,7 +147,6 @@ export class RentalsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -160,17 +158,17 @@ export class RentalsService {
   returnEquipment(
     returnEquipmentRequest: ReturnEquipmentRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<RentalReturnResponse>;
   returnEquipment(
     returnEquipmentRequest: ReturnEquipmentRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<RentalReturnResponse>>;
   returnEquipment(
     returnEquipmentRequest: ReturnEquipmentRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalReturnResponse>>;
   /** Completes a rental by returning the rented equipment, calculates final cost and records additional payment if needed */
   returnEquipment(
@@ -194,7 +192,6 @@ export class RentalsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -203,14 +200,14 @@ export class RentalsService {
     return this.httpClient.post(url, returnEquipmentRequest, requestOptions);
   }
 
-  createDraft(observe?: 'body', options?: RequestOptions<'blob'>): Observable<RentalResponse>;
+  createDraft(observe?: 'body', options?: RequestOptions<'json'>): Observable<RentalResponse>;
   createDraft(
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<RentalResponse>>;
   createDraft(
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalResponse>>;
   /** Creates an empty rental draft to be filled step by step */
   createDraft(
@@ -229,7 +226,6 @@ export class RentalsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -241,17 +237,17 @@ export class RentalsService {
   getRentalById(
     id: number,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<RentalResponse>;
   getRentalById(
     id: number,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<RentalResponse>>;
   getRentalById(
     id: number,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalResponse>>;
   getRentalById(
     id: number,
@@ -270,7 +266,6 @@ export class RentalsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -283,19 +278,19 @@ export class RentalsService {
     id: number,
     rentalUpdateJsonPatchRequest: RentalUpdateJsonPatchRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<RentalResponse>;
   updateRental(
     id: number,
     rentalUpdateJsonPatchRequest: RentalUpdateJsonPatchRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<RentalResponse>>;
   updateRental(
     id: number,
     rentalUpdateJsonPatchRequest: RentalUpdateJsonPatchRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalResponse>>;
   /** Applies partial updates to a rental. Supported paths: /customerId, /equipmentIds, /duration, /status. Setting status=ACTIVE activates the rental. */
   updateRental(
@@ -320,7 +315,6 @@ export class RentalsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),

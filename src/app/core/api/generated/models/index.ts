@@ -61,7 +61,7 @@ export interface EquipmentRequest {
   /** Unique serial number */
   serialNumber: string;
   /** Unique identifier tag (UID) */
-  uid?: string;
+  uid: string;
   /** Equipment type slug */
   typeSlug?: string;
   /** Equipment status slug */
@@ -445,7 +445,7 @@ export interface PricingTypeResponse {
   /** Localized title */
   title: string;
   /** Localized description */
-  description: string;
+  description?: string;
 }
 
 export interface PageRentalSummaryResponse {

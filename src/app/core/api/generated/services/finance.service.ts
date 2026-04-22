@@ -46,17 +46,17 @@ export class FinanceService {
   recordWithdrawal(
     recordWithdrawalRequest: RecordWithdrawalRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TransactionResponse>;
   recordWithdrawal(
     recordWithdrawalRequest: RecordWithdrawalRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TransactionResponse>>;
   recordWithdrawal(
     recordWithdrawalRequest: RecordWithdrawalRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TransactionResponse>>;
   recordWithdrawal(
     recordWithdrawalRequest: RecordWithdrawalRequest,
@@ -79,7 +79,6 @@ export class FinanceService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -91,17 +90,17 @@ export class FinanceService {
   recordDeposit(
     recordDepositRequest: RecordDepositRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TransactionResponse>;
   recordDeposit(
     recordDepositRequest: RecordDepositRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TransactionResponse>>;
   recordDeposit(
     recordDepositRequest: RecordDepositRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TransactionResponse>>;
   recordDeposit(
     recordDepositRequest: RecordDepositRequest,
@@ -124,7 +123,6 @@ export class FinanceService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -136,17 +134,17 @@ export class FinanceService {
   applyAdjustment(
     adjustmentRequest: AdjustmentRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<TransactionResponse>;
   applyAdjustment(
     adjustmentRequest: AdjustmentRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TransactionResponse>>;
   applyAdjustment(
     adjustmentRequest: AdjustmentRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TransactionResponse>>;
   applyAdjustment(
     adjustmentRequest: AdjustmentRequest,
@@ -169,7 +167,6 @@ export class FinanceService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -183,21 +180,21 @@ export class FinanceService {
     arg1: TransactionHistoryFilterParams,
     arg2: Pageable,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<Page>;
   getTransactionHistory(
     customerId: string,
     arg1: TransactionHistoryFilterParams,
     arg2: Pageable,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<Page>>;
   getTransactionHistory(
     customerId: string,
     arg1: TransactionHistoryFilterParams,
     arg2: Pageable,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<Page>>;
   getTransactionHistory(
     customerId: string,
@@ -227,7 +224,6 @@ export class FinanceService {
       observe: observe as any,
       headers,
       params,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -239,17 +235,17 @@ export class FinanceService {
   getBalances(
     customerId: string,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<CustomerAccountBalancesResponse>;
   getBalances(
     customerId: string,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<CustomerAccountBalancesResponse>>;
   getBalances(
     customerId: string,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<CustomerAccountBalancesResponse>>;
   getBalances(
     customerId: string,
@@ -268,7 +264,6 @@ export class FinanceService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),

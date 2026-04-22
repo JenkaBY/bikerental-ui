@@ -41,17 +41,17 @@ export class CustomersService {
   getById(
     id: string,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<CustomerResponse>;
   getById(
     id: string,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<CustomerResponse>>;
   getById(
     id: string,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<CustomerResponse>>;
   /** Returns full customer profile by UUID */
   getById(
@@ -71,7 +71,6 @@ export class CustomersService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -84,19 +83,19 @@ export class CustomersService {
     id: string,
     customerRequest: CustomerRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<CustomerResponse>;
   updateCustomer(
     id: string,
     customerRequest: CustomerRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<CustomerResponse>>;
   updateCustomer(
     id: string,
     customerRequest: CustomerRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<CustomerResponse>>;
   /** Replaces all fields of an existing customer profile */
   updateCustomer(
@@ -121,7 +120,6 @@ export class CustomersService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -133,17 +131,17 @@ export class CustomersService {
   searchByPhone(
     phone: string,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<Array<CustomerSearchResponse>>;
   searchByPhone(
     phone: string,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<Array<CustomerSearchResponse>>>;
   searchByPhone(
     phone: string,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<Array<CustomerSearchResponse>>>;
   /** Returns customers whose phone number contains the given digit sequence */
   searchByPhone(
@@ -169,7 +167,6 @@ export class CustomersService {
       observe: observe as any,
       headers,
       params,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -181,17 +178,17 @@ export class CustomersService {
   createCustomer(
     customerRequest: CustomerRequest,
     observe?: 'body',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<CustomerResponse>;
   createCustomer(
     customerRequest: CustomerRequest,
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<CustomerResponse>>;
   createCustomer(
     customerRequest: CustomerRequest,
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
+    options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<CustomerResponse>>;
   /** Creates a new customer profile */
   createCustomer(
@@ -215,7 +212,6 @@ export class CustomersService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
