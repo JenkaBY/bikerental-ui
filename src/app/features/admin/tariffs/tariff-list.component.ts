@@ -189,7 +189,7 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
 export class TariffListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private snackBar = inject(MatSnackBar);
-  readonly store = inject(TariffStore);
+  private store = inject(TariffStore);
   private dialog = inject(MatDialog);
 
   readonly items = this.store.tariffs;
