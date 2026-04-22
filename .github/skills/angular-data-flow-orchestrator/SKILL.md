@@ -30,7 +30,7 @@ description: This skill defines the mandatory step-by-step procedure for impleme
 
 3. The Enrichment Loop:
 
-- Inject required LookupStores (e.g., `StatusStore`).
+- Inject required LookupStores (e.g., `EquipmentStatusStore`).
 - Create a `readonly items = computed(() => ...)` signal.
 
 - Inside computed, iterate through the raw data and call the Mapper, passing items from LookupStores to resolve slugs/IDs into full metadata.

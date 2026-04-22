@@ -74,6 +74,12 @@ Status indicators (e.g., "Available", "Rented") are determined by functional fla
 - **Output:** Rich UI Models (Domain Models).
 - **Why:** Decouples the frontend from backend schema changes and handles date/currency formatting centrally.
 
+### 4.5. Non-blocking Lookup Initialization
+
+At application startup, a `LookupInitializerFacade` is used with `APP_INITIALIZER` to trigger the loading of dictionary data (e.g., Equipment Statuses, Types) in the background.
+
+- **Why:** This approach ensures that the initial rendering of the application is not blocked by HTTP requests for lookup data. The factory function for the `APP_INITIALIZER` returns a `Promise.resolve()` immediately after subscribing to the facade's `init()` method, allowing the application to bootstrap while data is being fetched in the background. This improves the user's perceived performance.
+
 ---
 
 ## 5. API Generation
@@ -133,3 +139,10 @@ The following pages are implemented within `shared-lib/src/lib/features/` and im
 - **Material Design:** Used for complex components (Tables, Dialogs, Steppers, Datepickers).
 - **Tailwind CSS:** Used for grid layouts, spacing, flexbox, and responsive visibility classes.
 - **Customization:** Material themes are customized via Tailwind variables for design consistency.
+- **Filter-Pagination Coupling** Whenever filters change, the pageIndex must be reset to 0 before fetching new data. Filters should be handled via a patchFilters method in the Store that merges new criteria into the current state and triggers a reload.
+
+## 11. Notification Strategy
+
+- **Success**: Trigger from the Component inside the `.subscribe({ next: ... })` block. This keeps Stores reusable and context-free.
+- **Critical** Errors: Handle globally via HttpInterceptor.
+- **Domain Errors**: Handle in the Store using catchError to manage the error signal and optionally trigger a specific error toast.
