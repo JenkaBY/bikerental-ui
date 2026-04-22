@@ -80,6 +80,7 @@
             "ci": {
               "watch": false,
               "coverage": true,
+              "coverageExclude": ["src/app/core/api/generated/**"],
               "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
             }
           }

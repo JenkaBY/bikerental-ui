@@ -116,6 +116,12 @@ Execute tasks in dependency order:
 
 ## Recent Changes
 
+- **2026-04-22**: Core state store test coverage expansion:
+  - Added `equipment-type.store.spec.ts` with load/create/update behavior coverage, including sorting/config enrichment, `typesForEquipment`, and loading/saving state transitions.
+  - Added `equipment-status.store.spec.ts` with load/create/update behavior coverage, including slug sorting, transition mapping, and loading/saving state transitions.
+  - Added `tariff.store.spec.ts` with paging/load/create/update/activate/deactivate coverage, including lookup-enriched mapping and write-path saving state transitions.
+  - Validation: `npm test -- --include "src/app/core/state/**/*.spec.ts"` passed with 28/28 tests green across 5 state store spec files.
+
 - **2026-04-22**: Tariff admin list store migration follow-up:
   - `TariffWrite.pricingType` was switched to `string` to keep the write contract slug-based while `Tariff.pricingType` remains the richer `PricingType` domain object.
   - `TariffMapper.toRequest()` now maps `TariffWrite.pricingType` directly into generated request `pricingType` with explicit type narrowing.

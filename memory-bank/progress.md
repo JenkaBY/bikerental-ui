@@ -124,6 +124,13 @@
 
 ### 2026-04-22
 
+- Added missing store unit test files under `src/app/core/state/`:
+  - `equipment-type.store.spec.ts`
+  - `equipment-status.store.spec.ts`
+  - `tariff.store.spec.ts`
+- Covered store behavior for load/create/update/activate/deactivate, pagination/filter reload triggers, mapper-enriched domain state, and loading/saving signal transitions.
+- Validation: `npm test -- --include "src/app/core/state/**/*.spec.ts"` passed with **28/28 tests green (5 files)**.
+
 - Migrated `src/app/features/admin/tariffs/tariff-list.component.ts` from the handwritten `TariffService` to `TariffStore`.
 - Added `src/app/core/state/pricing-type.store.ts` to centralize `PricingType[]` lookup state loaded from `TariffsService.getPricingTypes()`.
 - Renamed the tariff domain slug union from `PricingType` to `PricingTypeSlug` and updated lookup/dialog typings to match.

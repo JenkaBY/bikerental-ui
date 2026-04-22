@@ -140,3 +140,6 @@ Base URL: `/api/tariffs`
 - Refined tariff domain enrichment in `TariffMapper.fromResponse()` so tariff rows carry an `EquipmentType` object rather than only a slug/name string fallback.
 - Aligned tariff dialog initialization and tests with `Tariff.equipmentType.slug`.
 - Validation: all tariff feature tests pass (`npm test -- --include "src/app/features/admin/tariffs/**/*.spec.ts"`) — 101 tests green.
+- Added `src/app/core/state/tariff.store.spec.ts` with unit coverage for `load`, `setPage`, `create`, `update`, `activate`, and `deactivate`.
+- Tariff store tests now assert lookup-enriched mapping, create-triggered reload with page reset to `0`, and `saving`/`loading` signal transitions across write and read flows.
+- Validation: `npm test -- --include "src/app/core/state/**/*.spec.ts"` passed with 28/28 tests green across 5 state store spec files.

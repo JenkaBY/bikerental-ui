@@ -104,6 +104,9 @@ All planned components, dialog, services integration and tests were implemented 
   - `equipment-list.component.spec.ts` now asserts no extra component-level `store.load()` call after page change.
   - `equipment.store.spec.ts` now verifies filter setters trigger reload with page reset to `0`, and `setPage()` triggers reload with requested page/size.
 - Verification: targeted equipment tests passed; full suite passed with 378/378 tests green.
+  - Added `src/app/core/state/equipment-type.store.spec.ts` and `src/app/core/state/equipment-status.store.spec.ts` to close missing store-level unit coverage in core state.
+  - New specs verify load mapping/sorting behavior, create/update state mutation, and loading/saving signal transitions for both lookup stores.
+  - Validation: `npm test -- --include "src/app/core/state/**/*.spec.ts"` passed with 28/28 tests green across all current state-store specs.
 
 Implementation is complete and the task is now closed. If you want, I can open a PR with the changes or run the full test suite and provide the test output.
 
