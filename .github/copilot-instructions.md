@@ -7,7 +7,7 @@ applyTo: '**'
 
 ## System Context
 
-You are a senior developer working on a **Angular** project using Node 24, TypeScript and Angular 21.
+You are a senior developer working on a enterprise **Angular** project using Node 24, TypeScript and Angular 21.
 
 ## Required Startup Sequence
 

@@ -14,7 +14,7 @@ This is a high-performance enterprise bike rental management system built with *
 - **Framework:** Angular 21 (Standalone Components, Signals, Hydration).
 - **UI Framework:** Angular Material + Tailwind CSS (Hybrid approach: Material for components, Tailwind for layout/utilities).
 - **State Management:** Angular Signals (Global and Local stores).
-- **API Generation:** `ng-openapi-gen` (Restful API integration).
+- **API Generation:** `ng-openapi` (Restful API integration).
 - **i18n:** Built-in Angular `@angular/localize` (XLF files).
 - **Linting/Formatting:** ESLint + Prettier.
 - **CI/CD:** GitHub Actions.
