@@ -1,0 +1,18 @@
+<app-shell
+  [items]="navItems"
+  [brand]="brand"
+  [title]="title"
+  (toggleSidebar)="onToggleSidebar()"
+  (logout)="onLogout()"
+  [showModeToggle]="false"
+>
+  <div sidebar-footer>
+    <app-health-indicator />
+  </div>
+
+  <div toolbar-actions>
+    <app-logout-button (logout)="onLogout()" />
+  </div>
+
+  <router-outlet></router-outlet>
+</app-shell>

@@ -6,7 +6,7 @@ import prettierPlugin from 'eslint-plugin-prettier';
 
 export default tseslint.config(
   {
-    ignores: ['src/app/core/api/generated/**'],
+    ignores: ['src/app/core/api/generated/**', 'projects/shared/**/core/api/generated/**'],
   },
   {
     files: ['**/*.ts'],

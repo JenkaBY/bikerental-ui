@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+/* Minimal gateway styles — copied from root styles.css */
+@layer base {
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+app-root {
+  height: 100%;
+}

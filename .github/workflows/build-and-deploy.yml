@@ -69,29 +69,54 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests with coverage
-        run: npm run test:coverage
+      - name: Run gateway tests
+        run: npx ng test gateway --configuration=ci
 
-      - name: Publish coverage report to PR
+      - name: Run admin tests
+        run: npx ng test admin --configuration=ci
+
+      - name: Run operator tests
+        run: npx ng test operator --configuration=ci
+
+      - name: Publish gateway coverage report
         uses: davelosert/vitest-coverage-report-action@v2
         if: always()
         with:
+          name: gateway
           threshold-icons: "{0: '🔴', 80: '🔵', 90: '🟢'}"
-          json-summary-path: coverage/${{ env.PROJECT_NAME }}/coverage-summary.json
-          json-final-path: coverage/${{ env.PROJECT_NAME }}/coverage-final.json
+          json-summary-path: coverage/gateway/coverage-summary.json
+          json-final-path: coverage/gateway/coverage-final.json
+
+      - name: Publish admin coverage report
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: always()
+        with:
+          name: admin
+          threshold-icons: "{0: '🔴', 80: '🔵', 90: '🟢'}"
+          json-summary-path: coverage/admin/coverage-summary.json
+          json-final-path: coverage/admin/coverage-final.json
+
+      - name: Publish operator coverage report
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: always()
+        with:
+          name: operator
+          threshold-icons: "{0: '🔴', 80: '🔵', 90: '🟢'}"
+          json-summary-path: coverage/operator/coverage-summary.json
+          json-final-path: coverage/operator/coverage-final.json
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
-          path: coverage/${{ env.PROJECT_NAME }}/
+          path: coverage/
           retention-days: 30
 
   build:
     name: Build Angular Application
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     needs: [ quality, test ]
     steps:
       - name: Checkout code
@@ -108,20 +133,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Inject Bike Rental API host
+      - name: Inject Bike Rental API host into all apps
         env:
           BIKE_RENTAL_API: ${{ vars.BIKE_RENTAL_API }}
         run: |
-          echo "Injecting Bike Rental API host: ${{ env.BIKE_RENTAL_API }}"
-          sed -i "s|BIKE_API_PLACEHOLDER|${{ env.BIKE_RENTAL_API }}|g" src/environments/environment.prod.ts
+          sed -i "s|BIKE_API_PLACEHOLDER|${BIKE_RENTAL_API}|g" projects/gateway/src/environments/environment.prod.ts
+          sed -i "s|BIKE_API_PLACEHOLDER|${BIKE_RENTAL_API}|g" projects/admin/src/environments/environment.prod.ts
+          sed -i "s|BIKE_API_PLACEHOLDER|${BIKE_RENTAL_API}|g" projects/operator/src/environments/environment.prod.ts
 
-      - name: Build for production
-        run: npx ng build --configuration production --base-href /${{ github.event.repository.name }}/
+      - name: Build gateway
+        run: npx ng build gateway --configuration production --base-href /${{ github.event.repository.name }}/
+
+      - name: Build admin
+        run: npx ng build admin --configuration production --base-href /${{ github.event.repository.name }}/admin/
+
+      - name: Build operator
+        run: npx ng build operator --configuration production --base-href /${{ github.event.repository.name }}/operator/
+
+      - name: Assemble staging directory
+        run: |
+          mkdir -p staging/admin staging/operator
+          cp -r dist/gateway/browser/. staging/
+          cp -r dist/admin/browser/. staging/admin/
+          cp -r dist/operator/browser/. staging/operator/
 
       - name: Create root redirect to /en/
         run: |
           BASE="/${{ github.event.repository.name }}"
-          cat > dist/${{ env.PROJECT_NAME }}/browser/index.html << 'HTMLEOF'
+          cat > staging/index.html << 'HTMLEOF'
           <!doctype html>
           <html lang="en">
             <head>
@@ -133,18 +172,25 @@ jobs:
             <body></body>
           </html>
           HTMLEOF
-          sed -i "s|BASE_PLACEHOLDER|${BASE}|g" dist/${{ env.PROJECT_NAME }}/browser/index.html
+          sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/index.html
 
       - name: Add 404.html for SPA routing
         run: |
-          cp dist/${{ env.PROJECT_NAME }}/browser/index.html dist/${{ env.PROJECT_NAME }}/browser/404.html
-          cp dist/${{ env.PROJECT_NAME }}/browser/en/index.html dist/${{ env.PROJECT_NAME }}/browser/en/404.html
-          cp dist/${{ env.PROJECT_NAME }}/browser/ru/index.html dist/${{ env.PROJECT_NAME }}/browser/ru/404.html
+          # gateway
+          cp staging/index.html staging/404.html
+          cp staging/en/index.html staging/en/404.html
+          cp staging/ru/index.html staging/ru/404.html
+          # admin
+          cp staging/admin/en/index.html staging/admin/en/404.html
+          cp staging/admin/ru/index.html staging/admin/ru/404.html
+          # operator
+          cp staging/operator/en/index.html staging/operator/en/404.html
+          cp staging/operator/ru/index.html staging/operator/ru/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/${{ env.PROJECT_NAME }}/browser
+          path: staging
 
   ci:
     name: CI

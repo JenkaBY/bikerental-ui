@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/shared-lib",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "sourceMap": true,
+    "types": ["@angular/localize"]
+  },
+  "exclude": ["src/test.ts", "src/**/*.spec.ts", "ng-package.json"]
+}

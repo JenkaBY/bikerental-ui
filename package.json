@@ -3,27 +3,34 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "concurrently \"ng serve gateway --port 4200 --proxy-config proxy.conf.json\" \"ng serve admin --port 4201\" \"ng serve operator --port 4202\"",
+    "start:gateway": "ng serve gateway --port 4200 --proxy-config proxy.conf.json",
+    "start:admin": "ng serve admin --port 4201",
+    "start:operator": "ng serve operator --port 4202",
     "build": "ng build",
+    "build:gateway": "ng build gateway",
+    "build:admin": "ng build admin",
+    "build:operator": "ng build operator",
+    "build:all": "npm run build:gateway && npm run build:admin && npm run build:operator",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test --watch=false",
-    "test:watch": "ng test",
-    "test:coverage": "ng test --configuration=ci",
-    "lint": "ng lint",
-    "lint:fix": "ng lint --fix",
-    "format": "prettier --write \"src/**/*.{ts,html,scss,css}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss,css}\"",
+    "test": "ng test gateway --watch=false && ng test admin --watch=false && ng test operator --watch=false && ng test shared --watch=false",
+    "test:watch": "ng test gateway && ng test admin && ng test operator && ng test shared",
+    "test:coverage": "ng test gateway --configuration=ci && ng test admin --configuration=ci && ng test operator --configuration=ci",
+    "lint": "ng lint gateway && ng lint admin && ng lint operator && ng lint shared",
+    "lint:fix": "ng lint gateway --fix && ng lint admin --fix && ng lint operator --fix && ng lint shared --fix",
+    "format": "prettier --write \"projects/**/*.{ts,html,scss,css}\"",
+    "format:check": "prettier --check \"projects/**/*.{ts,html,scss,css}\"",
     "fix": "npm run lint:fix && npm run format",
     "analyze": "ng build --stats-json && webpack-bundle-analyzer dist/bikerental-ui/browser/stats.json",
     "prepare": "husky",
-    "i18n:extract": "ng extract-i18n --output-path src/locale",
-    "generate:api": "ng-openapi -c src/config/openapi.config.ts"
+    "i18n:extract": "ng extract-i18n gateway --output-path projects/shared/src/locale --out-file gateway.xlf && ng extract-i18n admin --output-path projects/shared/src/locale --out-file admin.xlf && ng extract-i18n operator --output-path projects/shared/src/locale --out-file operator.xlf && node scripts/merge-xlf.mjs",
+    "generate:api": "ng-openapi -c projects/shared/config/openapi.config.ts"
   },
   "lint-staged": {
-    "src/**/*.{ts,html}": [
+    "{src,projects}/**/*.{ts,html}": [
       "eslint --fix"
     ],
-    "src/**/*.{ts,html,scss,css,json}": [
+    "{src,projects}/**/*.{ts,html,scss,css,json}": [
       "prettier --write"
     ]
   },
@@ -66,6 +73,7 @@
     "typescript": "~5.9.0",
     "typescript-eslint": "8.58.2",
     "vitest": "^4.1.4",
-    "webpack-bundle-analyzer": "^5.3.0"
+    "webpack-bundle-analyzer": "^5.3.0",
+    "concurrently": "^9.2.1"
   }
 }

@@ -119,14 +119,14 @@ Backend ──► Response      ──► Mapper          ──► Domain      
 UI Component ──► Domain ──► Mapper ──► Request ──► Backend
 ```
 
-- **`core/models/`** — API-level types only: raw `*Response` / `*Request` shapes mirroring backend JSON.
+- **`src/app/core/api/generated/models`** — API-level types only: raw `*Response` / `*Request` shapes mirroring backend JSON.
   Components **must not** import from `core/models/` directly.
-- **`core/models/`** — Clean UI domain objects. May use `Date` instead of ISO strings and derived fields.
+- **`src/app/core/models`** — Clean UI domain objects. May use `Date` instead of ISO strings and derived fields.
   All components, dialogs, and templates exclusively use types from here.
-- **`core/mappers/`** — Pure, stateless classes with two static methods per domain:
+- **`src/app/core//`** — Pure, stateless classes with two static methods per domain:
   - `fromResponse(r: XyzResponse): Xyz` — converts API response → domain object
   - `toRequest(w: XyzWrite): XyzRequest` — converts domain write object → API request
-- **`core/api/` services** — the mapping boundary: all public methods accept/return domain types;
+- **`src/app/core/state/` stores** — the mapping boundary: all public methods accept/return domain types;
   mapping is done internally via `.pipe(map(XyzMapper.fromResponse))` / `XyzMapper.toRequest(w)`.
 
 **Example — TariffService:**
