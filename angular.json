@@ -19,6 +19,7 @@
           "options": {
             "browser": "projects/gateway/src/main.ts",
             "outputPath": "dist/gateway",
+            "i18nMissingTranslation": "ignore",
             "tsConfig": "projects/gateway/tsconfig.app.json",
             "assets": [
               {
@@ -47,8 +48,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "projects/gateway/src/environments/environment.ts",
+                  "with": "projects/gateway/src/environments/environment.prod.ts"
                 }
               ]
             },
@@ -119,6 +120,7 @@
           "options": {
             "browser": "projects/admin/src/main.ts",
             "outputPath": "dist/admin",
+            "i18nMissingTranslation": "ignore",
             "tsConfig": "projects/admin/tsconfig.app.json",
             "assets": [
               {
@@ -219,6 +221,7 @@
           "options": {
             "browser": "projects/operator/src/main.ts",
             "outputPath": "dist/operator",
+            "i18nMissingTranslation": "ignore",
             "tsConfig": "projects/operator/tsconfig.app.json",
             "assets": [
               {
@@ -318,7 +321,8 @@
           "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/shared/ng-package.json",
-            "tsConfig": "projects/shared/tsconfig.lib.json"
+            "tsConfig": "projects/shared/tsconfig.lib.json",
+            "i18nMissingTranslation": "ignore"
           },
           "configurations": {
             "production": {

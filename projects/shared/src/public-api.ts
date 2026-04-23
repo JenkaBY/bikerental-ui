@@ -4,6 +4,7 @@ export * from './app.tokens';
 // Core — generated API client (providers, services, models, tokens, utils)
 // Export under the `api` namespace to avoid top-level symbol collisions
 export * as api from './core/api/generated';
+export { provideDefaultClient } from './core/api/generated/providers';
 
 // Core — health monitoring
 export * from './core/health/health.model';
