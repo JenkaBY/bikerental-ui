@@ -17,7 +17,7 @@
     "analyze": "ng build --stats-json && webpack-bundle-analyzer dist/bikerental-ui/browser/stats.json",
     "prepare": "husky",
     "i18n:extract": "ng extract-i18n --output-path src/locale",
-    "generate:api": "ng-openapi -c src/config/openapi.config.ts"
+    "generate:api": "ng-openapi -c projects/shared/config/openapi.config.ts"
   },
   "lint-staged": {
     "{src,projects}/**/*.{ts,html}": [
