@@ -3,8 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve gateway",
+    "start": "concurrently \"ng serve gateway --port 4200\" \"ng serve admin --port 4201\"",
+    "start:gateway": "ng serve gateway",
+    "start:admin": "ng serve admin",
+    "start:both": "concurrently \"ng serve gateway --port 4200\" \"ng serve admin --port 4201\"",
     "build": "ng build",
+    "build:gateway": "ng build gateway",
+    "build:admin": "ng build admin",
+    "build:all": "npm run build:gateway && npm run build:admin",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
     "test:watch": "ng test",
@@ -66,6 +72,7 @@
     "typescript": "~5.9.0",
     "typescript-eslint": "8.58.2",
     "vitest": "^4.1.4",
-    "webpack-bundle-analyzer": "^5.3.0"
+    "webpack-bundle-analyzer": "^5.3.0",
+    "concurrently": "^9.2.1"
   }
 }

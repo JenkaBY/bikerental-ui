@@ -119,6 +119,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "projects/admin/src/main.ts",
+            "baseHref": "/admin/",
             "outputPath": "dist/admin",
             "i18nMissingTranslation": "ignore",
             "tsConfig": "projects/admin/tsconfig.app.json",
@@ -149,8 +150,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "projects/admin/src/environments/environment.ts",
+                  "with": "projects/admin/src/environments/environment.prod.ts"
                 }
               ]
             },
