@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 
-const LOCALE_DIR = 'src/locale';
+const LOCALE_DIR = 'projects/shared/src/locale';
 const SOURCES = ['gateway', 'admin', 'operator'];
 const OUTPUT = `${LOCALE_DIR}/messages.xlf`;
 

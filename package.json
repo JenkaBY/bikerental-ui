@@ -23,7 +23,7 @@
     "fix": "npm run lint:fix && npm run format",
     "analyze": "ng build --stats-json && webpack-bundle-analyzer dist/bikerental-ui/browser/stats.json",
     "prepare": "husky",
-    "i18n:extract": "ng extract-i18n gateway --output-path src/locale --out-file gateway.xlf && ng extract-i18n admin --output-path src/locale --out-file admin.xlf && ng extract-i18n operator --output-path src/locale --out-file operator.xlf && node scripts/merge-xlf.mjs",
+    "i18n:extract": "ng extract-i18n gateway --output-path projects/shared/src/locale --out-file gateway.xlf && ng extract-i18n admin --output-path projects/shared/src/locale --out-file admin.xlf && ng extract-i18n operator --output-path projects/shared/src/locale --out-file operator.xlf && node scripts/merge-xlf.mjs",
     "generate:api": "ng-openapi -c projects/shared/config/openapi.config.ts"
   },
   "lint-staged": {

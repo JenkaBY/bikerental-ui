@@ -27,7 +27,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.css"],
+            "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "projects/shared/src/styles.css"
+            ],
             "polyfills": ["@angular/localize/init"],
             "localize": ["ru", "en"]
           },
@@ -97,7 +100,7 @@
           "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "gateway:build",
-            "outputPath": "src/locale",
+            "outputPath": "projects/shared/src/locale",
             "outFile": "gateway.xlf"
           }
         }
@@ -105,8 +108,8 @@
       "i18n": {
         "sourceLocale": "en-US",
         "locales": {
-          "ru": "src/locale/messages.ru.xlf",
-          "en": "src/locale/messages.xlf"
+          "ru": "projects/shared/src/locale/messages.ru.xlf",
+          "en": "projects/shared/src/locale/messages.xlf"
         }
       }
     },
@@ -131,7 +134,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.css"],
+            "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "projects/shared/src/styles.css"
+            ],
             "polyfills": ["@angular/localize/init"],
             "localize": ["ru", "en"]
           },
@@ -201,7 +207,7 @@
           "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "admin:build",
-            "outputPath": "src/locale",
+            "outputPath": "projects/shared/src/locale",
             "outFile": "admin.xlf"
           }
         }
@@ -209,8 +215,8 @@
       "i18n": {
         "sourceLocale": "en-US",
         "locales": {
-          "ru": "src/locale/messages.ru.xlf",
-          "en": "src/locale/messages.xlf"
+          "ru": "projects/shared/src/locale/messages.ru.xlf",
+          "en": "projects/shared/src/locale/messages.xlf"
         }
       }
     },
@@ -235,7 +241,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.css"],
+            "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "projects/shared/src/styles.css"
+            ],
             "polyfills": ["@angular/localize/init"],
             "localize": ["ru", "en"]
           },
@@ -305,7 +314,7 @@
           "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "operator:build",
-            "outputPath": "src/locale",
+            "outputPath": "projects/shared/src/locale",
             "outFile": "operator.xlf"
           }
         }
@@ -313,8 +322,8 @@
       "i18n": {
         "sourceLocale": "en-US",
         "locales": {
-          "ru": "src/locale/messages.ru.xlf",
-          "en": "src/locale/messages.xlf"
+          "ru": "projects/shared/src/locale/messages.ru.xlf",
+          "en": "projects/shared/src/locale/messages.xlf"
         }
       }
     },
