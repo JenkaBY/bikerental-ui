@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AppToolbarComponent } from '../../../shared/components/app-toolbar/app-toolbar.component';
-import { BottomNavComponent } from '../../../shared/components/bottom-nav/bottom-nav.component';
-import { HealthIndicatorComponent } from '../../../shared/components/health-indicator/health-indicator.component';
-import { LogoutButtonComponent } from '../../../shared/components/logout-button/logout-button.component';
-import { NavItem } from '../../../shared/components/sidebar-nav-item/nav-item.model';
-import { APP_BRAND } from '../../../app.tokens';
+import {
+  APP_BRAND,
+  AppToolbarComponent,
+  BottomNavComponent,
+  HealthIndicatorComponent,
+  LogoutButtonComponent,
+  NavItem,
+} from '@bikerental/shared';
 
 const NAV_ITEMS: NavItem[] = [
   { label: $localize`Dashboard`, route: 'dashboard', icon: 'dashboard' },
@@ -14,6 +16,7 @@ const NAV_ITEMS: NavItem[] = [
 
 @Component({
   selector: 'app-operator-layout',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AppToolbarComponent,

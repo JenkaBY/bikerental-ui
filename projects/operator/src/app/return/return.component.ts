@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LayoutModeService } from '../../../core/layout-mode.service';
+import { LayoutModeService } from '@bikerental/shared';
 
 @Component({
   selector: 'app-return',

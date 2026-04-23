@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { OperatorShellWrapperComponent } from './operator-shell-wrapper.component';
-import { LayoutModeService } from '../../../core/layout-mode.service';
-import { APP_BRAND, BRAND } from '../../../app.tokens';
+import { APP_BRAND, BRAND, LayoutModeService } from '@bikerental/shared';
 
 describe('OperatorShellWrapperComponent', () => {
   beforeEach(async () => {

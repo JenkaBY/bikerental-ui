@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { OperatorLayoutComponent } from './operator-layout.component';
-import { APP_BRAND, BRAND } from '../../../app.tokens';
+import { APP_BRAND, BRAND } from '@bikerental/shared';
 
 describe('OperatorLayoutComponent', () => {
   let fixture: ComponentFixture<OperatorLayoutComponent>;

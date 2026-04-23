@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LayoutModeService } from '../../../core/layout-mode.service';
+import {
+  APP_BRAND,
+  HealthIndicatorComponent,
+  LayoutModeService,
+  LogoutButtonComponent,
+  NavItem,
+  ShellComponent,
+} from '@bikerental/shared';
 import { OperatorLayoutComponent } from './operator-layout.component';
-import { ShellComponent } from '../../../shared/components/shell/shell.component';
-import { HealthIndicatorComponent } from '../../../shared/components/health-indicator/health-indicator.component';
-import { LogoutButtonComponent } from '../../../shared/components/logout-button/logout-button.component';
-import { NavItem } from '../../../shared/components/sidebar-nav-item/nav-item.model';
-import { APP_BRAND } from '../../../app.tokens';
 
 const NAV_ITEMS: NavItem[] = [
   { label: $localize`Dashboard`, route: 'dashboard', icon: 'dashboard' },

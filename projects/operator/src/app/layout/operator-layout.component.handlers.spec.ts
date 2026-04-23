@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { OperatorLayoutComponent } from './operator-layout.component';
-import { APP_BRAND, BRAND } from '../../../app.tokens';
+import { APP_BRAND, BRAND } from '@bikerental/shared';
 
 describe('OperatorLayoutComponent handlers', () => {
   it('onLogout logs a message', async () => {

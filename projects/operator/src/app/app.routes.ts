@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { OperatorShellWrapperComponent } from './layout/operator-shell-wrapper.component';
 
-export const OPERATOR_ROUTES: Routes = [
+export const routes: Routes = [
   {
     path: '',
     component: OperatorShellWrapperComponent,
@@ -23,4 +23,5 @@ export const OPERATOR_ROUTES: Routes = [
       },
     ],
   },
+  { path: '**', redirectTo: '' },
 ];

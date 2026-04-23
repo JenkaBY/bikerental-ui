@@ -221,6 +221,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "projects/operator/src/main.ts",
+            "baseHref": "/operator/",
             "outputPath": "dist/operator",
             "i18nMissingTranslation": "ignore",
             "tsConfig": "projects/operator/tsconfig.app.json",
@@ -251,8 +252,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "projects/operator/src/environments/environment.ts",
+                  "with": "projects/operator/src/environments/environment.prod.ts"
                 }
               ]
             },
