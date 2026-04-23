@@ -78,13 +78,13 @@ Status indicators (e.g., "Available", "Rented") are determined by functional fla
 
 At application startup, a `LookupInitializerFacade` is used with `APP_INITIALIZER` to trigger the loading of dictionary data (e.g., Equipment Statuses, Types) in the background.
 
-- **Why:** This approach ensures that the initial rendering of the application is not blocked by HTTP requests for lookup data. The factory function for the `APP_INITIALIZER` returns a `Promise.resolve()` immediately after subscribing to the facade's `init()` method, allowing the application to bootstrap while data is being fetched in the background. This improves the user's perceived performance.
+- **Why:** This approach ensures that the initial rendering of the application is not blocked by HTTP requests for lookup data. The factory function in the `provideAppInitializer` returns a `Promise.resolve()` immediately after subscribing to the facade's `init()` method, allowing the application to bootstrap while data is being fetched in the background. This improves the user's perceived performance.
 
 ---
 
 ## 5. API Generation
 
-The project uses `ng-openapi-gen` for automated API client generation.
+The project uses `ng-openapi` for automated API client generation.
 
 - **Configuration Path:** `projects/shared-lib/src/config/openapi.config.ts`.
 - **Source:** Dynamic JSON URL provided by the backend.

@@ -86,8 +86,6 @@ Fill in the placeholder sections in `.github/copilot-instructions.md` with your 
 - Data flow update rules
 - Any other technology-specific or architectural guardrails
 
-Reference [github-copilot/examples/copilot-instructions.md](github-copilot/examples/copilot-instructions.md) for a
-completed example.
 
 **2. Create custom skills**
 For technology-specific guidance, create skill files in `.github/skills/`. These define patterns, best practices, and
