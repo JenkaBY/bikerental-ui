@@ -34,6 +34,27 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/gateway/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/gateway/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/admin/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/admin/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/operator/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/operator/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/shared/tsconfig.lib.json"
     }
   ]
 }

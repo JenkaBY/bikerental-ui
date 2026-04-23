@@ -7,18 +7,19 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "bikerental-ui": {
+    "gateway": {
       "projectType": "application",
       "schematics": {},
-      "root": "",
-      "sourceRoot": "src",
+      "root": "projects/gateway",
+      "sourceRoot": "projects/gateway/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "src/main.ts",
-            "tsConfig": "tsconfig.app.json",
+            "browser": "projects/gateway/src/main.ts",
+            "outputPath": "dist/gateway",
+            "tsConfig": "projects/gateway/tsconfig.app.json",
             "assets": [
               {
                 "glob": "**/*",
@@ -63,10 +64,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "bikerental-ui:build:production"
+              "buildTarget": "gateway:build:production"
             },
             "development": {
-              "buildTarget": "bikerental-ui:build:development"
+              "buildTarget": "gateway:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -74,13 +75,13 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "tsconfig.spec.json"
+            "tsConfig": "projects/gateway/tsconfig.spec.json"
           },
           "configurations": {
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageExclude": ["src/app/core/api/generated/**"],
+              "coverageExclude": ["projects/shared/**/core/api/generated/**"],
               "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
             }
           }
@@ -88,7 +89,13 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": ["projects/gateway/src/**/*.ts", "projects/gateway/src/**/*.html"]
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n",
+          "options": {
+            "buildTarget": "gateway:build"
           }
         }
       },
@@ -97,6 +104,233 @@
         "locales": {
           "ru": "src/locale/messages.ru.xlf",
           "en": "src/locale/messages.xlf"
+        }
+      }
+    },
+    "admin": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/admin",
+      "sourceRoot": "projects/admin/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/admin/src/main.ts",
+            "outputPath": "dist/admin",
+            "tsConfig": "projects/admin/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": ["@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.css"],
+            "polyfills": ["@angular/localize/init"],
+            "localize": ["ru", "en"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "admin:build:production"
+            },
+            "development": {
+              "buildTarget": "admin:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/admin/tsconfig.spec.json"
+          },
+          "configurations": {
+            "ci": {
+              "watch": false,
+              "coverage": true,
+              "coverageExclude": ["projects/shared/**/core/api/generated/**"],
+              "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/admin/src/**/*.ts", "projects/admin/src/**/*.html"]
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n",
+          "options": {
+            "buildTarget": "admin:build"
+          }
+        }
+      },
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "ru": "src/locale/messages.ru.xlf",
+          "en": "src/locale/messages.xlf"
+        }
+      }
+    },
+    "operator": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/operator",
+      "sourceRoot": "projects/operator/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/operator/src/main.ts",
+            "outputPath": "dist/operator",
+            "tsConfig": "projects/operator/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": ["@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.css"],
+            "polyfills": ["@angular/localize/init"],
+            "localize": ["ru", "en"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "operator:build:production"
+            },
+            "development": {
+              "buildTarget": "operator:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/operator/tsconfig.spec.json"
+          },
+          "configurations": {
+            "ci": {
+              "watch": false,
+              "coverage": true,
+              "coverageExclude": ["projects/shared/**/core/api/generated/**"],
+              "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/operator/src/**/*.ts", "projects/operator/src/**/*.html"]
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n",
+          "options": {
+            "buildTarget": "operator:build"
+          }
+        }
+      },
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "ru": "src/locale/messages.ru.xlf",
+          "en": "src/locale/messages.xlf"
+        }
+      }
+    },
+    "shared": {
+      "projectType": "library",
+      "schematics": {},
+      "root": "projects/shared",
+      "sourceRoot": "projects/shared/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/shared/ng-package.json",
+            "tsConfig": "projects/shared/tsconfig.lib.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/shared/src/**/*.ts", "projects/shared/src/**/*.html"]
+          }
         }
       }
     }

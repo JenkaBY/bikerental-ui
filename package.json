@@ -20,10 +20,10 @@
     "generate:api": "ng-openapi -c src/config/openapi.config.ts"
   },
   "lint-staged": {
-    "src/**/*.{ts,html}": [
+    "{src,projects}/**/*.{ts,html}": [
       "eslint --fix"
     ],
-    "src/**/*.{ts,html,scss,css,json}": [
+    "{src,projects}/**/*.{ts,html,scss,css,json}": [
       "prettier --write"
     ]
   },
