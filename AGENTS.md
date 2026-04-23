@@ -4,9 +4,6 @@ Angular 21 POS for a bike rental shop. Two lazy-loaded feature modules:
 - **Admin** (`/admin/**`) — desktop-first (≥22" 1080p), CRUD management via `MatDialog` forms
 - **Operator** (`/operator/**`) — mobile-first, multi-step stepper rental flow + QR scanner return
 
-> **Memory Bank first.** Before any task, read all files in `memory-bank/`
-> — especially `activeContext.md`, `tasks/_index.md`, and `progress.md`. They are the sole source of truth across sessions.
-
 ## Commands
 
 ```powershell
