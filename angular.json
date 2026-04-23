@@ -96,7 +96,9 @@
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
           "options": {
-            "buildTarget": "gateway:build"
+            "buildTarget": "gateway:build",
+            "outputPath": "src/locale",
+            "outFile": "gateway.xlf"
           }
         }
       },
@@ -198,7 +200,9 @@
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
           "options": {
-            "buildTarget": "admin:build"
+            "buildTarget": "admin:build",
+            "outputPath": "src/locale",
+            "outFile": "admin.xlf"
           }
         }
       },
@@ -300,7 +304,9 @@
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
           "options": {
-            "buildTarget": "operator:build"
+            "buildTarget": "operator:build",
+            "outputPath": "src/locale",
+            "outFile": "operator.xlf"
           }
         }
       },
