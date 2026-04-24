@@ -66,3 +66,5 @@ export * from './shared/utils/date.util';
 // Shared UI — validators
 export * from './shared/validators/form-error-messages';
 export * from './shared/validators/slug-validators';
+
+export * from './environments/environment';

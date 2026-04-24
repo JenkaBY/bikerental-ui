@@ -51,12 +51,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "projects/gateway/src/environments/environment.ts",
-                  "with": "projects/gateway/src/environments/environment.prod.ts"
-                },
-                {
-                  "replace": "projects/shared/environments/environment.ts",
-                  "with": "projects/shared/environments/environment.prod.ts"
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.prod.ts"
                 }
               ]
             },
@@ -163,12 +159,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "projects/admin/src/environments/environment.ts",
-                  "with": "projects/admin/src/environments/environment.prod.ts"
-                },
-                {
-                  "replace": "projects/shared/environments/environment.ts",
-                  "with": "projects/shared/environments/environment.prod.ts"
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.prod.ts"
                 }
               ]
             },
@@ -275,12 +267,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "projects/operator/src/environments/environment.ts",
-                  "with": "projects/operator/src/environments/environment.prod.ts"
-                },
-                {
-                  "replace": "projects/shared/environments/environment.ts",
-                  "with": "projects/shared/environments/environment.prod.ts"
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.prod.ts"
                 }
               ]
             },
