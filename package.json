@@ -16,7 +16,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test gateway --watch=false && ng test admin --watch=false && ng test operator --watch=false && ng test shared --watch=false",
     "test:watch": "ng test gateway && ng test admin && ng test operator && ng test shared",
-    "test:coverage": "ng test gateway --configuration=ci && ng test admin --configuration=ci && ng test operator --configuration=ci",
+    "test:coverage": "ng test gateway --configuration=ci && ng test admin --configuration=ci && ng test operator --configuration=ci  && ng test shared --configuration=ci",
     "lint": "ng lint gateway && ng lint admin && ng lint operator && ng lint shared",
     "lint:fix": "ng lint gateway --fix && ng lint admin --fix && ng lint operator --fix && ng lint shared --fix",
     "format": "prettier --write \"projects/**/*.{ts,html,scss,css}\"",

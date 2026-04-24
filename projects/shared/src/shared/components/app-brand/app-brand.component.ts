@@ -21,15 +21,14 @@ import { Router } from '@angular/router';
   `,
 })
 export class AppBrandComponent {
-  brand = input<string | undefined>(undefined);
+  brand = input<string>();
   protected appBrand = inject(APP_BRAND);
   private router = inject(Router);
 
-  // When rendering, prefer explicit input if provided, otherwise app token
-  protected getBrand = () => {
+  protected getBrand() {
     const b = this.brand();
     return typeof b === 'string' && b.length ? b : this.appBrand;
-  };
+  }
 
   goHome(): void {
     void this.router.navigate(['/']);

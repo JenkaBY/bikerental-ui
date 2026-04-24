@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, EMPTY } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { HealthResponse, HealthStatus, ServerInfo } from './health.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class HealthService {

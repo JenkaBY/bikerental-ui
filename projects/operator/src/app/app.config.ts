@@ -13,12 +13,12 @@ import { routes } from './app.routes';
 import {
   APP_BRAND,
   BRAND,
+  environment,
   errorInterceptor,
   HealthPollerService,
   LookupInitializerFacade,
   provideDefaultClient,
 } from '@bikerental/shared';
-import { environment } from '../environments/environment';
 
 interface EnvWithBrand {
   brand?: string;
