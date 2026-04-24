@@ -9,7 +9,9 @@ function makeDocument(pathname: string, baseURI = 'http://localhost/') {
       if (prop === 'baseURI') return baseURI;
       if (prop === 'location') return locationMock;
       const value = (target as unknown as Record<string, unknown>)[prop];
-      return typeof value === 'function' ? (value as Function).bind(target) : value;
+      return typeof value === 'function'
+        ? (value as (...a: unknown[]) => unknown).bind(target)
+        : value;
     },
   }) as Document & { location: { href: string; pathname: string } };
 }
