@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DashboardCardComponent } from '@bikerental/shared';
 
 interface DashboardCardDef {
@@ -34,6 +35,8 @@ interface DashboardCardDef {
   `,
 })
 export class HomeComponent {
+  private readonly document = inject(DOCUMENT);
+
   protected readonly title = $localize`Bike Rental`;
   protected readonly subtitle = $localize`Choose your dashboard`;
 
@@ -43,25 +46,28 @@ export class HomeComponent {
       title: $localize`Administrator`,
       description: $localize`Manage equipment, tariffs and customers`,
       ariaLabel: $localize`Open administrator dashboard`,
-      href: '/admin/',
+      href: 'admin/',
     },
     {
       id: 'operator-mobile',
       title: $localize`Operator (Mobile)`,
       description: $localize`Mobile-first operator flow`,
       ariaLabel: $localize`Open operator dashboard (mobile)`,
-      href: '/operator/',
+      href: 'operator/',
     },
     {
       id: 'operator-desktop',
       title: $localize`Operator (Desktop)`,
       description: $localize`Desktop layout with sidebar`,
       ariaLabel: $localize`Open operator dashboard (desktop)`,
-      href: '/operator/',
+      href: 'operator/',
     },
   ];
 
-  onCardSelect(card: DashboardCardDef) {
-    window.location.href = card.href;
+  onCardSelect(card: DashboardCardDef): void {
+    const basePath = new URL(this.document.baseURI).pathname;
+    const relativePath = this.document.location.pathname.slice(basePath.length);
+    const locale = relativePath.split('/')[0] || 'en';
+    this.document.location.href = `${this.document.baseURI}${card.href}${locale}/`;
   }
 }

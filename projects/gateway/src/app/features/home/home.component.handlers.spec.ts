@@ -1,49 +1,75 @@
+import { DOCUMENT } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { HomeComponent } from './home.component';
 
-describe('HomeComponent handlers (direct)', () => {
-  let locationMock: { href: string };
+function makeDocument(pathname: string, baseURI = 'http://localhost/') {
+  const locationMock = { href: '', pathname };
+  return new Proxy(document, {
+    get(target, prop: string) {
+      if (prop === 'baseURI') return baseURI;
+      if (prop === 'location') return locationMock;
+      const value = (target as unknown as Record<string, unknown>)[prop];
+      return typeof value === 'function' ? (value as Function).bind(target) : value;
+    },
+  }) as Document & { location: { href: string; pathname: string } };
+}
 
-  beforeEach(() => {
-    locationMock = { href: '' };
-    Object.defineProperty(window, 'location', { value: locationMock, writable: true });
-  });
-
-  it('onCardSelect sets window.location.href to card href', async () => {
+describe('HomeComponent handlers', () => {
+  it('navigates to admin with current locale', async () => {
+    const doc = makeDocument('/en/');
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
+      providers: [{ provide: DOCUMENT, useValue: doc }],
     }).compileComponents();
 
-    const fixture = TestBed.createComponent(HomeComponent);
-    const comp = fixture.componentInstance;
+    const comp = TestBed.createComponent(HomeComponent).componentInstance;
+    comp.onCardSelect({ id: 'admin', title: '', description: '', ariaLabel: '', href: 'admin/' });
 
-    comp.onCardSelect({
-      id: 'admin',
-      title: 'Admin',
-      description: 'd',
-      ariaLabel: 'a',
-      href: '/admin/',
-    });
-
-    expect(locationMock.href).toBe('/admin/');
+    expect(doc.location.href).toBe('http://localhost/admin/en/');
   });
 
-  it('onCardSelect navigates to /operator/ for operator card', async () => {
+  it('navigates to operator with current locale', async () => {
+    const doc = makeDocument('/en/');
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
+      providers: [{ provide: DOCUMENT, useValue: doc }],
     }).compileComponents();
 
-    const fixture = TestBed.createComponent(HomeComponent);
-    const comp = fixture.componentInstance;
-
+    const comp = TestBed.createComponent(HomeComponent).componentInstance;
     comp.onCardSelect({
       id: 'operator-mobile',
-      title: 'Operator',
-      description: 'd',
-      ariaLabel: 'a',
-      href: '/operator/',
+      title: '',
+      description: '',
+      ariaLabel: '',
+      href: 'operator/',
     });
 
-    expect(locationMock.href).toBe('/operator/');
+    expect(doc.location.href).toBe('http://localhost/operator/en/');
+  });
+
+  it('preserves ru locale', async () => {
+    const doc = makeDocument('/bikerental-ui/ru/', 'http://localhost/bikerental-ui/');
+    await TestBed.configureTestingModule({
+      imports: [HomeComponent],
+      providers: [{ provide: DOCUMENT, useValue: doc }],
+    }).compileComponents();
+
+    const comp = TestBed.createComponent(HomeComponent).componentInstance;
+    comp.onCardSelect({ id: 'admin', title: '', description: '', ariaLabel: '', href: 'admin/' });
+
+    expect(doc.location.href).toBe('http://localhost/bikerental-ui/admin/ru/');
+  });
+
+  it('falls back to en when locale missing', async () => {
+    const doc = makeDocument('/bikerental-ui/', 'http://localhost/bikerental-ui/');
+    await TestBed.configureTestingModule({
+      imports: [HomeComponent],
+      providers: [{ provide: DOCUMENT, useValue: doc }],
+    }).compileComponents();
+
+    const comp = TestBed.createComponent(HomeComponent).componentInstance;
+    comp.onCardSelect({ id: 'admin', title: '', description: '', ariaLabel: '', href: 'admin/' });
+
+    expect(doc.location.href).toBe('http://localhost/bikerental-ui/admin/en/');
   });
 });

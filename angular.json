@@ -85,7 +85,8 @@
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageExclude": ["projects/shared/**/core/api/generated/**"],
+              "coverageInclude": ["projects/gateway/src/**/*.ts"],
+              "coverageExclude": ["projects/gateway/src/**/*.spec.ts"],
               "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
             }
           }
@@ -192,7 +193,8 @@
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageExclude": ["projects/shared/**/core/api/generated/**"],
+              "coverageInclude": ["projects/admin/src/**/*.ts"],
+              "coverageExclude": ["projects/admin/src/**/*.spec.ts"],
               "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
             }
           }
@@ -299,7 +301,8 @@
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageExclude": ["projects/shared/**/core/api/generated/**"],
+              "coverageInclude": ["projects/operator/src/**/*.ts"],
+              "coverageExclude": ["projects/operator/src/**/*.spec.ts"],
               "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
             }
           }
@@ -338,12 +341,32 @@
           "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/shared/ng-package.json",
-            "tsConfig": "projects/shared/tsconfig.lib.json",
-            "i18nMissingTranslation": "ignore"
+            "tsConfig": "projects/shared/tsconfig.lib.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "projects/shared/tsconfig.lib.prod.json"
+            },
+            "development": {}
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/shared/tsconfig.spec.json",
+            "setupFiles": ["projects/shared/src/test-setup.ts"]
+          },
+          "configurations": {
+            "ci": {
+              "watch": false,
+              "coverage": true,
+              "coverageInclude": ["projects/shared/src/**/*.ts"],
+              "coverageExclude": [
+                "projects/shared/**/core/api/generated/**",
+                "projects/shared/src/**/*.spec.ts",
+                "projects/shared/src/test-setup.ts"
+              ],
+              "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
             }
           }
         },

@@ -78,6 +78,14 @@ jobs:
       - name: Run operator tests
         run: npx ng test operator --configuration=ci
 
+      - name: Run shared tests
+        run: npx ng test shared --configuration=ci
+
+      - name: Merge coverage reports
+        run: |
+          mkdir -p coverage/merged
+          cat coverage/gateway/lcov.info coverage/admin/lcov.info coverage/operator/lcov.info coverage/shared/lcov.info > coverage/merged/lcov.info
+
       - name: Publish gateway coverage report
         uses: davelosert/vitest-coverage-report-action@v2
         if: always()
@@ -104,6 +112,15 @@ jobs:
           threshold-icons: "{0: '🔴', 80: '🔵', 90: '🟢'}"
           json-summary-path: coverage/operator/coverage-summary.json
           json-final-path: coverage/operator/coverage-final.json
+
+      - name: Publish shared coverage report
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: always()
+        with:
+          name: shared
+          threshold-icons: "{0: '🔴', 80: '🔵', 90: '🟢'}"
+          json-summary-path: coverage/shared/coverage-summary.json
+          json-final-path: coverage/shared/coverage-final.json
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
