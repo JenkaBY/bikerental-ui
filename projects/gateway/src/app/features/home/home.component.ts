@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, LOCALE_ID } from '@angular/core';
 import { DashboardCardComponent } from '@bikerental/shared';
 
 interface DashboardCardDef {
@@ -36,6 +36,7 @@ interface DashboardCardDef {
 })
 export class HomeComponent {
   private readonly document = inject(DOCUMENT);
+  private readonly localeId = inject(LOCALE_ID);
 
   protected readonly title = $localize`Bike Rental`;
   protected readonly subtitle = $localize`Choose your dashboard`;
@@ -65,9 +66,12 @@ export class HomeComponent {
   ];
 
   onCardSelect(card: DashboardCardDef): void {
-    const basePath = new URL(this.document.baseURI).pathname;
-    const relativePath = this.document.location.pathname.slice(basePath.length);
-    const locale = relativePath.split('/')[0] || 'en';
-    this.document.location.href = `${this.document.baseURI}${card.href}${locale}/`;
+    const locale = this.localeId.split('-')[0];
+    const baseURL = new URL(this.document.baseURI);
+    const rootSegments = baseURL.pathname.split('/').filter(Boolean).slice(0, -1);
+    const appBase = rootSegments.length
+      ? `${baseURL.origin}/${rootSegments.join('/')}/`
+      : `${baseURL.origin}/`;
+    this.document.location.href = `${appBase}${card.href}${locale}/`;
   }
 }
