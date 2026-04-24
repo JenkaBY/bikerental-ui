@@ -1,9 +1,10 @@
 import { DOCUMENT } from '@angular/common';
+import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { HomeComponent } from './home.component';
 
-function makeDocument(pathname: string, baseURI = 'http://localhost/') {
-  const locationMock = { href: '', pathname };
+function makeDocument(baseURI: string) {
+  const locationMock = { href: '' };
   return new Proxy(document, {
     get(target, prop: string) {
       if (prop === 'baseURI') return baseURI;
@@ -13,15 +14,18 @@ function makeDocument(pathname: string, baseURI = 'http://localhost/') {
         ? (value as (...a: unknown[]) => unknown).bind(target)
         : value;
     },
-  }) as Document & { location: { href: string; pathname: string } };
+  }) as Document & { location: { href: string } };
 }
 
 describe('HomeComponent handlers', () => {
-  it('navigates to admin with current locale', async () => {
-    const doc = makeDocument('/en/');
+  it('navigates to admin preserving en locale', async () => {
+    const doc = makeDocument('http://localhost/en/');
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
-      providers: [{ provide: DOCUMENT, useValue: doc }],
+      providers: [
+        { provide: DOCUMENT, useValue: doc },
+        { provide: LOCALE_ID, useValue: 'en-US' },
+      ],
     }).compileComponents();
 
     const comp = TestBed.createComponent(HomeComponent).componentInstance;
@@ -30,11 +34,14 @@ describe('HomeComponent handlers', () => {
     expect(doc.location.href).toBe('http://localhost/admin/en/');
   });
 
-  it('navigates to operator with current locale', async () => {
-    const doc = makeDocument('/en/');
+  it('navigates to operator preserving en locale', async () => {
+    const doc = makeDocument('http://localhost/en/');
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
-      providers: [{ provide: DOCUMENT, useValue: doc }],
+      providers: [
+        { provide: DOCUMENT, useValue: doc },
+        { provide: LOCALE_ID, useValue: 'en-US' },
+      ],
     }).compileComponents();
 
     const comp = TestBed.createComponent(HomeComponent).componentInstance;
@@ -49,29 +56,35 @@ describe('HomeComponent handlers', () => {
     expect(doc.location.href).toBe('http://localhost/operator/en/');
   });
 
-  it('preserves ru locale', async () => {
-    const doc = makeDocument('/bikerental-ui/ru/', 'http://localhost/bikerental-ui/');
+  it('preserves ru locale on GitHub Pages', async () => {
+    const doc = makeDocument('https://jenkaby.github.io/bikerental-ui/ru/');
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
-      providers: [{ provide: DOCUMENT, useValue: doc }],
+      providers: [
+        { provide: DOCUMENT, useValue: doc },
+        { provide: LOCALE_ID, useValue: 'ru' },
+      ],
     }).compileComponents();
 
     const comp = TestBed.createComponent(HomeComponent).componentInstance;
     comp.onCardSelect({ id: 'admin', title: '', description: '', ariaLabel: '', href: 'admin/' });
 
-    expect(doc.location.href).toBe('http://localhost/bikerental-ui/admin/ru/');
+    expect(doc.location.href).toBe('https://jenkaby.github.io/bikerental-ui/admin/ru/');
   });
 
-  it('falls back to en when locale missing', async () => {
-    const doc = makeDocument('/bikerental-ui/', 'http://localhost/bikerental-ui/');
+  it('navigates correctly on GitHub Pages with en locale', async () => {
+    const doc = makeDocument('https://jenkaby.github.io/bikerental-ui/en/');
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
-      providers: [{ provide: DOCUMENT, useValue: doc }],
+      providers: [
+        { provide: DOCUMENT, useValue: doc },
+        { provide: LOCALE_ID, useValue: 'en-US' },
+      ],
     }).compileComponents();
 
     const comp = TestBed.createComponent(HomeComponent).componentInstance;
     comp.onCardSelect({ id: 'admin', title: '', description: '', ariaLabel: '', href: 'admin/' });
 
-    expect(doc.location.href).toBe('http://localhost/bikerental-ui/admin/en/');
+    expect(doc.location.href).toBe('https://jenkaby.github.io/bikerental-ui/admin/en/');
   });
 });

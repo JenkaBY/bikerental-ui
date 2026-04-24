@@ -53,6 +53,10 @@
                 {
                   "replace": "projects/gateway/src/environments/environment.ts",
                   "with": "projects/gateway/src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "projects/shared/environments/environment.ts",
+                  "with": "projects/shared/environments/environment.prod.ts"
                 }
               ]
             },
@@ -161,6 +165,10 @@
                 {
                   "replace": "projects/admin/src/environments/environment.ts",
                   "with": "projects/admin/src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "projects/shared/environments/environment.ts",
+                  "with": "projects/shared/environments/environment.prod.ts"
                 }
               ]
             },
@@ -269,6 +277,10 @@
                 {
                   "replace": "projects/operator/src/environments/environment.ts",
                   "with": "projects/operator/src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "projects/shared/environments/environment.ts",
+                  "with": "projects/shared/environments/environment.prod.ts"
                 }
               ]
             },
