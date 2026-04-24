@@ -20,7 +20,7 @@ import {
   LookupInitializerFacade,
   provideDefaultClient,
 } from '@bikerental/shared';
-import { environment } from '../environments/environment';
+import { environment } from '../../../shared/environments/environment';
 
 interface EnvWithBrand {
   brand?: string;

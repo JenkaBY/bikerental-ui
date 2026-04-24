@@ -64,14 +64,14 @@ import { NavItem } from '../sidebar-nav-item/nav-item.model';
   `,
 })
 export class ShellComponent {
-  items = input<NavItem[] | undefined>(undefined);
-  brand = input<string | undefined>(undefined);
+  items = input<NavItem[]>();
+  brand = input<string>();
   title = input<string>('');
   hasSidebar = computed(() => Array.isArray(this.items()));
   showModeToggle = input<boolean>(false);
 
   private _opened = signal(true);
-  sidenavOpened = input<boolean | undefined>(undefined);
+  sidenavOpened = input<boolean>();
 
   // Expose a computed that resolves to the provided input or local state
   effectiveOpened = computed(() => {

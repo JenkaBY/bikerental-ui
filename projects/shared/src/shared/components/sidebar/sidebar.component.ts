@@ -27,5 +27,5 @@ import { AppBrandComponent } from '../app-brand/app-brand.component';
 })
 export class SidebarComponent {
   items = input<NavItem[]>([]);
-  brand = input<string | undefined>(undefined);
+  brand = input<string>();
 }
