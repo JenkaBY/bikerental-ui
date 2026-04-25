@@ -4,3 +4,8 @@ export * from './equipment-type.mapper';
 export * from './pricing-type.mapper';
 export * from './page.mapper';
 export * from './tariff.mapper';
+export * from './customer.mapper';
+export * from './transaction.mapper';
+export * from './money.mapper';
+export * from './balance.mapper';
+export * from './rental.mapper';
