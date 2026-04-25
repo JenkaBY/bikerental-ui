@@ -46,6 +46,24 @@
 * **When** the row renders
 * **Then** the status chip has `color="warn"` resolved via `mapRentalStatus('DEBT')`
 
+**Scenario 3a: ASSIGNED equipment item uses primary colour**
+
+* **Given** an equipment item with status `ASSIGNED`
+* **When** the expanded row renders
+* **Then** the item status chip has `color="primary"` resolved via `mapEquipmentItemStatus('ASSIGNED')`
+
+**Scenario 3b: ACTIVE equipment item uses warn colour**
+
+* **Given** an equipment item with status `ACTIVE`
+* **When** the expanded row renders
+* **Then** the item status chip has `color="warn"` resolved via `mapEquipmentItemStatus('ACTIVE')`
+
+**Scenario 3c: RETURNED equipment item uses default colour**
+
+* **Given** an equipment item with status `RETURNED`
+* **When** the expanded row renders
+* **Then** the item status chip has `color="default"` resolved via `mapEquipmentItemStatus('RETURNED')`
+
 **Scenario 3: Expanding a row loads and shows equipment items with status chips**
 
 * **Given** the user clicks a collapsed rental row

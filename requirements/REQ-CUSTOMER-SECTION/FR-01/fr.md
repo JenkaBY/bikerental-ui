@@ -17,7 +17,7 @@
   * `CustomerMapper` is a pure static class — no Angular DI, no side effects
   * Two status enums with display metadata must be declared in `core/models/`:
     - `RentalStatus` — values: `DRAFT`, `ACTIVE`, `COMPLETED`, `CANCELLED`, `DEBT`; each value carries a `colour` token (`primary` | `accent` | `warn` | `default`) and a `labelKey` string used for i18n
-    - `EquipmentItemStatus` — values: `ACTIVE`, `RETURNED`, `DEBT`; each value carries a `colour` token and a `labelKey`
+    - `EquipmentItemStatus` — values: `ASSIGNED`, `ACTIVE`, `RETURNED`; each value carries a `colour` token and a `labelKey`
   * Both enums are implemented as typed object maps (not TypeScript `enum` keyword) so that each entry can hold multiple metadata fields alongside the slug
   * A mapper helper `mapRentalStatus(slug: string): RentalStatusMeta` and `mapEquipmentItemStatus(slug: string): EquipmentItemStatusMeta` must be provided for safe lookup with a fallback
   * `CustomerRentalSummary.status` stores the raw string slug; components resolve display metadata via the helper — not stored in the model itself
@@ -80,11 +80,17 @@
 * **When** called
 * **Then** it returns an entry with `colour: 'default'` (neutral/success) and the appropriate `labelKey`
 
-**Scenario 3d: EquipmentItemStatus active slug uses warn colour**
+**Scenario 3d: EquipmentItemStatus ACTIVE slug uses warn colour**
 
 * **Given** the helper `mapEquipmentItemStatus('ACTIVE')`
 * **When** called
 * **Then** it returns an entry with `colour: 'warn'`
+
+**Scenario 3e: EquipmentItemStatus ASSIGNED slug uses primary colour**
+
+* **Given** the helper `mapEquipmentItemStatus('ASSIGNED')`
+* **When** called
+* **Then** it returns an entry with `colour: 'primary'` (reserved/waiting state)
 
 **Scenario 4: CustomerBalance is typed**
 

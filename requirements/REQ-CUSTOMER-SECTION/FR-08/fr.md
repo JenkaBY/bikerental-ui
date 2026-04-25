@@ -13,7 +13,7 @@
   * Dialog is opened by the Account tab component via `MatDialog.open(TopUpDialogComponent, { data: { customerId } })`
   * Fields:
     - **Amount** (required): positive number only; minimum value 0.01; shown as a `mat-form-field` number input
-    - **Payment method** (required): `mat-select` with options: CASH, CARD, BANK_TRANSFER, CARD_TERMINAL
+    - **Payment method** (required): `mat-select` with options: CASH, BANK_TRANSFER, CARD_TERMINAL
   * Confirm button disabled when form is invalid
   * On Confirm: calls `FinanceService.recordDeposit(RecordDepositRequest)` where:
     - `customerId` comes from dialog data
