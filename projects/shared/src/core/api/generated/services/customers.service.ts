@@ -129,23 +129,23 @@ export class CustomersService {
   }
 
   searchByPhone(
-    phone: string,
+    phone?: string | null,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<Array<CustomerSearchResponse>>;
   searchByPhone(
-    phone: string,
+    phone?: string | null,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<Array<CustomerSearchResponse>>>;
   searchByPhone(
-    phone: string,
+    phone?: string | null,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<Array<CustomerSearchResponse>>>;
-  /** Returns customers whose phone number contains the given digit sequence */
+  /** Returns customers whose phone number contains the given digit sequence. Returns 10 customers sorted by last and first name asc, if no phone provided, */
   searchByPhone(
-    phone: string,
+    phone?: string | null,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {

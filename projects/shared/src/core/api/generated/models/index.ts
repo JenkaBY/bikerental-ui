@@ -293,13 +293,7 @@ export interface ReturnEquipmentRequest {
   /** List of equipment UIDs to return */
   equipmentUids?: Array<string>;
   /** Payment method for any additional charge */
-  paymentMethod?:
-    | 'CARD'
-    | 'CASH'
-    | 'BANK_TRANSFER'
-    | 'WALLET'
-    | 'INTERNAL_TRANSFER'
-    | 'CARD_TERMINAL';
+  paymentMethod?: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER' | 'WALLET' | 'INTERNAL_TRANSFER';
   /** Operator identifier */
   operatorId: string;
 }
@@ -331,13 +325,7 @@ export interface RecordWithdrawalRequest {
   /** Withdrawal amount */
   amount: number;
   /** Payout method (CASH, CARD_TERMINAL, BANK_TRANSFER) */
-  paymentMethod:
-    | 'CARD'
-    | 'CASH'
-    | 'BANK_TRANSFER'
-    | 'WALLET'
-    | 'INTERNAL_TRANSFER'
-    | 'CARD_TERMINAL';
+  paymentMethod: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER';
   /** Operator identifier */
   operatorId: string;
 }
@@ -359,13 +347,7 @@ export interface RecordDepositRequest {
   /** Deposit amount */
   amount: number;
   /** Payment method (CASH, CARD_TERMINAL, BANK_TRANSFER) */
-  paymentMethod:
-    | 'CARD'
-    | 'CASH'
-    | 'BANK_TRANSFER'
-    | 'WALLET'
-    | 'INTERNAL_TRANSFER'
-    | 'CARD_TERMINAL';
+  paymentMethod: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER';
   /** Operator identifier */
   operatorId: string;
 }
@@ -479,8 +461,28 @@ export interface TransactionHistoryFilterParams {
   sourceType?: 'RENTAL';
 }
 
-export interface Page {
-  items?: Array<any>;
+/** A single journal entry line in the transaction history */
+export interface CustomerTransactionResponse {
+  /** Customer id */
+  customerId: string;
+  /** TxN amount */
+  amount: number;
+  /** Business transaction type */
+  type: string;
+  /** When the entry was recorded (UTC ISO-8601) */
+  recordedAt: Date;
+  /** Payment method, present for deposits and withdrawals */
+  paymentMethod: string;
+  /** Free-text reason, present for adjustments */
+  reason?: string;
+  /** Source type, e.g. RENTAL */
+  sourceType?: string;
+  /** Source identifier */
+  sourceId?: string;
+}
+
+export interface PageCustomerTransactionResponse {
+  items?: Array<CustomerTransactionResponse>;
   totalItems?: number;
   pageRequest?: PageRequest;
 }
