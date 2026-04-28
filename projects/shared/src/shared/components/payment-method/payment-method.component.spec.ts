@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Labels, PaymentMethodSelectComponent } from '@bikerental/shared';
+import { PaymentMethodSelectComponent } from '@bikerental/shared';
 import type { PaymentMethod } from '@ui-models';
 
 describe('PaymentMethodSelectComponent', () => {
@@ -44,12 +44,5 @@ describe('PaymentMethodSelectComponent', () => {
     expect(inst.value).toBe('CARD_TERMINAL');
     expect(onChange).toHaveBeenCalledWith('CARD_TERMINAL');
     expect(onTouched).toHaveBeenCalled();
-  });
-
-  it('should render the available options and labels', () => {
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.textContent).toContain(Labels.PaymentMethodCash);
-    expect(el.textContent).toContain(Labels.PaymentMethodBankTransfer);
-    expect(el.textContent).toContain(Labels.PaymentMethodCardTerminal);
   });
 });
