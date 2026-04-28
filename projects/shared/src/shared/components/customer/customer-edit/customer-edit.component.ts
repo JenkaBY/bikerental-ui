@@ -58,13 +58,13 @@ import { SaveButtonComponent } from '../../save-button/save-button.component';
         <textarea matInput formControlName="notes" rows="3"></textarea>
       </mat-form-field>
 
-      <div class="flex gap-2">
+      <div class="flex gap-2 justify-end items-center">
+        <app-form-cancel-button></app-form-cancel-button>
         <app-form-save-button
           [saving]="saving()"
           [disabled]="form.invalid"
           (save)="submit()"
         ></app-form-save-button>
-        <app-form-cancel-button></app-form-cancel-button>
       </div>
     </form>
   `,
