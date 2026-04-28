@@ -62,10 +62,10 @@ describe('CustomerEditComponent', () => {
     expect(lastNameInput.value).toContain('Ivanov');
     expect(emailInput.value).toContain('ivan@example.com');
 
-    // submit the form
-    const submitBtn = el.querySelector('button[type="submit"]') as HTMLButtonElement;
-    expect(submitBtn).toBeTruthy();
-    submitBtn.click();
+    // submit the form using the shared save button
+    const saveBtn = el.querySelector('app-form-save-button button') as HTMLButtonElement;
+    expect(saveBtn).toBeTruthy();
+    saveBtn.click();
     fixture.detectChanges();
 
     expect(host.saved).toBeTruthy();
@@ -89,7 +89,7 @@ describe('CustomerEditComponent', () => {
     } as Customer;
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
-    const submitBtn = el.querySelector('button[type="submit"]') as HTMLButtonElement;
-    expect(submitBtn.disabled).toBe(true);
+    const saveBtn = el.querySelector('app-form-save-button button') as HTMLButtonElement;
+    expect(saveBtn.disabled).toBe(true);
   });
 });

@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { type Customer, type CustomerWrite } from '@ui-models';
 import { Labels } from '../../../constant/labels';
 import { CancelButtonComponent } from '../../cancel-button/cancel-button.component';
+import { SaveButtonComponent } from '../../save-button/save-button.component';
 
 @Component({
   selector: 'app-customer-edit',
@@ -21,6 +22,7 @@ import { CancelButtonComponent } from '../../cancel-button/cancel-button.compone
     MatDatepickerModule,
     CancelButtonComponent,
     CancelButtonComponent,
+    SaveButtonComponent,
   ],
   template: `
     <form [formGroup]="form" (ngSubmit)="submit()">
@@ -57,9 +59,11 @@ import { CancelButtonComponent } from '../../cancel-button/cancel-button.compone
       </mat-form-field>
 
       <div class="flex gap-2">
-        <button mat-flat-button type="submit" [disabled]="form.invalid || saving()">
-          {{ Labels.SaveButton }}
-        </button>
+        <app-form-save-button
+          [saving]="saving()"
+          [disabled]="form.invalid"
+          (save)="submit()"
+        ></app-form-save-button>
         <app-form-cancel-button></app-form-cancel-button>
       </div>
     </form>
