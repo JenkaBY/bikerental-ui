@@ -126,6 +126,7 @@ await TestBed.configureTestingModule({
 - Auth (`TASK002`) is intentionally unimplemented — all routes are currently open
 - Avoid Angular APIs deprecated in v21 (e.g. use `provideAnimationsAsync()`, not `provideAnimations()`)
 - Do not call `HttpClient` directly for spec-covered endpoints — use generated services
+- Do not use `any` either source code or tests
 
 ---
 
