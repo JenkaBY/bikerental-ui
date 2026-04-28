@@ -126,6 +126,7 @@ await TestBed.configureTestingModule({
 - Auth (`TASK002`) is intentionally unimplemented — all routes are currently open
 - Avoid Angular APIs deprecated in v21 (e.g. use `provideAnimationsAsync()`, not `provideAnimations()`)
 - Do not call `HttpClient` directly for spec-covered endpoints — use generated services
+- Do not use `any` either source code or tests
 
 ---
 
@@ -148,3 +149,56 @@ Follow the instructions in the [file](.github/instructions/angular.instructions.
 ## MCP tools reminder
 
 You have access to the Angular MCP tools (`find_examples`, `get_best_practices` , `list_projects`, `onpush_zoneless_migration`, `search_documentation`). Use them to search for and fetch the latest official documentation, get examples and best practices whenever your work involves Angular SDKs. Use that documentation to guide design decisions and implementation details.
+
+# 🅰️ Angular 21 Enterprise Frontend Rules
+
+## 🎯 Scope & Context
+
+- **Apply these rules ONLY when:** The file path contains `projects/` or the file extension is `.ts`, `.html` (Angular templates), or `.scss`.
+- **Target Version:** Angular 21+, RxJS 7.8+, Signals-only state management.
+
+## 🏗 Architectural Principles
+
+- **Smart/Dumb Components:** - Smart (Pages): Handle DI, Router inputs, and Store orchestration.
+  - Dumb (UI): Use `input()`, `output()`, and `ChangeDetectionStrategy.OnPush`.
+- **Logic Location:** Components must be thin (< 200 lines). Move business logic to Services or Stores.
+- **Data Mapping:** Always use Mappers to transform Backend DTOs into Frontend UI Models. Never use DTOs directly in templates.
+
+## 🚦 State Management (The Signal Store Pattern)
+
+- **Pattern:** Use a class-based Signal Store.
+  - `private readonly _state = signal<T>(initialState);`
+  - `readonly data = computed(() => this._state().data);`
+  - Mutation methods: `update(patch: Partial<T>) { this._state.update(...) }`.
+- **Hierarchy & DI:**
+  - **Global Stores:** `providedIn: 'root'` for dictionaries, user preferences, and auth.
+  - **Feature Stores:** Provided in the **Parent Component** `providers: []` to sync state between tabs (Child Components) via a shared instance.
+- **Persistence:** Use `effect()` inside stores to sync specific signals with `localStorage`.
+
+## 🧱 Component Standards
+
+- **Inputs:** Use the new signal-based `input()` and `input.required()`.
+- **Outputs:** Use `output<T>()`.
+- **Control Flow:** Strictly use `@if`, `@for`, and `@switch`. Avoid `*ngIf` and `*ngFor`.
+- **Dependency Injection:** Use the `inject(Service)` function instead of `constructor(private service: Service)`.
+
+## 🚀 Lifecycle & Navigation
+
+- **Initialization:** Use `provideAppInitializer()` for background data loading. Ensure it returns `Promise.resolve()` immediately to prevent blocking the initial render (Non-blocking bootstrap).
+- **Routing:** Enable `withComponentInputBinding()`. Use URL as the primary Source of Truth for IDs.
+- **Tab Sync:** When filters or IDs change, always reset `pageIndex` to 0 in the corresponding store.
+
+## 🛠 Resilience & Logging
+
+- **Error Handling:** - Handle success notifications in **Components**.
+  - Handle domain errors in **Stores** via `catchError`.
+  - Handle system errors (500, 404) via a global `HttpInterceptor`.
+- **Logging:** Strictly use a custom `LoggerService` with levels (DEBUG, INFO, WARN, ERROR). Use CSS styling in `console.log` for better visibility in DevMode.
+- **API Safety:** Never log PII (Personal Identifiable Information). Log only IDs and event contexts.
+
+## 💅 Styling & DX
+
+- **Styling:** Prefer Tailwind CSS or Scoped SCSS.
+- **Type Safety:** `strict: true` is a must. No `any`. Use `Readonly<T>` for state models.
+- **Naming:** - Stores: `[Entity]Store` (e.g., `EquipmentStore`).
+  - Orchestrators: `[Feature]LayoutStore`.

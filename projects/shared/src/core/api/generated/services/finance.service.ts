@@ -23,8 +23,8 @@ import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
   AdjustmentRequest,
   CustomerAccountBalancesResponse,
-  Page,
   Pageable,
+  PageCustomerTransactionResponse,
   RecordDepositRequest,
   RecordWithdrawalRequest,
   RequestOptions,
@@ -181,21 +181,21 @@ export class FinanceService {
     arg2: Pageable,
     observe?: 'body',
     options?: RequestOptions<'json'>,
-  ): Observable<Page>;
+  ): Observable<PageCustomerTransactionResponse>;
   getTransactionHistory(
     customerId: string,
     arg1: TransactionHistoryFilterParams,
     arg2: Pageable,
     observe?: 'response',
     options?: RequestOptions<'json'>,
-  ): Observable<HttpResponse<Page>>;
+  ): Observable<HttpResponse<PageCustomerTransactionResponse>>;
   getTransactionHistory(
     customerId: string,
     arg1: TransactionHistoryFilterParams,
     arg2: Pageable,
     observe?: 'events',
     options?: RequestOptions<'json'>,
-  ): Observable<HttpEvent<Page>>;
+  ): Observable<HttpEvent<PageCustomerTransactionResponse>>;
   getTransactionHistory(
     customerId: string,
     arg1: TransactionHistoryFilterParams,

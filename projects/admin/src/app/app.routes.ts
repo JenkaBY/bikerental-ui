@@ -37,6 +37,48 @@ export const routes: Routes = [
           import('./customers/customer-list.component').then((m) => m.CustomerListComponent),
       },
       {
+        path: 'customers/:id',
+        loadComponent: () =>
+          import('./customers/customer-detail/customer-detail.component').then(
+            (m) => m.CustomerDetailComponent,
+          ),
+        children: [
+          {
+            path: '',
+            redirectTo: 'profile',
+            pathMatch: 'full',
+          },
+          {
+            path: 'profile',
+            loadComponent: () =>
+              import('./customers/customer-detail/tabs/customer-profile/customer-profile.component').then(
+                (m) => m.CustomerProfileComponent,
+              ),
+          },
+          {
+            path: 'rentals',
+            loadComponent: () =>
+              import('./customers/customer-detail/tabs/customer-rentals/customer-rentals.component').then(
+                (m) => m.CustomerRentalsComponent,
+              ),
+          },
+          {
+            path: 'account',
+            loadComponent: () =>
+              import('./customers/customer-detail/tabs/customer-account/customer-account.component').then(
+                (m) => m.CustomerAccountComponent,
+              ),
+          },
+          {
+            path: 'transactions',
+            loadComponent: () =>
+              import('./customers/customer-detail/tabs/customer-transactions/customer-transactions.component').then(
+                (m) => m.CustomerTransactionsComponent,
+              ),
+          },
+        ],
+      },
+      {
         path: 'rentals',
         loadComponent: () =>
           import('./rentals/rental-history.component').then((m) => m.RentalHistoryComponent),

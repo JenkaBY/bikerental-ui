@@ -3,3 +3,7 @@ export * from './equipment.model';
 export * from './equipment-status.model';
 export * from './equipment-type.model';
 export * from './tariff.model';
+export * from './customer.model';
+export * from './customer-balance.model';
+export * from './rental.model';
+export * from './transaction.model';
