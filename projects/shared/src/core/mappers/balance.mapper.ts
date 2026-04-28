@@ -4,10 +4,12 @@ import { makeMoney } from './money.mapper';
 
 export class BalanceMapper {
   static fromBalanceResponse(r: CustomerAccountBalancesResponse): CustomerBalance {
+    const available = makeMoney(r.walletBalance);
     return {
-      available: makeMoney(r.walletBalance),
+      available,
       reserved: makeMoney(r.holdBalance),
       lastUpdatedAt: new Date(r.lastUpdatedAt),
+      isWithdrawalAvailable: available.amount > 0,
     };
   }
 }

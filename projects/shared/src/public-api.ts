@@ -31,6 +31,7 @@ export * from './core/state/equipment.store';
 export * from './core/state/pricing-type.store';
 export * from './core/state/tariff.store';
 export * from './core/state/lookup-initializer.facade';
+export * from './core/state/customer.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';
@@ -52,13 +53,16 @@ export * from './shared/components/shell/shell.component';
 export * from './shared/components/sidebar/sidebar.component';
 export * from './shared/components/sidebar-nav-item/nav-item.model';
 export * from './shared/components/sidebar-nav-item/sidebar-nav-item.component';
+export * from './shared/components/payment-method/payment-method.component';
 export * from './shared/components/toggle-button/toggle-button.component';
-
+export * from './shared/components/customer/customer-view/customer-view.component';
+export * from './shared/components/customer/customer-edit/customer-edit.component';
 // Shared UI — constants
 export * from './shared/constant/labels';
 
 // Shared UI — pipes
 export * from './shared/pipes/truncate.pipe';
+export * from './shared/pipes/money.pipe';
 
 // Shared UI — utilities
 export * from './shared/utils/date.util';

@@ -20,4 +20,5 @@ export class FormErrorMessages {
   static readonly lastNameRequired = $localize`Last name is required`;
   static readonly emailInvalid = $localize`Enter a valid email address`;
   static readonly birthDateFuture = $localize`Birth date must be in the past`;
+  static readonly withdrawAmountExceedsAvailable = $localize`Amount exceeds available balance`;
 }
