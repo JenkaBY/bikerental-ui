@@ -71,7 +71,7 @@
 
 ## 5. Out of Scope
 
-* Creating customers from this screen
+* Creating customers from this screen — covered by FR-10
 * Bulk selection or deletion
 * Server-side pagination on this screen (all results from search endpoint are displayed)
 * Sorting columns
