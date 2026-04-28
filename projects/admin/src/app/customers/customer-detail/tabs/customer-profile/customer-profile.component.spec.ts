@@ -105,7 +105,7 @@ describe('CustomerProfileComponent', () => {
 
     fixture.nativeElement
       .querySelector('app-customer-edit')
-      .dispatchEvent(new CustomEvent('cancel', { bubbles: true }));
+      .dispatchEvent(new CustomEvent('cancelEdit', { bubbles: true }));
     fixture.detectChanges();
 
     expect(component['editMode']()).toBe(false);
