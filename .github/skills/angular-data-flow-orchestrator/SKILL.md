@@ -1,6 +1,6 @@
 ---
 name: angular-data-flow-orchestrator
-description: This skill defines the mandatory step-by-step procedure for implementing any data-driven feature in the bike-rental workspace.
+description: This skill must be used when new ui model, mapper or store to be created.
 ---
 
 ## Phase 1: Model Definition (The Blueprint)

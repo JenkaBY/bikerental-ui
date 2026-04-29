@@ -8,11 +8,10 @@
 
 ## 2. Context & Business Rules
 
-* **Trigger:** User clicks the FAB (mobile) or the "New Customer" toolbar button (desktop) on the `/customers` list screen
+* **Trigger:** User clicks the "New Customer" toolbar button on the `/customers` list screen.
 * **Rules Enforced:**
-  * On mobile (viewport `< md`): a `MatFab` (floating action button) is fixed at the bottom-right of the screen
-  * On desktop (viewport `≥ md`): a standard `mat-button` or `mat-raised-button` is rendered in the list header/toolbar alongside the search input
-  * Both triggers open `CustomerCreateDialogComponent` via `MatDialog.open(...)`
+  * A standard `mat-button` or `mat-raised-button` is rendered in the list header/toolbar the page title(`Customer`)
+  * It triggers open `CustomerCreateDialogComponent` via `MatDialog.open(...)`
   * Dialog fields:
     - **Phone** (required): text input; must not be empty
     - **First Name** (required): text input; must not be empty

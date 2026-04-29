@@ -29,7 +29,9 @@ export class CustomerListStore {
     },
   });
 
-  readonly customers = computed(() => this.resource.value() ?? []);
+  readonly customers = computed(() => {
+    return this.resource.value() ?? [];
+  });
   readonly loading = this.resource.isLoading;
   readonly searchQuery = this._query.asReadonly();
 
