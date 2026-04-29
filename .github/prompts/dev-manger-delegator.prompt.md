@@ -8,4 +8,4 @@ INPUT: the reference to a checklist.md file with the list of tasks to be done.
 
 CONSTRAINT: Don't start without the link to checklist.md
 
-Delegate the tasks to a developer and control their completion. Iterate until all tasks from this list are done.
+Delegate the tasks to a developer and control their completion. Iterate until all tasks from this list are done. Don't ask the requester's approval anymore. You have green light for any actions to implement the tasks
