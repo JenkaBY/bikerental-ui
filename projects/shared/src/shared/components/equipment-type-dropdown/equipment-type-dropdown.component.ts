@@ -11,6 +11,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { EquipmentTypeStore } from '@store.equipment-type.store';
+import { Labels } from '../../constant/labels';
 
 @Component({
   selector: 'app-equipment-type-dropdown',
@@ -26,7 +27,7 @@ import { EquipmentTypeStore } from '@store.equipment-type.store';
   imports: [MatFormFieldModule, MatSelectModule],
   template: `
     <mat-form-field appearance="outline" class="w-full">
-      <mat-label>{{ label }}</mat-label>
+      <mat-label>{{ Labels.EquipmentType }}</mat-label>
       <mat-select
         [value]="value()"
         [disabled]="isDisabled()"
@@ -34,7 +35,7 @@ import { EquipmentTypeStore } from '@store.equipment-type.store';
         (blur)="onTouched()"
       >
         @if (loading()) {
-          <mat-option disabled i18n>Loading...</mat-option>
+          <mat-option disabled>{{ Labels.Loading }}</mat-option>
         }
         @for (t of types(); track t.slug) {
           <mat-option [value]="t.slug">{{ t.name }}</mat-option>
@@ -45,6 +46,7 @@ import { EquipmentTypeStore } from '@store.equipment-type.store';
 })
 export class EquipmentTypeDropdownComponent implements ControlValueAccessor {
   private store = inject(EquipmentTypeStore);
+  protected readonly Labels = Labels;
 
   private _value = signal<string | null>(null);
   readonly value = this._value.asReadonly();
@@ -58,8 +60,6 @@ export class EquipmentTypeDropdownComponent implements ControlValueAccessor {
 
   private onChange: (v: string | null) => void = () => void 0;
   onTouched: () => void = () => void 0;
-
-  readonly label = $localize`Equipment Type`;
 
   onSelect(slug: string | null): void {
     this._value.set(slug ?? null);

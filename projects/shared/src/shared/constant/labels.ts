@@ -9,6 +9,7 @@
 export class Labels {
   static readonly Save = $localize`Save`;
   static readonly Saving = $localize`Saving...`;
+  static readonly Loading = $localize`Loading...`;
   static readonly Cancel = $localize`Cancel`;
   static readonly Description = $localize`Description`;
   static readonly Name = $localize`Name`;
@@ -134,6 +135,9 @@ export class Labels {
   static readonly CustomerEditButton = $localize`Edit`;
   static readonly CustomerSaveSuccess = $localize`Customer profile saved`;
   static readonly CustomerSaveError = $localize`Failed to save customer profile`;
+
+  static readonly CustomerNewButton = $localize`New Customer`;
+  static readonly CustomerCreateError = $localize`Failed to create customer`;
 
   static readonly CustomerRentalsTabLabel = $localize`Rentals`;
   static readonly CustomerRentalsEmptyState = $localize`No rentals found`;
