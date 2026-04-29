@@ -1,53 +1,33 @@
 import { TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
 import { CustomerEditComponent } from '@bikerental/shared';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import type { Customer, CustomerWrite } from '@ui-models';
 
-@Component({
-  standalone: true,
-  imports: [CustomerEditComponent],
-  template: `
-    <app-customer-edit
-      [customer]="customer"
-      [saving]="saving"
-      (saveCustomer)="onSave($event)"
-      (cancelEdit)="onCancel()"
-    ></app-customer-edit>
-  `,
-})
-class HostComponent {
-  customer: Customer = {
-    id: 'c1',
-    phone: '+375291234567',
-    firstName: 'Ivan',
-    lastName: 'Ivanov',
-    email: 'ivan@example.com',
-  };
-  saving = false;
-  saved?: CustomerWrite;
-  cancelled = false;
-
-  onSave(payload: CustomerWrite) {
-    this.saved = payload;
-  }
-
-  onCancel() {
-    this.cancelled = true;
-  }
-}
-
 describe('CustomerEditComponent', () => {
   it('renders initial customer values and emits saveCustomer on submit', async () => {
     await TestBed.configureTestingModule({
-      imports: [HostComponent],
+      imports: [CustomerEditComponent],
       providers: [provideNativeDateAdapter()],
     }).compileComponents();
-    const fixture = TestBed.createComponent(HostComponent);
-    fixture.detectChanges();
 
-    const host = fixture.componentInstance;
+    const fixture = TestBed.createComponent(CustomerEditComponent);
+    const component = fixture.componentInstance;
     const el = fixture.nativeElement as HTMLElement;
+
+    const customer: Customer = {
+      id: 'c1',
+      phone: '+375291234567',
+      firstName: 'Ivan',
+      lastName: 'Ivanov',
+      email: 'ivan@example.com',
+    };
+
+    let saved: CustomerWrite | undefined;
+    component.saveCustomer.subscribe((payload) => (saved = payload));
+
+    fixture.componentRef.setInput('customer', customer);
+    fixture.componentRef.setInput('saving', false);
+    fixture.detectChanges();
 
     // check initial values are rendered in inputs
     const phoneInput = el.querySelector('input[formcontrolname="phone"]') as HTMLInputElement;
@@ -68,27 +48,32 @@ describe('CustomerEditComponent', () => {
     saveBtn.click();
     fixture.detectChanges();
 
-    expect(host.saved).toBeTruthy();
-    expect(host.saved?.phone).toBe('+375291234567');
-    expect(host.saved?.firstName).toBe('Ivan');
-    expect(host.saved?.lastName).toBe('Ivanov');
+    expect(saved).toBeTruthy();
+    expect(saved?.phone).toBe('+375291234567');
+    expect(saved?.firstName).toBe('Ivan');
+    expect(saved?.lastName).toBe('Ivanov');
   });
 
   it('disables submit when form invalid', async () => {
     await TestBed.configureTestingModule({
-      imports: [HostComponent],
+      imports: [CustomerEditComponent],
       providers: [provideNativeDateAdapter()],
     }).compileComponents();
-    const fixture = TestBed.createComponent(HostComponent);
-    // make customer invalid (empty required fields)
-    fixture.componentInstance.customer = {
+
+    const fixture = TestBed.createComponent(CustomerEditComponent);
+    const el = fixture.nativeElement as HTMLElement;
+
+    const invalidCustomer = {
       id: 'c2',
       phone: '',
       firstName: '',
       lastName: '',
     } as Customer;
+
+    fixture.componentRef.setInput('customer', invalidCustomer);
+    fixture.componentRef.setInput('saving', false);
     fixture.detectChanges();
-    const el = fixture.nativeElement as HTMLElement;
+
     const saveBtn = el.querySelector('app-form-save-button button') as HTMLButtonElement;
     expect(saveBtn.disabled).toBe(true);
   });

@@ -187,7 +187,4 @@ export class Labels {
   static readonly TransactionDateLabel = $localize`Date`;
   static readonly TransactionDescriptionLabel = $localize`Description`;
   static readonly TransactionTypeLabel = $localize`Type`;
-
-  static readonly SaveButton = $localize`Save`;
-  static readonly CancelButton = $localize`Cancel`;
 }

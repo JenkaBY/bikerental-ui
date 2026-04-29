@@ -57,6 +57,7 @@ export * from './shared/components/payment-method/payment-method.component';
 export * from './shared/components/toggle-button/toggle-button.component';
 export * from './shared/components/customer/customer-view/customer-view.component';
 export * from './shared/components/customer/customer-edit/customer-edit.component';
+export * from './shared/components/customer/customer-create-dialog/customer-create-dialog.component';
 // Shared UI — constants
 export * from './shared/constant/labels';
 
@@ -70,5 +71,7 @@ export * from './shared/utils/date.util';
 // Shared UI — validators
 export * from './shared/validators/form-error-messages';
 export * from './shared/validators/slug-validators';
+export * from './shared/validators/phone-validators';
+export * from './shared/validators/date-validators';
 
 export * from './environments/environment';
