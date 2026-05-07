@@ -18,6 +18,8 @@ export * from './core/interceptors/error.service';
 // Core — layout mode
 export * from './core/layout-mode.service';
 
+export * from './core/locale-redirect.service';
+
 // Core — mappers
 export * from './core/mappers';
 
@@ -32,6 +34,7 @@ export * from './core/state/pricing-type.store';
 export * from './core/state/tariff.store';
 export * from './core/state/lookup-initializer.facade';
 export * from './core/state/customer.store';
+export * from './core/state/user.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';

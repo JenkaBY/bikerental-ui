@@ -9,7 +9,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { CancelButtonComponent, Labels, PaymentMethodSelectComponent } from '@bikerental/shared';
+import {
+  CancelButtonComponent,
+  Labels,
+  PaymentMethodSelectComponent,
+  UserStore,
+} from '@bikerental/shared';
 import { CustomerFinanceStore } from '@store.customer-finance.store';
 import { v4 as uuid } from 'uuid';
 
@@ -64,6 +69,7 @@ export class TopUpDialogComponent {
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly userStore = inject(UserStore);
 
   protected readonly submitting = signal(false);
   protected errorShown = false;
@@ -86,7 +92,8 @@ export class TopUpDialogComponent {
         customerId: this.data.customerId,
         amount: amount!,
         paymentMethod: paymentMethod as PaymentMethod,
-        operatorId: 'IMPLEMENT_ME',
+        // TODO remove hardcoded value after authorization is done
+        operatorId: this.userStore.currentUser()?.id || 'CALL_DEVELOPER_IF_SEE_IT',
       })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
