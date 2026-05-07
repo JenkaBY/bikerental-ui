@@ -14,6 +14,7 @@ import {
   Money,
   MoneyPipe,
   PaymentMethodSelectComponent,
+  UserStore,
 } from '@bikerental/shared';
 import { CustomerFinanceStore } from '@store.customer-finance.store';
 import type { PaymentMethod } from '@ui-models';
@@ -83,6 +84,7 @@ export class WithdrawDialogComponent {
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly userStore = inject(UserStore);
 
   public readonly submitting = signal(false);
 
@@ -108,7 +110,8 @@ export class WithdrawDialogComponent {
         customerId: this.data.customerId,
         amount: amount!,
         paymentMethod: paymentMethod as PaymentMethod,
-        operatorId: 'IMPLEMENT_ME',
+        // TODO remove hardcoded value after authorization is done
+        operatorId: this.userStore.currentUser()?.id || 'CALL_DEVELOPER_IF_SEE_IT',
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

@@ -7,3 +7,5 @@ export * from './customer.model';
 export * from './customer-balance.model';
 export * from './rental.model';
 export * from './transaction.model';
+export * from './user-profile.model';
+export * from './user-preferences.model';
