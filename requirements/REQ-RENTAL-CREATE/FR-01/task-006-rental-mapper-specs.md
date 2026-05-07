@@ -1,5 +1,41 @@
+# Task 006: Write Specs for New `RentalMapper` Methods
+
+> **Applied Skill:** `angular-testing` — Vitest unit testing for pure static mapper functions; no TestBed required; use `describe`/`it`/`expect` from `vitest`; `as unknown as T` for partial API response stubs.
+
+## 1. Objective
+
+Extend `rental.mapper.spec.ts` with three new `describe` blocks that cover all five BDD acceptance criteria defined in `fr.md`:
+
+* `toCreateRequest` — Scenario 1 (required fields) and Scenario 2 (special price mode)
+* `toCostCalculationRequest` — Scenario 3 (equipment types population)
+* `fromCostResponse` — Scenario 5 (RentalCostEstimate typing)
+
+## 2. File to Modify / Create
+
+* **File Path:** `projects/shared/src/core/mappers/rental.mapper.spec.ts`
+* **Action:** Modify Existing File
+
+## 3. Code Implementation
+
+**Imports Required:**
+
+Add the following named type imports to the top of the file, alongside the existing import:
+
+```typescript
 import { describe, expect, it } from 'vitest';
-import type { CostCalculationResponse, RentalSummaryResponse } from '@api-models';
+import type { RentalSummaryResponse, CostCalculationResponse } from '@api-models';
+import type { RentalWrite } from '@ui-models';
+import { RentalMapper } from './rental.mapper';
+import { makeMoney } from './money.mapper';
+```
+
+**Code to Add/Replace:**
+
+* **Location:** Replace the entire file content with the snippet below. The existing two `it` blocks are preserved verbatim; the three new `describe` blocks are appended at the end.
+
+```typescript
+import { describe, expect, it } from 'vitest';
+import type { RentalSummaryResponse, CostCalculationResponse } from '@api-models';
 import type { RentalWrite } from '@ui-models';
 import { RentalMapper } from './rental.mapper';
 import { makeMoney } from './money.mapper';
@@ -86,7 +122,10 @@ describe('RentalMapper.toCostCalculationRequest', () => {
 
     const result = RentalMapper.toCostCalculationRequest(draft, ['bike', 'helmet']);
 
-    expect(result.equipments).toEqual([{ equipmentType: 'bike' }, { equipmentType: 'helmet' }]);
+    expect(result.equipments).toEqual([
+      { equipmentType: 'bike' },
+      { equipmentType: 'helmet' },
+    ]);
     expect(result.plannedDurationMinutes).toBe(60);
     expect(result.discountPercent).toBe(5);
   });
@@ -100,15 +139,7 @@ describe('RentalMapper.fromCostResponse', () => {
       discount: { percent: 10, amount: 20 },
       specialPricingApplied: false,
       equipmentBreakdowns: [
-        {
-          equipmentType: 'bike',
-          tariffId: 1,
-          itemCost: 180,
-          tariffName: 'Standard',
-          pricingType: 'PER_MINUTE',
-          billedDurationMinutes: 60,
-          calculationBreakdown: {},
-        },
+        { equipmentType: 'bike', tariffId: 1, itemCost: 180, tariffName: 'Standard', pricingType: 'PER_MINUTE', billedDurationMinutes: 60, calculationBreakdown: {} },
       ],
     } as unknown as CostCalculationResponse;
 
@@ -139,3 +170,12 @@ describe('RentalMapper.fromCostResponse', () => {
     expect(result.specialPricingApplied).toBe(true);
   });
 });
+```
+
+## 4. Validation Steps
+
+Execute the following commands to ensure this task was successful. Do NOT run the full application server.
+
+```bash
+npx vitest run --reporter=verbose projects/shared/src/core/mappers/rental.mapper.spec.ts
+```
