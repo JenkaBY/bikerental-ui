@@ -36,7 +36,12 @@ export const appConfig: ApplicationConfig = {
       registerLocaleData(localeRu, 'ru');
       const lookupFacade = inject(LookupInitializerFacade);
       lookupFacade
-        .init({ loadEquipmentStatus: true, loadEquipmentType: true, loadPricingType: false })
+        .init({
+          loadEquipmentStatus: true,
+          loadEquipmentType: true,
+          loadPricingType: false,
+          loadSpecialTariffId: true,
+        })
         .subscribe();
       return Promise.resolve();
     }),
