@@ -44,6 +44,7 @@ export class RentalStore {
   private readonly _costEstimate = signal<RentalCostEstimate | null>(null);
   private readonly _isSaving = signal<boolean>(false);
   private readonly _isActivating = signal<boolean>(false);
+  private readonly _isLoading = signal<boolean>(false);
 
   // Primary public signals
   readonly id = computed(() => this._id());
@@ -55,6 +56,7 @@ export class RentalStore {
   readonly costEstimate = computed(() => this._costEstimate());
   readonly isSaving = computed(() => this._isSaving());
   readonly isActivating = computed(() => this._isActivating());
+  readonly isLoading = computed(() => this._isLoading());
 
   // Convenience computed signals derived from _draft (preserve public API for step components)
   readonly durationMinutes = computed(() => this._draft().durationMinutes);
@@ -202,6 +204,7 @@ export class RentalStore {
   }
 
   loadRental(id: number): Observable<void> {
+    this._isLoading.set(true);
     return this.rentalsService.getRentalById(id).pipe(
       tap((response) => {
         const items: EquipmentSearchItem[] = response.equipmentItems.map((item) => ({
@@ -225,6 +228,7 @@ export class RentalStore {
         this.reset();
         throw err;
       }),
+      finalize(() => this._isLoading.set(false)),
     );
   }
 
@@ -236,6 +240,7 @@ export class RentalStore {
     this._specialPriceEnabled.set(false);
     this._draft.set({ ...DEFAULT_DRAFT });
     this._costEstimate.set(null);
+    this._isLoading.set(false);
   }
 
   private patchDraft(id: number): Observable<void> {

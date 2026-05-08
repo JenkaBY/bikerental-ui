@@ -145,6 +145,7 @@ export class Labels {
   static readonly CustomerNewRentalComingSoon = $localize`New rental feature coming soon`;
   static readonly CustomerRentalLoadError = $localize`Failed to load rentals`;
   static readonly CustomerRentalDetailLoadError = $localize`Failed to load rental details`;
+  static readonly RentalDraftLoadError = $localize`Failed to load rental draft. Starting fresh.`;
 
   static readonly RentalStatusDraft = $localize`Draft`;
   static readonly RentalStatusActive = $localize`Active`;
