@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MatDialog } from '@angular/material/dialog';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { CustomerListComponent } from './customer-list.component';
-import { CustomerListStore } from './customer-list.store';
+import { CustomerListStore } from '@bikerental/shared';
 
 const makeStore = () => ({
   customers: signal([]),

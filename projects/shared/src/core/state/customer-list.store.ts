@@ -1,7 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { debounce, distinctUntilChanged, filter, map, timer } from 'rxjs';
-import { api, Customer, CustomerMapper } from '@bikerental/shared';
 import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { CustomersService } from '../api/generated';
+import { CustomerMapper } from '../mappers';
+import type { Customer } from '@ui-models';
 
 interface SearchRequest {
   phone: string | null;
@@ -9,7 +11,7 @@ interface SearchRequest {
 
 @Injectable()
 export class CustomerListStore {
-  private readonly customersService = inject(api.CustomersService);
+  private readonly customersService = inject(CustomersService);
   private readonly _query = signal<string | null>(null);
   private readonly _debouncedQuery = toSignal(
     toObservable(this._query).pipe(
@@ -25,13 +27,11 @@ export class CustomerListStore {
     stream: (request) => {
       return this.customersService
         .searchByPhone(request.params.phone)
-        .pipe(map((res) => res.map(CustomerMapper.fromResponse)));
+        .pipe(map((res) => res.map(CustomerMapper.fromSearchResponse)));
     },
   });
 
-  readonly customers = computed(() => {
-    return this.resource.value() ?? [];
-  });
+  readonly customers = computed(() => this.resource.value() ?? []);
   readonly loading = this.resource.isLoading;
   readonly searchQuery = this._query.asReadonly();
 

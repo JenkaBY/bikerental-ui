@@ -34,6 +34,7 @@ export * from './core/state/pricing-type.store';
 export * from './core/state/tariff.store';
 export * from './core/state/lookup-initializer.facade';
 export * from './core/state/customer.store';
+export * from './core/state/customer-list.store';
 export * from './core/state/rental.store';
 export * from './core/state/user.store';
 
@@ -62,6 +63,7 @@ export * from './shared/components/toggle-button/toggle-button.component';
 export * from './shared/components/customer/customer-view/customer-view.component';
 export * from './shared/components/customer/customer-edit/customer-edit.component';
 export * from './shared/components/customer/customer-create-dialog/customer-create-dialog.component';
+export * from './shared/components/customer/customer-form.provider';
 // Shared UI — constants
 export * from './shared/constant/labels';
 

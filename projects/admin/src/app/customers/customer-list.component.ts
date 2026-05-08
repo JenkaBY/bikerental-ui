@@ -8,9 +8,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { type Customer, CustomerCreateDialogComponent, Labels } from '@bikerental/shared';
+import {
+  type Customer,
+  CustomerCreateDialogComponent,
+  CustomerListStore,
+  Labels,
+} from '@bikerental/shared';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { CustomerListStore } from './customer-list.store';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
