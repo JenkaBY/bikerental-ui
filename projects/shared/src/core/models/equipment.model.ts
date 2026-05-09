@@ -21,3 +21,10 @@ export interface EquipmentWrite {
   commissionedAt?: Date;
   condition?: string;
 }
+
+export interface EquipmentSearchItem {
+  readonly id: number;
+  readonly uid: string;
+  readonly model: string;
+  readonly type: EquipmentType;
+}

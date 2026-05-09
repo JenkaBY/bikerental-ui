@@ -1,8 +1,8 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { Observable, of } from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, debounceTime, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { RentalsService, TariffsService } from '../api/generated';
+import { FinanceService, RentalsService, TariffsService } from '../api/generated';
 import type { RentalUpdateJsonPatchRequest } from '@api-models';
 import type {
   Customer,
@@ -11,14 +11,14 @@ import type {
   RentalCostEstimate,
   RentalWrite,
 } from '@ui-models';
-import { RentalMapper } from '../mappers';
+import { BalanceMapper, makeMoney, RentalMapper } from '../mappers';
 import { TariffStore } from './tariff.store';
 import { UserStore } from './user.store';
 
 const DEFAULT_DRAFT: RentalWrite = {
   customerId: '',
   equipmentIds: [],
-  durationMinutes: 60,
+  durationMinutes: 30,
   operatorId: '',
 };
 
@@ -26,6 +26,7 @@ const DEFAULT_DRAFT: RentalWrite = {
 export class RentalStore {
   private readonly tariffsService = inject(TariffsService);
   private readonly rentalsService = inject(RentalsService);
+  private readonly financeService = inject(FinanceService);
   private readonly tariffStore = inject(TariffStore);
   private readonly userStore = inject(UserStore);
   private readonly destroyRef = inject(DestroyRef);
@@ -66,7 +67,8 @@ export class RentalStore {
   readonly projectedBalance = computed(() => {
     const balance = this._customerBalance();
     if (balance === null) return null;
-    return balance.available.amount - (this._costEstimate()?.totalCost ?? 0);
+    const amount = balance.available.amount - (this._costEstimate()?.totalCost.amount ?? 0);
+    return makeMoney(amount);
   });
 
   readonly canProceedFromStep2 = computed(() => {
@@ -79,7 +81,7 @@ export class RentalStore {
 
   readonly isBalanceSufficient = computed(() => {
     const balance = this.projectedBalance();
-    return balance !== null && balance >= 0;
+    return balance !== null && balance.amount >= 0;
   });
 
   private readonly _costInputs = computed(() => {
@@ -87,10 +89,10 @@ export class RentalStore {
     return {
       items: this._equipmentItems(),
       durationMinutes: draft.durationMinutes,
-      discountPercent: draft.discountPercent ?? undefined,
+      discountPercent: draft.discountPercent ?? null,
       specialEnabled: this._specialPriceEnabled(),
-      specialPrice: draft.specialPrice ?? undefined,
-      specialTariffId: this.tariffStore.specialTariffId() ?? undefined,
+      specialPrice: draft.specialPrice ?? null,
+      specialTariffId: this.tariffStore.specialTariffId(),
     };
   });
 
@@ -109,11 +111,11 @@ export class RentalStore {
                   RentalMapper.toCostCalculationRequest(
                     {
                       durationMinutes: debounced.durationMinutes,
-                      discountPercent: debounced.discountPercent,
-                      specialTariffId: debounced.specialTariffId,
-                      specialPrice: debounced.specialPrice,
+                      discountPercent: debounced.discountPercent ?? undefined,
+                      specialTariffId: debounced.specialTariffId ?? undefined,
+                      specialPrice: debounced.specialPrice ?? undefined,
                     },
-                    debounced.items.map((e) => e.typeSlug),
+                    debounced.items.map((e) => e.type.slug),
                   ),
                 )
                 .pipe(
@@ -146,6 +148,19 @@ export class RentalStore {
     this._draft.update((d) => ({ ...d, equipmentIds: items.map((e) => e.id) }));
   }
 
+  addEquipmentItem(item: EquipmentSearchItem): void {
+    if (this._equipmentItems().some((e) => e.id === item.id)) return;
+    const newItems = [...this._equipmentItems(), item];
+    this._equipmentItems.set(newItems);
+    this._draft.update((d) => ({ ...d, equipmentIds: newItems.map((e) => e.id) }));
+  }
+
+  removeEquipmentItem(id: number): void {
+    const newItems = this._equipmentItems().filter((e) => e.id !== id);
+    this._equipmentItems.set(newItems);
+    this._draft.update((d) => ({ ...d, equipmentIds: newItems.map((e) => e.id) }));
+  }
+
   setDiscountPercent(percent: number | null): void {
     if (percent !== null) {
       this._specialPriceEnabled.set(false);
@@ -172,14 +187,27 @@ export class RentalStore {
     }
   }
 
+  refreshCustomerBalance(): void {
+    const id = this.customer()?.id;
+    if (!id) return;
+    this.financeService
+      .getBalances(id)
+      .pipe(
+        tap((r) => {
+          this._customerBalance.set(BalanceMapper.fromBalanceResponse(r));
+        }),
+        catchError(() => EMPTY),
+      )
+      .subscribe();
+  }
+
   save(): Observable<void> {
     this._isSaving.set(true);
     const currentId = this._id();
     if (currentId === null) {
       return this.rentalsService.createDraft().pipe(
         tap((response) => this._id.set(response.id)),
-        // switchMap((response) => this.patchDraft(response.id)),
-        map(() => undefined as void),
+        switchMap((response) => this.patchDraft(response.id)),
         finalize(() => this._isSaving.set(false)),
       );
     }
@@ -211,8 +239,7 @@ export class RentalStore {
           id: item.equipmentId,
           uid: item.equipmentUid ?? '',
           model: '',
-          typeSlug: '',
-          statusSlug: item.status,
+          type: { slug: '', name: '', isForSpecialTariff: false },
         }));
         this._id.set(response.id);
         this._equipmentItems.set(items);

@@ -188,4 +188,20 @@ export class Labels {
   static readonly TransactionDateLabel = $localize`Date`;
   static readonly TransactionDescriptionLabel = $localize`Description`;
   static readonly TransactionTypeLabel = $localize`Type`;
+
+  static readonly Duration = $localize`Duration`;
+  static readonly DurationMinutes = $localize`Duration (min)`;
+  static readonly SearchEquipmentPlaceholder = $localize`Search by UID or model...`;
+  static readonly ScanQr = $localize`Scan QR`;
+  static readonly ComingSoon = $localize`Coming soon`;
+  static readonly DiscountPercent = $localize`Discount (%)`;
+  static readonly SpecialPrice = $localize`Special Price`;
+  static readonly SpecialPriceModeLabel = $localize`Special price mode`;
+  static readonly TotalCost = $localize`Total Cost`;
+  static readonly ProjectedBalance = $localize`Balance after payment`;
+  static readonly InsufficientBalance = $localize`Insufficient balance`;
+  static readonly SaveDraft = $localize`Save Draft`;
+  static readonly Next = $localize`Next`;
+  static readonly DraftSaved = $localize`Draft saved`;
+  static readonly NoEquipmentSelected = $localize`Add at least one item to proceed`;
 }

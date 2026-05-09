@@ -46,15 +46,15 @@ export class RentalMapper {
 
   static fromCostResponse(response: CostCalculationResponse): RentalCostEstimate {
     return {
-      subtotal: response.subtotal,
-      totalCost: response.totalCost,
+      subtotal: makeMoney(response.subtotal),
+      totalCost: makeMoney(response.totalCost),
       specialPricingApplied: response.specialPricingApplied ?? false,
       discountPercent: response.discount?.percent,
-      discountAmount: response.discount?.amount,
+      discountAmount: makeMoney(response.discount?.amount ?? 0),
       equipmentBreakdowns: response.equipmentBreakdowns.map((b) => ({
         equipmentType: b.equipmentType,
         tariffId: b.tariffId,
-        itemCost: b.itemCost,
+        itemCost: makeMoney(b.itemCost),
       })),
     };
   }
