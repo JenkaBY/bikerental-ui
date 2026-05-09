@@ -14,3 +14,4 @@ export { EquipmentTypesService } from './equipmentTypes.service';
 export { FinanceService } from './finance.service';
 export { RentalsService } from './rentals.service';
 export { TariffsService } from './tariffs.service';
+export { TimeTravelControllerService } from './timeTravelController.service';

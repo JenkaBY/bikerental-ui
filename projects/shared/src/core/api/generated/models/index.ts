@@ -134,6 +134,14 @@ export interface EquipmentStatusResponse {
   allowedTransitions: Array<string>;
 }
 
+export interface SetTimeRequest {
+  instant: Date;
+}
+
+export interface TimeResponse {
+  instant: Date;
+}
+
 /** Request body for creating or updating a customer profile */
 export interface CustomerRequest {
   /** Customer phone number */
@@ -501,6 +509,10 @@ export interface PageEquipmentResponse {
   items?: Array<EquipmentResponse>;
   totalItems?: number;
   pageRequest?: PageRequest;
+}
+
+export interface SseEmitter {
+  timeout?: number;
 }
 
 /** Compact customer info returned in search results */
