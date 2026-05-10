@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { Labels, MoneyPipe, RentalStore } from '@bikerental/shared';
+import { Labels, MoneyPipe, RentalStore, TopUpButtonComponent } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-customer-panel',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MoneyPipe],
+  imports: [MatButtonModule, MoneyPipe, TopUpButtonComponent],
   template: `
     <div
       class="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-200 shadow-sm"
@@ -28,9 +28,7 @@ import { Labels, MoneyPipe, RentalStore } from '@bikerental/shared';
           </span>
         }
       </div>
-      <button mat-stroked-button type="button" (click)="topUpRequested.emit()">
-        {{ Labels.CustomerTopUpButton }}
-      </button>
+      <app-top-up-button (confirm)="topUpRequested.emit()"></app-top-up-button>
     </div>
   `,
 })

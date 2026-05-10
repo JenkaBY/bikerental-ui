@@ -9,7 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Labels, MoneyPipe } from '@bikerental/shared';
+import { Labels, MoneyPipe, TopUpButtonComponent } from '@bikerental/shared';
 import { CustomerLayoutStore } from '../../customer-layout.store';
 import { CustomerFinanceStore } from '@store.customer-finance.store';
 import { TopUpDialogComponent } from '../../../dialogs/top-up-dialog/top-up-dialog.component';
@@ -19,7 +19,7 @@ import { CustomerTransactionsStore } from '../../customer-transactions.store';
 @Component({
   selector: 'app-customer-account',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MoneyPipe],
+  imports: [MatButtonModule, MoneyPipe, TopUpButtonComponent],
   template: `
     <div class="p-4 md:p-6 max-w-sm">
       <dl class="flex flex-col gap-4 mb-6">
@@ -46,14 +46,7 @@ import { CustomerTransactionsStore } from '../../customer-transactions.store';
       </dl>
 
       <div class="flex gap-3">
-        <button
-          mat-flat-button
-          class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-          style="background-color: #ecfdf5; color: #065f46"
-          (click)="openTopUp()"
-        >
-          {{ Labels.CustomerTopUpButton }}
-        </button>
+        <app-top-up-button (confirm)="openTopUp()"></app-top-up-button>
         <button
           mat-stroked-button
           class="bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200"
