@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, defaultIfEmpty, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { TariffsService } from '../api/generated';
+import { CostCalculationRequest, CostCalculationResponse, TariffsService } from '../api/generated';
 import { Tariff, TariffWrite } from '../models';
 import { TariffMapper } from '../mappers';
 import { EquipmentTypeStore } from './equipment-type.store';
@@ -132,10 +132,15 @@ export class TariffStore {
         const specialTariff = responses
           .map((r) => TariffMapper.fromResponse(r, equipmentTypes, pricingTypes))
           .find((t) => t.isSpecial);
+        console.log('Set spec tariff ', specialTariff);
         this._specialTariffId.set(specialTariff?.id ?? null);
       }),
       map(() => undefined),
       catchError(() => EMPTY),
     );
+  }
+
+  calculateCost(request: CostCalculationRequest): Observable<CostCalculationResponse> {
+    return this.service.calculateCost(request);
   }
 }

@@ -1,17 +1,12 @@
-import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, debounceTime, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { FinanceService, RentalsService, TariffsService } from '../api/generated';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { Observable } from 'rxjs';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { RentalsService } from '../api/generated';
 import type { RentalUpdateJsonPatchRequest } from '@api-models';
-import type {
-  Customer,
-  CustomerBalance,
-  EquipmentSearchItem,
-  RentalCostEstimate,
-  RentalWrite,
-} from '@ui-models';
-import { BalanceMapper, makeMoney, RentalMapper } from '../mappers';
+import type { Customer, EquipmentSearchItem, RentalWrite } from '@ui-models';
+import { makeMoney, RentalMapper } from '../mappers';
+import { CustomerFinanceStore } from './customer-finance.store';
+import { RentalCostCalculationStore } from './rental-cost-calculation.store';
 import { TariffStore } from './tariff.store';
 import { UserStore } from './user.store';
 
@@ -24,17 +19,15 @@ const DEFAULT_DRAFT: RentalWrite = {
 
 @Injectable()
 export class RentalStore {
-  private readonly tariffsService = inject(TariffsService);
   private readonly rentalsService = inject(RentalsService);
-  private readonly financeService = inject(FinanceService);
   private readonly tariffStore = inject(TariffStore);
   private readonly userStore = inject(UserStore);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly customerFinanceStore = inject(CustomerFinanceStore);
+  private readonly costCalculationStore = inject(RentalCostCalculationStore);
 
   // UI-enriched state — not representable by RentalWrite
   private readonly _id = signal<number | null>(null);
   private readonly _customer = signal<Customer | null>(null);
-  private readonly _customerBalance = signal<CustomerBalance | null>(null);
   private readonly _equipmentItems = signal<EquipmentSearchItem[]>([]);
   private readonly _specialPriceEnabled = signal<boolean>(false);
 
@@ -42,8 +35,6 @@ export class RentalStore {
   private readonly _draft = signal<RentalWrite>({ ...DEFAULT_DRAFT });
 
   // Async / loading state
-  private readonly _costEstimate = signal<RentalCostEstimate | null>(null);
-  private readonly _isCalculatingCost = signal<boolean>(false);
   private readonly _isSaving = signal<boolean>(false);
   private readonly _isActivating = signal<boolean>(false);
   private readonly _isLoading = signal<boolean>(false);
@@ -51,12 +42,12 @@ export class RentalStore {
   // Primary public signals
   readonly id = computed(() => this._id());
   readonly customer = computed(() => this._customer());
-  readonly customerBalance = computed(() => this._customerBalance());
+  readonly customerBalance = computed(() => this.customerFinanceStore.balance());
   readonly equipmentItems = computed(() => this._equipmentItems());
   readonly specialPriceEnabled = computed(() => this._specialPriceEnabled());
   readonly draft = computed(() => this._draft());
-  readonly costEstimate = computed(() => this._costEstimate());
-  readonly isCalculatingCost = computed(() => this._isCalculatingCost());
+  readonly costEstimate = computed(() => this.costCalculationStore.costEstimate());
+  readonly isCalculatingCost = computed(() => this.costCalculationStore.isCalculatingCost());
   readonly isSaving = computed(() => this._isSaving());
   readonly isActivating = computed(() => this._isActivating());
   readonly isLoading = computed(() => this._isLoading());
@@ -65,11 +56,14 @@ export class RentalStore {
   readonly durationMinutes = computed(() => this._draft().durationMinutes);
   readonly discountPercent = computed(() => this._draft().discountPercent ?? null);
   readonly specialPrice = computed(() => this._draft().specialPrice ?? null);
+  readonly isSelectedAnyEquipment = computed(() => this._equipmentItems().length > 0);
 
   readonly projectedBalance = computed(() => {
-    const balance = this._customerBalance();
+    if (this._customer() === null) return null;
+    const balance = this.customerFinanceStore.balance();
     if (balance === null) return null;
-    const amount = balance.available.amount - (this._costEstimate()?.totalCost.amount ?? 0);
+    const amount =
+      balance.available.amount - (this.costCalculationStore.costEstimate()?.totalCost.amount ?? 0);
     return makeMoney(amount);
   });
 
@@ -77,7 +71,7 @@ export class RentalStore {
     const items = this._equipmentItems();
     const specialEnabled = this._specialPriceEnabled();
     const specialPrice = this._draft().specialPrice;
-    const estimate = this._costEstimate();
+    const estimate = this.costCalculationStore.costEstimate();
     return items.length > 0 && (!specialEnabled || specialPrice !== undefined) && estimate !== null;
   });
 
@@ -97,71 +91,23 @@ export class RentalStore {
     return { amount: Math.abs(balance.amount), currency: balance.currency };
   });
 
-  private readonly _costInputs = computed(() => {
-    const draft = this._draft();
-    return {
-      items: this._equipmentItems(),
-      durationMinutes: draft.durationMinutes,
-      discountPercent: draft.discountPercent ?? null,
-      specialEnabled: this._specialPriceEnabled(),
-      specialPrice: draft.specialPrice ?? null,
-      specialTariffId: this.tariffStore.specialTariffId(),
-    };
-  });
-
-  constructor() {
-    toObservable(this._costInputs)
-      .pipe(
-        switchMap((inputs) => {
-          if (inputs.items.length === 0) {
-            this._isCalculatingCost.set(false);
-            return of(null);
-          }
-          return of(inputs).pipe(
-            debounceTime(300),
-            switchMap((debounced) => {
-              this._isCalculatingCost.set(true);
-              return this.tariffsService
-                .calculateCost(
-                  RentalMapper.toCostCalculationRequest(
-                    {
-                      durationMinutes: debounced.durationMinutes,
-                      discountPercent: debounced.discountPercent ?? undefined,
-                      specialTariffId: debounced.specialTariffId ?? undefined,
-                      specialPrice: debounced.specialPrice ?? undefined,
-                    },
-                    debounced.items.map((e) => e.type.slug),
-                  ),
-                )
-                .pipe(
-                  map((response) => RentalMapper.fromCostResponse(response)),
-                  catchError(() => of(null)),
-                  finalize(() => this._isCalculatingCost.set(false)),
-                );
-            }),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((estimate) => this._costEstimate.set(estimate));
-  }
-
   setCustomer(customer: Customer | null): void {
     this._customer.set(customer);
     this._draft.update((d) => ({ ...d, customerId: customer?.id ?? '' }));
-  }
-
-  setCustomerBalance(balance: CustomerBalance | null): void {
-    this._customerBalance.set(balance);
+    if (customer?.id) {
+      this.customerFinanceStore.loadById(customer.id);
+    }
   }
 
   setDurationMinutes(minutes: number): void {
     this._draft.update((d) => ({ ...d, durationMinutes: minutes }));
+    this.syncCostInputs();
   }
 
   setEquipmentItems(items: EquipmentSearchItem[]): void {
     this._equipmentItems.set(items);
     this._draft.update((d) => ({ ...d, equipmentIds: items.map((e) => e.id) }));
+    this.syncCostInputs();
   }
 
   addEquipmentItem(item: EquipmentSearchItem): void {
@@ -169,52 +115,57 @@ export class RentalStore {
     const newItems = [...this._equipmentItems(), item];
     this._equipmentItems.set(newItems);
     this._draft.update((d) => ({ ...d, equipmentIds: newItems.map((e) => e.id) }));
+    this.syncCostInputs();
   }
 
   removeEquipmentItem(id: number): void {
     const newItems = this._equipmentItems().filter((e) => e.id !== id);
     this._equipmentItems.set(newItems);
     this._draft.update((d) => ({ ...d, equipmentIds: newItems.map((e) => e.id) }));
+    this.syncCostInputs();
   }
 
   setDiscountPercent(percent: number | null): void {
+    if (this._specialPriceEnabled()) {
+      return;
+    }
     if (percent !== null) {
       this._specialPriceEnabled.set(false);
       this._draft.update((d) => ({ ...d, discountPercent: percent, specialPrice: undefined }));
     } else {
       this._draft.update((d) => ({ ...d, discountPercent: undefined }));
     }
+    this.syncCostInputs();
   }
 
   setSpecialPriceEnabled(enabled: boolean): void {
     this._specialPriceEnabled.set(enabled);
     if (enabled) {
-      this._draft.update((d) => ({ ...d, discountPercent: undefined }));
+      this._draft.update((d) => ({ ...d, specialPrice: 0, discountPercent: undefined }));
     } else {
       this._draft.update((d) => ({ ...d, specialPrice: undefined }));
     }
+    this.syncCostInputs();
   }
 
   setSpecialPrice(price: number | null): void {
+    if (!this._specialPriceEnabled()) {
+      return;
+    }
     if (price !== null) {
-      this._draft.update((d) => ({ ...d, specialPrice: price, discountPercent: undefined }));
+      this._draft.update((d) => ({
+        ...d,
+        specialPrice: price,
+        discountPercent: undefined,
+      }));
     } else {
       this._draft.update((d) => ({ ...d, specialPrice: undefined }));
     }
+    this.syncCostInputs();
   }
 
   refreshCustomerBalance(): void {
-    const id = this.customer()?.id;
-    if (!id) return;
-    this.financeService
-      .getBalances(id)
-      .pipe(
-        tap((r) => {
-          this._customerBalance.set(BalanceMapper.fromBalanceResponse(r));
-        }),
-        catchError(() => EMPTY),
-      )
-      .subscribe();
+    this.customerFinanceStore.refreshBalance();
   }
 
   save(): Observable<void> {
@@ -278,12 +229,19 @@ export class RentalStore {
   reset(): void {
     this._id.set(null);
     this._customer.set(null);
-    this._customerBalance.set(null);
     this._equipmentItems.set([]);
     this._specialPriceEnabled.set(false);
     this._draft.set({ ...DEFAULT_DRAFT });
-    this._costEstimate.set(null);
     this._isLoading.set(false);
+    this.costCalculationStore.reset();
+  }
+
+  private syncCostInputs(): void {
+    this.costCalculationStore.updateInputs(
+      this._equipmentItems(),
+      this._draft(),
+      this._specialPriceEnabled(),
+    );
   }
 
   private patchDraft(id: number): Observable<void> {

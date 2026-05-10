@@ -17,6 +17,7 @@ import { Labels } from '@bikerental/shared';
         type="number"
         min="0"
         max="100"
+        [disabled]="disabled()"
         [ngModel]="rawValue()"
         (ngModelChange)="rawValue.set($event)"
         (blur)="commit()"
@@ -28,6 +29,7 @@ import { Labels } from '@bikerental/shared';
 export class DiscountInputComponent {
   readonly value = input<number | null>(null);
   readonly valueChange = output<number | null>();
+  readonly disabled = input(false);
 
   protected readonly Labels = Labels;
   protected readonly rawValue = signal<number | string>('');
@@ -42,7 +44,7 @@ export class DiscountInputComponent {
   protected commit(): void {
     const raw = this.rawValue();
     if (raw === '' || raw === null) {
-      this.valueChange.emit(null);
+      this.valueChange.emit(0);
       return;
     }
     const parsed = Number(raw);

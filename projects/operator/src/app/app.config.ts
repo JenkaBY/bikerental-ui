@@ -39,7 +39,7 @@ export const appConfig: ApplicationConfig = {
         .init({
           loadEquipmentStatus: true,
           loadEquipmentType: true,
-          loadPricingType: false,
+          loadPricingType: true,
           loadSpecialTariffId: true,
         })
         .subscribe();

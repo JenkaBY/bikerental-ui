@@ -17,6 +17,7 @@ import { Labels } from '@bikerental/shared';
         type="number"
         min="0.01"
         step="0.01"
+        [disabled]="disabled()"
         [ngModel]="rawValue()"
         (ngModelChange)="rawValue.set($event)"
         (blur)="commit()"
@@ -29,9 +30,10 @@ import { Labels } from '@bikerental/shared';
   `,
 })
 export class SpecialPriceInputComponent {
-  readonly value = input<number | null>(null);
+  readonly value = input<number | null>(0);
   readonly showRequired = input<boolean>(false);
   readonly valueChange = output<number | null>();
+  readonly disabled = input(false);
 
   protected readonly Labels = Labels;
   protected readonly rawValue = signal<number | string>('');
@@ -41,7 +43,7 @@ export class SpecialPriceInputComponent {
   constructor() {
     effect(() => {
       const v = this.value();
-      this.rawValue.set(v !== null ? v : '');
+      this.rawValue.set(v !== null ? v : 0);
     });
     effect(() => {
       this.showError.set(this.showRequired() && !this.value());

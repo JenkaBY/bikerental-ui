@@ -9,7 +9,12 @@ import {
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, filter, of, switchMap, tap } from 'rxjs';
-import { Labels, RentalStore } from '@bikerental/shared';
+import {
+  CustomerFinanceStore,
+  Labels,
+  RentalCostCalculationStore,
+  RentalStore,
+} from '@bikerental/shared';
 import { RentalStep1Component } from './step1/rental-step1.component';
 import { RentalStep2Component } from './step2/rental-step2.component';
 import { RentalStep3Component } from './step3/rental-step3.component';
@@ -17,7 +22,7 @@ import { RentalStep3Component } from './step3/rental-step3.component';
 @Component({
   selector: 'app-rental-create',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RentalStore],
+  providers: [CustomerFinanceStore, RentalCostCalculationStore, RentalStore],
   imports: [RentalStep1Component, RentalStep2Component, RentalStep3Component],
   template: `
     @if (isLoading()) {
