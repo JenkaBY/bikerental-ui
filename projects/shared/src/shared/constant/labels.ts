@@ -208,6 +208,7 @@ export class Labels {
   static readonly Next = $localize`Next`;
   static readonly DraftSaved = $localize`Draft saved`;
   static readonly NoEquipmentSelected = $localize`Add at least one item to proceed`;
+  static readonly NoAvailableEquipment = $localize`No available equipment`;
 
   static readonly StartRental = $localize`Start Rental`;
   static readonly RentalStarted = $localize`Rental started`;

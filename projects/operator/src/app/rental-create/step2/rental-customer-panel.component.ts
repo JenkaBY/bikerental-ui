@@ -18,13 +18,13 @@ import { Labels, MoneyPipe, RentalStore, TopUpButtonComponent } from '@bikerenta
         @if (customerFullName()) {
           <span class="text-sm text-slate-500 truncate">{{ customerFullName() }}</span>
         }
-        @if (store.projectedBalance(); as balance) {
+        @if (store.customerBalance(); as balance) {
           <span
             class="text-sm font-medium"
             [class.text-red-600]="!store.isBalanceSufficient()"
             [class.text-green-700]="store.isBalanceSufficient()"
           >
-            {{ Labels.BalanceAvailable }}: {{ balance | money }}
+            {{ Labels.BalanceAvailable }}: {{ balance?.available | money }}
           </span>
         }
       </div>

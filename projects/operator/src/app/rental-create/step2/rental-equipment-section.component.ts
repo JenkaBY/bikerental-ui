@@ -46,6 +46,10 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
                 <span class="font-mono">{{ item.uid }}</span>
                 <span class="text-slate-500 ml-2">{{ item.model }} · {{ item.type.name }}</span>
               </mat-option>
+            } @empty {
+              @if (equipmentSearchStore.searchQuery() && !loading()) {
+                <mat-option disabled>{{ Labels.NoAvailableEquipment }}</mat-option>
+              }
             }
           </mat-autocomplete>
         </mat-form-field>
@@ -74,7 +78,7 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
   providers: [EquipmentSearchStore],
 })
 export class RentalEquipmentSectionComponent {
-  private readonly equipmentSearchStore = inject(EquipmentSearchStore);
+  protected readonly equipmentSearchStore = inject(EquipmentSearchStore);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly store = inject(RentalStore);

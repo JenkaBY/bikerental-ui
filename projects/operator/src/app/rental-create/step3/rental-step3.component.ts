@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { catchError, of, tap } from 'rxjs';
@@ -14,14 +14,14 @@ import { RentalSummaryComponent } from './rental-summary.component';
   selector: 'app-rental-step3',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButtonModule,
-    MatIconModule,
+    MatButton,
+    MatIcon,
     RentalSummaryComponent,
     RentalBalanceWarningComponent,
     RentalActivateButtonComponent,
   ],
   template: `
-    <div class="flex flex-col gap-6 pb-24">
+    <div class="flex flex-col gap-6">
       <app-rental-summary
         [customer]="store.customer()!"
         [durationMinutes]="store.durationMinutes()"
@@ -35,17 +35,19 @@ import { RentalSummaryComponent } from './rental-summary.component';
       <app-rental-balance-warning (topUpRequested)="onTopUpRequested()" />
     </div>
 
-    <div class="fixed bottom-0 left-0 right-0 flex flex-col gap-2 bg-white p-4 shadow-md">
-      <app-rental-activate-button
-        [disabled]="!store.isBalanceSufficient()"
-        [loading]="store.isActivating()"
-        (activateRequested)="onActivateRequested()"
-      />
+    <div class="bg-white p-4 shadow-md">
+      <div class="flex gap-2 mt-1">
+        <button matButton="outlined" class="flex-1" type="button" (click)="stepBack.emit()">
+          <mat-icon>arrow_back</mat-icon>
+          {{ Labels.Back }}
+        </button>
 
-      <button mat-button type="button" (click)="stepBack.emit()">
-        <mat-icon>arrow_back</mat-icon>
-        {{ Labels.Back }}
-      </button>
+        <app-rental-activate-button
+          [disabled]="!store.isBalanceSufficient()"
+          [loading]="store.isActivating()"
+          (activateRequested)="onActivateRequested()"
+        />
+      </div>
     </div>
   `,
 })
