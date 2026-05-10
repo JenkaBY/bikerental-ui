@@ -24,7 +24,7 @@ import { CustomerTransactionsStore } from '../../customer-transactions.store';
     <div class="p-4 md:p-6 max-w-sm">
       <dl class="flex flex-col gap-4 mb-6">
         <div>
-          <dt class="text-xs text-slate-500">{{ Labels.CustomerBalanceAvailable }}</dt>
+          <dt class="text-xs text-slate-500">{{ Labels.Available }}</dt>
           <dd class="text-2xl font-semibold">
             @if (financeStore.balance(); as bal) {
               {{ bal.available | money }}

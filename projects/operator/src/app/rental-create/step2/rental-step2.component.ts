@@ -4,11 +4,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, tap } from 'rxjs';
 import { Labels, RentalStore } from '@bikerental/shared';
-import { RentalCustomerPanelComponent } from './rental-customer-panel.component';
-import { RentalDurationControlComponent } from './rental-duration-control.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
 import { RentalPricingSectionComponent } from './rental-pricing-section.component';
 import { RentalCostFooterComponent } from './rental-cost-footer.component';
+import { RentalCustomerPanelComponent } from './rental-customer-panel.component';
+import { RentalDurationControlComponent } from './duration/rental-duration-control.component';
 
 // TopUpDialogComponent is provided by the shared module (FR-07).
 // Import it once that task is completed:

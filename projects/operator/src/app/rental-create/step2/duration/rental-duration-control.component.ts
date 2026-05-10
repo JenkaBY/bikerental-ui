@@ -1,17 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Labels, RentalStore } from '@bikerental/shared';
 import { DurationSliderComponent } from './duration-slider.component';
 import { DurationInputComponent } from './duration-input.component';
-import {
-  DURATION_SNAP_POINTS_TOKEN,
-  durationSnapPointProviders,
-  SNAP_TO_NEAREST_TOKEN,
-} from '../duration-snap-point.provider';
+import { DURATION_SNAP_POINTS, snapToNearest } from './snap-points';
 
 @Component({
   selector: 'app-rental-duration-control',
   standalone: true,
-  providers: durationSnapPointProviders,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DurationSliderComponent, DurationInputComponent],
   template: `
@@ -19,13 +14,13 @@ import {
       <span class="text-sm font-medium text-slate-700">{{ Labels.Duration }}</span>
       <app-duration-slider
         [value]="store.durationMinutes()"
-        [snapPoints]="snapPoints"
+        [snapPoints]="snapPoints()"
         (valueChange)="onDurationChange($event)"
       />
       <app-duration-input
         [value]="store.durationMinutes()"
-        [min]="snapPoints[0]"
-        [max]="snapPoints[snapPoints.length - 1]"
+        [min]="minDuration()"
+        [max]="maxDuration()"
         (valueChange)="onDurationChange($event)"
       />
     </div>
@@ -33,11 +28,12 @@ import {
 })
 export class RentalDurationControlComponent {
   protected readonly store = inject(RentalStore);
+  protected readonly snapPoints = signal(DURATION_SNAP_POINTS).asReadonly();
+  protected readonly minDuration = computed(() => this.snapPoints()[0] ?? 30);
+  protected readonly maxDuration = computed(() => this.snapPoints().at(-1) ?? 2880);
   protected readonly Labels = Labels;
-  protected readonly snapPoints = inject(DURATION_SNAP_POINTS_TOKEN);
-  private readonly snapFn = inject(SNAP_TO_NEAREST_TOKEN);
 
   protected onDurationChange(raw: number): void {
-    this.store.setDurationMinutes(this.snapFn(raw));
+    this.store.setDurationMinutes(snapToNearest(raw));
   }
 }

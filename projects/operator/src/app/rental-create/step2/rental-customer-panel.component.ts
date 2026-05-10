@@ -24,7 +24,7 @@ import { Labels, MoneyPipe, RentalStore } from '@bikerental/shared';
             [class.text-red-600]="!store.isBalanceSufficient()"
             [class.text-green-700]="store.isBalanceSufficient()"
           >
-            {{ Labels.CustomerBalanceAvailable }}: {{ balance | money }}
+            {{ Labels.BalanceAvailable }}: {{ balance | money }}
           </span>
         }
       </div>

@@ -22,6 +22,7 @@ import {
 } from '@bikerental/shared';
 import { CustomerSearchOptionComponent } from './customer-search-option.component';
 import { CustomerCreateInlineFormComponent } from './customer-create-inline-form.component';
+import { MatIcon } from '@angular/material/icon';
 
 const CREATE_SENTINEL = '__create__';
 
@@ -37,10 +38,11 @@ const CREATE_SENTINEL = '__create__';
     CustomerSearchOptionComponent,
     CustomerCreateInlineFormComponent,
     PhoneCharactersOnlyDirective,
+    MatIcon,
   ],
   template: `
     <mat-form-field appearance="outline" class="w-full">
-      <mat-label>{{ Labels.Phone }}</mat-label>
+      <mat-label>{{ Labels.SearchByPhone }}</mat-label>
       <input
         matInput
         type="tel"
@@ -60,7 +62,9 @@ const CREATE_SENTINEL = '__create__';
             <app-customer-search-option [customer]="customer" />
           </mat-option>
         }
-        <mat-option [value]="CREATE_SENTINEL">{{ Labels.CreateCustomer }}</mat-option>
+        <mat-option [value]="CREATE_SENTINEL"
+          ><mat-icon>add</mat-icon>{{ Labels.CreateCustomer }}</mat-option
+        >
       </mat-autocomplete>
     </mat-form-field>
 

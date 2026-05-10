@@ -132,7 +132,6 @@ export class TariffStore {
         const specialTariff = responses
           .map((r) => TariffMapper.fromResponse(r, equipmentTypes, pricingTypes))
           .find((t) => t.isSpecial);
-        console.log('Set spec tariff ', specialTariff);
         this._specialTariffId.set(specialTariff?.id ?? null);
       }),
       map(() => undefined),

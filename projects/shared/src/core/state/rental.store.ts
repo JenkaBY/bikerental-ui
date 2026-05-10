@@ -13,7 +13,7 @@ import { UserStore } from './user.store';
 const DEFAULT_DRAFT: RentalWrite = {
   customerId: '',
   equipmentIds: [],
-  durationMinutes: 30,
+  durationMinutes: 60,
   operatorId: '',
 };
 

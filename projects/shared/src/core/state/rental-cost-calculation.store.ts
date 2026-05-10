@@ -40,8 +40,6 @@ export class RentalCostCalculationStore {
   readonly isCalculatingCost = computed(() => this._isCalculatingCost());
 
   constructor() {
-    console.log('Debounced', this.tariffStore.specialTariffId());
-
     toObservable(this._costInputs)
       .pipe(
         switchMap((inputs) => {
@@ -53,7 +51,6 @@ export class RentalCostCalculationStore {
             debounceTime(300),
             switchMap((debounced) => {
               this._isCalculatingCost.set(true);
-              console.log('Debounced', debounced);
               return this.tariffStore
                 .calculateCost(
                   RentalMapper.toCostCalculationRequest(

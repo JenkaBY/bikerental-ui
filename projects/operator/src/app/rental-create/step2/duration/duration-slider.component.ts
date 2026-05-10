@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { MatSliderModule } from '@angular/material/slider';
+import { findNearestIndex } from './snap-points';
+import { normalizeToHuman } from '@bikerental/shared';
 
 @Component({
   selector: 'app-duration-slider',
@@ -7,9 +9,10 @@ import { MatSliderModule } from '@angular/material/slider';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatSliderModule],
   template: `
-    <mat-slider class="w-full" [min]="0" [max]="sliderMax()" [step]="1" discrete>
+    <mat-slider class="w-8/10!" [min]="0" [max]="sliderMax()" [step]="1" discrete showTickMarks>
       <input matSliderThumb [value]="sliderIndex()" (valueChange)="onSliderChange($event)" />
     </mat-slider>
+    <span> {{ formatDuration(sliderIndex()) }}</span>
   `,
 })
 export class DurationSliderComponent {
@@ -19,15 +22,7 @@ export class DurationSliderComponent {
 
   readonly sliderMax = computed(() => Math.max(0, this.snapPoints().length - 1));
 
-  readonly sliderIndex = computed(() => {
-    const snaps = this.snapPoints();
-    if (snaps.length === 0) return 0;
-    return snaps.reduce(
-      (bestIdx, curr, i) =>
-        Math.abs(curr - this.value()) < Math.abs(snaps[bestIdx] - this.value()) ? i : bestIdx,
-      0,
-    );
-  });
+  readonly sliderIndex = computed(() => findNearestIndex(this.value(), this.snapPoints()));
 
   onSliderChange(index: number): void {
     const snaps = this.snapPoints();
@@ -35,4 +30,8 @@ export class DurationSliderComponent {
       this.valueChange.emit(snaps[index]);
     }
   }
+
+  readonly formatDuration = (index: number): string => {
+    return normalizeToHuman(this.snapPoints()[index]);
+  };
 }

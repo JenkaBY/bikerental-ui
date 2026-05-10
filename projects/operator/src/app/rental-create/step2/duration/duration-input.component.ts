@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -22,6 +22,7 @@ import { Labels } from '@bikerental/shared';
         (blur)="commit()"
         (keydown.enter)="commit()"
       />
+      <span matTextSuffix>{{ Labels.MinuteShort }}</span>
     </mat-form-field>
   `,
 })
@@ -32,20 +33,15 @@ export class DurationInputComponent {
   readonly valueChange = output<number>();
 
   protected readonly Labels = Labels;
-  protected readonly rawValue = signal<number | string>('');
-
-  constructor() {
-    effect(() => {
-      this.rawValue.set(this.value());
-    });
-  }
+  protected rawValue = linkedSignal(() => this.value());
 
   protected commit(): void {
     const parsed = Number(this.rawValue());
-    if (!isNaN(parsed) && parsed > 0) {
-      this.valueChange.emit(parsed);
-    } else {
+    if (isNaN(parsed) || parsed <= 0) {
       this.rawValue.set(this.value());
+      return;
     }
+    const clamped = Math.min(this.max(), Math.max(this.min(), parsed));
+    this.valueChange.emit(clamped);
   }
 }

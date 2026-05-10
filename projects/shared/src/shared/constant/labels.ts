@@ -87,7 +87,7 @@ export class Labels {
   static readonly Email = $localize`Email`;
   static readonly BirthDate = $localize`Birth Date`;
   static readonly Comments = $localize`Comments`;
-  static readonly SearchByPhone = $localize`Search by phone (min. 4 digits)`;
+  static readonly SearchByPhone = $localize`Search customer by phone (min. 4 digits)`;
   static readonly CustomersNotFound = $localize`No customers found`;
 
   static readonly RentalHistory = $localize`Rental History`;
@@ -122,7 +122,8 @@ export class Labels {
   static readonly CustomerEmptyState = $localize`No customers found`;
   static readonly CustomerBackButton = $localize`Back to customers`;
 
-  static readonly CustomerBalanceAvailable = $localize`Available`;
+  static readonly Available = $localize`Available`;
+  static readonly BalanceAvailable = $localize`Balance Available`;
   static readonly CustomerBalanceReserved = $localize`Reserved`;
 
   static readonly CustomerProfileTabLabel = $localize`Profile`;
@@ -192,6 +193,8 @@ export class Labels {
 
   static readonly Duration = $localize`Duration`;
   static readonly DurationMinutes = $localize`Duration (min)`;
+  static readonly MinuteShort = $localize`min`;
+  static readonly HourShort = $localize`h`;
   static readonly SearchEquipmentPlaceholder = $localize`Search by UID or model...`;
   static readonly ScanQr = $localize`Scan QR`;
   static readonly ComingSoon = $localize`Coming soon`;
