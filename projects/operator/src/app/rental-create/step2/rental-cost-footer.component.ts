@@ -2,16 +2,13 @@ import { ChangeDetectionStrategy, Component, inject, output } from '@angular/cor
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { Labels, MoneyPipe, RentalStore } from '@bikerental/shared';
+import { Labels, makeMoney, MoneyPipe, RentalStore } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-cost-footer',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, MatProgressSpinnerModule, MatChipsModule, MoneyPipe],
-  host: {
-    class: 'fixed bottom-0 left-0 right-0 z-10',
-  },
   template: `
     <div class="bg-white border-t border-slate-200 shadow-lg px-4 py-3 flex flex-col gap-2">
       <div class="flex items-center justify-between">
@@ -20,8 +17,10 @@ import { Labels, MoneyPipe, RentalStore } from '@bikerental/shared';
           <span class="font-semibold text-slate-900">
             {{ cost.totalCost | money }}
           </span>
-        } @else {
+        } @else if (store.isCalculatingCost()) {
           <mat-spinner diameter="20" />
+        } @else {
+          <span class="text-slate-500">{{ this.makeMoney(0) | money }}</span>
         }
       </div>
 
@@ -74,4 +73,5 @@ export class RentalCostFooterComponent {
 
   readonly nextRequested = output<void>();
   readonly saveDraftRequested = output<void>();
+  protected readonly makeMoney = makeMoney;
 }

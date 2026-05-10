@@ -1,4 +1,4 @@
-import { InjectionToken } from '@angular/core';
+import { InjectionToken, Provider } from '@angular/core';
 
 export const DURATION_SNAP_POINTS = [30, 60, 120, 240, 480, 1440, 2880] as const;
 
@@ -15,3 +15,8 @@ export function snapToNearest(value: number): number {
     Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev,
   );
 }
+
+export const durationSnapPointProviders: Provider[] = [
+  { provide: DURATION_SNAP_POINTS_TOKEN, useValue: DURATION_SNAP_POINTS },
+  { provide: SNAP_TO_NEAREST_TOKEN, useValue: snapToNearest },
+];

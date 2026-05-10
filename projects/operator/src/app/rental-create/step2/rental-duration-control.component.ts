@@ -2,11 +2,16 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Labels, RentalStore } from '@bikerental/shared';
 import { DurationSliderComponent } from './duration-slider.component';
 import { DurationInputComponent } from './duration-input.component';
-import { DURATION_SNAP_POINTS_TOKEN, SNAP_TO_NEAREST_TOKEN } from '../duration-snap-point.provider';
+import {
+  DURATION_SNAP_POINTS_TOKEN,
+  durationSnapPointProviders,
+  SNAP_TO_NEAREST_TOKEN,
+} from '../duration-snap-point.provider';
 
 @Component({
   selector: 'app-rental-duration-control',
   standalone: true,
+  providers: durationSnapPointProviders,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DurationSliderComponent, DurationInputComponent],
   template: `

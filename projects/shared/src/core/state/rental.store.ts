@@ -43,6 +43,7 @@ export class RentalStore {
 
   // Async / loading state
   private readonly _costEstimate = signal<RentalCostEstimate | null>(null);
+  private readonly _isCalculatingCost = signal<boolean>(false);
   private readonly _isSaving = signal<boolean>(false);
   private readonly _isActivating = signal<boolean>(false);
   private readonly _isLoading = signal<boolean>(false);
@@ -55,6 +56,7 @@ export class RentalStore {
   readonly specialPriceEnabled = computed(() => this._specialPriceEnabled());
   readonly draft = computed(() => this._draft());
   readonly costEstimate = computed(() => this._costEstimate());
+  readonly isCalculatingCost = computed(() => this._isCalculatingCost());
   readonly isSaving = computed(() => this._isSaving());
   readonly isActivating = computed(() => this._isActivating());
   readonly isLoading = computed(() => this._isLoading());
@@ -112,12 +114,14 @@ export class RentalStore {
       .pipe(
         switchMap((inputs) => {
           if (inputs.items.length === 0) {
+            this._isCalculatingCost.set(false);
             return of(null);
           }
           return of(inputs).pipe(
             debounceTime(300),
-            switchMap((debounced) =>
-              this.tariffsService
+            switchMap((debounced) => {
+              this._isCalculatingCost.set(true);
+              return this.tariffsService
                 .calculateCost(
                   RentalMapper.toCostCalculationRequest(
                     {
@@ -132,8 +136,9 @@ export class RentalStore {
                 .pipe(
                   map((response) => RentalMapper.fromCostResponse(response)),
                   catchError(() => of(null)),
-                ),
-            ),
+                  finalize(() => this._isCalculatingCost.set(false)),
+                );
+            }),
           );
         }),
         takeUntilDestroyed(this.destroyRef),
