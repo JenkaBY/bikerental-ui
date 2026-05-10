@@ -84,6 +84,17 @@ export class RentalStore {
     return balance !== null && balance.amount >= 0;
   });
 
+  readonly isProjectedBalanceNegative = computed(() => {
+    const balance = this.projectedBalance();
+    return balance !== null && balance.amount < 0;
+  });
+
+  readonly balanceShortfall = computed(() => {
+    const balance = this.projectedBalance();
+    if (!balance) return null;
+    return { amount: Math.abs(balance.amount), currency: balance.currency };
+  });
+
   private readonly _costInputs = computed(() => {
     const draft = this._draft();
     return {
@@ -276,7 +287,7 @@ export class RentalStore {
       operations: [
         { op: 'replace', path: '/customerId', value: draft.customerId },
         { op: 'replace', path: '/equipmentIds', value: draft.equipmentIds },
-        { op: 'replace', path: '/duration', value: draft.durationMinutes },
+        { op: 'replace', path: '/duration', value: draft.durationMinutes.toString() },
       ],
     };
     return this.rentalsService.updateRental(id, patchRequest).pipe(map(() => undefined as void));

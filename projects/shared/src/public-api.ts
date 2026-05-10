@@ -71,6 +71,8 @@ export * from './shared/constant/labels';
 // Shared UI — pipes
 export * from './shared/pipes/truncate.pipe';
 export * from './shared/pipes/money.pipe';
+export * from './shared/pipes/duration.pipe';
+export * from './shared/directives/phone-characters-only.directive';
 
 // Shared UI — utilities
 export * from './shared/utils/date.util';

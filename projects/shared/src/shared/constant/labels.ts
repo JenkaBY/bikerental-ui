@@ -127,6 +127,7 @@ export class Labels {
 
   static readonly CustomerProfileTabLabel = $localize`Profile`;
   static readonly CustomerPhoneLabel = $localize`Phone`;
+  static readonly PhoneFormatHint = $localize`Example: digits only, e.g. +375291234567`;
   static readonly CustomerFirstNameLabel = $localize`First name`;
   static readonly CustomerLastNameLabel = $localize`Last name`;
   static readonly CustomerEmailLabel = $localize`Email`;
@@ -204,4 +205,14 @@ export class Labels {
   static readonly Next = $localize`Next`;
   static readonly DraftSaved = $localize`Draft saved`;
   static readonly NoEquipmentSelected = $localize`Add at least one item to proceed`;
+
+  static readonly StartRental = $localize`Start Rental`;
+  static readonly RentalStarted = $localize`Rental started`;
+  static readonly RentalStartError = $localize`Failed to start rental. Please try again.`;
+  static readonly Confirmation = $localize`Confirmation`;
+  static readonly Back = $localize`Back`;
+  static readonly TopUpBalance = $localize`Top Up Balance`;
+  static readonly RentalSummary = $localize`Rental Summary`;
+  static readonly BalanceShortfall = $localize`Shortfall`;
+  static readonly CustomerName = $localize`Customer`;
 }

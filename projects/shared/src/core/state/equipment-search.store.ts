@@ -32,7 +32,7 @@ export class EquipmentSearchStore {
     stream: ({ params: { query } }) => {
       if (!query) return of([]);
       return this.equipmentService
-        .searchEquipments({ size: 20 }, 'available', undefined, query)
+        .searchEquipments({ size: 20 }, 'AVAILABLE', undefined, query)
         .pipe(
           map((page) => {
             const types = this.equipmentTypeStore.typesForEquipment();
