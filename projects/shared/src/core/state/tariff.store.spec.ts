@@ -231,3 +231,131 @@ describe('TariffStore', () => {
     expect(store.saving()).toBe(false);
   });
 });
+
+describe('TariffStore — resolveSpecialTariff', () => {
+  const specialEquipmentType: EquipmentType = {
+    slug: 'special-bike',
+    name: 'Special Bike',
+    description: 'Special',
+    isForSpecialTariff: true,
+  };
+
+  const regularEquipmentType: EquipmentType = {
+    slug: 'regular-bike',
+    name: 'Regular Bike',
+    description: 'Regular',
+    isForSpecialTariff: false,
+  };
+
+  const makeService = (overrides?: Partial<typeof TariffsService.prototype>) => ({
+    getAllTariffs: vi.fn(() => of({ items: [], totalItems: 0 })),
+    getActiveTariffs: vi.fn(() =>
+      of([]),
+    ) as unknown as (typeof TariffsService.prototype)['getActiveTariffs'],
+    calculateCost: vi.fn(),
+    createTariff: vi.fn(),
+    updateTariff: vi.fn(),
+    activateTariff: vi.fn(),
+    deactivateTariff: vi.fn(),
+    ...(overrides ?? {}),
+  });
+
+  const makeEquipmentTypeStore = (types: EquipmentType[]) => ({
+    types: vi.fn(() => types),
+    typesForEquipment: vi.fn(() => types.filter((t) => !t.isForSpecialTariff)),
+    loading: vi.fn(() => false),
+    load: vi.fn(() => of(undefined)),
+  });
+
+  const makePricingTypeStore = () => ({
+    pricingTypes: vi.fn(() => [
+      pricingType,
+      { slug: 'SPECIAL', title: 'Special', description: 'Special pricing' } as PricingType,
+    ]),
+  });
+
+  let store: TariffStore;
+
+  async function setup(
+    types: EquipmentType[],
+    serviceOverrides?: Partial<typeof TariffsService.prototype>,
+  ) {
+    await TestBed.configureTestingModule({
+      providers: [
+        TariffStore,
+        { provide: TariffsService, useValue: makeService(serviceOverrides) },
+        { provide: EquipmentTypeStore, useValue: makeEquipmentTypeStore(types) },
+        { provide: PricingTypeStore, useValue: makePricingTypeStore() },
+      ],
+    }).compileComponents();
+    store = TestBed.inject(TariffStore);
+  }
+
+  it('should store specialTariffId when a tariff with isSpecial=true is found for the matching equipment type', async () => {
+    await setup([regularEquipmentType, specialEquipmentType], {
+      getActiveTariffs: vi.fn(() =>
+        of([
+          {
+            id: 77,
+            name: 'Special tariff',
+            pricingType: 'SPECIAL',
+            equipmentType: 'special-bike',
+            params: {},
+            validFrom: new Date().toISOString(),
+            status: 'ACTIVE',
+          },
+        ]),
+      ),
+    } as unknown as Partial<typeof TariffsService.prototype>);
+
+    store.resolveSpecialTariff().subscribe();
+
+    expect(store.specialTariffId()).toBe(77);
+  });
+
+  it('should return EMPTY and leave specialTariffId null when no equipment type has isForSpecialTariff=true', async () => {
+    await setup([regularEquipmentType]);
+
+    let emitted = false;
+    store.resolveSpecialTariff().subscribe({ complete: () => (emitted = true) });
+
+    expect(emitted).toBe(true);
+    expect(store.specialTariffId()).toBeNull();
+  });
+
+  it('should return EMPTY and leave specialTariffId null when getActiveTariffs errors', async () => {
+    await setup([specialEquipmentType], {
+      getActiveTariffs: vi.fn(() => throwError(() => new Error('Network error'))),
+    } as unknown as Partial<typeof TariffsService.prototype>);
+
+    store.resolveSpecialTariff().subscribe(
+      () => void 0,
+      () => void 0,
+      () => void 0,
+    );
+
+    expect(store.specialTariffId()).toBeNull();
+  });
+
+  it('should leave specialTariffId null when active tariffs list contains no tariff with isSpecial=true (SPECIAL pricing type)', async () => {
+    await setup([specialEquipmentType], {
+      getActiveTariffs: vi.fn(() =>
+        of([
+          {
+            id: 10,
+            name: 'Flat tariff',
+            pricingType: 'FLAT_HOURLY',
+            equipmentType: 'special-bike',
+            params: {},
+            validFrom: new Date().toISOString(),
+            status: 'ACTIVE',
+          },
+        ]),
+      ),
+    } as unknown as Partial<typeof TariffsService.prototype>);
+
+    store.resolveSpecialTariff().subscribe();
+
+    expect(store.specialTariffId()).toBeNull();
+  });
+});

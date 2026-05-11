@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, finalize, forkJoin, of, tap } from 'rxjs';
+import { catchError, finalize, forkJoin, Observable, of, switchMap, tap } from 'rxjs';
 import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
 import { PricingTypeStore } from './pricing-type.store';
+import { TariffStore } from './tariff.store';
 import { LookupConfig } from '../models/lookup-config.model';
 import { UserStore } from '@store.user.store';
 
@@ -11,11 +12,12 @@ export class LookupInitializerFacade {
   private readonly equipmentStatusStore = inject(EquipmentStatusStore);
   private readonly equipmentTypeStore = inject(EquipmentTypeStore);
   private readonly pricingTypeStore = inject(PricingTypeStore);
+  private readonly tariffStore = inject(TariffStore);
   private readonly userStore = inject(UserStore);
 
-  init(config: LookupConfig) {
+  init(config: LookupConfig): Observable<unknown> {
     console.log('Background initialization started...');
-    const tasks = [];
+    const tasks: Observable<unknown>[] = [];
     // TODO Remove after real Auth will be enabled
     this.userStore.login().subscribe();
 
@@ -52,9 +54,18 @@ export class LookupInitializerFacade {
       );
     }
 
-    return forkJoin(tasks).pipe(
+    const pipeline = forkJoin(tasks).pipe(
       tap(() => console.log('Lookup initialization started...')),
       finalize(() => console.log('Lookup initialization finished.')),
     );
+
+    if (config.loadSpecialTariffId) {
+      return pipeline.pipe(
+        switchMap(() => this.tariffStore.resolveSpecialTariff()),
+        catchError(() => of(null)),
+      );
+    }
+
+    return pipeline;
   }
 }

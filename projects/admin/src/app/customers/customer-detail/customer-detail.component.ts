@@ -60,7 +60,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         @if (this.layoutStore.balance()) {
           <div class="flex gap-2 text-xs shrink-0">
             <span class="px-2 py-1 rounded-full bg-green-100 text-green-800">
-              {{ Labels.CustomerBalanceAvailable }}:
+              {{ Labels.Available }}:
               {{ this.layoutStore.balance()!.available | money }}
             </span>
             <span class="px-2 py-1 rounded-full bg-amber-100 text-amber-800">

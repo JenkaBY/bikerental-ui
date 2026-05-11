@@ -1,4 +1,4 @@
-import type { CustomerRequest, CustomerResponse } from '@api-models';
+import type { CustomerRequest, CustomerResponse, CustomerSearchResponse } from '@api-models';
 import { type Customer, type CustomerWrite } from '@ui-models';
 
 export class CustomerMapper {
@@ -11,6 +11,15 @@ export class CustomerMapper {
       email: r.email,
       birthDate: r.birthDate ? new Date(r.birthDate) : undefined,
       notes: r.comments,
+    };
+  }
+
+  static fromSearchResponse(r: CustomerSearchResponse): Customer {
+    return {
+      id: r.id,
+      phone: r.phone,
+      firstName: r.firstName ?? '',
+      lastName: r.lastName ?? '',
     };
   }
 

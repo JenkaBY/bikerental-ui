@@ -87,7 +87,7 @@ export class Labels {
   static readonly Email = $localize`Email`;
   static readonly BirthDate = $localize`Birth Date`;
   static readonly Comments = $localize`Comments`;
-  static readonly SearchByPhone = $localize`Search by phone (min. 4 digits)`;
+  static readonly SearchByPhone = $localize`Search customer by phone (min. 4 digits)`;
   static readonly CustomersNotFound = $localize`No customers found`;
 
   static readonly RentalHistory = $localize`Rental History`;
@@ -122,11 +122,13 @@ export class Labels {
   static readonly CustomerEmptyState = $localize`No customers found`;
   static readonly CustomerBackButton = $localize`Back to customers`;
 
-  static readonly CustomerBalanceAvailable = $localize`Available`;
+  static readonly Available = $localize`Available`;
+  static readonly BalanceAvailable = $localize`Balance Available`;
   static readonly CustomerBalanceReserved = $localize`Reserved`;
 
   static readonly CustomerProfileTabLabel = $localize`Profile`;
   static readonly CustomerPhoneLabel = $localize`Phone`;
+  static readonly PhoneFormatHint = $localize`Example: digits only, e.g. +375291234567`;
   static readonly CustomerFirstNameLabel = $localize`First name`;
   static readonly CustomerLastNameLabel = $localize`Last name`;
   static readonly CustomerEmailLabel = $localize`Email`;
@@ -145,6 +147,7 @@ export class Labels {
   static readonly CustomerNewRentalComingSoon = $localize`New rental feature coming soon`;
   static readonly CustomerRentalLoadError = $localize`Failed to load rentals`;
   static readonly CustomerRentalDetailLoadError = $localize`Failed to load rental details`;
+  static readonly RentalDraftLoadError = $localize`Failed to load rental draft. Starting fresh.`;
 
   static readonly RentalStatusDraft = $localize`Draft`;
   static readonly RentalStatusActive = $localize`Active`;
@@ -187,4 +190,33 @@ export class Labels {
   static readonly TransactionDateLabel = $localize`Date`;
   static readonly TransactionDescriptionLabel = $localize`Description`;
   static readonly TransactionTypeLabel = $localize`Type`;
+
+  static readonly Duration = $localize`Duration`;
+  static readonly DurationMinutes = $localize`Duration (min)`;
+  static readonly MinuteShort = $localize`min`;
+  static readonly HourShort = $localize`h`;
+  static readonly SearchEquipmentPlaceholder = $localize`Search by UID or model...`;
+  static readonly ScanQr = $localize`Scan QR`;
+  static readonly ComingSoon = $localize`Coming soon`;
+  static readonly DiscountPercent = $localize`Discount (%)`;
+  static readonly SpecialPrice = $localize`Special Price`;
+  static readonly SpecialPriceModeLabel = $localize`Special price mode`;
+  static readonly TotalCost = $localize`Total Cost`;
+  static readonly ProjectedBalance = $localize`Balance after payment`;
+  static readonly InsufficientBalance = $localize`Insufficient balance`;
+  static readonly SaveDraft = $localize`Save Draft`;
+  static readonly Next = $localize`Next`;
+  static readonly DraftSaved = $localize`Draft saved`;
+  static readonly NoEquipmentSelected = $localize`Add at least one item to proceed`;
+  static readonly NoAvailableEquipment = $localize`No available equipment`;
+
+  static readonly StartRental = $localize`Start Rental`;
+  static readonly RentalStarted = $localize`Rental started`;
+  static readonly RentalStartError = $localize`Failed to start rental. Please try again.`;
+  static readonly Confirmation = $localize`Confirmation`;
+  static readonly Back = $localize`Back`;
+  static readonly TopUpBalance = $localize`Top Up Balance`;
+  static readonly RentalSummary = $localize`Rental Summary`;
+  static readonly BalanceShortfall = $localize`Shortfall`;
+  static readonly CustomerName = $localize`Customer`;
 }

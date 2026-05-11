@@ -9,3 +9,4 @@ export * from './rental.model';
 export * from './transaction.model';
 export * from './user-profile.model';
 export * from './user-preferences.model';
+export * from './rental-create.model';

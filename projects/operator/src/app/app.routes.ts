@@ -13,7 +13,7 @@ export const routes: Routes = [
           import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
       {
-        path: 'rental/new',
+        path: 'rentals/new',
         loadComponent: () =>
           import('./rental-create/rental-create.component').then((m) => m.RentalCreateComponent),
       },

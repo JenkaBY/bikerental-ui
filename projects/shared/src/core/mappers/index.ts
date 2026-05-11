@@ -11,3 +11,4 @@ export * from './balance.mapper';
 export * from './rental.mapper';
 export * from './customer-finance.mapper';
 export * from './user-profile.mapper';
+export * from './equipment-search-item.mapper';

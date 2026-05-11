@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { RentalSummaryResponse } from '@api-models';
+import type { RentalWrite } from '@ui-models';
 import { RentalMapper } from './rental.mapper';
 import { makeMoney } from './money.mapper';
 
@@ -34,5 +35,59 @@ describe('RentalMapper', () => {
     expect(out.expectedReturnAt).toBeUndefined();
     expect(out.equipmentIds).toEqual([]);
     expect(out.estimatedCost).toEqual(makeMoney(0));
+  });
+});
+
+describe('RentalMapper.toCreateRequest', () => {
+  it('maps all required fields and omits undefined optional fields (Scenario 1)', () => {
+    const draft: RentalWrite = {
+      customerId: 'uuid-1',
+      equipmentIds: [10, 20],
+      durationMinutes: 120,
+      discountPercent: 10,
+      operatorId: 'op-1',
+    };
+
+    const result = RentalMapper.toCreateRequest(draft);
+
+    expect(result.customerId).toBe('uuid-1');
+    expect(result.equipmentIds).toEqual([10, 20]);
+    expect(result.duration).toBe(120);
+    expect(result.discountPercent).toBe(10);
+    expect(result.operatorId).toBe('op-1');
+    expect(result.specialTariffId).toBeUndefined();
+    expect(result.specialPrice).toBeUndefined();
+  });
+
+  it('includes specialTariffId and specialPrice when set; omits discountPercent (Scenario 2)', () => {
+    const draft: RentalWrite = {
+      customerId: 'uuid-2',
+      equipmentIds: [5],
+      durationMinutes: 60,
+      specialTariffId: 5,
+      specialPrice: 500,
+      operatorId: 'op-2',
+    };
+
+    const result = RentalMapper.toCreateRequest(draft);
+
+    expect(result.specialTariffId).toBe(5);
+    expect(result.specialPrice).toBe(500);
+    expect(result.discountPercent).toBeUndefined();
+  });
+});
+
+describe('RentalMapper.toCostCalculationRequest', () => {
+  it('populates equipments from equipmentTypes array and maps durationMinutes (Scenario 3)', () => {
+    const draft: Partial<RentalWrite> = {
+      durationMinutes: 60,
+      discountPercent: 5,
+    };
+
+    const result = RentalMapper.toCostCalculationRequest(draft, ['bike', 'helmet']);
+
+    expect(result.equipments).toEqual([{ equipmentType: 'bike' }, { equipmentType: 'helmet' }]);
+    expect(result.plannedDurationMinutes).toBe(60);
+    expect(result.discountPercent).toBe(5);
   });
 });

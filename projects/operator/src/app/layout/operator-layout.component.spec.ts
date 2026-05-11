@@ -54,4 +54,11 @@ describe('OperatorLayoutComponent', () => {
     const host = fixture.nativeElement as HTMLElement;
     expect(host.classList).toContain('h-screen');
   });
+
+  it('should have the "New Rental" bottom nav link pointing to rentals/new', () => {
+    const links: NodeListOf<HTMLAnchorElement> = fixture.nativeElement.querySelectorAll('a');
+    const newRentalLink = Array.from(links).find((a) => a.textContent?.includes('New Rental'));
+    expect(newRentalLink).toBeTruthy();
+    expect(newRentalLink!.getAttribute('href')).toContain('rentals/new');
+  });
 });

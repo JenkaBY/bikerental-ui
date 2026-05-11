@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, defaultIfEmpty, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { TariffsService } from '../api/generated';
+import { CostCalculationRequest, CostCalculationResponse, TariffsService } from '../api/generated';
 import { Tariff, TariffWrite } from '../models';
 import { TariffMapper } from '../mappers';
 import { EquipmentTypeStore } from './equipment-type.store';
@@ -20,12 +20,15 @@ export class TariffStore {
   private readonly _pageSize = signal(10);
   private readonly _totalItems = signal(0);
 
+  private readonly _specialTariffId = signal<number | null>(null);
+
   readonly tariffs = computed(() => this._tariffs());
   readonly loading = computed(() => this._loading());
   readonly saving = computed(() => this._saving());
   readonly currentPage = computed(() => this._currentPage());
   readonly pageSize = computed(() => this._pageSize());
   readonly totalItems = computed(() => this._totalItems());
+  readonly specialTariffId = computed(() => this._specialTariffId());
 
   load(): Observable<void> {
     this._loading.set(true);
@@ -115,5 +118,28 @@ export class TariffStore {
       }),
       finalize(() => this._saving.set(false)),
     );
+  }
+
+  resolveSpecialTariff(): Observable<void> {
+    const specialType = this.equipmentTypeStore.types().find((t) => t.isForSpecialTariff);
+    if (!specialType) {
+      return EMPTY;
+    }
+    const equipmentTypes = this.equipmentTypeStore.types();
+    const pricingTypes = this.pricingTypeStore.pricingTypes();
+    return this.service.getActiveTariffs(specialType.slug).pipe(
+      tap((responses) => {
+        const specialTariff = responses
+          .map((r) => TariffMapper.fromResponse(r, equipmentTypes, pricingTypes))
+          .find((t) => t.isSpecial);
+        this._specialTariffId.set(specialTariff?.id ?? null);
+      }),
+      map(() => undefined),
+      catchError(() => EMPTY),
+    );
+  }
+
+  calculateCost(request: CostCalculationRequest): Observable<CostCalculationResponse> {
+    return this.service.calculateCost(request);
   }
 }
