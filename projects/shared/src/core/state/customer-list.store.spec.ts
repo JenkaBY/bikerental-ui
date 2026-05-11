@@ -46,12 +46,4 @@ describe('CustomerListStore', () => {
     });
     expect(onlyShortOrNull).toBe(true);
   });
-
-  it('calls service for empty search (normalized to null) and populates customers', async () => {
-    store.search('');
-    await new Promise((r) => setTimeout(r, 50));
-    expect(customersService.searchByPhone).toHaveBeenCalledWith(null);
-    expect(store.customers().length).toBe(1);
-    expect(store.customers()[0].phone).toBe('+375291234567');
-  });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { CostCalculationResponse, RentalSummaryResponse } from '@api-models';
+import type { RentalSummaryResponse } from '@api-models';
 import type { RentalWrite } from '@ui-models';
 import { RentalMapper } from './rental.mapper';
 import { makeMoney } from './money.mapper';
@@ -89,53 +89,5 @@ describe('RentalMapper.toCostCalculationRequest', () => {
     expect(result.equipments).toEqual([{ equipmentType: 'bike' }, { equipmentType: 'helmet' }]);
     expect(result.plannedDurationMinutes).toBe(60);
     expect(result.discountPercent).toBe(5);
-  });
-});
-
-describe('RentalMapper.fromCostResponse', () => {
-  it('flattens discount and maps all fields from CostCalculationResponse (Scenario 5)', () => {
-    const response = {
-      subtotal: 200,
-      totalCost: 180,
-      discount: { percent: 10, amount: 20 },
-      specialPricingApplied: false,
-      equipmentBreakdowns: [
-        {
-          equipmentType: 'bike',
-          tariffId: 1,
-          itemCost: 180,
-          tariffName: 'Standard',
-          pricingType: 'PER_MINUTE',
-          billedDurationMinutes: 60,
-          calculationBreakdown: {},
-        },
-      ],
-    } as unknown as CostCalculationResponse;
-
-    const result = RentalMapper.fromCostResponse(response);
-
-    expect(result.subtotal).toBe(200);
-    expect(result.totalCost).toBe(180);
-    expect(result.discountPercent).toBe(10);
-    expect(result.discountAmount).toBe(20);
-    expect(result.specialPricingApplied).toBe(false);
-    expect(result.equipmentBreakdowns).toEqual([
-      { equipmentType: 'bike', tariffId: 1, itemCost: 180 },
-    ]);
-  });
-
-  it('returns undefined discountPercent and discountAmount when no discount object present', () => {
-    const response = {
-      subtotal: 100,
-      totalCost: 100,
-      specialPricingApplied: true,
-      equipmentBreakdowns: [],
-    } as unknown as CostCalculationResponse;
-
-    const result = RentalMapper.fromCostResponse(response);
-
-    expect(result.discountPercent).toBeUndefined();
-    expect(result.discountAmount).toBeUndefined();
-    expect(result.specialPricingApplied).toBe(true);
   });
 });

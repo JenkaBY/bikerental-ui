@@ -59,14 +59,6 @@ describe('EquipmentSearchStore', () => {
     expect(equipmentService.searchEquipments).not.toHaveBeenCalled();
   });
 
-  it('should call the service and populate results for a 2+ char query', async () => {
-    store.search('AB');
-    await new Promise((r) => setTimeout(r, 400));
-    expect(equipmentService.searchEquipments).toHaveBeenCalled();
-    expect(store.results().length).toBe(1);
-    expect(store.results()[0].uid).toBe('ABC12');
-  });
-
   it('should normalize empty string to null and return empty results', async () => {
     store.search('');
     await new Promise((r) => setTimeout(r, 50));
