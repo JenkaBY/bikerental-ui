@@ -1,6 +1,13 @@
 import { EquipmentType } from './equipment-type.model';
 import { EquipmentStatus } from './equipment-status.model';
 
+export type EquipmentConditionSlug = 'GOOD' | 'MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
+
+export interface EquipmentCondition {
+  slug: EquipmentConditionSlug;
+  name: string;
+}
+
 export interface Equipment {
   id: number;
   serialNumber: string;
@@ -9,7 +16,8 @@ export interface Equipment {
   status: EquipmentStatus;
   model: string;
   commissionedAt?: Date;
-  condition?: string;
+  conditionNotes?: string;
+  condition?: EquipmentCondition;
 }
 
 export interface EquipmentWrite {
@@ -19,7 +27,8 @@ export interface EquipmentWrite {
   statusSlug?: string;
   model?: string;
   commissionedAt?: Date;
-  condition?: string;
+  conditionNotes?: string;
+  conditionSlug?: EquipmentConditionSlug;
 }
 
 export interface EquipmentSearchItem {

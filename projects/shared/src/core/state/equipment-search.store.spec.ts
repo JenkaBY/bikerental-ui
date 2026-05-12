@@ -2,39 +2,39 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { EquipmentSearchStore } from './equipment-search.store';
-import { EquipmentService } from '../api/generated';
+import { RentalsService } from '../api/generated';
 import { EquipmentTypeStore } from './equipment-type.store';
 
-const mockEquipmentResponse = {
+const mockAvailableEquipmentResponse = {
   id: 1,
   uid: 'ABC12',
   model: 'Trek FX3',
-  type: 'bicycle',
-  status: 'available',
+  typeSlug: 'bicycle',
   serialNumber: 'S1',
 };
 
 describe('EquipmentSearchStore', () => {
   let store: EquipmentSearchStore;
 
-  const equipmentService = {
-    searchEquipments: vi.fn(),
+  const rentalsService = {
+    getAvailableEquipments: vi.fn(),
   };
 
   const equipmentTypeStore = {
     types: () => [{ slug: 'bicycle', name: 'Bicycle', isForSpecialTariff: false }],
+    typesForEquipment: () => [{ slug: 'bicycle', name: 'Bicycle', isForSpecialTariff: false }],
   };
 
   beforeEach(() => {
-    equipmentService.searchEquipments.mockReset();
-    equipmentService.searchEquipments.mockReturnValue(
-      of({ items: [mockEquipmentResponse], totalItems: 1 }),
+    rentalsService.getAvailableEquipments.mockReset();
+    rentalsService.getAvailableEquipments.mockReturnValue(
+      of({ items: [mockAvailableEquipmentResponse], totalItems: 1 }),
     );
 
     TestBed.configureTestingModule({
       providers: [
         EquipmentSearchStore,
-        { provide: EquipmentService, useValue: equipmentService },
+        { provide: RentalsService, useValue: rentalsService },
         { provide: EquipmentTypeStore, useValue: equipmentTypeStore },
       ],
     });
@@ -50,13 +50,13 @@ describe('EquipmentSearchStore', () => {
   it('should not call the service for a null query', async () => {
     store.search(null);
     await new Promise((r) => setTimeout(r, 50));
-    expect(equipmentService.searchEquipments).not.toHaveBeenCalled();
+    expect(rentalsService.getAvailableEquipments).not.toHaveBeenCalled();
   });
 
   it('should not call the service for a query shorter than 2 chars', async () => {
     store.search('A');
     await new Promise((r) => setTimeout(r, 400));
-    expect(equipmentService.searchEquipments).not.toHaveBeenCalled();
+    expect(rentalsService.getAvailableEquipments).not.toHaveBeenCalled();
   });
 
   it('should normalize empty string to null and return empty results', async () => {

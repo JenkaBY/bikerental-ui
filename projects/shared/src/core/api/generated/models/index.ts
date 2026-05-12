@@ -72,6 +72,8 @@ export interface EquipmentRequest {
   commissionedAt?: Date;
   /** Condition description */
   condition?: string;
+  /** Condition slug */
+  conditionSlug?: 'GOOD' | 'MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
 }
 
 /** Equipment record */
@@ -90,7 +92,9 @@ export interface EquipmentResponse {
   model: string;
   /** Commissioned date */
   commissionedAt?: Date;
-  /** Condition */
+  /** Condition notes */
+  conditionNotes?: string;
+  /** Physical condition slug */
   condition?: string;
 }
 
@@ -391,7 +395,7 @@ export interface EquipmentStatusRequest {
 }
 
 export interface RentalPatchOperation {
-  op: 'replace' | 'add';
+  op: 'replace';
   path: string;
   value?: any;
 }
@@ -460,6 +464,26 @@ export interface RentalSummaryResponse {
   expectedReturnAt?: Date;
   /** Overdue minutes (null if not overdue) */
   overdueMinutes?: number;
+}
+
+/** Equipment available for a new rental */
+export interface AvailableEquipmentResponse {
+  /** Equipment ID */
+  id?: number;
+  /** Equipment UID */
+  uid?: string;
+  /** Serial number */
+  serialNumber?: string;
+  /** Equipment type slug */
+  typeSlug?: string;
+  /** Model name */
+  model?: string;
+}
+
+export interface PageAvailableEquipmentResponse {
+  items?: Array<AvailableEquipmentResponse>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
 }
 
 export interface TransactionHistoryFilterParams {
