@@ -23,6 +23,7 @@ import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
   CreateRentalRequest,
   Pageable,
+  PageAvailableEquipmentResponse,
   PageRentalSummaryResponse,
   RentalResponse,
   RentalReturnResponse,
@@ -321,5 +322,59 @@ export class RentalsService {
     };
 
     return this.httpClient.patch(url, rentalUpdateJsonPatchRequest, requestOptions);
+  }
+
+  getAvailableEquipments(
+    arg1: Pageable,
+    q?: string,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PageAvailableEquipmentResponse>;
+  getAvailableEquipments(
+    arg1: Pageable,
+    q?: string,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PageAvailableEquipmentResponse>>;
+  getAvailableEquipments(
+    arg1: Pageable,
+    q?: string,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PageAvailableEquipmentResponse>>;
+  /** Returns equipment that is in GOOD condition and not currently occupied by an active or assigned rental. Pagination is best-effort: the returned page may contain fewer items than the requested size. */
+  getAvailableEquipments(
+    arg1: Pageable,
+    q?: string,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/available-equipments`;
+
+    let params = new HttpParams();
+    if (q != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, q, 'q');
+    }
+    if (arg1 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
   }
 }

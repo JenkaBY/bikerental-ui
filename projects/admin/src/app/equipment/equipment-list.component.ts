@@ -118,21 +118,20 @@ import { EquipmentStatusStore } from '@store.equipment-status.store';
 
           <ng-container matColumnDef="commissionedAt">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.CommissionedAt }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.commissionedAt }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.commissionedAt | date }}</td>
           </ng-container>
 
           <ng-container matColumnDef="condition">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.Condition }}</th>
             <td mat-cell *matCellDef="let row">
               <span
-                class="inline-block truncate"
-                [matTooltip]="row.condition"
-                [matTooltipDisabled]="!row.condition"
+                [matTooltip]="row.conditionNotes"
+                [matTooltipDisabled]="!row.conditionNotes"
                 matTooltipPosition="above"
                 matTooltipShowDelay="250"
-                [attr.aria-label]="row.condition"
+                [attr.aria-label]="row.condition?.name ?? ''"
               >
-                {{ row.condition | truncate: 20 }}
+                {{ row.condition?.name ?? '' }}
               </span>
             </td>
           </ng-container>

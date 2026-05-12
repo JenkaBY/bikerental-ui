@@ -12,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CancelButtonComponent,
+  EQUIPMENT_CONDITIONS,
   EquipmentTypeDropdownComponent,
   FormErrorMessages,
   Labels,
@@ -19,7 +20,13 @@ import {
   SaveButtonComponent,
 } from '@bikerental/shared';
 import { formatDate } from '@angular/common';
-import { Equipment, EquipmentStatus, EquipmentType, EquipmentWrite } from '@ui-models';
+import {
+  Equipment,
+  EquipmentConditionSlug,
+  EquipmentStatus,
+  EquipmentType,
+  EquipmentWrite,
+} from '@ui-models';
 import { EquipmentStore } from '@store.equipment.store';
 
 export interface EquipmentDialogData {
@@ -80,6 +87,31 @@ export interface EquipmentDialogData {
         ></app-equipment-type-dropdown>
 
         <mat-form-field appearance="outline" class="w-full">
+          <mat-label>{{ labels.Condition }}</mat-label>
+          <mat-select formControlName="conditionSlug">
+            @for (cond of conditionOptions; track cond.slug) {
+              <mat-option [value]="cond.slug">{{ cond.name }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.conditionSlug.hasError('required')) {
+            <mat-error>{{ errors.conditionIsRequired }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>{{ labels.Model }}</mat-label>
+          <input matInput formControlName="model" maxlength="200" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>{{ labels.CommissionedAt }}</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="commissionedAt" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-hint>{{ labels.FormatDate }} {{ dateFormatHint }}</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
           <mat-label>
             @if (data.equipment) {
               <span
@@ -105,22 +137,9 @@ export interface EquipmentDialogData {
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>{{ labels.Model }}</mat-label>
-          <input matInput formControlName="model" maxlength="200" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>{{ labels.CommissionedAt }}</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="commissionedAt" />
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-          <mat-hint>{{ labels.FormatDate }} {{ dateFormatHint }}</mat-hint>
-        </mat-form-field>
-
         <mat-form-field appearance="outline" class="w-full col-span-2">
-          <mat-label>{{ labels.Condition }}</mat-label>
-          <textarea matInput formControlName="condition" rows="3"></textarea>
+          <mat-label>{{ labels.ConditionNotes }}</mat-label>
+          <textarea matInput formControlName="conditionNotes" rows="3"></textarea>
         </mat-form-field>
       </form>
     </mat-dialog-content>
@@ -160,8 +179,14 @@ export class EquipmentDialogComponent implements OnInit {
       value: parseDate((this.data?.equipment?.commissionedAt as unknown as string) ?? null),
       disabled: !this.data?.equipment?.id,
     }),
-    condition: new FormControl(this.data?.equipment?.condition ?? ''),
+    conditionSlug: new FormControl<EquipmentConditionSlug>(
+      this.data?.equipment?.condition?.slug ?? ('GOOD' as EquipmentConditionSlug),
+      [Validators.required],
+    ),
+    conditionNotes: new FormControl(this.data?.equipment?.conditionNotes ?? ''),
   });
+
+  readonly conditionOptions = EQUIPMENT_CONDITIONS;
 
   get statusOptions(): EquipmentStatus[] {
     const currentStatus = this.data?.equipment?.status;
@@ -209,19 +234,17 @@ export class EquipmentDialogComponent implements OnInit {
       return;
     }
 
-    const write = this.form.getRawValue() as EquipmentWrite;
-
-    // const write: EquipmentWrite = {
-    //   serialNumber: raw.serialNumber ?? '',
-    //   uid: raw.uid || undefined,
-    //   typeSlug: raw.typeSlug || undefined,
-    //   statusSlug: raw.statusSlug || undefined,
-    //   model: raw.model || undefined,
-    //   commissionedAt: raw.commissionedAt
-    //     ? (toIsoDate(raw.commissionedAt) as unknown as Date)
-    //     : undefined,
-    //   condition: raw.condition || undefined,
-    // };
+    const raw = this.form.getRawValue();
+    const write: EquipmentWrite = {
+      serialNumber: raw.serialNumber ?? '',
+      uid: raw.uid || undefined,
+      typeSlug: raw.typeSlug || undefined,
+      statusSlug: raw.statusSlug || undefined,
+      model: raw.model || undefined,
+      commissionedAt: raw.commissionedAt ?? undefined,
+      conditionSlug: raw.conditionSlug ?? undefined,
+      conditionNotes: raw.conditionNotes || undefined,
+    };
 
     const op$ = this.data?.equipment?.id
       ? this.store.update(this.data.equipment.id, write)

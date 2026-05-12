@@ -27,7 +27,7 @@ import { RentalDurationControlComponent } from './duration/rental-duration-contr
   ],
   template: `
     <!-- Add padding-bottom equal to footer height so content is not obscured -->
-    <div class="flex flex-col gap-6 pb-36">
+    <div class="flex flex-col">
       <app-rental-customer-panel (topUpRequested)="onTopUpRequested()" />
       <app-rental-duration-control />
       <app-rental-equipment-section />

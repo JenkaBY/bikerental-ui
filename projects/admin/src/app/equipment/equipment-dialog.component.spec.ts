@@ -83,7 +83,8 @@ describe('EquipmentDialogComponent', () => {
       type: { slug: 'bike', name: 'Bike', isForSpecialTariff: false },
       status: { slug: 'available', name: 'Available', allowedTransitions: ['maintenance'] },
       model: 'M',
-      condition: 'ok',
+      condition: { slug: 'GOOD', name: 'Good' },
+      conditionNotes: 'ok',
     };
 
     const statuses: EquipmentStatus[] = [

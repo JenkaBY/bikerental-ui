@@ -1,5 +1,6 @@
 import { EquipmentRequest, EquipmentResponse } from '@api-models';
 import { Equipment, EquipmentStatus, EquipmentType, EquipmentWrite } from '../models';
+import { EquipmentConditionMapper } from './equipment-condition.mapper';
 
 export class EquipmentMapper {
   static fromResponse(
@@ -25,7 +26,8 @@ export class EquipmentMapper {
       commissionedAt: r.commissionedAt
         ? new Date(r.commissionedAt as unknown as string)
         : undefined,
-      condition: r.condition,
+      conditionNotes: r.conditionNotes,
+      condition: EquipmentConditionMapper.fromSlugString(r.condition),
     };
   }
 
@@ -37,7 +39,8 @@ export class EquipmentMapper {
       statusSlug: w.statusSlug,
       model: w.model,
       commissionedAt: w.commissionedAt,
-      condition: w.condition,
+      condition: w.conditionNotes,
+      conditionSlug: w.conditionSlug,
     };
   }
 }
