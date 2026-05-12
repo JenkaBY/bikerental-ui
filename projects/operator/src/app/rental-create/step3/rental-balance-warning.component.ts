@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Labels, MoneyPipe, RentalStore } from '@bikerental/shared';
+import { Labels, MoneyPipe, RentalStore, TopUpButtonComponent } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-balance-warning',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatIconModule, MoneyPipe],
+  imports: [MatButtonModule, MatIconModule, MoneyPipe, TopUpButtonComponent],
   template: `
     @if (!store.isBalanceSufficient()) {
       <div class="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
@@ -17,9 +17,7 @@ import { Labels, MoneyPipe, RentalStore } from '@bikerental/shared';
         <p class="text-sm text-red-600">
           {{ Labels.BalanceShortfall }}: {{ store.balanceShortfall() | money }}
         </p>
-        <button mat-stroked-button type="button" (click)="topUpRequested.emit()">
-          {{ Labels.TopUpBalance }}
-        </button>
+        <app-top-up-button (confirm)="topUpRequested.emit()"></app-top-up-button>
       </div>
     }
   `,

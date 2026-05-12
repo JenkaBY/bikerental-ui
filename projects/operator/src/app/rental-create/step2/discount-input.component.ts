@@ -3,12 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Labels } from '@bikerental/shared';
+import { MaxDecimalsDirective } from '../../../../../shared/src/shared/directives/max-decimals.directive';
 
 @Component({
   selector: 'app-discount-input',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MaxDecimalsDirective],
   template: `
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>{{ Labels.DiscountPercent }}</mat-label>
@@ -17,12 +18,15 @@ import { Labels } from '@bikerental/shared';
         type="number"
         min="0"
         max="100"
+        step="1"
         [disabled]="disabled()"
         [ngModel]="rawValue()"
         (ngModelChange)="rawValue.set($event)"
+        [appMaxDecimals]="0"
         (blur)="commit()"
         (keydown.enter)="commit()"
       />
+      <span matTextSuffix>%</span>
     </mat-form-field>
   `,
 })

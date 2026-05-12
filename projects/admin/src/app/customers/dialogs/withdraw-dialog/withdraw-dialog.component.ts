@@ -54,6 +54,7 @@ interface WithdrawDialogData {
             [max]="data.availableBalance.amount"
             step="0.01"
             formControlName="amount"
+            [appMaxDecimals]="2"
           />
           <mat-hint>
             {{ Labels.WithdrawAvailableHint }}:

@@ -8,6 +8,6 @@ export class MoneyPipe implements PipeTransform {
    */
   transform(value: Money | null | undefined): string {
     if (!value) return '';
-    return `${parseFloat(value.amount.toString())} ${value.currency}`;
+    return `${parseFloat(value.amount.toFixed(2))} ${value.currency}`;
   }
 }

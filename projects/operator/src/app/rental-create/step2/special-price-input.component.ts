@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component, effect, input, output, signal } fro
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Labels } from '@bikerental/shared';
+import { Labels, MaxDecimalsDirective } from '@bikerental/shared';
 
 @Component({
   selector: 'app-special-price-input',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MaxDecimalsDirective],
   template: `
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>{{ Labels.SpecialPrice }}</mat-label>
@@ -17,6 +17,7 @@ import { Labels } from '@bikerental/shared';
         type="number"
         min="0.01"
         step="0.01"
+        [appMaxDecimals]="2"
         [disabled]="disabled()"
         [ngModel]="rawValue()"
         (ngModelChange)="rawValue.set($event)"

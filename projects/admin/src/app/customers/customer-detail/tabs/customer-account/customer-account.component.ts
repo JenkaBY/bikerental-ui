@@ -9,10 +9,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Labels, MoneyPipe, TopUpButtonComponent } from '@bikerental/shared';
+import { Labels, MoneyPipe, TopUpButtonComponent, TopUpDialogComponent } from '@bikerental/shared';
 import { CustomerLayoutStore } from '../../customer-layout.store';
 import { CustomerFinanceStore } from '@store.customer-finance.store';
-import { TopUpDialogComponent } from '../../../dialogs/top-up-dialog/top-up-dialog.component';
 import { WithdrawDialogComponent } from '../../../dialogs/withdraw-dialog/withdraw-dialog.component';
 import { CustomerTransactionsStore } from '../../customer-transactions.store';
 
