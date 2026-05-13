@@ -58,6 +58,7 @@ export * from './shared/components/health-indicator/health-tooltip.component';
 export * from './shared/components/layout-mode-toggle/layout-mode-toggle.component';
 export * from './shared/components/logout-button/logout-button.component';
 export * from './shared/components/save-button/save-button.component';
+export * from './shared/components/top-up-dialog/top-up-dialog.component';
 export * from './shared/components/shell/shell.component';
 export * from './shared/components/sidebar/sidebar.component';
 export * from './shared/components/sidebar-nav-item/nav-item.model';
@@ -77,6 +78,7 @@ export * from './shared/pipes/money.pipe';
 export * from './shared/pipes/duration.pipe';
 export * from './shared/pipes/duration-formatter';
 export * from './shared/directives/phone-characters-only.directive';
+export * from './shared/directives/max-decimals.directive';
 
 // Shared UI — utilities
 export * from './shared/utils/date.util';
@@ -86,5 +88,6 @@ export * from './shared/validators/form-error-messages';
 export * from './shared/validators/slug-validators';
 export * from './shared/validators/phone-validators';
 export * from './shared/validators/date-validators';
+export * from './shared/validators/number-validators';
 
 export * from './environments/environment';

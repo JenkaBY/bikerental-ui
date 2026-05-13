@@ -7,18 +7,16 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import {
-  CancelButtonComponent,
-  Labels,
-  PaymentMethodSelectComponent,
-  UserStore,
-} from '@bikerental/shared';
-import { CustomerFinanceStore } from '@store.customer-finance.store';
 import { v4 as uuid } from 'uuid';
-
-import type { PaymentMethod } from '@ui-models';
+import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
+import { UserStore } from '../../../core/state/user.store';
+import type { PaymentMethod } from '../../../core/models/transaction.model';
+import { Labels } from '../../constant/labels';
+import { CancelButtonComponent } from '../cancel-button/cancel-button.component';
+import { PaymentMethodSelectComponent } from '../payment-method/payment-method.component';
+import { maxDecimalPlacesValidator } from '../../validators/number-validators';
+import { MaxDecimalsDirective } from '../../directives/max-decimals.directive';
 
 interface TopUpDialogData {
   customerId: string;
@@ -34,10 +32,10 @@ interface TopUpDialogData {
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     MatSnackBarModule,
     PaymentMethodSelectComponent,
     CancelButtonComponent,
+    MaxDecimalsDirective,
   ],
   template: `
     <h2 mat-dialog-title>{{ Labels.TopUpDialogTitle }}</h2>
@@ -46,7 +44,14 @@ interface TopUpDialogData {
       <form [formGroup]="form" class="flex flex-col gap-3 pt-2">
         <mat-form-field appearance="outline">
           <mat-label>{{ Labels.TopUpAmountLabel }}</mat-label>
-          <input matInput type="number" min="0.01" step="0.01" formControlName="amount" />
+          <input
+            matInput
+            type="number"
+            min="0.01"
+            step="0.01"
+            formControlName="amount"
+            [appMaxDecimals]="2"
+          />
         </mat-form-field>
 
         <app-payment-method-select formControlName="paymentMethod"></app-payment-method-select>
@@ -75,7 +80,11 @@ export class TopUpDialogComponent {
   protected errorShown = false;
 
   public readonly form = new FormGroup({
-    amount: new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]),
+    amount: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0.01),
+      maxDecimalPlacesValidator(2),
+    ]),
     paymentMethod: new FormControl<PaymentMethod>('CASH', [Validators.required]),
   });
 
@@ -92,8 +101,7 @@ export class TopUpDialogComponent {
         customerId: this.data.customerId,
         amount: amount!,
         paymentMethod: paymentMethod as PaymentMethod,
-        // TODO remove hardcoded value after authorization is done
-        operatorId: this.userStore.currentUser()?.id || 'CALL_DEVELOPER_IF_SEE_IT',
+        operatorId: this.userStore.currentUser()?.id,
       })
       .pipe(
         takeUntilDestroyed(this.destroyRef),

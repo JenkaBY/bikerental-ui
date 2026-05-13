@@ -11,6 +11,7 @@ import {
   CancelButtonComponent,
   FormErrorMessages,
   Labels,
+  MaxDecimalsDirective,
   Money,
   MoneyPipe,
   PaymentMethodSelectComponent,
@@ -39,6 +40,7 @@ interface WithdrawDialogData {
     MatSelectModule,
     MoneyPipe,
     PaymentMethodSelectComponent,
+    MaxDecimalsDirective,
   ],
   template: `
     <h2 mat-dialog-title>{{ Labels.WithdrawDialogTitle }}</h2>
@@ -54,6 +56,7 @@ interface WithdrawDialogData {
             [max]="data.availableBalance.amount"
             step="0.01"
             formControlName="amount"
+            [appMaxDecimals]="2"
           />
           <mat-hint>
             {{ Labels.WithdrawAvailableHint }}:

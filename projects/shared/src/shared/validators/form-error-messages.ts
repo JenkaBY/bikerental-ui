@@ -22,4 +22,5 @@ export class FormErrorMessages {
   static readonly emailInvalid = $localize`Enter a valid email address`;
   static readonly birthDateFuture = $localize`Birth date must be in the past`;
   static readonly withdrawAmountExceedsAvailable = $localize`Amount exceeds available balance`;
+  static readonly maxDecimalPlaces = $localize`Maximum 2 decimal places allowed`;
 }

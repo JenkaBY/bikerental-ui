@@ -1,11 +1,19 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  output,
+  ViewContainerRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { catchError, of, tap } from 'rxjs';
-import { Labels, RentalStore } from '@bikerental/shared';
+import { Labels, RentalStore, TopUpDialogComponent } from '@bikerental/shared';
 import { RentalActivateButtonComponent } from './rental-activate-button.component';
 import { RentalBalanceWarningComponent } from './rental-balance-warning.component';
 import { RentalSummaryComponent } from './rental-summary.component';
@@ -56,8 +64,10 @@ export class RentalStep3Component {
   protected readonly store = inject(RentalStore);
 
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly stepBack = output<void>();
 
@@ -80,6 +90,19 @@ export class RentalStep3Component {
   }
 
   protected onTopUpRequested(): void {
-    // TODO (FR-07): Open TopUpDialogComponent and refresh customer balance after successful top-up.
+    const customerId = this.store.customer()?.id;
+    if (!customerId) return;
+
+    this.dialog
+      .open(TopUpDialogComponent, {
+        data: { customerId },
+        disableClose: true,
+        viewContainerRef: this.viewContainerRef,
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result === true) this.store.refreshCustomerBalance();
+      });
   }
 }
