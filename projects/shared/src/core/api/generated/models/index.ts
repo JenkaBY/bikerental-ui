@@ -56,6 +56,66 @@ export interface ProblemDetail {
   properties?: Record<string, any>;
 }
 
+/** Request body for creating a rental via Fast Path */
+export interface RentalRequest {
+  /** Customer UUID */
+  customerId: string;
+  /** List of Equipment IDs to rent (preferred) */
+  equipmentIds: Array<number>;
+  /** Planned rental duration in minutes */
+  duration: number;
+  /** Operator identifier */
+  operatorId: string;
+  /** Id of a SPECIAL-type tariff; mutually exclusive with discountPercent */
+  specialTariffId?: number;
+  /** Operator-provided fixed total; required when specialTariffId is set */
+  specialPrice?: number;
+  /** Discount percentage applied to the non-special subtotal (0-100); ignored when specialTariffId is set */
+  discountPercent?: number;
+}
+
+/** Equipment item within rental */
+export interface EquipmentItemResponse {
+  /** Equipment ID */
+  equipmentId: number;
+  /** Equipment UID */
+  equipmentUid?: string;
+  /** Estimated cost for this equipment (optional) */
+  estimatedCost: number;
+  /** Final cost for this equipment (optional) */
+  finalCost?: number;
+  /** Tariff ID */
+  tariffId?: number;
+  /** Status rental equipment */
+  status: string;
+}
+
+/** Full rental details */
+export interface RentalResponse {
+  /** Rental ID */
+  id: number;
+  /** Customer UUID */
+  customerId: string;
+  /** List of equipment items in this rental */
+  equipmentItems: Array<EquipmentItemResponse>;
+  /** Rental status */
+  status: string;
+  /** Rental start time */
+  startedAt: Date;
+  /** Expected return time */
+  expectedReturnAt?: Date;
+  /** Actual return time (null if not returned) */
+  actualReturnAt?: Date;
+  /** Planned duration in minutes */
+  plannedDurationMinutes: number;
+  /** Actual duration in minutes (null until returned) */
+  actualDurationMinutes?: number;
+  /** Estimated rental cost */
+  estimatedCost: number;
+  /** Final rental cost (null until returned) */
+  finalCost?: number;
+}
+
 /** Request body for creating or updating equipment */
 export interface EquipmentRequest {
   /** Unique serial number */
@@ -234,68 +294,6 @@ export interface EquipmentCostBreakdownResponse {
   calculationBreakdown: BreakdownCostDetails;
 }
 
-/** Request body for creating a rental via Fast Path */
-export interface CreateRentalRequest {
-  /** Customer UUID */
-  customerId: string;
-  /** List of Equipment IDs to rent (preferred) */
-  equipmentIds?: Array<number>;
-  /** Planned rental duration in minutes */
-  duration: number;
-  /** Optional tariff ID; auto-selected if not provided */
-  tariffId?: number;
-  /** Operator identifier */
-  operatorId: string;
-  /** ID of a SPECIAL-type V2 tariff; mutually exclusive with discountPercent */
-  specialTariffId?: number;
-  /** Operator-provided fixed total; required when specialTariffId is set */
-  specialPrice?: number;
-  /** Discount percentage applied to the non-special subtotal (0-100); ignored when specialTariffId is set */
-  discountPercent?: number;
-}
-
-/** Equipment item within rental */
-export interface EquipmentItemResponse {
-  /** Equipment ID */
-  equipmentId: number;
-  /** Equipment UID */
-  equipmentUid?: string;
-  /** Estimated cost for this equipment (optional) */
-  estimatedCost: number;
-  /** Final cost for this equipment (optional) */
-  finalCost?: number;
-  /** Tariff ID */
-  tariffId?: number;
-  /** Status rental equipment */
-  status: string;
-}
-
-/** Full rental details */
-export interface RentalResponse {
-  /** Rental ID */
-  id: number;
-  /** Customer UUID */
-  customerId: string;
-  /** List of equipment items in this rental */
-  equipmentItems: Array<EquipmentItemResponse>;
-  /** Rental status */
-  status: string;
-  /** Rental start time */
-  startedAt: Date;
-  /** Expected return time */
-  expectedReturnAt?: Date;
-  /** Actual return time (null if not returned) */
-  actualReturnAt?: Date;
-  /** Planned duration in minutes */
-  plannedDurationMinutes: number;
-  /** Actual duration in minutes (null until returned) */
-  actualDurationMinutes?: number;
-  /** Estimated rental cost */
-  estimatedCost: number;
-  /** Final rental cost (null until returned) */
-  finalCost?: number;
-}
-
 /** Request body for returning rented equipment */
 export interface ReturnEquipmentRequest {
   /** Rental ID */
@@ -394,14 +392,9 @@ export interface EquipmentStatusRequest {
   allowedTransitions?: Array<string>;
 }
 
-export interface RentalPatchOperation {
-  op: 'replace';
-  path: string;
-  value?: any;
-}
-
-export interface RentalUpdateJsonPatchRequest {
-  operations: Array<RentalPatchOperation>;
+export interface RentalLifecycleRequest {
+  status: 'ACTIVE' | 'CANCELLED';
+  operatorId: string;
 }
 
 export interface Pageable {
