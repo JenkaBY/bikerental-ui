@@ -38,7 +38,7 @@ describe('RentalMapper', () => {
   });
 });
 
-describe('RentalMapper.toCreateRequest', () => {
+describe('RentalMapper.toRentalRequest', () => {
   it('maps all required fields and omits undefined optional fields (Scenario 1)', () => {
     const draft: RentalWrite = {
       customerId: 'uuid-1',
@@ -48,7 +48,7 @@ describe('RentalMapper.toCreateRequest', () => {
       operatorId: 'op-1',
     };
 
-    const result = RentalMapper.toCreateRequest(draft);
+    const result = RentalMapper.toRentalRequest(draft);
 
     expect(result.customerId).toBe('uuid-1');
     expect(result.equipmentIds).toEqual([10, 20]);
@@ -69,7 +69,7 @@ describe('RentalMapper.toCreateRequest', () => {
       operatorId: 'op-2',
     };
 
-    const result = RentalMapper.toCreateRequest(draft);
+    const result = RentalMapper.toRentalRequest(draft);
 
     expect(result.specialTariffId).toBe(5);
     expect(result.specialPrice).toBe(500);
