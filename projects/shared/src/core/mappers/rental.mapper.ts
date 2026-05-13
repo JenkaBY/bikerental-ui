@@ -1,7 +1,7 @@
 import type {
   CostCalculationRequest,
   CostCalculationResponse,
-  CreateRentalRequest,
+  RentalRequest,
   RentalSummaryResponse,
 } from '@api-models';
 import { type CustomerRentalSummary, type RentalCostEstimate, type RentalWrite } from '@ui-models';
@@ -19,7 +19,7 @@ export class RentalMapper {
     };
   }
 
-  static toCreateRequest(draft: RentalWrite): CreateRentalRequest {
+  static toRentalRequest(draft: RentalWrite): RentalRequest {
     return {
       customerId: draft.customerId,
       equipmentIds: draft.equipmentIds,

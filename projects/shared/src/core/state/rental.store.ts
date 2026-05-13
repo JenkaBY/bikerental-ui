@@ -2,7 +2,6 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { RentalsService } from '../api/generated';
-import type { RentalUpdateJsonPatchRequest } from '@api-models';
 import type { Customer, EquipmentSearchItem, RentalWrite } from '@ui-models';
 import { makeMoney, RentalMapper } from '../mappers';
 import { CustomerFinanceStore } from './customer-finance.store';
@@ -30,6 +29,7 @@ export class RentalStore {
   private readonly _customer = signal<Customer | null>(null);
   private readonly _equipmentItems = signal<EquipmentSearchItem[]>([]);
   private readonly _specialPriceEnabled = signal<boolean>(false);
+  private readonly _operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
 
   // Single source of truth for all RentalWrite fields
   private readonly _draft = signal<RentalWrite>({ ...DEFAULT_DRAFT });
@@ -37,8 +37,8 @@ export class RentalStore {
   // Async / loading state
   private readonly _isSaving = signal<boolean>(false);
   private readonly _isActivating = signal<boolean>(false);
-  private readonly _isLoading = signal<boolean>(false);
 
+  private readonly _isLoading = signal<boolean>(false);
   // Primary public signals
   readonly id = computed(() => this._id());
   readonly customer = computed(() => this._customer());
@@ -51,7 +51,6 @@ export class RentalStore {
   readonly isSaving = computed(() => this._isSaving());
   readonly isActivating = computed(() => this._isActivating());
   readonly isLoading = computed(() => this._isLoading());
-
   // Convenience computed signals derived from _draft (preserve public API for step components)
   readonly durationMinutes = computed(() => this._draft().durationMinutes);
   readonly discountPercent = computed(() => this._draft().discountPercent ?? null);
@@ -174,28 +173,31 @@ export class RentalStore {
     if (currentId === null) {
       return this.rentalsService.createDraft().pipe(
         tap((response) => this._id.set(response.id)),
-        switchMap((response) => this.patchDraft(response.id)),
+        switchMap((response) => this.updateDraft(response.id)),
         finalize(() => this._isSaving.set(false)),
       );
     }
-    return this.patchDraft(currentId).pipe(finalize(() => this._isSaving.set(false)));
+    return this.updateDraft(currentId).pipe(finalize(() => this._isSaving.set(false)));
   }
 
-  activateRental(): Observable<number> {
+  activateRental(): Observable<void> {
+    const id = this._id();
+    if (id === null) throw new Error('No rental id in store');
     this._isActivating.set(true);
-    const draft = this._draft();
-    const request: RentalWrite = {
-      ...draft,
-      operatorId: this.userStore.currentUser()?.id ?? '',
-      discountPercent: draft.discountPercent,
-      specialTariffId: this.tariffStore.specialTariffId() ?? undefined,
-      specialPrice: draft.specialPrice,
-    };
-    return this.rentalsService.createRental(RentalMapper.toCreateRequest(request)).pipe(
-      tap((response) => this._id.set(response.id)),
-      map((response) => response.id),
-      finalize(() => this._isActivating.set(false)),
-    );
+    return this.rentalsService
+      .updateLifecycle(id, { status: 'ACTIVE', operatorId: this._operatorId() })
+      .pipe(
+        map(() => undefined as void),
+        finalize(() => this._isActivating.set(false)),
+      );
+  }
+
+  cancelRental(): Observable<void> {
+    const id = this._id();
+    if (id === null) throw new Error('No rental id in store');
+    return this.rentalsService
+      .updateLifecycle(id, { status: 'CANCELLED', operatorId: this._operatorId() })
+      .pipe(map(() => undefined as void));
   }
 
   loadRental(id: number): Observable<void> {
@@ -244,15 +246,12 @@ export class RentalStore {
     );
   }
 
-  private patchDraft(id: number): Observable<void> {
-    const draft = this._draft();
-    const patchRequest: RentalUpdateJsonPatchRequest = {
-      operations: [
-        { op: 'replace', path: '/customerId', value: draft.customerId },
-        { op: 'replace', path: '/equipmentIds', value: draft.equipmentIds },
-        { op: 'replace', path: '/duration', value: draft.durationMinutes.toString() },
-      ],
-    };
-    return this.rentalsService.updateRental(id, patchRequest).pipe(map(() => undefined as void));
+  private updateDraft(id: number): Observable<void> {
+    return this.rentalsService
+      .updateRental(id, {
+        ...RentalMapper.toRentalRequest(this._draft()),
+        operatorId: this._operatorId(),
+      })
+      .pipe(map(() => undefined as void));
   }
 }

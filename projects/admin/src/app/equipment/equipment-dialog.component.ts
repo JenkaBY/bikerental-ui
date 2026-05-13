@@ -67,9 +67,6 @@ export interface EquipmentDialogData {
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.SerialNumber }}</mat-label>
           <input matInput formControlName="serialNumber" maxlength="50" />
-          @if (form.controls.serialNumber.hasError('required')) {
-            <mat-error>{{ errors.serialNumberRequired }}</mat-error>
-          }
           @if (form.controls.serialNumber.hasError('maxlength')) {
             <mat-error>{{ errors.serialNumberMaxLength }}</mat-error>
           }
@@ -168,7 +165,6 @@ export class EquipmentDialogComponent implements OnInit {
 
   form = new FormGroup({
     serialNumber: new FormControl(this.data?.equipment?.serialNumber ?? '', [
-      Validators.required,
       Validators.maxLength(50),
     ]),
     uid: new FormControl(this.data?.equipment?.uid ?? '', [Validators.maxLength(100)]),
