@@ -21,13 +21,13 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  CreateRentalRequest,
   Pageable,
   PageAvailableEquipmentResponse,
   PageRentalSummaryResponse,
+  RentalLifecycleRequest,
+  RentalRequest,
   RentalResponse,
   RentalReturnResponse,
-  RentalUpdateJsonPatchRequest,
   RequestOptions,
   ReturnEquipmentRequest,
 } from '../models';
@@ -43,96 +43,32 @@ export class RentalsService {
     return context.set(this.clientContextToken, 'default');
   }
 
-  getRentals(
-    arg3: Pageable,
-    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
-    customerId?: string,
-    equipmentUid?: string,
-    observe?: 'body',
-    options?: RequestOptions<'json'>,
-  ): Observable<PageRentalSummaryResponse>;
-  getRentals(
-    arg3: Pageable,
-    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
-    customerId?: string,
-    equipmentUid?: string,
-    observe?: 'response',
-    options?: RequestOptions<'json'>,
-  ): Observable<HttpResponse<PageRentalSummaryResponse>>;
-  getRentals(
-    arg3: Pageable,
-    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
-    customerId?: string,
-    equipmentUid?: string,
-    observe?: 'events',
-    options?: RequestOptions<'json'>,
-  ): Observable<HttpEvent<PageRentalSummaryResponse>>;
-  /** Returns a paginated list of rentals filtered by status, customer or equipment UID */
-  getRentals(
-    arg3: Pageable,
-    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
-    customerId?: string,
-    equipmentUid?: string,
-    observe?: 'body' | 'events' | 'response',
-    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
-  ): Observable<any> {
-    const url = `${this.basePath}/api/rentals`;
-
-    let params = new HttpParams();
-    if (status != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, status, 'status');
-    }
-    if (customerId != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, customerId, 'customerId');
-    }
-    if (equipmentUid != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, equipmentUid, 'equipmentUid');
-    }
-    if (arg3 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg3, 'arg3');
-    }
-
-    let headers: HttpHeaders;
-    if (options?.headers instanceof HttpHeaders) {
-      headers = options.headers;
-    } else {
-      headers = new HttpHeaders(options?.headers);
-    }
-
-    const requestOptions: any = {
-      observe: observe as any,
-      headers,
-      params,
-      reportProgress: options?.reportProgress,
-      withCredentials: options?.withCredentials,
-      context: this.createContextWithClientId(options?.context),
-    };
-
-    return this.httpClient.get(url, requestOptions);
-  }
-
-  createRental(
-    createRentalRequest: CreateRentalRequest,
+  updateRental(
+    rentalId: number,
+    rentalRequest: RentalRequest,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<RentalResponse>;
-  createRental(
-    createRentalRequest: CreateRentalRequest,
+  updateRental(
+    rentalId: number,
+    rentalRequest: RentalRequest,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<RentalResponse>>;
-  createRental(
-    createRentalRequest: CreateRentalRequest,
+  updateRental(
+    rentalId: number,
+    rentalRequest: RentalRequest,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalResponse>>;
   /** Creates an active rental in one step with all required data */
-  createRental(
-    createRentalRequest: CreateRentalRequest,
+  updateRental(
+    rentalId: number,
+    rentalRequest: RentalRequest,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
-    const url = `${this.basePath}/api/rentals`;
+    const url = `${this.basePath}/api/rentals/${rentalId}`;
 
     let headers: HttpHeaders;
     if (options?.headers instanceof HttpHeaders) {
@@ -153,7 +89,7 @@ export class RentalsService {
       context: this.createContextWithClientId(options?.context),
     };
 
-    return this.httpClient.post(url, createRentalRequest, requestOptions);
+    return this.httpClient.put(url, rentalRequest, requestOptions);
   }
 
   returnEquipment(
@@ -235,6 +171,123 @@ export class RentalsService {
     return this.httpClient.post(url, null, requestOptions);
   }
 
+  updateLifecycle(
+    rentalId: number,
+    rentalLifecycleRequest: RentalLifecycleRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<RentalResponse>;
+  updateLifecycle(
+    rentalId: number,
+    rentalLifecycleRequest: RentalLifecycleRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<RentalResponse>>;
+  updateLifecycle(
+    rentalId: number,
+    rentalLifecycleRequest: RentalLifecycleRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<RentalResponse>>;
+  /** Transitions a rental to ACTIVE or CANCELLED status */
+  updateLifecycle(
+    rentalId: number,
+    rentalLifecycleRequest: RentalLifecycleRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/${rentalId}/lifecycles`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.patch(url, rentalLifecycleRequest, requestOptions);
+  }
+
+  getRentals(
+    arg3: Pageable,
+    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
+    customerId?: string,
+    equipmentUid?: string,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PageRentalSummaryResponse>;
+  getRentals(
+    arg3: Pageable,
+    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
+    customerId?: string,
+    equipmentUid?: string,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PageRentalSummaryResponse>>;
+  getRentals(
+    arg3: Pageable,
+    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
+    customerId?: string,
+    equipmentUid?: string,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PageRentalSummaryResponse>>;
+  /** Returns a paginated list of rentals filtered by status, customer or equipment UID */
+  getRentals(
+    arg3: Pageable,
+    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
+    customerId?: string,
+    equipmentUid?: string,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals`;
+
+    let params = new HttpParams();
+    if (status != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, status, 'status');
+    }
+    if (customerId != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, customerId, 'customerId');
+    }
+    if (equipmentUid != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, equipmentUid, 'equipmentUid');
+    }
+    if (arg3 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg3, 'arg3');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
   getRentalById(
     id: number,
     observe?: 'body',
@@ -273,55 +326,6 @@ export class RentalsService {
     };
 
     return this.httpClient.get(url, requestOptions);
-  }
-
-  updateRental(
-    id: number,
-    rentalUpdateJsonPatchRequest: RentalUpdateJsonPatchRequest,
-    observe?: 'body',
-    options?: RequestOptions<'json'>,
-  ): Observable<RentalResponse>;
-  updateRental(
-    id: number,
-    rentalUpdateJsonPatchRequest: RentalUpdateJsonPatchRequest,
-    observe?: 'response',
-    options?: RequestOptions<'json'>,
-  ): Observable<HttpResponse<RentalResponse>>;
-  updateRental(
-    id: number,
-    rentalUpdateJsonPatchRequest: RentalUpdateJsonPatchRequest,
-    observe?: 'events',
-    options?: RequestOptions<'json'>,
-  ): Observable<HttpEvent<RentalResponse>>;
-  /** Applies partial updates to a rental. Supported paths: /customerId, /equipmentIds, /duration, /status. Setting status=ACTIVE activates the rental. */
-  updateRental(
-    id: number,
-    rentalUpdateJsonPatchRequest: RentalUpdateJsonPatchRequest,
-    observe?: 'body' | 'events' | 'response',
-    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
-  ): Observable<any> {
-    const url = `${this.basePath}/api/rentals/${id}`;
-
-    let headers: HttpHeaders;
-    if (options?.headers instanceof HttpHeaders) {
-      headers = options.headers;
-    } else {
-      headers = new HttpHeaders(options?.headers);
-    }
-    // Set Content-Type for JSON requests if not already set
-    if (!headers.has('Content-Type')) {
-      headers = headers.set('Content-Type', 'application/json');
-    }
-
-    const requestOptions: any = {
-      observe: observe as any,
-      headers,
-      reportProgress: options?.reportProgress,
-      withCredentials: options?.withCredentials,
-      context: this.createContextWithClientId(options?.context),
-    };
-
-    return this.httpClient.patch(url, rentalUpdateJsonPatchRequest, requestOptions);
   }
 
   getAvailableEquipments(
