@@ -119,7 +119,7 @@ export interface RentalResponse {
 /** Request body for creating or updating equipment */
 export interface EquipmentRequest {
   /** Unique serial number */
-  serialNumber: string;
+  serialNumber?: string;
   /** Unique identifier tag (UID) */
   uid: string;
   /** Equipment type slug */

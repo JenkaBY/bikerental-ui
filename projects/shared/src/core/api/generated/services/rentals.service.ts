@@ -221,35 +221,43 @@ export class RentalsService {
   }
 
   getRentals(
-    arg3: Pageable,
+    arg5: Pageable,
     status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
     customerId?: string,
     equipmentUid?: string,
+    from?: Date,
+    to?: Date,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageRentalSummaryResponse>;
   getRentals(
-    arg3: Pageable,
+    arg5: Pageable,
     status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
     customerId?: string,
     equipmentUid?: string,
+    from?: Date,
+    to?: Date,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageRentalSummaryResponse>>;
   getRentals(
-    arg3: Pageable,
+    arg5: Pageable,
     status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
     customerId?: string,
     equipmentUid?: string,
+    from?: Date,
+    to?: Date,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageRentalSummaryResponse>>;
   /** Returns a paginated list of rentals filtered by status, customer or equipment UID */
   getRentals(
-    arg3: Pageable,
+    arg5: Pageable,
     status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
     customerId?: string,
     equipmentUid?: string,
+    from?: Date,
+    to?: Date,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
@@ -265,8 +273,14 @@ export class RentalsService {
     if (equipmentUid != null) {
       params = HttpParamsBuilder.addToHttpParams(params, equipmentUid, 'equipmentUid');
     }
-    if (arg3 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg3, 'arg3');
+    if (from != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, from, 'from');
+    }
+    if (to != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, to, 'to');
+    }
+    if (arg5 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg5, 'arg5');
     }
 
     let headers: HttpHeaders;
