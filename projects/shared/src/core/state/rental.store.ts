@@ -2,206 +2,163 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { RentalsService } from '../api/generated';
-import type { Customer, EquipmentSearchItem, RentalWrite } from '@ui-models';
-import { makeMoney, RentalMapper } from '../mappers';
+import type { Customer, EquipmentSearchItem, RentalState } from '@ui-models';
+import { RentalMapper } from '../mappers';
 import { CustomerFinanceStore } from './customer-finance.store';
-import { RentalCostCalculationStore } from './rental-cost-calculation.store';
-import { TariffStore } from './tariff.store';
 import { UserStore } from './user.store';
-
-const DEFAULT_DRAFT: RentalWrite = {
-  customerId: '',
-  equipmentIds: [],
-  durationMinutes: 60,
-  operatorId: '',
-};
 
 @Injectable()
 export class RentalStore {
   private readonly rentalsService = inject(RentalsService);
-  private readonly tariffStore = inject(TariffStore);
   private readonly userStore = inject(UserStore);
   private readonly customerFinanceStore = inject(CustomerFinanceStore);
-  private readonly costCalculationStore = inject(RentalCostCalculationStore);
 
-  // UI-enriched state — not representable by RentalWrite
-  private readonly _id = signal<number | null>(null);
-  private readonly _customer = signal<Customer | null>(null);
-  private readonly _equipmentItems = signal<EquipmentSearchItem[]>([]);
-  private readonly _specialPriceEnabled = signal<boolean>(false);
-  private readonly _operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
+  // Single source of truth for all mutable state
+  private readonly _state = signal<RentalState>({
+    id: null,
+    customer: null,
+    equipmentItems: [],
+    durationMinutes: 60,
+    discountPercent: undefined,
+    specialPrice: undefined,
+    specialPriceEnabled: false,
+    isSaving: false,
+    isActivating: false,
+    isLoading: false,
+  });
 
-  // Single source of truth for all RentalWrite fields
-  private readonly _draft = signal<RentalWrite>({ ...DEFAULT_DRAFT });
+  patchState(partial: Partial<ReturnType<typeof this._state>>) {
+    this._state.update((s) => ({ ...s, ...partial }));
+  }
 
-  // Async / loading state
-  private readonly _isSaving = signal<boolean>(false);
-  private readonly _isActivating = signal<boolean>(false);
-
-  private readonly _isLoading = signal<boolean>(false);
   // Primary public signals
-  readonly id = computed(() => this._id());
-  readonly customer = computed(() => this._customer());
+  readonly state = this._state.asReadonly();
+  readonly id = computed(() => this._state().id);
+  readonly customer = computed(() => this._state().customer);
   readonly customerBalance = computed(() => this.customerFinanceStore.balance());
-  readonly equipmentItems = computed(() => this._equipmentItems());
-  readonly specialPriceEnabled = computed(() => this._specialPriceEnabled());
-  readonly draft = computed(() => this._draft());
-  readonly costEstimate = computed(() => this.costCalculationStore.costEstimate());
-  readonly isCalculatingCost = computed(() => this.costCalculationStore.isCalculatingCost());
-  readonly isSaving = computed(() => this._isSaving());
-  readonly isActivating = computed(() => this._isActivating());
-  readonly isLoading = computed(() => this._isLoading());
-  // Convenience computed signals derived from _draft (preserve public API for step components)
-  readonly durationMinutes = computed(() => this._draft().durationMinutes);
-  readonly discountPercent = computed(() => this._draft().discountPercent ?? null);
-  readonly specialPrice = computed(() => this._draft().specialPrice ?? null);
-  readonly isSelectedAnyEquipment = computed(() => this._equipmentItems().length > 0);
+  readonly equipmentItems = computed(() => this._state().equipmentItems);
+  readonly specialPriceEnabled = computed(() => this._state().specialPriceEnabled);
+  readonly operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
 
-  readonly projectedBalance = computed(() => {
-    if (this._customer() === null) return null;
-    const balance = this.customerFinanceStore.balance();
-    if (balance === null) return null;
-    const amount =
-      balance.available.amount - (this.costCalculationStore.costEstimate()?.totalCost.amount ?? 0);
-    return makeMoney(amount);
-  });
+  readonly isSaving = computed(() => this._state().isSaving);
+  readonly isActivating = computed(() => this._state().isActivating);
+  readonly isLoading = computed(() => this._state().isLoading);
 
-  readonly canProceedFromStep2 = computed(() => {
-    const items = this._equipmentItems();
-    const specialEnabled = this._specialPriceEnabled();
-    const specialPrice = this._draft().specialPrice;
-    const estimate = this.costCalculationStore.costEstimate();
-    return items.length > 0 && (!specialEnabled || specialPrice !== undefined) && estimate !== null;
-  });
-
-  readonly isBalanceSufficient = computed(() => {
-    const balance = this.projectedBalance();
-    return balance !== null && balance.amount >= 0;
-  });
-
-  readonly isProjectedBalanceNegative = computed(() => {
-    const balance = this.projectedBalance();
-    return balance !== null && balance.amount < 0;
-  });
-
-  readonly balanceShortfall = computed(() => {
-    const balance = this.projectedBalance();
-    if (!balance) return null;
-    return { amount: Math.abs(balance.amount), currency: balance.currency };
-  });
+  // Convenience computed signals derived from _state
+  readonly durationMinutes = computed(() => this._state().durationMinutes);
+  readonly discountPercent = computed(() => this._state().discountPercent ?? null);
+  readonly specialPrice = computed(() => this._state().specialPrice ?? null);
+  readonly isSelectedAnyEquipment = computed(() => this._state().equipmentItems.length > 0);
 
   setCustomer(customer: Customer | null): void {
-    this._customer.set(customer);
-    this._draft.update((d) => ({ ...d, customerId: customer?.id ?? '' }));
+    this.patchState({ customer });
     if (customer?.id) {
       this.customerFinanceStore.loadById(customer.id);
     }
   }
 
+  refreshCustomerBalance(): void {
+    const cust = this.customer();
+    if (cust?.id) {
+      this.customerFinanceStore.loadById(cust.id);
+    }
+  }
+
   setDurationMinutes(minutes: number): void {
-    this._draft.update((d) => ({ ...d, durationMinutes: minutes }));
-    this.syncCostInputs();
+    this.patchState({ durationMinutes: minutes });
   }
 
   setEquipmentItems(items: EquipmentSearchItem[]): void {
-    this._equipmentItems.set(items);
-    this._draft.update((d) => ({ ...d, equipmentIds: items.map((e) => e.id) }));
-    this.syncCostInputs();
+    this.patchState({ equipmentItems: items });
   }
 
   addEquipmentItem(item: EquipmentSearchItem): void {
-    if (this._equipmentItems().some((e) => e.id === item.id)) return;
-    const newItems = [...this._equipmentItems(), item];
-    this._equipmentItems.set(newItems);
-    this._draft.update((d) => ({ ...d, equipmentIds: newItems.map((e) => e.id) }));
-    this.syncCostInputs();
+    const currentItems = this._state().equipmentItems;
+    if (currentItems.some((e) => e.id === item.id)) return;
+    const newItems = [...currentItems, item];
+    this.patchState({ equipmentItems: newItems });
   }
 
   removeEquipmentItem(id: number): void {
-    const newItems = this._equipmentItems().filter((e) => e.id !== id);
-    this._equipmentItems.set(newItems);
-    this._draft.update((d) => ({ ...d, equipmentIds: newItems.map((e) => e.id) }));
-    this.syncCostInputs();
+    const newItems = this._state().equipmentItems.filter((e) => e.id !== id);
+    this.patchState({ equipmentItems: newItems });
   }
 
   setDiscountPercent(percent: number | null): void {
-    if (this._specialPriceEnabled()) {
+    if (this._state().specialPriceEnabled) {
       return;
     }
     if (percent !== null) {
-      this._specialPriceEnabled.set(false);
-      this._draft.update((d) => ({ ...d, discountPercent: percent, specialPrice: undefined }));
-    } else {
-      this._draft.update((d) => ({ ...d, discountPercent: undefined }));
+      this.patchState({ specialPriceEnabled: false, discountPercent: percent });
     }
-    this.syncCostInputs();
   }
 
   setSpecialPriceEnabled(enabled: boolean): void {
-    this._specialPriceEnabled.set(enabled);
-    if (enabled) {
-      this._draft.update((d) => ({ ...d, specialPrice: 0, discountPercent: undefined }));
-    } else {
-      this._draft.update((d) => ({ ...d, specialPrice: undefined }));
-    }
-    this.syncCostInputs();
+    this.patchState({ specialPriceEnabled: enabled });
   }
 
   setSpecialPrice(price: number | null): void {
-    if (!this._specialPriceEnabled()) {
+    if (!this._state().specialPriceEnabled) {
       return;
     }
-    if (price !== null) {
-      this._draft.update((d) => ({
-        ...d,
-        specialPrice: price,
-        discountPercent: undefined,
-      }));
-    } else {
-      this._draft.update((d) => ({ ...d, specialPrice: undefined }));
-    }
-    this.syncCostInputs();
+
+    this.patchState({
+      specialPriceEnabled: true,
+      specialPrice: price ?? undefined,
+      discountPercent: undefined,
+    });
   }
 
-  refreshCustomerBalance(): void {
-    this.customerFinanceStore.refreshBalance();
+  save() {
+    const { id } = this._state();
+    this.patchState({ isSaving: true });
+
+    const request$ = id
+      ? this.rentalsService.updateRental(id, this.mapToRequest())
+      : this.rentalsService.createDraft().pipe(
+          tap((res) => this.patchState({ id: res.id })),
+          switchMap((res) => this.rentalsService.updateRental(res.id, this.mapToRequest())),
+        );
+
+    return request$.pipe(finalize(() => this.patchState({ isSaving: false })));
   }
 
-  save(): Observable<void> {
-    this._isSaving.set(true);
-    const currentId = this._id();
-    if (currentId === null) {
-      return this.rentalsService.createDraft().pipe(
-        tap((response) => this._id.set(response.id)),
-        switchMap((response) => this.updateDraft(response.id)),
-        finalize(() => this._isSaving.set(false)),
-      );
-    }
-    return this.updateDraft(currentId).pipe(finalize(() => this._isSaving.set(false)));
+  private mapToRequest() {
+    const s = this._state();
+    return {
+      ...RentalMapper.toRentalRequest({
+        customerId: s.customer?.id ?? '',
+        equipmentIds: s.equipmentItems.map((e) => e.id),
+        durationMinutes: s.durationMinutes,
+        discountPercent: s.discountPercent,
+        specialPrice: s.specialPrice,
+        operatorId: this.operatorId(),
+      }),
+    };
   }
 
   activateRental(): Observable<void> {
-    const id = this._id();
+    const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
-    this._isActivating.set(true);
+    this.patchState({ isActivating: true });
     return this.rentalsService
-      .updateLifecycle(id, { status: 'ACTIVE', operatorId: this._operatorId() })
+      .updateLifecycle(id, { status: 'ACTIVE', operatorId: this.operatorId() })
       .pipe(
         map(() => undefined as void),
-        finalize(() => this._isActivating.set(false)),
+        finalize(() => this.patchState({ isActivating: false })),
       );
   }
 
   cancelRental(): Observable<void> {
-    const id = this._id();
+    const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
     return this.rentalsService
-      .updateLifecycle(id, { status: 'CANCELLED', operatorId: this._operatorId() })
+      .updateLifecycle(id, { status: 'CANCELLED', operatorId: this.operatorId() })
       .pipe(map(() => undefined as void));
   }
 
   loadRental(id: number): Observable<void> {
-    this._isLoading.set(true);
+    this.patchState({ isLoading: true });
     return this.rentalsService.getRentalById(id).pipe(
       tap((response) => {
         const items: EquipmentSearchItem[] = response.equipmentItems.map((item) => ({
@@ -210,48 +167,32 @@ export class RentalStore {
           model: '',
           type: { slug: '', name: '', isForSpecialTariff: false },
         }));
-        this._id.set(response.id);
-        this._equipmentItems.set(items);
-        this._draft.update((d) => ({
-          ...d,
-          customerId: response.customerId,
-          equipmentIds: items.map((e) => e.id),
+
+        this.patchState({
+          id: response.id,
+          equipmentItems: items,
+          customer: this._state().customer,
           durationMinutes: response.plannedDurationMinutes,
-        }));
+        });
       }),
-      map(() => undefined),
+      map(() => undefined as void),
       catchError((err) => {
         this.reset();
         throw err;
       }),
-      finalize(() => this._isLoading.set(false)),
+      finalize(() => this.patchState({ isLoading: false })),
     );
   }
 
   reset(): void {
-    this._id.set(null);
-    this._customer.set(null);
-    this._equipmentItems.set([]);
-    this._specialPriceEnabled.set(false);
-    this._draft.set({ ...DEFAULT_DRAFT });
-    this._isLoading.set(false);
-    this.costCalculationStore.reset();
-  }
-
-  private syncCostInputs(): void {
-    this.costCalculationStore.updateInputs(
-      this._equipmentItems(),
-      this._draft(),
-      this._specialPriceEnabled(),
-    );
-  }
-
-  private updateDraft(id: number): Observable<void> {
-    return this.rentalsService
-      .updateRental(id, {
-        ...RentalMapper.toRentalRequest(this._draft()),
-        operatorId: this._operatorId(),
-      })
-      .pipe(map(() => undefined as void));
+    this.patchState({
+      id: null,
+      customer: null,
+      equipmentItems: [],
+      specialPriceEnabled: false,
+      isSaving: false,
+      isActivating: false,
+      isLoading: false,
+    });
   }
 }

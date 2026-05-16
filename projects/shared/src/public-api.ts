@@ -39,6 +39,7 @@ export * from './core/state/customer-list.store';
 export * from './core/state/equipment-search.store';
 export * from './core/state/rental.store';
 export * from './core/state/rental-cost-calculation.store';
+export * from './core/state/rental-validation.store';
 export * from './core/state/user.store';
 
 // Shared UI — components

@@ -4,7 +4,12 @@ import type {
   RentalRequest,
   RentalSummaryResponse,
 } from '@api-models';
-import { type CustomerRentalSummary, type RentalCostEstimate, type RentalWrite } from '@ui-models';
+import type {
+  CustomerRentalSummary,
+  RentalCostEstimate,
+  RentalState,
+  RentalWrite,
+} from '@ui-models';
 import { makeMoney } from './money.mapper';
 
 export class RentalMapper {
@@ -41,6 +46,19 @@ export class RentalMapper {
       ...(draft.discountPercent !== undefined && { discountPercent: draft.discountPercent }),
       ...(draft.specialTariffId !== undefined && { specialTariffId: draft.specialTariffId }),
       ...(draft.specialPrice !== undefined && { specialPrice: draft.specialPrice }),
+    };
+  }
+
+  static toCostCalculation(
+    draft: RentalState,
+    specialTariffId: number | null,
+  ): CostCalculationRequest {
+    return {
+      equipments: draft.equipmentItems.map((e) => ({ equipmentType: e.type.slug })),
+      plannedDurationMinutes: draft.durationMinutes,
+      discountPercent: draft.specialPriceEnabled ? undefined : draft.discountPercent,
+      specialPrice: draft.specialPriceEnabled ? draft.specialPrice : undefined,
+      specialTariffId: draft.specialPriceEnabled ? (specialTariffId ?? undefined) : undefined,
     };
   }
 

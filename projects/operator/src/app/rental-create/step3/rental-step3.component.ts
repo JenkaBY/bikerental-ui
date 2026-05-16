@@ -13,31 +13,27 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { catchError, of, tap } from 'rxjs';
-import { Labels, RentalStore, TopUpDialogComponent } from '@bikerental/shared';
-import { RentalActivateButtonComponent } from './rental-activate-button.component';
-import { RentalBalanceWarningComponent } from './rental-balance-warning.component';
-import { RentalSummaryComponent } from './rental-summary.component';
+import {
+  Labels,
+  RentalStore,
+  RentalValidationStore,
+  TopUpDialogComponent,
+} from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-step3',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatButton,
-    MatIcon,
-    RentalSummaryComponent,
-    RentalBalanceWarningComponent,
-    RentalActivateButtonComponent,
-  ],
+  imports: [MatButton, MatIcon],
   template: `
     <div class="flex flex-col gap-6">
       <app-rental-summary
         [customer]="store.customer()!"
         [durationMinutes]="store.durationMinutes()"
         [equipmentItems]="store.equipmentItems()"
-        [costEstimate]="store.costEstimate()!"
         [specialPriceEnabled]="store.specialPriceEnabled()"
-        [projectedBalance]="store.projectedBalance()"
-        [isBalanceNegative]="store.isProjectedBalanceNegative()"
+        [isBalanceNegative]="!validationStore.isBalanceSufficient()"
+        [costEstimate]="validationStore.estimate()!"
+        [projectedBalance]="validationStore.projectedBalance()"
       />
 
       <app-rental-balance-warning (topUpRequested)="onTopUpRequested()" />
@@ -51,7 +47,7 @@ import { RentalSummaryComponent } from './rental-summary.component';
         </button>
 
         <app-rental-activate-button
-          [disabled]="!store.isBalanceSufficient()"
+          [disabled]="!validationStore.isBalanceSufficient()"
           [loading]="store.isActivating()"
           (activateRequested)="onActivateRequested()"
         />
@@ -62,6 +58,7 @@ import { RentalSummaryComponent } from './rental-summary.component';
 export class RentalStep3Component {
   protected readonly Labels = Labels;
   protected readonly store = inject(RentalStore);
+  protected readonly validationStore = inject(RentalValidationStore);
 
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
