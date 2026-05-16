@@ -19,11 +19,20 @@ import {
   RentalValidationStore,
   TopUpDialogComponent,
 } from '@bikerental/shared';
+import { RentalActivateButtonComponent } from './rental-activate-button.component';
+import { RentalBalanceWarningComponent } from './rental-balance-warning.component';
+import { RentalSummaryComponent } from './rental-summary.component';
 
 @Component({
   selector: 'app-rental-step3',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIcon],
+  imports: [
+    MatButton,
+    MatIcon,
+    RentalSummaryComponent,
+    RentalBalanceWarningComponent,
+    RentalActivateButtonComponent,
+  ],
   template: `
     <div class="flex flex-col gap-6">
       <app-rental-summary

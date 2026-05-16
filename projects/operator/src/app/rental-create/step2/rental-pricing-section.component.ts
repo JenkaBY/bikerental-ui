@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Labels, RentalStore } from '@bikerental/shared';
+import { DiscountInputComponent } from './discount-input.component';
+import { SpecialPriceInputComponent } from './special-price-input.component';
 
 @Component({
   selector: 'app-rental-pricing-section',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatSlideToggleModule],
+  imports: [MatSlideToggleModule, DiscountInputComponent, SpecialPriceInputComponent],
   template: `
     @let isSpecialPriceEnabled = store.specialPriceEnabled();
     @let isAnyEquipmentSelected = store.isSelectedAnyEquipment();

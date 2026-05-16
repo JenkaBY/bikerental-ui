@@ -6,12 +6,15 @@ import {
   RentalStore,
   RentalValidationStore,
 } from '@bikerental/shared';
+import { RentalStep1Component } from './step1/rental-step1.component';
+import { RentalStep2Component } from './step2/rental-step2.component';
+import { RentalStep3Component } from './step3/rental-step3.component';
 
 @Component({
   selector: 'app-rental-create',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CustomerFinanceStore, RentalCostCalculationStore, RentalStore, RentalValidationStore],
-  imports: [],
+  imports: [RentalStep1Component, RentalStep2Component, RentalStep3Component],
   template: `
     @if (isLoading()) {
       <div class="flex h-full items-center justify-center">
