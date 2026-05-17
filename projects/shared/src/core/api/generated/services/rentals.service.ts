@@ -21,15 +21,15 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  Pageable,
-  PageAvailableEquipmentResponse,
-  PageRentalSummaryResponse,
-  RentalLifecycleRequest,
   RentalRequest,
-  RentalResponse,
-  RentalReturnResponse,
   RequestOptions,
+  RentalResponse,
   ReturnEquipmentRequest,
+  RentalReturnResponse,
+  RentalLifecycleRequest,
+  Pageable,
+  PageRentalSummaryResponse,
+  PageAvailableEquipmentResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })

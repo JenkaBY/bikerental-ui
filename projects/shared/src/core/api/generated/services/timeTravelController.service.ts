@@ -13,12 +13,14 @@ import {
   HttpContextToken,
   HttpEvent,
   HttpHeaders,
+  HttpParams,
   HttpResponse,
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
-import { RequestOptions, SetTimeRequest, SseEmitter, TimeResponse } from '../models';
+import { HttpParamsBuilder } from '../utils/http-params-builder';
+import { RequestOptions, SseEmitter, SetTimeRequest, TimeResponse } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class TimeTravelControllerService {

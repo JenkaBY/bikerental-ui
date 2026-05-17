@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import { HttpContextToken, HttpInterceptor } from '@angular/common/http';
+import { HttpInterceptor, HttpContextToken } from '@angular/common/http';
 
 /**
  * Injection token for the default client base API path

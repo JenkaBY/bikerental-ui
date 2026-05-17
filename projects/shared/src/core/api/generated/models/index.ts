@@ -112,6 +112,10 @@ export interface RentalResponse {
   actualDurationMinutes?: number;
   /** Estimated rental cost */
   estimatedCost: number;
+  /** Special price applied to this rental (if any) */
+  specialPrice?: number;
+  /** Discount percent applied to this rental (e.g. 10.5) */
+  discountPercent?: number;
   /** Final rental cost (null until returned) */
   finalCost?: number;
 }
@@ -302,8 +306,6 @@ export interface ReturnEquipmentRequest {
   equipmentIds?: Array<number>;
   /** List of equipment UIDs to return */
   equipmentUids?: Array<string>;
-  /** Payment method for any additional charge */
-  paymentMethod?: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER' | 'WALLET' | 'INTERNAL_TRANSFER';
   /** Operator identifier */
   operatorId: string;
 }

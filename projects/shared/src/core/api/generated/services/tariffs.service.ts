@@ -21,15 +21,15 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  CostCalculationRequest,
-  CostCalculationResponse,
+  RequestOptions,
+  TariffV2Response,
+  TariffV2Request,
   Pageable,
   PageTariffV2Response,
-  PricingTypeResponse,
-  RequestOptions,
+  CostCalculationRequest,
+  CostCalculationResponse,
   TariffSelectionV2Response,
-  TariffV2Request,
-  TariffV2Response,
+  PricingTypeResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
