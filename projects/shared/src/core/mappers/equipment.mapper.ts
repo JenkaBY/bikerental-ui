@@ -1,5 +1,6 @@
 import { EquipmentRequest, EquipmentResponse } from '@api-models';
 import { Equipment, EquipmentStatus, EquipmentType, EquipmentWrite } from '../models';
+import { toIsoDate } from '../../shared/utils/date.util';
 import { EquipmentConditionMapper } from './equipment-condition.mapper';
 
 export class EquipmentMapper {
@@ -38,7 +39,7 @@ export class EquipmentMapper {
       typeSlug: w.typeSlug,
       statusSlug: w.statusSlug,
       model: w.model,
-      commissionedAt: w.commissionedAt,
+      commissionedAt: w.commissionedAt ? toIsoDate(w.commissionedAt) : undefined,
       condition: w.conditionNotes,
       conditionSlug: w.conditionSlug,
     };

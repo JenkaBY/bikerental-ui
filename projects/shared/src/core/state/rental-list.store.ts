@@ -2,10 +2,11 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { RentalsService, CustomersService, EquipmentsCatalogueService } from '../api/generated';
+import { CustomersService, EquipmentsCatalogueService, RentalsService } from '../api/generated';
 import { RentalDashboardMapper } from '../mappers';
 import type { RentalListItem } from '@ui-models';
 import type { RentalSummaryResponse } from '@api-models';
+import { toIsoDate } from '../../shared/utils/date.util';
 
 @Injectable()
 export class RentalListStore {
@@ -13,7 +14,9 @@ export class RentalListStore {
   private readonly customersService = inject(CustomersService);
   private readonly equipmentsCatalogueService = inject(EquipmentsCatalogueService);
 
-  private readonly historyParams = signal<{ dateFrom: string; dateTo: string } | null>(null);
+  private readonly historyParams = signal<{ dateFrom: string; dateTo: Date; filter: Date } | null>(
+    null,
+  );
 
   private readonly activeResource = rxResource<RentalListItem[], void>({
     stream: () =>
@@ -25,19 +28,20 @@ export class RentalListStore {
 
   private readonly historyResource = rxResource<
     RentalListItem[],
-    { dateFrom: string; dateTo: string } | null
+    { dateFrom: Date; dateTo: Date } | null
   >({
     params: () => this.historyParams(),
     stream: ({ params }) => {
       if (!params) return of([]);
+      const statusApi = params.filter === 'ALL' ? undefined : params.filter;
       return this.rentalsService
         .getRentals(
           { page: 0, size: 100 },
+          statusApi,
           undefined,
           undefined,
-          undefined,
-          new Date(params.dateFrom),
-          new Date(params.dateTo),
+          params.dateFrom ? toIsoDate(params.dateFrom) : undefined,
+          params.dateTo ? toIsoDate(params.dateTo) : undefined,
         )
         .pipe(
           switchMap((page) => this.enrichItems(page.items ?? [])),
@@ -55,8 +59,8 @@ export class RentalListStore {
     this.activeResource.reload();
   }
 
-  loadHistory(dateFrom: string, dateTo: string): void {
-    this.historyParams.set({ dateFrom, dateTo });
+  loadHistory(dateFrom: Date, dateTo: Date, filter: string): void {
+    this.historyParams.set({ dateFrom, dateTo, filter });
   }
 
   private enrichItems(items: RentalSummaryResponse[]): Observable<RentalListItem[]> {

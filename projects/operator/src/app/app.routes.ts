@@ -6,11 +6,11 @@ export const routes: Routes = [
     path: '',
     component: OperatorShellWrapperComponent,
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'rentals', pathMatch: 'full' },
       {
-        path: 'dashboard',
+        path: 'rentals',
         loadComponent: () =>
-          import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
+          import('./dashboard/rental-dashboard.component').then((m) => m.RentalDashboardComponent),
       },
       {
         path: 'rentals/new',

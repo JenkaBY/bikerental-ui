@@ -158,7 +158,12 @@ export class Labels {
 
   static readonly EquipmentItemStatusAssigned = $localize`Assigned`;
   static readonly EquipmentItemStatusActive = $localize`In use`;
-  static readonly EquipmentItemStatusReturned = $localize`Returned`;
+  static readonly Rentals = $localize`Rentals`;
+  static readonly TodaysHistory = $localize`Today's History`;
+  static readonly ActiveRentals = $localize`active rentals`;
+  static readonly SortedByReturnTime = $localize`sorted by return time`;
+  static readonly Refresh = $localize`Refresh`;
+  static readonly Returned = $localize`Returned`;
 
   static readonly CustomerAccountTabLabel = $localize`Account`;
   static readonly CustomerTopUpButton = $localize`Top Up`;

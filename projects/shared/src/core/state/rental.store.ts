@@ -6,12 +6,14 @@ import type { Customer, EquipmentSearchItem, RentalState } from '@ui-models';
 import { RentalMapper } from '../mappers';
 import { CustomerFinanceStore } from './customer-finance.store';
 import { UserStore } from './user.store';
+import { TariffStore } from './tariff.store';
 
 @Injectable()
 export class RentalStore {
   private readonly rentalsService = inject(RentalsService);
   private readonly userStore = inject(UserStore);
   private readonly customerFinanceStore = inject(CustomerFinanceStore);
+  private readonly tariffStore = inject(TariffStore);
 
   // Single source of truth for all mutable state
   private readonly _state = signal<RentalState>({
@@ -130,8 +132,11 @@ export class RentalStore {
         customerId: s.customer?.id ?? '',
         equipmentIds: s.equipmentItems.map((e) => e.id),
         durationMinutes: s.durationMinutes,
-        discountPercent: s.discountPercent,
-        specialPrice: s.specialPrice,
+        discountPercent: s.specialPriceEnabled ? undefined : s.discountPercent,
+        specialPrice: s.specialPriceEnabled ? s.specialPrice : undefined,
+        specialTariffId: s.specialPriceEnabled
+          ? this.tariffStore.specialTariffId() || undefined
+          : undefined,
         operatorId: this.operatorId(),
       }),
     };

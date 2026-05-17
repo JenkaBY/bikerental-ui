@@ -1,5 +1,6 @@
 import type { CustomerRequest, CustomerResponse, CustomerSearchResponse } from '@api-models';
 import { type Customer, type CustomerWrite } from '@ui-models';
+import { toIsoDate } from '../../shared/utils/date.util';
 
 export class CustomerMapper {
   static fromResponse(r: CustomerResponse): Customer {
@@ -29,7 +30,7 @@ export class CustomerMapper {
       firstName: w.firstName,
       lastName: w.lastName,
       email: w.email,
-      birthDate: w.birthDate,
+      birthDate: w.birthDate ? toIsoDate(w.birthDate) : undefined,
       comments: w.notes,
     };
   }
