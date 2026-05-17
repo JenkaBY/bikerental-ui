@@ -87,9 +87,10 @@ never holds a DRAFT rental and `isActivating` from `RentalState` is **not applic
 * **Entity: `BrokenEquipmentEntry`** (new)
   * **Attributes:** `equipmentItemId` (Integer), `penaltyAmount` (optional Decimal)
 
-* **Entity: `ReturnEquipmentRequest`** (existing generated backend contract — extension required)
-  * **Attributes Added:** `discountPercent` (optional Decimal), `specialPrice` (optional Decimal)
-    — Note: `equipmentItemIds` in the domain model maps to `equipmentIds` in the API contract.
+* **Entity: `ReturnEquipmentRequest`** (existing generated backend contract — no changes required)
+  * **Note:** `equipmentItemIds` in the domain model maps to `equipmentIds` in the API contract.
+    `discountPercent`, `specialPrice`, and `paymentMethod` are intentionally NOT forwarded to
+    the return endpoint — the backend does not support pricing overrides at return time.
 
 ## 4. Component Contracts & Payloads
 
