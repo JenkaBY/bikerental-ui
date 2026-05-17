@@ -349,28 +349,28 @@ export class TariffsService {
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
-    rentalDate?: Date,
+    rentalDate?: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<TariffSelectionV2Response>;
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
-    rentalDate?: Date,
+    rentalDate?: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TariffSelectionV2Response>>;
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
-    rentalDate?: Date,
+    rentalDate?: string,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TariffSelectionV2Response>>;
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
-    rentalDate?: Date,
+    rentalDate?: string,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {

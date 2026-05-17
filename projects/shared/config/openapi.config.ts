@@ -4,7 +4,7 @@ const config: GeneratorConfig = {
   input: 'http://localhost:8080/v3/api-docs/all',
   output: '../src/core/api/generated',
   options: {
-    dateType: 'Date',
+    dateType: 'string',
     enumStyle: 'enum',
     generateServices: true,
     responseTypeMapping: {

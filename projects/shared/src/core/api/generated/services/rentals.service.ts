@@ -225,8 +225,8 @@ export class RentalsService {
     status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
     customerId?: string,
     equipmentUid?: string,
-    from?: Date,
-    to?: Date,
+    from?: string,
+    to?: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageRentalSummaryResponse>;
@@ -235,8 +235,8 @@ export class RentalsService {
     status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
     customerId?: string,
     equipmentUid?: string,
-    from?: Date,
-    to?: Date,
+    from?: string,
+    to?: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageRentalSummaryResponse>>;
@@ -245,8 +245,8 @@ export class RentalsService {
     status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
     customerId?: string,
     equipmentUid?: string,
-    from?: Date,
-    to?: Date,
+    from?: string,
+    to?: string,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageRentalSummaryResponse>>;
@@ -256,8 +256,8 @@ export class RentalsService {
     status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
     customerId?: string,
     equipmentUid?: string,
-    from?: Date,
-    to?: Date,
+    from?: string,
+    to?: string,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {

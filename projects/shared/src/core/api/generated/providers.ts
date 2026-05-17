@@ -11,7 +11,6 @@ import { EnvironmentProviders, Provider, makeEnvironmentProviders } from '@angul
 import { HTTP_INTERCEPTORS, HttpInterceptor } from '@angular/common/http';
 import { BASE_PATH_DEFAULT, HTTP_INTERCEPTORS_DEFAULT } from './tokens';
 import { DefaultBaseInterceptor } from './utils/base-interceptor';
-import { DateInterceptor } from './utils/date-transformer';
 
 /** Configuration options for default client */
 export interface DefaultConfig {
@@ -61,20 +60,11 @@ export function provideDefaultClient(config: DefaultConfig): EnvironmentProvider
       (InterceptorClass) => new InterceptorClass(),
     );
 
-    // Add date interceptor if enabled (default: true)
-    if (config.enableDateTransform !== false) {
-      interceptorInstances.unshift(new DateInterceptor());
-    }
+    // Date transformation not available (dateType: 'string' was used in generation)
 
     providers.push({
       provide: HTTP_INTERCEPTORS_DEFAULT,
       useValue: interceptorInstances,
-    });
-  } else if (config.enableDateTransform !== false) {
-    // Only date interceptor enabled
-    providers.push({
-      provide: HTTP_INTERCEPTORS_DEFAULT,
-      useValue: [new DateInterceptor()],
     });
   } else {
     // No interceptors
