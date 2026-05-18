@@ -169,6 +169,8 @@ export class Labels {
   static readonly OverdueBy = $localize`Overdue by`;
   static readonly Remaining = $localize`remaining`;
   static readonly Returned = $localize`Returned`;
+  static readonly NoHistoryRentals = $localize`No rentals`;
+  static readonly Ended = $localize`Ended`;
 
   static readonly CustomerAccountTabLabel = $localize`Account`;
   static readonly CustomerTopUpButton = $localize`Top Up`;

@@ -41,10 +41,7 @@ const FILTER_OPTIONS: { value: string; label: string }[] = [
         Labels.Records
       }}
     </div>
-    <app-rental-history-card-list
-      [rentals]="store.historyRentals()"
-      [isLoading]="store.isLoadingHistory()"
-    />
+    <app-rental-history-card-list />
   `,
 })
 export class RentalHistoryTabComponent {

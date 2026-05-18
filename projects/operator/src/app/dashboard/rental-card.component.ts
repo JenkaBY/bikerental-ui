@@ -13,9 +13,9 @@ import type { RentalListItem } from '@bikerental/shared';
     '(click)': 'navigateToDetail()',
     class:
       'block cursor-pointer select-none transition-colors duration-200 rounded-lg p-3 shadow-sm border border-transparent bg-white',
-    '[class.bg-amber-50]': 'item().isOverdue',
-    '[class.border-l-4]': 'item().isOverdue',
-    '[class.border-l-amber-400]': 'item().isOverdue',
+    '[class.bg-amber-50]': 'isWarning()',
+    '[class.border-l-4]': 'isWarning()',
+    '[class.border-l-amber-400]': 'isWarning()',
   },
   template: `
     <div class="flex items-start justify-between gap-2">
@@ -52,6 +52,25 @@ import type { RentalListItem } from '@bikerental/shared';
       </div>
     }
 
+    @if (variant() === 'history') {
+      <div class="mt-1 text-sm">
+        @if (item().isDebt) {
+          <span class="text-amber-600">
+            {{ Labels.RentalStatusDebt }}
+            @if (item().expectedReturnAt; as endedAt) {
+              &nbsp;&middot;&nbsp;{{ Labels.Ended }}&nbsp;{{ endedAt | date: 'HH:mm' }}
+            }
+          </span>
+        } @else {
+          <span class="text-slate-500">
+            @if (item().expectedReturnAt; as endedAt) {
+              {{ Labels.Ended }}&nbsp;{{ endedAt | date: 'HH:mm' }}
+            }
+          </span>
+        }
+      </div>
+    }
+
     @if (item().equipmentNames.length > 0) {
       <div class="mt-2 flex flex-wrap gap-1">
         @for (name of item().equipmentNames; track $index) {
@@ -68,6 +87,7 @@ export class RentalCardComponent {
 
   readonly item = input.required<RentalListItem>();
   readonly variant = input<'active' | 'history'>('active');
+  readonly isWarning = computed(() => this.item().isOverdue || this.item().isDebt);
 
   protected readonly Labels = Labels;
 
@@ -88,6 +108,15 @@ export class RentalCardComponent {
   });
 
   protected navigateToDetail(): void {
+    if (this.variant() === 'history' && this.item().status === 'DRAFT') {
+      console.log('open draft is temporary disabled');
+      // void this.router.navigate(['/rentals/new'], {
+      //   queryParams: { rentalId: this.item().id },
+      // });
+      // });
+      return;
+    }
+
     void this.router.navigate(['/rentals', this.item().id]);
   }
 }
