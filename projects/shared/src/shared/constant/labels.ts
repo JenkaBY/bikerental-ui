@@ -232,4 +232,9 @@ export class Labels {
   static readonly RentalSummary = $localize`Rental Summary`;
   static readonly BalanceShortfall = $localize`Shortfall`;
   static readonly CustomerName = $localize`Customer`;
+  static readonly GoBack = $localize`Go back`;
+  static readonly RentalPrefix = $localize`Rental #`;
+  static readonly Expected = $localize`Expected`;
+  static readonly DebtAutoCharge = $localize`Balance will be charged automatically once topped up`;
+  static readonly Retry = $localize`Retry`;
 }

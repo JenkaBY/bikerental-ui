@@ -1,19 +1,19 @@
 import type {
   CustomerResponse,
   EquipmentItemResponse,
-  EquipmentResponse,
   RentalResponse,
   RentalSummaryResponse,
   ReturnEquipmentRequest,
 } from '@api-models';
 import type {
   BrokenEquipmentEntry,
+  Customer,
+  EquipmentSearchItem,
   RentalDetailState,
   RentalEquipmentItem,
   RentalListItem,
   ReturnEquipmentWrite,
 } from '@ui-models';
-import { CustomerMapper } from './customer.mapper';
 import { makeMoney } from './money.mapper';
 
 export class RentalDashboardMapper {
@@ -46,8 +46,8 @@ export class RentalDashboardMapper {
 
   static toDetailState(
     r: RentalResponse,
-    customer: CustomerResponse | null,
-    equipmentBatch: EquipmentResponse[],
+    customer: Customer | null,
+    equipmentBatch: EquipmentSearchItem[],
   ): Partial<RentalDetailState> {
     const isActive = r.status === 'ACTIVE';
     const isDebt = r.status === 'DEBT';
@@ -59,7 +59,7 @@ export class RentalDashboardMapper {
       r.plannedDurationMinutes != null &&
       new Date(startedAt.getTime() + r.plannedDurationMinutes * 60_000) < now;
 
-    const equipmentMap = new Map<number, EquipmentResponse>(equipmentBatch.map((e) => [e.id, e]));
+    const equipmentMap = new Map<number, EquipmentSearchItem>(equipmentBatch.map((e) => [e.id, e]));
     const equipmentItems: RentalEquipmentItem[] = (r.equipmentItems ?? []).map(
       (item: EquipmentItemResponse) => {
         const eq = equipmentMap.get(item.equipmentId);
@@ -67,7 +67,7 @@ export class RentalDashboardMapper {
           id: item.equipmentId,
           uid: eq?.uid ?? item.equipmentUid ?? '',
           model: eq?.model ?? '',
-          type: { slug: eq?.type ?? '', name: eq?.type ?? '', isForSpecialTariff: false },
+          type: eq?.type ?? { slug: '', name: '', isForSpecialTariff: false },
           statusSlug: item.status,
           isReturned: item.status === 'RETURNED',
         };
@@ -78,7 +78,7 @@ export class RentalDashboardMapper {
       id: r.id,
       status: r.status,
       customerId: r.customerId,
-      customer: customer ? CustomerMapper.fromResponse(customer) : null,
+      customer,
       equipmentItems,
       durationMinutes: r.plannedDurationMinutes,
       startedAt,

@@ -1,9 +1,16 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { RentalsService } from '../api/generated';
-import type { Customer, EquipmentSearchItem, RentalState } from '@ui-models';
-import { RentalMapper } from '../mappers';
+import {
+  type BrokenEquipmentEntry,
+  type Customer,
+  type EquipmentSearchItem,
+  type RentalDetailState,
+} from '@ui-models';
+import { RentalDashboardMapper, RentalMapper } from '../mappers';
+import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
 import { UserStore } from './user.store';
 import { TariffStore } from './tariff.store';
@@ -11,12 +18,13 @@ import { TariffStore } from './tariff.store';
 @Injectable()
 export class RentalStore {
   private readonly rentalsService = inject(RentalsService);
+  private readonly batchRentalPropertyStore = inject(BatchRentalPropertyStore);
   private readonly userStore = inject(UserStore);
   private readonly customerFinanceStore = inject(CustomerFinanceStore);
   private readonly tariffStore = inject(TariffStore);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // Single source of truth for all mutable state
-  private readonly _state = signal<RentalState>({
+  private readonly _state = signal<RentalDetailState>({
     id: null,
     customer: null,
     equipmentItems: [],
@@ -27,6 +35,14 @@ export class RentalStore {
     isSaving: false,
     isActivating: false,
     isLoading: false,
+    status: '',
+    customerId: '',
+    startedAt: null,
+    isActive: false,
+    isDebt: false,
+    isOverdue: false,
+    brokenEquipmentEntries: [] as BrokenEquipmentEntry[],
+    isReturning: false,
   });
 
   patchState(partial: Partial<ReturnType<typeof this._state>>) {
@@ -51,6 +67,21 @@ export class RentalStore {
   readonly discountPercent = computed(() => this._state().discountPercent ?? null);
   readonly specialPrice = computed(() => this._state().specialPrice ?? null);
   readonly isSelectedAnyEquipment = computed(() => this._state().equipmentItems.length > 0);
+
+  readonly loadError = signal(false);
+
+  readonly status = computed(() => this._state().status);
+  readonly isActive = computed(() => this._state().isActive);
+  readonly isDebt = computed(() => this._state().isDebt);
+  readonly isOverdue = computed(() => this._state().isOverdue);
+  readonly overdueMinutes = computed(() => this._state().overdueMinutes);
+  readonly debtAmount = computed(() => this._state().debtAmount);
+  readonly expectedReturnAt = computed(() => this._state().expectedReturnAt);
+  readonly startedAt = computed(() => this._state().startedAt);
+  readonly customerId = computed(() => this._state().customerId);
+  readonly paidDurationMinutes = computed(() => this._state().paidDurationMinutes);
+  readonly brokenEquipmentEntries = computed(() => this._state().brokenEquipmentEntries);
+  readonly isReturning = computed(() => this._state().isReturning);
 
   setCustomer(customer: Customer | null): void {
     this.patchState({ customer });
@@ -162,31 +193,30 @@ export class RentalStore {
       .pipe(map(() => undefined as void));
   }
 
-  loadRental(id: number): Observable<void> {
+  loadDetail(id: number): void {
     this.patchState({ isLoading: true });
-    return this.rentalsService.getRentalById(id).pipe(
-      tap((response) => {
-        const items: EquipmentSearchItem[] = response.equipmentItems.map((item) => ({
-          id: item.equipmentId,
-          uid: item.equipmentUid ?? '',
-          model: '',
-          type: { slug: '', name: '', isForSpecialTariff: false },
-        }));
+    this.loadError.set(false);
 
-        this.patchState({
-          id: response.id,
-          equipmentItems: items,
-          customer: this._state().customer,
-          durationMinutes: response.plannedDurationMinutes,
-        });
-      }),
-      map(() => undefined as void),
-      catchError((err) => {
-        this.reset();
-        throw err;
-      }),
-      finalize(() => this.patchState({ isLoading: false })),
-    );
+    this.rentalsService
+      .getRentalById(id)
+      .pipe(
+        switchMap((rental) => {
+          const equipmentIds = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
+          return this.batchRentalPropertyStore
+            .fetch$({ equipmentIds, customerId: rental.customerId ?? null })
+            .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
+        }),
+        map(({ rental, customer, equipmentItems }) =>
+          RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
+        ),
+        finalize(() => this.patchState({ isLoading: false })),
+        catchError(() => {
+          this.loadError.set(true);
+          return EMPTY;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((state) => this.patchState(state));
   }
 
   reset(): void {

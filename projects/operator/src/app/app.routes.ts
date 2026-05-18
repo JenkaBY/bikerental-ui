@@ -18,6 +18,11 @@ export const routes: Routes = [
           import('./rental-create/rental-create.component').then((m) => m.RentalCreateComponent),
       },
       {
+        path: 'rentals/:id',
+        loadComponent: () =>
+          import('./rental-detail/rental-detail.component').then((m) => m.RentalDetailComponent),
+      },
+      {
         path: 'return',
         loadComponent: () => import('./return/return.component').then((m) => m.ReturnComponent),
       },
