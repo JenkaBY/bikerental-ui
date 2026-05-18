@@ -8,15 +8,19 @@ import type { RentalListItem } from '@ui-models';
 import type { RentalSummaryResponse } from '@api-models';
 import { toIsoDate } from '../../shared/utils/date.util';
 
+export interface RentalFilter {
+  dateFrom: Date;
+  dateTo: Date;
+  filter: 'ALL' | 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT' | undefined;
+}
+
 @Injectable()
 export class RentalListStore {
   private readonly rentalsService = inject(RentalsService);
   private readonly customersService = inject(CustomersService);
   private readonly equipmentsCatalogueService = inject(EquipmentsCatalogueService);
 
-  private readonly historyParams = signal<{ dateFrom: string; dateTo: Date; filter: Date } | null>(
-    null,
-  );
+  private readonly historyParams = signal<RentalFilter | null>(null);
 
   private readonly activeResource = rxResource<RentalListItem[], void>({
     stream: () =>
@@ -26,10 +30,7 @@ export class RentalListStore {
       ),
   });
 
-  private readonly historyResource = rxResource<
-    RentalListItem[],
-    { dateFrom: Date; dateTo: Date } | null
-  >({
+  private readonly historyResource = rxResource<RentalListItem[], RentalFilter | null>({
     params: () => this.historyParams(),
     stream: ({ params }) => {
       if (!params) return of([]);
@@ -59,7 +60,7 @@ export class RentalListStore {
     this.activeResource.reload();
   }
 
-  loadHistory(dateFrom: Date, dateTo: Date, filter: string): void {
+  loadHistory(dateFrom: Date, dateTo: Date, filter: RentalFilter['filter'] = 'ALL'): void {
     this.historyParams.set({ dateFrom, dateTo, filter });
   }
 

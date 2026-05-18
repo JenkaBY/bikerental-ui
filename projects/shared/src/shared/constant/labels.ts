@@ -163,6 +163,8 @@ export class Labels {
   static readonly ActiveRentals = $localize`active rentals`;
   static readonly SortedByReturnTime = $localize`sorted by return time`;
   static readonly Refresh = $localize`Refresh`;
+  static readonly FilterDrafts = $localize`Drafts`;
+  static readonly Records = $localize`records`;
   static readonly Returned = $localize`Returned`;
 
   static readonly CustomerAccountTabLabel = $localize`Account`;
