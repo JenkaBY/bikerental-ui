@@ -35,15 +35,17 @@ import { RentalSummaryComponent } from './rental-summary.component';
   ],
   template: `
     <div class="flex flex-col gap-6">
-      <app-rental-summary
-        [customer]="store.customer()!"
-        [durationMinutes]="store.durationMinutes()"
-        [equipmentItems]="store.equipmentItems()"
-        [specialPriceEnabled]="store.specialPriceEnabled()"
-        [isBalanceNegative]="!validationStore.isBalanceSufficient()"
-        [costEstimate]="validationStore.estimate()!"
-        [projectedBalance]="validationStore.projectedBalance()"
-      />
+      @if (validationStore.estimate()) {
+        <app-rental-summary
+          [customer]="store.customer()!"
+          [durationMinutes]="store.durationMinutes()"
+          [equipmentItems]="store.equipmentItems()"
+          [specialPriceEnabled]="store.specialPriceEnabled()"
+          [isBalanceNegative]="!validationStore.isBalanceSufficient()"
+          [costEstimate]="validationStore.estimate()!"
+          [projectedBalance]="validationStore.projectedBalance()"
+        />
+      }
 
       <app-rental-balance-warning (topUpRequested)="onTopUpRequested()" />
     </div>
