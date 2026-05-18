@@ -54,7 +54,7 @@ export class RentalListStore {
   private readonly customersService = inject(api.CustomersService);
   private readonly equipmentsCatalogueService = inject(api.EquipmentsCatalogueService);
 
-  private readonly historyParams = signal<{ dateFrom: string; dateTo: string } | null>(null);
+  private readonly historyParams = signal<{ dateFrom: Date; dateTo: Date; filter: string } | null>(null);
 
   private readonly activeResource = rxResource({
     loader: () =>
@@ -70,14 +70,15 @@ export class RentalListStore {
     request: () => this.historyParams(),
     loader: ({ request: params }) => {
       if (!params) return of([]);
+      const statusApi = params.filter === 'ALL' ? undefined : params.filter;
       return this.rentalsService
         .getRentals(
           { page: 0, size: 100 },
+          statusApi,
           undefined,
           undefined,
-          undefined,
-          new Date(params.dateFrom),
-          new Date(params.dateTo),
+          toIsoString(params.dateFrom),
+          toIsoString(params.dateTo),
         )
         .pipe(
           switchMap((page) => this.enrichItems(page.items ?? [])),
@@ -95,8 +96,8 @@ export class RentalListStore {
     this.activeResource.reload();
   }
 
-  loadHistory(dateFrom: string, dateTo: string): void {
-    this.historyParams.set({ dateFrom, dateTo });
+  loadHistory(dateFrom: Date, dateTo: Date, filter: string): void {
+    this.historyParams.set({ dateFrom, dateTo, filter });
   }
 
   private enrichItems(items: api.RentalSummaryResponse[]): Observable<RentalListItem[]> {
@@ -148,7 +149,9 @@ export class RentalListStore {
   `activeResource.reload()` to trigger a fresh fetch.
 - `historyResource` is driven by the `historyParams` signal via `request: () => this.historyParams()`.
   Setting `historyParams` to `null` (initial state) returns `of([])` immediately — no API call.
-  `loadHistory(dateFrom, dateTo)` simply sets the signal; `rxResource` re-fetches automatically.
+  `loadHistory(dateFrom, dateTo, filter)` simply sets the signal; `rxResource` re-fetches
+  automatically. The filter slug `'ALL'` is converted to `undefined` before being forwarded to
+  the `status` positional argument of `getRentals`, so the API receives an unconstrained query.
 - Public signals `activeRentals` and `historyRentals` are `computed()` wrappers over the resource
   `value()` with a `?? []` fallback for the initial `undefined` state. `isLoadingActive` and
   `isLoadingHistory` are the resource `.isLoading` signals directly — preserving the original
