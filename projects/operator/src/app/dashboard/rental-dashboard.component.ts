@@ -71,10 +71,7 @@ import { RentalHistoryTabComponent } from './rental-history-tab.component';
     </div>
     <mat-tab-nav-panel #tabPanel>
       @if (activeTab() === 'active') {
-        <app-rental-active-tab
-          [activeRentals]="store.activeRentals()"
-          [isLoadingActive]="store.isLoadingActive()"
-        />
+        <app-rental-active-tab />
       } @else {
         <app-rental-history-tab />
       }

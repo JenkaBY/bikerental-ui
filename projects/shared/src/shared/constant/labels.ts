@@ -165,6 +165,9 @@ export class Labels {
   static readonly Refresh = $localize`Refresh`;
   static readonly FilterDrafts = $localize`Drafts`;
   static readonly Records = $localize`records`;
+  static readonly NoActiveRentals = $localize`No active rentals`;
+  static readonly OverdueBy = $localize`Overdue by`;
+  static readonly Remaining = $localize`remaining`;
   static readonly Returned = $localize`Returned`;
 
   static readonly CustomerAccountTabLabel = $localize`Account`;
