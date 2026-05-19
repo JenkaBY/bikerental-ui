@@ -1,14 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Labels, mapRentalStatus } from '@bikerental/shared';
+import { DurationPipe, Labels, mapRentalStatus } from '@bikerental/shared';
 import type { RentalListItem } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe],
+  imports: [DatePipe, DurationPipe],
   host: {
     '(click)': 'navigateToDetail()',
     class:
@@ -34,12 +34,12 @@ import type { RentalListItem } from '@bikerental/shared';
       <div class="mt-1 text-sm font-medium">
         @if (item().isOverdue) {
           <span class="text-amber-600">
-            {{ Labels.OverdueBy }} {{ item().overdueMinutes }} {{ Labels.MinuteShort }}
+            {{ Labels.OverdueBy }} {{ item().overdueMinutes | duration }}
           </span>
         } @else {
           <span class="text-slate-500">
             @if (remainingMinutes(); as mins) {
-              {{ mins }} {{ Labels.MinuteShort }} {{ Labels.Remaining }}
+              {{ mins | duration }} {{ Labels.MinuteShort }} {{ Labels.Remaining }}
             }
             @if (item().expectedReturnAt; as returnAt) {
               @if (remainingMinutes()) {

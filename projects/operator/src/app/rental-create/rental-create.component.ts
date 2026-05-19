@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
+  BatchRentalPropertyStore,
   CustomerFinanceStore,
   Labels,
+  RENTAL_STORE_TOKEN,
   RentalCostCalculationStore,
   RentalStore,
   RentalValidationStore,
@@ -13,7 +15,14 @@ import { RentalStep3Component } from './step3/rental-step3.component';
 @Component({
   selector: 'app-rental-create',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CustomerFinanceStore, RentalCostCalculationStore, RentalStore, RentalValidationStore],
+  providers: [
+    BatchRentalPropertyStore,
+    CustomerFinanceStore,
+    RentalCostCalculationStore,
+    RentalStore,
+    RentalValidationStore,
+    { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
+  ],
   imports: [RentalStep1Component, RentalStep2Component, RentalStep3Component],
   template: `
     @if (isLoading()) {

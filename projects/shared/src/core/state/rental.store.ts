@@ -54,6 +54,9 @@ export class RentalStore {
   readonly id = computed(() => this._state().id);
   readonly customer = computed(() => this._state().customer);
   readonly customerBalance = computed(() => this.customerFinanceStore.balance());
+  readonly isBalanceSufficient = computed(
+    () => (this.customerFinanceStore.balance()?.available.amount ?? 0) >= 0,
+  );
   readonly equipmentItems = computed(() => this._state().equipmentItems);
   readonly specialPriceEnabled = computed(() => this._state().specialPriceEnabled);
   readonly operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
@@ -216,7 +219,10 @@ export class RentalStore {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((state) => this.patchState(state));
+      .subscribe((state) => {
+        this.patchState(state);
+        this.setCustomer(state.customer || null);
+      });
   }
 
   reset(): void {

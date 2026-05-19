@@ -1,22 +1,53 @@
 import { DatePipe, Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  ViewContainerRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   BatchRentalPropertyStore,
   CustomerFinanceStore,
+  DurationPipe,
   Labels,
   mapRentalStatus,
+  RENTAL_STORE_TOKEN,
   RentalStore,
+  TopUpDialogComponent,
+  MoneyPipe,
 } from '@bikerental/shared';
+import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
 
 @Component({
   selector: 'app-rental-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RentalStore, CustomerFinanceStore, BatchRentalPropertyStore],
-  imports: [DatePipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  providers: [
+    RentalStore,
+    CustomerFinanceStore,
+    BatchRentalPropertyStore,
+    { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
+  ],
+  imports: [
+    DatePipe,
+    MatButtonModule,
+    MatDividerModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    RentalCustomerPanelComponent,
+    MoneyPipe,
+    DurationPipe,
+  ],
   template: `
     <div class="flex flex-col h-full">
       <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 shrink-0">
@@ -35,7 +66,7 @@ import {
         >
           <mat-icon class="!text-base">warning_amber</mat-icon>
           <span>
-            {{ Labels.OverdueBy }} {{ store.overdueMinutes() }} {{ Labels.MinuteShort }}
+            {{ Labels.OverdueBy }} {{ store.overdueMinutes() | duration }}
             @if (store.expectedReturnAt(); as returnAt) {
               &nbsp;&middot;&nbsp;{{ Labels.Expected }} {{ returnAt | date: 'HH:mm' }}
             }
@@ -50,7 +81,7 @@ import {
           <mat-icon class="!text-base">warning_amber</mat-icon>
           <span>
             @if (store.debtAmount(); as debt) {
-              {{ debt.amount }}&nbsp;{{ debt.currency }}&nbsp;&middot;&nbsp;
+              {{ debt | money }}&nbsp;&middot;&nbsp;
             }
             {{ Labels.DebtAutoCharge }}
           </span>
@@ -67,7 +98,10 @@ import {
           <button mat-button (click)="store.loadDetail(rentalId())">{{ Labels.Retry }}</button>
         </div>
       } @else if (store.id() !== null) {
-        <div class="flex-1 overflow-y-auto"></div>
+        <div class="flex-1 overflow-y-auto">
+          <app-rental-customer-panel (topUpRequested)="onTopUpRequested()" />
+          <mat-divider />
+        </div>
       }
     </div>
   `,
@@ -75,6 +109,10 @@ import {
 export class RentalDetailComponent {
   protected readonly store = inject(RentalStore);
   private readonly location = inject(Location);
+  private readonly dialog = inject(MatDialog);
+  private readonly financeStore = inject(CustomerFinanceStore);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly id = input.required<string>();
 
@@ -100,5 +138,24 @@ export class RentalDetailComponent {
 
   protected onBack(): void {
     this.location.back();
+  }
+
+  protected onTopUpRequested(): void {
+    const customerId = this.store.customerId();
+    if (!customerId) return;
+
+    this.dialog
+      .open(TopUpDialogComponent, {
+        data: { customerId },
+        disableClose: true,
+        viewContainerRef: this.viewContainerRef,
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result: boolean | undefined) => {
+        if (result) {
+          this.financeStore.loadById(customerId);
+        }
+      });
   }
 }

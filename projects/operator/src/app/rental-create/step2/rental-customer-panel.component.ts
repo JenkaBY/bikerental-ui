@@ -1,12 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  Labels,
-  MoneyPipe,
-  RentalStore,
-  RentalValidationStore,
-  TopUpButtonComponent,
-} from '@bikerental/shared';
+import { Labels, MoneyPipe, RENTAL_STORE_TOKEN, TopUpButtonComponent } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-customer-panel',
@@ -27,8 +21,8 @@ import {
         @if (store.customerBalance(); as balance) {
           <span
             class="text-sm font-medium"
-            [class.text-red-600]="!validationStore.isBalanceSufficient()"
-            [class.text-green-700]="validationStore.isBalanceSufficient()"
+            [class.text-red-600]="!store.isBalanceSufficient()"
+            [class.text-green-700]="store.isBalanceSufficient()"
           >
             {{ Labels.BalanceAvailable }}: {{ balance?.available | money }}
           </span>
@@ -39,8 +33,7 @@ import {
   `,
 })
 export class RentalCustomerPanelComponent {
-  protected readonly store = inject(RentalStore);
-  protected readonly validationStore = inject(RentalValidationStore);
+  protected readonly store = inject(RENTAL_STORE_TOKEN);
   protected readonly Labels = Labels;
 
   readonly topUpRequested = output<void>();

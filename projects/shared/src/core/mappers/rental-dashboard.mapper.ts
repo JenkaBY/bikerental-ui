@@ -17,6 +17,27 @@ import type {
 import { makeMoney } from './money.mapper';
 
 export class RentalDashboardMapper {
+  private static calculateOverdue(
+    isActive: boolean,
+    startedAt: Date | null,
+    plannedDurationMinutes: number | null | undefined,
+    now: Date = new Date(),
+  ): { isOverdue: boolean; overdueMinutes?: number } {
+    if (!isActive || startedAt === null || plannedDurationMinutes == null) {
+      return { isOverdue: false };
+    }
+
+    const expectedReturnAt = new Date(startedAt.getTime() + plannedDurationMinutes * 60_000);
+    const isOverdue = expectedReturnAt < now;
+
+    if (isOverdue) {
+      const overdueMinutes = (now.getTime() - expectedReturnAt.getTime()) / 60_000;
+      return { isOverdue: true, overdueMinutes };
+    }
+
+    return { isOverdue: false };
+  }
+
   static toListItem(
     r: RentalSummaryResponse,
     customer: CustomerResponse | null,
@@ -24,7 +45,15 @@ export class RentalDashboardMapper {
   ): RentalListItem {
     const isActive = r.status === 'ACTIVE';
     const isDebt = r.status === 'DEBT';
-    const isOverdue = r.overdueMinutes != null && r.overdueMinutes > 0;
+    const startedAt = r.startedAt ? new Date(r.startedAt) : new Date(0);
+    const plannedDurationMinutes = r.expectedReturnAt
+      ? (new Date(r.expectedReturnAt).getTime() - startedAt.getTime()) / 60_000
+      : undefined;
+    const { isOverdue, overdueMinutes } = this.calculateOverdue(
+      isActive,
+      startedAt,
+      plannedDurationMinutes,
+    );
     const firstName = customer?.firstName ?? '';
     const lastName = customer?.lastName ?? '';
     const fullName = [firstName, lastName].filter(Boolean).join(' ');
@@ -34,13 +63,13 @@ export class RentalDashboardMapper {
       status: r.status ?? '',
       customerPhone: customer?.phone ?? '',
       customerName: fullName || undefined,
-      startedAt: r.startedAt ? new Date(r.startedAt) : new Date(0),
+      startedAt,
       equipmentNames: (r.equipmentIds ?? []).map((id) => equipmentNameMap.get(id) ?? ''),
       expectedReturnAt: r.expectedReturnAt ? new Date(r.expectedReturnAt) : undefined,
       isActive,
       isDebt,
       isOverdue,
-      overdueMinutes: isOverdue ? r.overdueMinutes : undefined,
+      overdueMinutes,
     };
   }
 
@@ -52,12 +81,11 @@ export class RentalDashboardMapper {
     const isActive = r.status === 'ACTIVE';
     const isDebt = r.status === 'DEBT';
     const startedAt = r.startedAt ? new Date(r.startedAt) : null;
-    const now = new Date();
-    const isOverdue =
-      isActive &&
-      startedAt !== null &&
-      r.plannedDurationMinutes != null &&
-      new Date(startedAt.getTime() + r.plannedDurationMinutes * 60_000) < now;
+    const { isOverdue, overdueMinutes } = this.calculateOverdue(
+      isActive,
+      startedAt,
+      r.plannedDurationMinutes,
+    );
 
     const equipmentMap = new Map<number, EquipmentSearchItem>(equipmentBatch.map((e) => [e.id, e]));
     const equipmentItems: RentalEquipmentItem[] = (r.equipmentItems ?? []).map(
@@ -89,6 +117,7 @@ export class RentalDashboardMapper {
       isActive,
       isDebt,
       isOverdue,
+      overdueMinutes,
       brokenEquipmentEntries: [] as BrokenEquipmentEntry[],
       isReturning: false,
     };
