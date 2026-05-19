@@ -446,19 +446,23 @@ export interface PageRentalSummaryResponse {
 /** Compact rental summary for list views */
 export interface RentalSummaryResponse {
   /** Rental ID */
-  id?: number;
+  id: number;
   /** Customer UUID */
-  customerId?: string;
+  customerId: string;
   /** List of rented equipment IDs */
   equipmentIds?: Array<number>;
   /** Rental status */
-  status?: string;
+  status: string;
   /** Rental start time */
   startedAt?: string;
   /** Expected return time */
   expectedReturnAt?: string;
   /** Overdue minutes (null if not overdue) */
   overdueMinutes?: number;
+  /** Planned duration in minutes */
+  plannedDurationMinutes: number;
+  /** Actual duration in minutes (null until returned) */
+  actualDurationMinutes?: number;
 }
 
 /** Equipment available for a new rental */
