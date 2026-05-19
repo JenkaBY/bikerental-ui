@@ -28,7 +28,10 @@ import { Labels, MoneyPipe, RentalCostCalculationStore, RentalStore } from '@bik
           <mat-spinner diameter="28" />
         </div>
       } @else if (costStore.estimate(); as cost) {
-        <p class="text-2xl font-bold text-slate-900 mt-1">{{ cost.totalCost | money }}</p>
+        <div class="flex items-baseline gap-3 mt-1">
+          <p class="text-2xl font-bold text-slate-900">{{ cost.totalCost | money }}</p>
+          <p class="text-sm text-slate-400">{{ rentalStore.estimatedCost() | money }}</p>
+        </div>
       }
 
       @if (expanded() && costStore.estimate(); as cost) {

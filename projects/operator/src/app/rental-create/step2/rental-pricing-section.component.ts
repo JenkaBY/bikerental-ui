@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { Labels, RentalStore } from '@bikerental/shared';
+import { Labels, RENTAL_STORE_TOKEN } from '@bikerental/shared';
 import { DiscountInputComponent } from './discount-input.component';
 import { SpecialPriceInputComponent } from './special-price-input.component';
 
@@ -40,6 +40,6 @@ import { SpecialPriceInputComponent } from './special-price-input.component';
   `,
 })
 export class RentalPricingSectionComponent {
-  protected readonly store = inject(RentalStore);
+  protected readonly store = inject(RENTAL_STORE_TOKEN);
   protected readonly Labels = Labels;
 }

@@ -27,6 +27,7 @@ import {
   MoneyPipe,
 } from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
+import { RentalPricingSectionComponent } from '../rental-create/step2/rental-pricing-section.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
 
@@ -49,6 +50,7 @@ import { RentalCostSectionComponent } from './rental-cost-section.component';
     RentalCustomerPanelComponent,
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
+    RentalPricingSectionComponent,
     MoneyPipe,
     DurationPipe,
   ],
@@ -109,6 +111,13 @@ import { RentalCostSectionComponent } from './rental-cost-section.component';
           <mat-divider />
           @if (!store.isDraft()) {
             <app-rental-cost-section />
+            <mat-divider />
+          }
+          @if (store.isActive() && false) {
+            <p class="px-4 py-3 text-sm font-semibold text-slate-600">
+              {{ Labels.ReturnPricing }}
+            </p>
+            <app-rental-pricing-section />
             <mat-divider />
           }
         </div>

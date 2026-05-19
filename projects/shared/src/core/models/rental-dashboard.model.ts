@@ -40,6 +40,7 @@ export interface RentalDetailState extends RentalState {
   startedAt: Date | null;
   expectedReturnAt?: Date;
   paidDurationMinutes?: number;
+  estimatedCost?: Money;
   finalCost?: Money;
   debtAmount?: Money;
   isActive: boolean;

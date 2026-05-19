@@ -7,6 +7,7 @@ import type {
 import type {
   CustomerRentalSummary,
   RentalCostEstimate,
+  RentalDetailState,
   RentalState,
   RentalWrite,
 } from '@ui-models';
@@ -50,12 +51,17 @@ export class RentalMapper {
   }
 
   static toCostCalculation(
-    draft: RentalState,
+    draft: RentalState | RentalDetailState,
     specialTariffId: number | null,
   ): CostCalculationRequest {
+    const actualDuration =
+      'startedAt' in draft && draft.startedAt
+        ? Math.floor((new Date().getTime() - draft.startedAt.getTime()) / 60_000)
+        : undefined;
     return {
       equipments: draft.equipmentItems.map((e) => ({ equipmentType: e.type.slug })),
       plannedDurationMinutes: draft.durationMinutes,
+      actualDurationMinutes: actualDuration,
       discountPercent: draft.specialPriceEnabled ? undefined : draft.discountPercent,
       specialPrice: draft.specialPriceEnabled ? draft.specialPrice : undefined,
       specialTariffId: draft.specialPriceEnabled ? (specialTariffId ?? undefined) : undefined,

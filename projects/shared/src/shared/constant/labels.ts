@@ -245,4 +245,5 @@ export class Labels {
   static readonly DiscountLabel = $localize`Discount`;
   static readonly Total = $localize`Total`;
   static readonly SpecialPriceApplied = $localize`Special price applied`;
+  static readonly ReturnPricing = $localize`Return pricing`;
 }

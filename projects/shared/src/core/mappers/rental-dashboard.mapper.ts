@@ -117,6 +117,7 @@ export class RentalDashboardMapper {
       overdueMinutes,
       brokenEquipmentEntries: [] as BrokenEquipmentEntry[],
       isReturning: false,
+      estimatedCost: r.estimatedCost ? makeMoney(r.estimatedCost) : undefined,
     };
   }
 
