@@ -27,6 +27,7 @@ import {
   MoneyPipe,
 } from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
+import { RentalPeriodSectionComponent } from './rental-period-section.component';
 
 @Component({
   selector: 'app-rental-detail',
@@ -45,6 +46,7 @@ import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-cust
     MatIconModule,
     MatProgressSpinnerModule,
     RentalCustomerPanelComponent,
+    RentalPeriodSectionComponent,
     MoneyPipe,
     DurationPipe,
   ],
@@ -100,6 +102,8 @@ import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-cust
       } @else if (store.id() !== null) {
         <div class="flex-1 overflow-y-auto">
           <app-rental-customer-panel (topUpRequested)="onTopUpRequested()" />
+          <mat-divider />
+          <app-rental-period-section />
           <mat-divider />
         </div>
       }
