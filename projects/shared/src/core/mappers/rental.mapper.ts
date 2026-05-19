@@ -67,12 +67,14 @@ export class RentalMapper {
       subtotal: makeMoney(response.subtotal),
       totalCost: makeMoney(response.totalCost),
       specialPricingApplied: response.specialPricingApplied ?? false,
+      isEstimate: response.estimate ?? true,
       discountPercent: response.discount?.percent,
       discountAmount: makeMoney(response.discount?.amount ?? 0),
       equipmentBreakdowns: response.equipmentBreakdowns.map((b) => ({
         equipmentType: b.equipmentType,
         tariffId: b.tariffId,
         itemCost: makeMoney(b.itemCost),
+        calculationMessage: b.calculationBreakdown?.message ?? '',
       })),
     };
   }

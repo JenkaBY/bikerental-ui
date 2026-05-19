@@ -237,4 +237,12 @@ export class Labels {
   static readonly Expected = $localize`Expected`;
   static readonly DebtAutoCharge = $localize`Balance will be charged automatically once topped up`;
   static readonly Retry = $localize`Retry`;
+  static readonly CurrentCost = $localize`Current cost`;
+  static readonly FinalCost = $localize`Final cost`;
+  static readonly ShowDetails = $localize`Show details`;
+  static readonly CollapseDetails = $localize`Collapse`;
+  static readonly Subtotal = $localize`Subtotal`;
+  static readonly DiscountLabel = $localize`Discount`;
+  static readonly Total = $localize`Total`;
+  static readonly SpecialPriceApplied = $localize`Special price applied`;
 }

@@ -46,13 +46,10 @@ export class RentalDashboardMapper {
     const isActive = r.status === 'ACTIVE';
     const isDebt = r.status === 'DEBT';
     const startedAt = r.startedAt ? new Date(r.startedAt) : new Date(0);
-    const plannedDurationMinutes = r.expectedReturnAt
-      ? (new Date(r.expectedReturnAt).getTime() - startedAt.getTime()) / 60_000
-      : undefined;
     const { isOverdue, overdueMinutes } = this.calculateOverdue(
       isActive,
       startedAt,
-      plannedDurationMinutes,
+      r.plannedDurationMinutes,
     );
     const firstName = customer?.firstName ?? '';
     const lastName = customer?.lastName ?? '';

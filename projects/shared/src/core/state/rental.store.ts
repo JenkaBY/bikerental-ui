@@ -74,6 +74,7 @@ export class RentalStore {
   readonly loadError = signal(false);
 
   readonly status = computed(() => this._state().status);
+  readonly isDraft = computed(() => this._state().status === 'DRAFT');
   readonly isActive = computed(() => this._state().isActive);
   readonly isDebt = computed(() => this._state().isDebt);
   readonly isOverdue = computed(() => this._state().isOverdue);

@@ -28,6 +28,7 @@ import {
 } from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
+import { RentalCostSectionComponent } from './rental-cost-section.component';
 
 @Component({
   selector: 'app-rental-detail',
@@ -47,6 +48,7 @@ import { RentalPeriodSectionComponent } from './rental-period-section.component'
     MatProgressSpinnerModule,
     RentalCustomerPanelComponent,
     RentalPeriodSectionComponent,
+    RentalCostSectionComponent,
     MoneyPipe,
     DurationPipe,
   ],
@@ -105,6 +107,10 @@ import { RentalPeriodSectionComponent } from './rental-period-section.component'
           <mat-divider />
           <app-rental-period-section />
           <mat-divider />
+          @if (!store.isDraft()) {
+            <app-rental-cost-section />
+            <mat-divider />
+          }
         </div>
       }
     </div>

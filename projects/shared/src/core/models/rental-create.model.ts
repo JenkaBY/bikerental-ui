@@ -6,6 +6,7 @@ export interface RentalCostBreakdown {
   equipmentType: string;
   tariffId: number;
   itemCost: Money;
+  calculationMessage: string;
 }
 
 export interface RentalCostEstimate {
@@ -14,6 +15,7 @@ export interface RentalCostEstimate {
   readonly discountAmount?: Money;
   readonly discountPercent?: number;
   readonly specialPricingApplied: boolean;
+  readonly isEstimate: boolean;
   readonly equipmentBreakdowns: readonly RentalCostBreakdown[];
 }
 
