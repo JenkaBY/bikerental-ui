@@ -37,6 +37,8 @@ export class Labels {
   static readonly NoTransitionsAvailable = $localize`No transitions for this status`;
   // Added for equipment list
   static readonly Equipment = $localize`Equipment`;
+  static readonly SelectAll = $localize`Select all`;
+  static readonly Deselect = $localize`Deselect`;
   static readonly All = $localize`All`;
   static readonly Activate = $localize`Activate`;
   static readonly Deactivate = $localize`Deactivate`;

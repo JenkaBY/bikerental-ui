@@ -22,6 +22,7 @@ export interface EquipmentItemStatusMeta {
   readonly slug: string;
   readonly color: 'primary' | 'accent' | 'warn' | 'default';
   readonly labelKey: string;
+  readonly label: string;
 }
 
 export const RentalStatus: Record<string, RentalStatusMeta> = {
@@ -63,9 +64,24 @@ export const RentalStatus: Record<string, RentalStatusMeta> = {
 };
 
 export const EquipmentItemStatus: Record<string, EquipmentItemStatusMeta> = {
-  ASSIGNED: { slug: 'ASSIGNED', color: 'primary', labelKey: 'equipmentItemStatus.assigned' },
-  ACTIVE: { slug: 'ACTIVE', color: 'warn', labelKey: 'equipmentItemStatus.active' },
-  RETURNED: { slug: 'RETURNED', color: 'default', labelKey: 'equipmentItemStatus.returned' },
+  ASSIGNED: {
+    slug: 'ASSIGNED',
+    color: 'primary',
+    labelKey: 'equipmentItemStatus.assigned',
+    label: Labels.EquipmentItemStatusAssigned,
+  },
+  ACTIVE: {
+    slug: 'ACTIVE',
+    color: 'warn',
+    labelKey: 'equipmentItemStatus.active',
+    label: Labels.EquipmentItemStatusActive,
+  },
+  RETURNED: {
+    slug: 'RETURNED',
+    color: 'default',
+    labelKey: 'equipmentItemStatus.returned',
+    label: Labels.Returned,
+  },
 };
 
 const DEFAULT_RENTAL_STATUS: RentalStatusMeta = {
@@ -79,6 +95,7 @@ const DEFAULT_EQUIPMENT_ITEM_STATUS: EquipmentItemStatusMeta = {
   slug: '',
   color: 'default',
   labelKey: '',
+  label: '',
 };
 
 export function mapRentalStatus(slug: string): RentalStatusMeta {

@@ -8,6 +8,7 @@ import {
   type Customer,
   type EquipmentSearchItem,
   type RentalDetailState,
+  type RentalEquipmentItem,
 } from '@ui-models';
 import { RentalDashboardMapper, RentalMapper } from '../mappers';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
@@ -72,6 +73,11 @@ export class RentalStore {
   readonly isSelectedAnyEquipment = computed(() => this._state().equipmentItems.length > 0);
 
   readonly loadError = signal(false);
+  readonly selectedEquipmentItemIds = signal<Set<number>>(new Set<number>());
+  readonly selectedEquipmentCount = computed(() => this.selectedEquipmentItemIds().size);
+  readonly rentalEquipmentItems = computed(
+    () => this._state().equipmentItems as RentalEquipmentItem[],
+  );
 
   readonly status = computed(() => this._state().status);
   readonly isDraft = computed(() => this._state().status === 'DRAFT');
@@ -145,6 +151,26 @@ export class RentalStore {
       specialPrice: price ?? undefined,
       discountPercent: undefined,
     });
+  }
+
+  selectEquipmentItem(id: number): void {
+    const next = new Set(this.selectedEquipmentItemIds());
+    next.add(id);
+    this.selectedEquipmentItemIds.set(next);
+  }
+
+  deselectEquipmentItem(id: number): void {
+    const next = new Set(this.selectedEquipmentItemIds());
+    next.delete(id);
+    this.selectedEquipmentItemIds.set(next);
+  }
+
+  selectAllActiveItems(ids: number[]): void {
+    this.selectedEquipmentItemIds.set(new Set(ids));
+  }
+
+  clearSelection(): void {
+    this.selectedEquipmentItemIds.set(new Set<number>());
   }
 
   save() {
@@ -228,6 +254,7 @@ export class RentalStore {
   }
 
   reset(): void {
+    this.selectedEquipmentItemIds.set(new Set<number>());
     this.patchState({
       id: null,
       customer: null,

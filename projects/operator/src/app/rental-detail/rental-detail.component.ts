@@ -30,6 +30,7 @@ import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-cust
 import { RentalPricingSectionComponent } from '../rental-create/step2/rental-pricing-section.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
+import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
 
 @Component({
   selector: 'app-rental-detail',
@@ -51,6 +52,7 @@ import { RentalCostSectionComponent } from './rental-cost-section.component';
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
     RentalPricingSectionComponent,
+    RentalEquipmentSectionComponent,
     MoneyPipe,
     DurationPipe,
   ],
@@ -113,12 +115,19 @@ import { RentalCostSectionComponent } from './rental-cost-section.component';
             <app-rental-cost-section />
             <mat-divider />
           }
-          @if (store.isActive() && false) {
+          @let enableDiscountSection = false;
+          @if (store.isActive() && enableDiscountSection) {
             <p class="px-4 py-3 text-sm font-semibold text-slate-600">
               {{ Labels.ReturnPricing }}
             </p>
             <app-rental-pricing-section />
             <mat-divider />
+          }
+          @if (!store.isDraft()) {
+            <app-rental-equipment-section
+              [equipmentItems]="store.rentalEquipmentItems()"
+              [isDebt]="store.isDebt()"
+            />
           }
         </div>
       }
