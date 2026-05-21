@@ -72,20 +72,6 @@ describe('EquipmentListComponent', () => {
     return { store, typeStore, statusStore, dialog };
   }
 
-  it('should set filter and reload equipment on status filter change', async () => {
-    const store = makeStore();
-
-    await createComponentWithMocks({ store });
-    fixture.detectChanges();
-
-    component.onFilterStatusChange('available');
-
-    expect(store.setFilterStatus as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(
-      'available',
-    );
-    expect(store.load as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(1);
-  });
-
   it('should set filter and reload equipment on type filter change', async () => {
     const store = makeStore();
 

@@ -41,7 +41,7 @@ describe('CustomerMapper', () => {
     expect(req.firstName).toBe('John');
     expect(req.lastName).toBe('Doe');
     expect(req.email).toBe('j@d.com');
-    expect(req.birthDate).toBe(write.birthDate);
+    expect(req.birthDate).toBe('2000-01-01');
     expect(req.comments).toBe('some notes');
   });
 });

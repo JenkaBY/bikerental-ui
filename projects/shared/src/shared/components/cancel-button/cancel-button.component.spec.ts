@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { CancelButtonComponent } from './cancel-button.component';
 
 @Component({
@@ -11,7 +12,10 @@ class Host {}
 
 describe('CancelButtonComponent', () => {
   it('renders cancel button with localized text', async () => {
-    await TestBed.configureTestingModule({ imports: [Host] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [Host],
+      providers: [provideNoopAnimations()],
+    }).compileComponents();
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
     const btn: HTMLButtonElement = fixture.nativeElement.querySelector('button');

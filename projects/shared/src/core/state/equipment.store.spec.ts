@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
 import { Equipment, EquipmentStatus, EquipmentType, EquipmentWrite } from '../models';
-import { EquipmentService } from '../api/generated';
+import { EquipmentsCatalogueService } from '../api/generated';
 import { EquipmentStore } from './equipment.store';
 import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
@@ -93,7 +93,7 @@ describe('EquipmentStore', () => {
     TestBed.configureTestingModule({
       providers: [
         EquipmentStore,
-        { provide: EquipmentService, useValue: service },
+        { provide: EquipmentsCatalogueService, useValue: service },
         { provide: EquipmentTypeStore, useValue: equipmentTypeStore },
         { provide: EquipmentStatusStore, useValue: equipmentStatusStore },
       ],
