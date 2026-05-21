@@ -28,6 +28,7 @@ import {
 } from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
 import { RentalPricingSectionComponent } from '../rental-create/step2/rental-pricing-section.component';
+import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
@@ -49,6 +50,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     MatIconModule,
     MatProgressSpinnerModule,
     RentalCustomerPanelComponent,
+    RentalActionButtonsComponent,
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
     RentalPricingSectionComponent,
@@ -130,6 +132,10 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
             />
           }
         </div>
+
+        @if (!store.isDraft()) {
+          <app-rental-action-buttons />
+        }
       }
     </div>
   `,

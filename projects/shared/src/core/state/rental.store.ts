@@ -216,6 +216,20 @@ export class RentalStore {
       );
   }
 
+  returnEquipment(): Observable<void> {
+    const id = this._state().id;
+    if (id === null) throw new Error('No rental id in store');
+    const request = RentalDashboardMapper.toReturnRequest(
+      { rentalId: id, equipmentItemIds: [...this.selectedEquipmentItemIds()] },
+      this.operatorId(),
+    );
+    this.patchState({ isReturning: true });
+    return this.rentalsService.returnEquipment(request).pipe(
+      map(() => undefined as void),
+      finalize(() => this.patchState({ isReturning: false })),
+    );
+  }
+
   cancelRental(): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');

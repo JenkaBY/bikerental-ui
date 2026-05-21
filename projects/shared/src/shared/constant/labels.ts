@@ -248,4 +248,14 @@ export class Labels {
   static readonly Total = $localize`Total`;
   static readonly SpecialPriceApplied = $localize`Special price applied`;
   static readonly ReturnPricing = $localize`Return pricing`;
+  static readonly ReturnEquipmentButton = $localize`Return equipment`;
+  static readonly BrokenEquipment = $localize`Broken`;
+  static readonly CancelRental = $localize`Cancel rental`;
+  static readonly KeepRental = $localize`Keep rental`;
+  static readonly YesCancel = $localize`Yes, cancel`;
+  static readonly CancelRentalConfirmation = $localize`Are you sure you want to cancel this rental?`;
+  static readonly RentalReturnSuccess = $localize`Equipment returned successfully`;
+  static readonly RentalCancelSuccess = $localize`Rental cancelled`;
+  static readonly RentalReturnError = $localize`Failed to return equipment. Please try again.`;
+  static readonly RentalCancelError = $localize`Failed to cancel rental. Please try again.`;
 }
