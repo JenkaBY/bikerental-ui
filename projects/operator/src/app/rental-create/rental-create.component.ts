@@ -1,19 +1,12 @@
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, filter, of, switchMap, tap } from 'rxjs';
-import {
+  BatchRentalPropertyStore,
   CustomerFinanceStore,
   Labels,
+  RENTAL_STORE_TOKEN,
   RentalCostCalculationStore,
   RentalStore,
+  RentalValidationStore,
 } from '@bikerental/shared';
 import { RentalStep1Component } from './step1/rental-step1.component';
 import { RentalStep2Component } from './step2/rental-step2.component';
@@ -22,7 +15,14 @@ import { RentalStep3Component } from './step3/rental-step3.component';
 @Component({
   selector: 'app-rental-create',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CustomerFinanceStore, RentalCostCalculationStore, RentalStore],
+  providers: [
+    BatchRentalPropertyStore,
+    CustomerFinanceStore,
+    RentalCostCalculationStore,
+    RentalStore,
+    RentalValidationStore,
+    { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
+  ],
   imports: [RentalStep1Component, RentalStep2Component, RentalStep3Component],
   template: `
     @if (isLoading()) {
@@ -46,30 +46,9 @@ import { RentalStep3Component } from './step3/rental-step3.component';
 })
 export class RentalCreateComponent {
   private readonly store = inject(RentalStore);
-  private readonly snackBar = inject(MatSnackBar);
-  private readonly destroyRef = inject(DestroyRef);
 
-  readonly id = input<number>();
   readonly activeStep = signal<number>(0);
   protected readonly isLoading = this.store.isLoading;
-
-  constructor() {
-    toObservable(this.id)
-      .pipe(
-        filter((id): id is number => id !== undefined),
-        switchMap((id) =>
-          this.store.loadRental(id).pipe(
-            tap(() => this.activeStep.set(1)),
-            catchError(() => {
-              this.snackBar.open(Labels.RentalDraftLoadError, Labels.Close, { duration: 4000 });
-              return of(undefined);
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
 
   protected readonly Labels = Labels;
 }

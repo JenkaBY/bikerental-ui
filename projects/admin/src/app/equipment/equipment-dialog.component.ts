@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, LOCALE_ID, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, LOCALE_ID } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -108,32 +108,6 @@ export interface EquipmentDialogData {
           <mat-hint>{{ labels.FormatDate }} {{ dateFormatHint }}</mat-hint>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>
-            @if (data.equipment) {
-              <span
-                >{{ labels.TransitionFrom }} '{{ currentStatusName }}'
-                {{ labels.TransitionTo }}</span
-              >
-            } @else {
-              <span>{{ labels.Status }}</span>
-            }
-          </mat-label>
-          <span
-            [matTooltip]="statusSelectDisabled ? labels.NoTransitionsAvailable : ''"
-            matTooltipShowDelay="200"
-          >
-            <mat-select formControlName="statusSlug" [disabled]="statusSelectDisabled">
-              @for (s of statusOptions; track s.slug) {
-                <mat-option [value]="s.slug">{{ s.name }}</mat-option>
-              }
-            </mat-select>
-          </span>
-          @if (statusSelectDisabled) {
-            <mat-hint>{{ labels.NoTransitionsAvailable }}</mat-hint>
-          }
-        </mat-form-field>
-
         <mat-form-field appearance="outline" class="w-full col-span-2">
           <mat-label>{{ labels.ConditionNotes }}</mat-label>
           <textarea matInput formControlName="conditionNotes" rows="3"></textarea>
@@ -150,7 +124,7 @@ export interface EquipmentDialogData {
     </mat-dialog-actions>
   `,
 })
-export class EquipmentDialogComponent implements OnInit {
+export class EquipmentDialogComponent {
   private dialogRef = inject(MatDialogRef<EquipmentDialogComponent>);
   private store = inject(EquipmentStore);
   readonly data = inject<EquipmentDialogData>(MAT_DIALOG_DATA);
@@ -169,11 +143,10 @@ export class EquipmentDialogComponent implements OnInit {
     ]),
     uid: new FormControl(this.data?.equipment?.uid ?? '', [Validators.maxLength(100)]),
     typeSlug: new FormControl(this.data?.equipment?.type.slug ?? '', [Validators.required]),
-    statusSlug: new FormControl(this.data?.equipment?.status.slug ?? ''),
     model: new FormControl(this.data?.equipment?.model ?? '', [Validators.maxLength(200)]),
     commissionedAt: new FormControl({
       value: parseDate((this.data?.equipment?.commissionedAt as unknown as string) ?? null),
-      disabled: !this.data?.equipment?.id,
+      disabled: !this.data?.equipment,
     }),
     conditionSlug: new FormControl<EquipmentConditionSlug>(
       this.data?.equipment?.condition?.slug ?? ('GOOD' as EquipmentConditionSlug),
@@ -183,46 +156,6 @@ export class EquipmentDialogComponent implements OnInit {
   });
 
   readonly conditionOptions = EQUIPMENT_CONDITIONS;
-
-  get statusOptions(): EquipmentStatus[] {
-    const currentStatus = this.data?.equipment?.status;
-    if (!currentStatus) {
-      return this.data.statuses;
-    }
-
-    const current = this.data.statuses.find((s) => s === currentStatus);
-    const allowed = new Set(current?.allowedTransitions ?? []);
-
-    return this.data.statuses.filter((s) => s === currentStatus || allowed.has(s.slug ?? ''));
-  }
-
-  get currentStatusName(): string {
-    const status = this.data?.equipment?.status;
-    if (!status) return '';
-    return this.data.statuses.find((s) => s === status)?.name ?? status.name;
-  }
-
-  get statusSelectDisabled(): boolean {
-    const currentSlug = this.data?.equipment?.status.slug;
-    if (!currentSlug) return false;
-    const options = this.statusOptions.map((s) => s.slug);
-    return options.length <= 1;
-  }
-
-  ngOnInit(): void {
-    this.syncStatusControl();
-  }
-
-  private syncStatusControl(): void {
-    const ctrl = this.form.get('statusSlug');
-    if (!ctrl) return;
-    const shouldDisable = this.statusSelectDisabled;
-    if (shouldDisable && ctrl.enabled) {
-      ctrl.disable({ emitEvent: false });
-    } else if (!shouldDisable && ctrl.disabled) {
-      ctrl.enable({ emitEvent: false });
-    }
-  }
 
   save(): void {
     if (this.form.invalid) {
@@ -235,7 +168,7 @@ export class EquipmentDialogComponent implements OnInit {
       serialNumber: raw.serialNumber ?? '',
       uid: raw.uid || undefined,
       typeSlug: raw.typeSlug || undefined,
-      statusSlug: raw.statusSlug || undefined,
+      statusSlug: 'AVAILABLE',
       model: raw.model || undefined,
       commissionedAt: raw.commissionedAt ?? undefined,
       conditionSlug: raw.conditionSlug ?? undefined,

@@ -21,15 +21,15 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  AdjustmentRequest,
-  CustomerAccountBalancesResponse,
-  Pageable,
-  PageCustomerTransactionResponse,
-  RecordDepositRequest,
   RecordWithdrawalRequest,
   RequestOptions,
-  TransactionHistoryFilterParams,
   TransactionResponse,
+  RecordDepositRequest,
+  AdjustmentRequest,
+  TransactionHistoryFilterParams,
+  Pageable,
+  PageCustomerTransactionResponse,
+  CustomerAccountBalancesResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })

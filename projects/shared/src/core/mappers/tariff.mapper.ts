@@ -8,7 +8,7 @@ import {
   TariffWrite,
 } from '@ui-models';
 import { TariffV2Request, TariffV2Response } from '@api-models';
-import { toIsoDate } from '../../shared/utils/date.util';
+import { toIsoDate, parseDate } from '../../shared/utils/date.util';
 
 export class TariffMapper {
   static fromResponse(
@@ -34,8 +34,8 @@ export class TariffMapper {
       equipmentType,
       pricingType,
       params: { ...r.params },
-      validFrom: new Date(validFromStr + 'T00:00:00'),
-      validTo: validToStr ? new Date(validToStr + 'T00:00:00') : undefined,
+      validFrom: parseDate(validFromStr) ?? new Date(0),
+      validTo: validToStr ? (parseDate(validToStr) ?? undefined) : undefined,
       status: r.status as TariffStatus,
       isActive: r.status === 'ACTIVE',
       isSpecial: pricingType.slug === 'SPECIAL',
@@ -49,8 +49,8 @@ export class TariffMapper {
       equipmentTypeSlug: w.equipmentTypeSlug,
       pricingType: w.pricingType,
       params: { ...w.params },
-      validFrom: toIsoDate(w.validFrom) as unknown as Date,
-      validTo: w.validTo ? (toIsoDate(w.validTo) as unknown as Date) : undefined,
+      validFrom: toIsoDate(w.validFrom),
+      validTo: w.validTo ? toIsoDate(w.validTo) : undefined,
     };
   }
 }

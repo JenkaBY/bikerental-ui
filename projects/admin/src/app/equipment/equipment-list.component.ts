@@ -82,22 +82,19 @@ import { EquipmentStatusStore } from '@store.equipment-status.store';
             <td mat-cell *matCellDef="let row">{{ row.type.name }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>
-              <mat-form-field appearance="outline" class="w-full">
-                <mat-label>{{ Labels.Status }}</mat-label>
-                <mat-select
-                  [value]="store.filterStatus()"
-                  (selectionChange)="onFilterStatusChange($event.value)"
-                >
-                  <mat-option [value]="undefined">{{ Labels.All }}</mat-option>
-                  @for (s of equipmentStatusStore.statuses(); track s.slug) {
-                    <mat-option [value]="s.slug">{{ s.name }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </th>
-            <td mat-cell *matCellDef="let row">{{ row.status.name }}</td>
+          <ng-container matColumnDef="condition">
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.Condition }}</th>
+            <td mat-cell *matCellDef="let row">
+              <span
+                [matTooltip]="row.conditionNotes"
+                [matTooltipDisabled]="!row.conditionNotes"
+                matTooltipPosition="above"
+                matTooltipShowDelay="250"
+                [attr.aria-label]="row.condition?.name ?? ''"
+              >
+                {{ row.condition?.name ?? '' }}
+              </span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="model">
@@ -119,21 +116,6 @@ import { EquipmentStatusStore } from '@store.equipment-status.store';
           <ng-container matColumnDef="commissionedAt">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.CommissionedAt }}</th>
             <td mat-cell *matCellDef="let row">{{ row.commissionedAt | date }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="condition">
-            <th mat-header-cell *matHeaderCellDef>{{ Labels.Condition }}</th>
-            <td mat-cell *matCellDef="let row">
-              <span
-                [matTooltip]="row.conditionNotes"
-                [matTooltipDisabled]="!row.conditionNotes"
-                matTooltipPosition="above"
-                matTooltipShowDelay="250"
-                [attr.aria-label]="row.condition?.name ?? ''"
-              >
-                {{ row.condition?.name ?? '' }}
-              </span>
-            </td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
@@ -178,10 +160,9 @@ export class EquipmentListComponent implements OnInit {
     'uid',
     'serialNumber',
     'type',
-    'status',
     'model',
-    'commissionedAt',
     'condition',
+    'commissionedAt',
     'actions',
   ];
 
@@ -191,10 +172,6 @@ export class EquipmentListComponent implements OnInit {
 
   loadEquipment(): void {
     this.store.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-  }
-
-  onFilterStatusChange(value: string | undefined): void {
-    this.store.setFilterStatus(value);
   }
 
   onFilterTypeChange(value: string | undefined): void {

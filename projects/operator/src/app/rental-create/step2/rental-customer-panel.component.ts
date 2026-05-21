@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { Labels, MoneyPipe, RentalStore, TopUpButtonComponent } from '@bikerental/shared';
+import { Labels, MoneyPipe, RENTAL_STORE_TOKEN, TopUpButtonComponent } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-customer-panel',
@@ -33,7 +33,7 @@ import { Labels, MoneyPipe, RentalStore, TopUpButtonComponent } from '@bikerenta
   `,
 })
 export class RentalCustomerPanelComponent {
-  protected readonly store = inject(RentalStore);
+  protected readonly store = inject(RENTAL_STORE_TOKEN);
   protected readonly Labels = Labels;
 
   readonly topUpRequested = output<void>();

@@ -46,7 +46,7 @@ import { CustomerRentalsStore } from '../../customer-rentals.store';
                 <span class="flex-1 text-sm">{{
                   rental.startedAt | date: 'dd MMM yyyy HH:mm'
                 }}</span>
-                <mat-chip [color]="rentalColour(rental.status)" highlighted>
+                <mat-chip [color]="rentalColor(rental.status)" highlighted>
                   {{ rentalLabel(rental.status) }}
                 </mat-chip>
               </button>
@@ -64,7 +64,7 @@ import { CustomerRentalsStore } from '../../customer-rentals.store';
                         <span class="text-slate-600">{{
                           item.equipmentUid ?? item.equipmentId
                         }}</span>
-                        <mat-chip [color]="itemColour(item.status)" highlighted>
+                        <mat-chip [color]="itemColor(item.status)" highlighted>
                           {{ itemLabel(item.status) }}
                         </mat-chip>
                       </div>
@@ -89,16 +89,16 @@ export class CustomerRentalsComponent implements OnInit {
     this.store.load();
   }
 
-  protected rentalColour(status: string): string {
-    return mapRentalStatus(status).colour;
+  protected rentalColor(status: string): string {
+    return mapRentalStatus(status).color;
   }
 
   protected rentalLabel(status: string): string {
     return mapRentalStatus(status).labelKey;
   }
 
-  protected itemColour(status: string): string {
-    return mapEquipmentItemStatus(status).colour;
+  protected itemColor(status: string): string {
+    return mapEquipmentItemStatus(status).color;
   }
 
   protected itemLabel(status: string): string {

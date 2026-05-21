@@ -37,6 +37,8 @@ export class Labels {
   static readonly NoTransitionsAvailable = $localize`No transitions for this status`;
   // Added for equipment list
   static readonly Equipment = $localize`Equipment`;
+  static readonly SelectAll = $localize`Select all`;
+  static readonly Deselect = $localize`Deselect`;
   static readonly All = $localize`All`;
   static readonly Activate = $localize`Activate`;
   static readonly Deactivate = $localize`Deactivate`;
@@ -158,7 +160,19 @@ export class Labels {
 
   static readonly EquipmentItemStatusAssigned = $localize`Assigned`;
   static readonly EquipmentItemStatusActive = $localize`In use`;
-  static readonly EquipmentItemStatusReturned = $localize`Returned`;
+  static readonly Rentals = $localize`Rentals`;
+  static readonly TodaysHistory = $localize`Today's History`;
+  static readonly ActiveRentals = $localize`active rentals`;
+  static readonly SortedByReturnTime = $localize`sorted by return time`;
+  static readonly Refresh = $localize`Refresh`;
+  static readonly FilterDrafts = $localize`Drafts`;
+  static readonly Records = $localize`records`;
+  static readonly NoActiveRentals = $localize`No active rentals`;
+  static readonly OverdueBy = $localize`Overdue by`;
+  static readonly Remaining = $localize`remaining`;
+  static readonly Returned = $localize`Returned`;
+  static readonly NoHistoryRentals = $localize`No rentals`;
+  static readonly Ended = $localize`Ended`;
 
   static readonly CustomerAccountTabLabel = $localize`Account`;
   static readonly CustomerTopUpButton = $localize`Top Up`;
@@ -220,4 +234,35 @@ export class Labels {
   static readonly RentalSummary = $localize`Rental Summary`;
   static readonly BalanceShortfall = $localize`Shortfall`;
   static readonly CustomerName = $localize`Customer`;
+  static readonly GoBack = $localize`Go back`;
+  static readonly RentalPrefix = $localize`Rental #`;
+  static readonly Expected = $localize`Expected`;
+  static readonly DebtAutoCharge = $localize`Balance will be charged automatically once topped up`;
+  static readonly Retry = $localize`Retry`;
+  static readonly CurrentCost = $localize`Current cost`;
+  static readonly FinalCost = $localize`Final cost`;
+  static readonly ShowDetails = $localize`Show details`;
+  static readonly CollapseDetails = $localize`Collapse`;
+  static readonly Subtotal = $localize`Subtotal`;
+  static readonly DiscountLabel = $localize`Discount`;
+  static readonly Total = $localize`Total`;
+  static readonly SpecialPriceApplied = $localize`Special price applied`;
+  static readonly ReturnPricing = $localize`Return pricing`;
+  static readonly ReturnEquipmentButton = $localize`Return equipment`;
+  static readonly BrokenEquipment = $localize`Broken`;
+  static readonly CancelRental = $localize`Cancel rental`;
+  static readonly KeepRental = $localize`Keep rental`;
+  static readonly YesCancel = $localize`Yes, cancel`;
+  static readonly CancelRentalConfirmation = $localize`Are you sure you want to cancel this rental?`;
+  static readonly RentalReturnSuccess = $localize`Equipment returned successfully`;
+  static readonly RentalCancelSuccess = $localize`Rental cancelled`;
+  static readonly RentalReturnError = $localize`Failed to return equipment. Please try again.`;
+  static readonly RentalCancelError = $localize`Failed to cancel rental. Please try again.`;
+
+  static readonly BrokenEquipmentTitle = $localize`Broken equipment`;
+  static readonly BrokenEquipmentSubtitle = $localize`Select items to mark as broken and enter the penalty amount if applicable`;
+  static readonly BrokenEquipmentPenaltyUnderDevelopment = $localize`Penalty submission is under development. Broken item tracking will be available in a future update.`;
+  static readonly ItemsAlreadyReturned = $localize`items already returned`;
+  static readonly Apply = $localize`Apply`;
+  static readonly CurrencySymbol = $localize`BYN`;
 }

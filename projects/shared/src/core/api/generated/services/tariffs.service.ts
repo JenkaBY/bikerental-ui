@@ -21,15 +21,15 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  CostCalculationRequest,
-  CostCalculationResponse,
+  RequestOptions,
+  TariffV2Response,
+  TariffV2Request,
   Pageable,
   PageTariffV2Response,
-  PricingTypeResponse,
-  RequestOptions,
+  CostCalculationRequest,
+  CostCalculationResponse,
   TariffSelectionV2Response,
-  TariffV2Request,
-  TariffV2Response,
+  PricingTypeResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -349,28 +349,28 @@ export class TariffsService {
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
-    rentalDate?: Date,
+    rentalDate?: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<TariffSelectionV2Response>;
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
-    rentalDate?: Date,
+    rentalDate?: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<TariffSelectionV2Response>>;
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
-    rentalDate?: Date,
+    rentalDate?: string,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<TariffSelectionV2Response>>;
   selectTariff(
     equipmentType: string,
     durationMinutes: number,
-    rentalDate?: Date,
+    rentalDate?: string,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {

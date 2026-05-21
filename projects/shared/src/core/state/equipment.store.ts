@@ -2,14 +2,14 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, defaultIfEmpty, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { Equipment, EquipmentWrite, Page } from '@ui-models';
-import { EquipmentService as GeneratedEquipmentService } from '../api/generated';
+import { EquipmentsCatalogueService } from '../api/generated';
 import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
 import { EquipmentMapper } from '../mappers';
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentStore {
-  private service = inject(GeneratedEquipmentService);
+  private service = inject(EquipmentsCatalogueService);
   private equipmentTypeStore = inject(EquipmentTypeStore);
   private equipmentStatusStore = inject(EquipmentStatusStore);
 

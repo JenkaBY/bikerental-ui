@@ -21,10 +21,10 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  CustomerRequest,
-  CustomerResponse,
-  CustomerSearchResponse,
   RequestOptions,
+  CustomerResponse,
+  CustomerRequest,
+  CustomerSearchResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -218,5 +218,52 @@ export class CustomersService {
     };
 
     return this.httpClient.post(url, customerRequest, requestOptions);
+  }
+
+  getCustomersBatch(
+    ids: Array<string>,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<Array<CustomerResponse>>;
+  getCustomersBatch(
+    ids: Array<string>,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<Array<CustomerResponse>>>;
+  getCustomersBatch(
+    ids: Array<string>,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<Array<CustomerResponse>>>;
+  /** Returns a flat list of customer records for the provided UUIDs. UUIDs that do not match any record are silently omitted. */
+  getCustomersBatch(
+    ids: Array<string>,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/customers/batch`;
+
+    let params = new HttpParams();
+    if (ids != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, ids, 'ids');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
   }
 }

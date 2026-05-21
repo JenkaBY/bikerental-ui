@@ -15,7 +15,7 @@ import { Labels, MaxDecimalsDirective } from '@bikerental/shared';
       <input
         matInput
         type="number"
-        min="0.01"
+        min="0"
         step="0.01"
         [appMaxDecimals]="2"
         [disabled]="disabled()"
@@ -31,7 +31,7 @@ import { Labels, MaxDecimalsDirective } from '@bikerental/shared';
   `,
 })
 export class SpecialPriceInputComponent {
-  readonly value = input<number | null>(0);
+  readonly value = input<number | null>(null);
   readonly showRequired = input<boolean>(false);
   readonly valueChange = output<number | null>();
   readonly disabled = input(false);
@@ -44,7 +44,7 @@ export class SpecialPriceInputComponent {
   constructor() {
     effect(() => {
       const v = this.value();
-      this.rawValue.set(v !== null ? v : 0);
+      this.rawValue.set(v !== null ? v : '');
     });
     effect(() => {
       this.showError.set(this.showRequired() && !this.value());
@@ -59,7 +59,7 @@ export class SpecialPriceInputComponent {
       return;
     }
     const parsed = Number(raw);
-    if (!isNaN(parsed) && parsed > 0) {
+    if (!isNaN(parsed) && parsed >= 0) {
       this.valueChange.emit(parsed);
       this.showError.set(false);
     } else {

@@ -2,7 +2,14 @@ import { ChangeDetectionStrategy, Component, inject, output } from '@angular/cor
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { Labels, makeMoney, MoneyPipe, RentalStore } from '@bikerental/shared';
+import {
+  Labels,
+  makeMoney,
+  MoneyPipe,
+  RentalCostCalculationStore,
+  RentalStore,
+  RentalValidationStore,
+} from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-cost-footer',
@@ -13,27 +20,30 @@ import { Labels, makeMoney, MoneyPipe, RentalStore } from '@bikerental/shared';
     <div class="bg-white border-t border-slate-200 shadow-lg px-4 py-3 flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <span class="text-sm text-slate-600">{{ Labels.TotalCost }}</span>
-        @if (store.costEstimate(); as cost) {
+        @if (costStore.estimate(); as cost) {
           <span class="font-semibold text-slate-900">
             {{ cost.totalCost | money }}
           </span>
-        } @else if (store.isCalculatingCost()) {
+        } @else if (costStore.isCalculating()) {
           <mat-spinner diameter="20" />
         } @else {
           <span class="text-slate-500">{{ this.makeMoney(0) | money }}</span>
         }
       </div>
 
-      @if (store.projectedBalance(); as projected) {
+      @let isBalanceSufficient = validationStore.isBalanceSufficient();
+      @let isSavingRental = rentalStore.isSaving();
+
+      @if (validationStore.projectedBalance(); as projected) {
         <div class="flex items-center justify-between">
           <span class="text-sm text-slate-600">{{ Labels.ProjectedBalance }}</span>
-          <span class="font-medium" [class.text-red-600]="!store.isBalanceSufficient()">
+          <span class="font-medium" [class.text-red-600]="!isBalanceSufficient">
             {{ projected | money }}
           </span>
         </div>
       }
 
-      @if (!store.isBalanceSufficient()) {
+      @if (!isBalanceSufficient) {
         <div class="text-xs font-medium text-red-600 bg-red-50 rounded px-2 py-1">
           {{ Labels.InsufficientBalance }}
         </div>
@@ -44,10 +54,10 @@ import { Labels, makeMoney, MoneyPipe, RentalStore } from '@bikerental/shared';
           mat-stroked-button
           type="button"
           class="flex-1"
-          [disabled]="store.isSaving()"
+          [disabled]="isSavingRental"
           (click)="saveDraftRequested.emit()"
         >
-          @if (store.isSaving()) {
+          @if (isSavingRental) {
             {{ Labels.Saving }}
           } @else {
             {{ Labels.SaveDraft }}
@@ -58,7 +68,7 @@ import { Labels, makeMoney, MoneyPipe, RentalStore } from '@bikerental/shared';
           color="primary"
           type="button"
           class="flex-1"
-          [disabled]="!store.canProceedFromStep2() || store.isSaving()"
+          [disabled]="!validationStore.canProceed() || isSavingRental"
           (click)="nextRequested.emit()"
         >
           {{ Labels.Next }}
@@ -68,7 +78,9 @@ import { Labels, makeMoney, MoneyPipe, RentalStore } from '@bikerental/shared';
   `,
 })
 export class RentalCostFooterComponent {
-  protected readonly store = inject(RentalStore);
+  protected readonly rentalStore = inject(RentalStore);
+  protected readonly validationStore = inject(RentalValidationStore);
+  protected readonly costStore = inject(RentalCostCalculationStore);
   protected readonly Labels = Labels;
 
   readonly nextRequested = output<void>();

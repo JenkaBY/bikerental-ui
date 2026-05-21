@@ -38,7 +38,7 @@ import { DurationPipe, Labels, MoneyPipe } from '@bikerental/shared';
         <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
           {{ Labels.TotalCost }}
         </p>
-        @if (!specialPriceEnabled() && costEstimate().discountPercent) {
+        @if (!specialPriceEnabled() && (costEstimate().discountPercent ?? 0) > 0) {
           <p class="text-sm text-slate-500">
             {{ Labels.DiscountPercent }}: {{ costEstimate().discountPercent }}%
           </p>

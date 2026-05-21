@@ -58,7 +58,6 @@ describe('EquipmentDialogComponent', () => {
 
     expect(component.form.get('serialNumber')?.value).toBe('');
     expect(component.form.get('typeSlug')?.value).toBe('');
-    expect(component.statusSelectDisabled).toBe(false);
   });
 
   it('should call store.create on save and close dialog on success', async () => {

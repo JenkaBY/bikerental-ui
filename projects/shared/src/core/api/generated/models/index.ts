@@ -29,8 +29,8 @@ export interface TariffV2Request {
   equipmentTypeSlug?: string;
   pricingType: 'DEGRESSIVE_HOURLY' | 'FLAT_HOURLY' | 'DAILY' | 'FLAT_FEE' | 'SPECIAL';
   params: PricingParams;
-  validFrom: Date;
-  validTo?: Date;
+  validFrom: string;
+  validTo?: string;
 }
 
 /** V2 Tariff details */
@@ -41,8 +41,8 @@ export interface TariffV2Response {
   equipmentType: string;
   pricingType: 'DEGRESSIVE_HOURLY' | 'FLAT_HOURLY' | 'DAILY' | 'FLAT_FEE' | 'SPECIAL';
   params: PricingParams;
-  validFrom: Date;
-  validTo?: Date;
+  validFrom: string;
+  validTo?: string;
   version?: string;
   status: 'ACTIVE' | 'INACTIVE';
 }
@@ -101,17 +101,21 @@ export interface RentalResponse {
   /** Rental status */
   status: string;
   /** Rental start time */
-  startedAt: Date;
+  startedAt: string;
   /** Expected return time */
-  expectedReturnAt?: Date;
+  expectedReturnAt?: string;
   /** Actual return time (null if not returned) */
-  actualReturnAt?: Date;
+  actualReturnAt?: string;
   /** Planned duration in minutes */
   plannedDurationMinutes: number;
   /** Actual duration in minutes (null until returned) */
   actualDurationMinutes?: number;
   /** Estimated rental cost */
   estimatedCost: number;
+  /** Special price applied to this rental (if any) */
+  specialPrice?: number;
+  /** Discount percent applied to this rental (e.g. 10.5) */
+  discountPercent?: number;
   /** Final rental cost (null until returned) */
   finalCost?: number;
 }
@@ -119,7 +123,7 @@ export interface RentalResponse {
 /** Request body for creating or updating equipment */
 export interface EquipmentRequest {
   /** Unique serial number */
-  serialNumber: string;
+  serialNumber?: string;
   /** Unique identifier tag (UID) */
   uid: string;
   /** Equipment type slug */
@@ -129,7 +133,7 @@ export interface EquipmentRequest {
   /** Model name */
   model?: string;
   /** Date when equipment was put into service */
-  commissionedAt?: Date;
+  commissionedAt?: string;
   /** Condition description */
   condition?: string;
   /** Condition slug */
@@ -151,7 +155,7 @@ export interface EquipmentResponse {
   /** Model name */
   model: string;
   /** Commissioned date */
-  commissionedAt?: Date;
+  commissionedAt?: string;
   /** Condition notes */
   conditionNotes?: string;
   /** Physical condition slug */
@@ -199,11 +203,11 @@ export interface EquipmentStatusResponse {
 }
 
 export interface SetTimeRequest {
-  instant: Date;
+  instant: string;
 }
 
 export interface TimeResponse {
-  instant: Date;
+  instant: string;
 }
 
 /** Request body for creating or updating a customer profile */
@@ -217,7 +221,7 @@ export interface CustomerRequest {
   /** Email address */
   email?: string;
   /** Date of birth (must be in the past) */
-  birthDate?: Date;
+  birthDate?: string;
   /** Optional comments about the customer */
   comments?: string;
 }
@@ -235,7 +239,7 @@ export interface CustomerResponse {
   /** Email address */
   email?: string;
   /** Date of birth */
-  birthDate?: Date;
+  birthDate?: string;
   /** Comments */
   comments?: string;
 }
@@ -248,7 +252,7 @@ export interface CostCalculationRequest {
   discountPercent?: number;
   specialTariffId?: number;
   specialPrice?: number;
-  rentalDate?: Date;
+  rentalDate?: string;
 }
 
 /** Single equipment item for cost calculation */
@@ -302,8 +306,6 @@ export interface ReturnEquipmentRequest {
   equipmentIds?: Array<number>;
   /** List of equipment UIDs to return */
   equipmentUids?: Array<string>;
-  /** Payment method for any additional charge */
-  paymentMethod?: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER' | 'WALLET' | 'INTERNAL_TRANSFER';
   /** Operator identifier */
   operatorId: string;
 }
@@ -323,7 +325,7 @@ export interface SettlementResponse {
   /** Release transaction reference (UUID). Present when a release transaction was created. */
   releaseTransactionRef?: string | null;
   /** Timestamp when the settlement was recorded */
-  recordedAt: Date;
+  recordedAt: string;
 }
 
 /** Request body for recording a fund withdrawal */
@@ -345,7 +347,7 @@ export interface TransactionResponse {
   /** Transaction UUID */
   transactionId: string;
   /** Timestamp when the transaction was recorded */
-  recordedAt: Date;
+  recordedAt: string;
 }
 
 /** Request body for recording a fund deposit */
@@ -444,19 +446,23 @@ export interface PageRentalSummaryResponse {
 /** Compact rental summary for list views */
 export interface RentalSummaryResponse {
   /** Rental ID */
-  id?: number;
+  id: number;
   /** Customer UUID */
-  customerId?: string;
+  customerId: string;
   /** List of rented equipment IDs */
   equipmentIds?: Array<number>;
   /** Rental status */
-  status?: string;
+  status: string;
   /** Rental start time */
-  startedAt?: Date;
+  startedAt?: string;
   /** Expected return time */
-  expectedReturnAt?: Date;
+  expectedReturnAt?: string;
   /** Overdue minutes (null if not overdue) */
   overdueMinutes?: number;
+  /** Planned duration in minutes */
+  plannedDurationMinutes: number;
+  /** Actual duration in minutes (null until returned) */
+  actualDurationMinutes?: number;
 }
 
 /** Equipment available for a new rental */
@@ -480,8 +486,8 @@ export interface PageAvailableEquipmentResponse {
 }
 
 export interface TransactionHistoryFilterParams {
-  fromDate?: Date;
-  toDate?: Date;
+  fromDate?: string;
+  toDate?: string;
   sourceId?: string;
   sourceType?: 'RENTAL';
 }
@@ -495,7 +501,7 @@ export interface CustomerTransactionResponse {
   /** Business transaction type */
   type: string;
   /** When the entry was recorded (UTC ISO-8601) */
-  recordedAt: Date;
+  recordedAt: string;
   /** Payment method, present for deposits and withdrawals */
   paymentMethod: string;
   /** Free-text reason, present for adjustments */
@@ -519,7 +525,7 @@ export interface CustomerAccountBalancesResponse {
   /** Reserved (held) balance for active rentals */
   holdBalance: number;
   /** Timestamp of the most recent ledger mutation (UTC ISO-8601) */
-  lastUpdatedAt: Date;
+  lastUpdatedAt: string;
 }
 
 export interface PageEquipmentResponse {

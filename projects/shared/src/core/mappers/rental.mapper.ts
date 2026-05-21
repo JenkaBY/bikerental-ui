@@ -4,7 +4,13 @@ import type {
   RentalRequest,
   RentalSummaryResponse,
 } from '@api-models';
-import { type CustomerRentalSummary, type RentalCostEstimate, type RentalWrite } from '@ui-models';
+import type {
+  CustomerRentalSummary,
+  RentalCostEstimate,
+  RentalDetailState,
+  RentalState,
+  RentalWrite,
+} from '@ui-models';
 import { makeMoney } from './money.mapper';
 
 export class RentalMapper {
@@ -44,17 +50,37 @@ export class RentalMapper {
     };
   }
 
+  static toCostCalculation(
+    draft: RentalState | RentalDetailState,
+    specialTariffId: number | null,
+  ): CostCalculationRequest {
+    const actualDuration =
+      'startedAt' in draft && draft.startedAt
+        ? Math.floor((new Date().getTime() - draft.startedAt.getTime()) / 60_000)
+        : undefined;
+    return {
+      equipments: draft.equipmentItems.map((e) => ({ equipmentType: e.type.slug })),
+      plannedDurationMinutes: draft.durationMinutes,
+      actualDurationMinutes: actualDuration,
+      discountPercent: draft.specialPriceEnabled ? undefined : draft.discountPercent,
+      specialPrice: draft.specialPriceEnabled ? draft.specialPrice : undefined,
+      specialTariffId: draft.specialPriceEnabled ? (specialTariffId ?? undefined) : undefined,
+    };
+  }
+
   static fromCostResponse(response: CostCalculationResponse): RentalCostEstimate {
     return {
       subtotal: makeMoney(response.subtotal),
       totalCost: makeMoney(response.totalCost),
       specialPricingApplied: response.specialPricingApplied ?? false,
+      isEstimate: response.estimate ?? true,
       discountPercent: response.discount?.percent,
       discountAmount: makeMoney(response.discount?.amount ?? 0),
       equipmentBreakdowns: response.equipmentBreakdowns.map((b) => ({
         equipmentType: b.equipmentType,
         tariffId: b.tariffId,
         itemCost: makeMoney(b.itemCost),
+        calculationMessage: b.calculationBreakdown?.message ?? '',
       })),
     };
   }

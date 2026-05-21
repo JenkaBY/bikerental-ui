@@ -9,7 +9,7 @@ import {
 } from '@bikerental/shared';
 
 const NAV_ITEMS: NavItem[] = [
-  { label: $localize`Dashboard`, route: 'dashboard', icon: 'dashboard' },
+  { label: $localize`Rentals`, route: 'rentals', icon: 'directions_bike' },
   { label: $localize`New Rental`, route: 'rentals/new', icon: 'add_circle' },
   { label: $localize`Return`, route: 'return', icon: 'qr_code_scanner' },
 ];
