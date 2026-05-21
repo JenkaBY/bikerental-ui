@@ -92,6 +92,11 @@ export class RentalStore {
   readonly paidDurationMinutes = computed(() => this._state().paidDurationMinutes);
   readonly estimatedCost = computed(() => this._state().estimatedCost);
   readonly brokenEquipmentEntries = computed(() => this._state().brokenEquipmentEntries);
+
+  setBrokenEquipmentEntries(entries: BrokenEquipmentEntry[]): void {
+    this.patchState({ brokenEquipmentEntries: entries });
+  }
+
   readonly isReturning = computed(() => this._state().isReturning);
 
   setCustomer(customer: Customer | null): void {

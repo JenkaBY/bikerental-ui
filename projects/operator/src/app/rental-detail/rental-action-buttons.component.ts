@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import type { BrokenEquipmentEntry } from '@ui-models';
 import { Labels, RentalStore } from '@bikerental/shared';
 import { BrokenEquipmentSheetComponent } from './broken-equipment-sheet.component';
 import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
@@ -92,12 +93,20 @@ export class RentalActionButtonsComponent {
   }
 
   protected onBroken(): void {
-    this.bottomSheet.open(BrokenEquipmentSheetComponent, {
-      data: {
-        equipmentItems: this.store.rentalEquipmentItems(),
-        brokenEquipmentEntries: this.store.brokenEquipmentEntries(),
-      },
-    });
+    this.bottomSheet
+      .open(BrokenEquipmentSheetComponent, {
+        data: {
+          equipmentItems: this.store.rentalEquipmentItems(),
+          existingEntries: this.store.brokenEquipmentEntries(),
+        },
+      })
+      .afterDismissed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((entries: BrokenEquipmentEntry[] | undefined) => {
+        if (entries !== undefined) {
+          this.store.setBrokenEquipmentEntries(entries);
+        }
+      });
   }
 
   protected onCancel(): void {

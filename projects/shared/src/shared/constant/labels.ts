@@ -258,4 +258,11 @@ export class Labels {
   static readonly RentalCancelSuccess = $localize`Rental cancelled`;
   static readonly RentalReturnError = $localize`Failed to return equipment. Please try again.`;
   static readonly RentalCancelError = $localize`Failed to cancel rental. Please try again.`;
+
+  static readonly BrokenEquipmentTitle = $localize`Broken equipment`;
+  static readonly BrokenEquipmentSubtitle = $localize`Select items to mark as broken and enter the penalty amount if applicable`;
+  static readonly BrokenEquipmentPenaltyUnderDevelopment = $localize`Penalty submission is under development. Broken item tracking will be available in a future update.`;
+  static readonly ItemsAlreadyReturned = $localize`items already returned`;
+  static readonly Apply = $localize`Apply`;
+  static readonly CurrencySymbol = $localize`BYN`;
 }
