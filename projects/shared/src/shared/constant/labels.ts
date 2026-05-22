@@ -265,4 +265,7 @@ export class Labels {
   static readonly ItemsAlreadyReturned = $localize`items already returned`;
   static readonly Apply = $localize`Apply`;
   static readonly CurrencySymbol = $localize`BYN`;
+
+  static readonly TimeTravelDialogTitle = $localize`Server Time`;
+  static readonly TimeTravelReset = $localize`Reset`;
 }

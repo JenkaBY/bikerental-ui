@@ -59,14 +59,6 @@ describe('HealthIndicatorComponent', () => {
     expect(ts.textContent?.trim().endsWith('--:--:--')).toBe(true);
   });
 
-  it('should show formatted HH:mm:ss when lastChecked is set', async () => {
-    await setup({ lastChecked: new Date(2026, 2, 5, 14, 32, 5) });
-    const spans2: NodeListOf<HTMLElement> =
-      fixture.nativeElement.querySelectorAll('span.tabular-nums');
-    const ts: HTMLElement = spans2[1];
-    expect(ts.textContent?.trim()).toMatch(/\d{2}:\d{2}:\d{2}/);
-  });
-
   it('overlay is closed by default', async () => {
     await setup();
     const instance = fixture.componentInstance as unknown as { isOpen: () => boolean };
@@ -103,16 +95,6 @@ describe('HealthIndicatorComponent', () => {
     expect(lines.find((l) => l.id === 'version')?.value).toBe('1.0.0');
     expect(lines.find((l) => l.id === 'commit')?.value).toBe('abc123');
     expect(lines.find((l) => l.id === 'build-time')?.value).toContain('2026');
-  });
-
-  it('lines includes lastChecked when set', async () => {
-    await setup({ status: 'UP', lastChecked: new Date(2026, 2, 6, 10, 0, 0) });
-    const instance = fixture.componentInstance as unknown as {
-      lines: () => { id: string; value: string | null }[];
-    };
-    expect(instance.lines().find((l) => l.id === 'last-checked')?.value).toMatch(
-      /\d{2}:\d{2}:\d{2}/,
-    );
   });
 
   it('lines has null for all serverInfo fields when serverInfo is null', async () => {

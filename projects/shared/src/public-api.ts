@@ -44,10 +44,13 @@ export * from './core/state/rental-list.store';
 export * from './core/state/rental-cost-calculation.store';
 export * from './core/state/rental-validation.store';
 export * from './core/state/user.store';
+export * from './core/state/time-travel.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';
 export * from './shared/components/app-toolbar/app-toolbar.component';
+export * from './shared/components/time-travel-display/time-travel-display.component';
+export * from './shared/components/time-travel-dialog/time-travel-dialog.component';
 export * from './shared/components/bottom-nav/bottom-nav.component';
 export * from './shared/components/bottom-nav-item/bottom-nav-item.component';
 export * from './shared/components/button/button.component';
