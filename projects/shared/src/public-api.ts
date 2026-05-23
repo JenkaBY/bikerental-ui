@@ -45,6 +45,8 @@ export * from './core/state/rental-cost-calculation.store';
 export * from './core/state/rental-validation.store';
 export * from './core/state/user.store';
 export * from './core/state/time-travel.store';
+export * from './core/state/time-travel-store.token';
+export * from './core/state/time.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';

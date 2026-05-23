@@ -11,4 +11,3 @@ export * from './user-profile.model';
 export * from './user-preferences.model';
 export * from './rental-create.model';
 export * from './rental-dashboard.model';
-export * from './server-time.model';

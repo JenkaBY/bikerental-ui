@@ -18,7 +18,9 @@ import {
   HealthPollerService,
   LookupInitializerFacade,
   provideDefaultClient,
+  TimeTravelStore,
 } from '@bikerental/shared';
+import { TIME_TRAVEL_STORE_TOKEN } from '@store.time-travel-store.token';
 
 interface EnvWithBrand {
   brand?: string;
@@ -48,5 +50,11 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: environment.defaultLocale },
     { provide: APP_BRAND, useValue: envBrand },
     provideDefaultClient({ basePath: environment.apiUrl }),
+    {
+      provide: TIME_TRAVEL_STORE_TOKEN,
+      useFactory: () => {
+        return environment.timeTravelEnabled ? new TimeTravelStore() : null;
+      },
+    },
   ],
 };

@@ -4,7 +4,7 @@ import { of, timer } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import type { CostCalculationRequest } from '@api-models';
 import type { RentalCostEstimate } from '@ui-models';
-import { RentalMapper } from '../mappers';
+import { CostCalculationMapper } from '../mappers/cost-calculation.mapper';
 import { TariffStore } from './tariff.store';
 import { RentalStore } from './rental.store';
 
@@ -12,12 +12,13 @@ import { RentalStore } from './rental.store';
 export class RentalCostCalculationStore {
   private readonly tariffStore = inject(TariffStore);
   private readonly rentalStore = inject(RentalStore);
+  private readonly costCalculationMapper = inject(CostCalculationMapper);
 
   private readonly calculationRequest = computed(() => {
     const s = this.rentalStore.state();
     if (s.equipmentItems.length === 0) return null;
     if (s.specialPriceEnabled && !s.specialPrice) return null;
-    return RentalMapper.toCostCalculation(s, this.tariffStore.specialTariffId());
+    return this.costCalculationMapper.fromState(s, this.tariffStore.specialTariffId());
   });
 
   readonly resource = rxResource<RentalCostEstimate | null, CostCalculationRequest | null>({
@@ -26,7 +27,7 @@ export class RentalCostCalculationStore {
       if (!params) return of(null);
       return timer(300).pipe(
         switchMap(() => this.tariffStore.calculateCost(params)),
-        map((res) => RentalMapper.fromCostResponse(res)),
+        map((res) => this.costCalculationMapper.fromResponse(res)),
         catchError(() => of(null)),
       );
     },

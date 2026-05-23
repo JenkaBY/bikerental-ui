@@ -5,10 +5,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { TimeTravelStore } from '../../../core/state/time-travel.store';
 import { CancelButtonComponent } from '../cancel-button/cancel-button.component';
 import { Labels } from '../../constant/labels';
 import { toDateTimeLocalString, parseDateTimeLocal } from '../../utils/date.util';
+import { TIME_TRAVEL_STORE_TOKEN } from '../../../core/state/time-travel-store.token';
 
 @Component({
   selector: 'app-time-travel-dialog',
@@ -44,17 +44,17 @@ import { toDateTimeLocalString, parseDateTimeLocal } from '../../utils/date.util
 export class TimeTravelDialogComponent {
   protected readonly Labels = Labels;
 
-  private readonly store = inject(TimeTravelStore);
+  private readonly store = inject(TIME_TRAVEL_STORE_TOKEN, { optional: true });
   private readonly dialogRef = inject<MatDialogRef<TimeTravelDialogComponent>>(MatDialogRef);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly datetimeControl = new FormControl<string>(
-    toDateTimeLocalString(this.store.serverTime()?.instant ?? new Date()),
+    toDateTimeLocalString(this.store?.serverTime() ?? new Date()),
     [Validators.required],
   );
 
   protected onSave(): void {
-    if (this.datetimeControl.invalid) return;
+    if (this.datetimeControl.invalid || !this.store) return;
     this.store
       .setTime(parseDateTimeLocal(this.datetimeControl.value!))
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -62,6 +62,7 @@ export class TimeTravelDialogComponent {
   }
 
   protected onReset(): void {
+    if (!this.store) return;
     this.store
       .resetTime()
       .pipe(takeUntilDestroyed(this.destroyRef))
