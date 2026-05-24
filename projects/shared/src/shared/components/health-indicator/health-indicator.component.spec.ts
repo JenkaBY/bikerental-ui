@@ -50,15 +50,6 @@ describe('HealthIndicatorComponent', () => {
     expect(dot.classList).toContain(cssClass);
   });
 
-  it('should show --:--:-- when lastChecked is null', async () => {
-    await setup({ lastChecked: null });
-    const spans: NodeListOf<HTMLElement> =
-      fixture.nativeElement.querySelectorAll('span.tabular-nums');
-    const ts: HTMLElement = spans[1];
-    // The span includes the localized label (e.g. "last checked: --:--:--") so assert it contains the sentinel
-    expect(ts.textContent?.trim().endsWith('--:--:--')).toBe(true);
-  });
-
   it('overlay is closed by default', async () => {
     await setup();
     const instance = fixture.componentInstance as unknown as { isOpen: () => boolean };

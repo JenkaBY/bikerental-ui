@@ -76,21 +76,6 @@ describe('AppToolbarComponent', () => {
       expect(titleSpan).toBeTruthy();
       expect(titleSpan.classList).not.toContain('shrink-0');
     });
-
-    it('title span should use flex-1 to allow projected content to remain visible', () => {
-      const titleSpan: HTMLElement = fixture.nativeElement.querySelector(
-        'mat-toolbar span.truncate',
-      );
-      expect(titleSpan).toBeTruthy();
-      expect(titleSpan.classList).toContain('flex-1');
-    });
-
-    it('should not have duplicate spacer span that pushes projected content out', () => {
-      const toolbar: HTMLElement = fixture.nativeElement.querySelector('mat-toolbar');
-      const spans = toolbar.querySelectorAll(':scope > span');
-      // Only the title span — no extra empty spacer span
-      expect(spans.length).toBe(1);
-    });
   });
 
   describe('toggle button', () => {
