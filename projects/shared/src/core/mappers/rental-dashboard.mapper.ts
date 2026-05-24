@@ -42,6 +42,7 @@ export class RentalDashboardMapper {
     r: RentalSummaryResponse,
     customer: CustomerResponse | null,
     equipmentNameMap: Map<number, string>,
+    currentDate: Date = new Date(),
   ): RentalListItem {
     const isActive = r.status === 'ACTIVE';
     const isDebt = r.status === 'DEBT';
@@ -50,7 +51,9 @@ export class RentalDashboardMapper {
       isActive,
       startedAt,
       r.plannedDurationMinutes,
+      currentDate,
     );
+    console.log('Overdue ', isOverdue, overdueMinutes);
     const firstName = customer?.firstName ?? '';
     const lastName = customer?.lastName ?? '';
     const fullName = [firstName, lastName].filter(Boolean).join(' ');

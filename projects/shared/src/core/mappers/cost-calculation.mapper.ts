@@ -24,7 +24,9 @@ export class CostCalculationMapper {
   ): CostCalculationRequest {
     const actualDuration =
       'startedAt' in draft && draft.startedAt
-        ? Math.floor((this.timeStore.getDate().getTime() - draft.startedAt.getTime()) / 60_000)
+        ? Math.floor(
+            (this.timeStore.getCurrentDate().getTime() - draft.startedAt.getTime()) / 60_000,
+          )
         : undefined;
     return {
       equipments: draft.equipmentItems.map((e) => ({ equipmentType: e.type.slug })),

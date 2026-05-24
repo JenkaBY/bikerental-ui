@@ -5,7 +5,7 @@ import { TIME_TRAVEL_STORE_TOKEN } from './time-travel-store.token';
 export class TimeStore {
   private readonly timeTravelStore = inject(TIME_TRAVEL_STORE_TOKEN, { optional: true });
 
-  getDate(): Date {
+  getCurrentDate(): Date {
     return this.timeTravelStore?.getCurrentTime() || new Date();
   }
 }
