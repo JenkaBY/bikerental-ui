@@ -1,8 +1,9 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { TimeTravelControllerService } from '../api/generated';
+import { SSE_PROVIDER } from '../api/event-source';
 import { SetTimeRequest } from '@api-models';
 
 interface ServerTime {
@@ -12,6 +13,7 @@ interface ServerTime {
 
 @Injectable({ providedIn: 'root' })
 export class TimeTravelStore {
+  private sse = inject(SSE_PROVIDER, { optional: true });
   private readonly service = inject(TimeTravelControllerService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -23,20 +25,19 @@ export class TimeTravelStore {
   readonly uiTime = computed(() => this._uiTime());
 
   constructor() {
-    if (!this.timeTravelEnabled) return;
+    if (!this.timeTravelEnabled || !this.sse) return;
 
-    const source = new EventSource(`${environment.apiUrl}/api/dev/time`);
+    const sub: Subscription = this.sse.stream(`${environment.apiUrl}/api/dev/time`).subscribe({
+      next: (event: MessageEvent) => {
+        this._serverTime.set(TimeTravelStore.fromSseMessage(event.data as string));
+      },
+      error: () => {
+        this._uiTime.set(null);
+        this._serverTime.set(null);
+      },
+    });
 
-    source.onmessage = (event: MessageEvent) => {
-      this._serverTime.set(TimeTravelStore.fromSseMessage(event.data as string));
-    };
-
-    source.onerror = () => {
-      this._uiTime.set(null);
-      this._serverTime.set(null);
-    };
-
-    this.destroyRef.onDestroy(() => source.close());
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
   setTime(date: Date): Observable<void> {

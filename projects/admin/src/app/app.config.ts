@@ -20,6 +20,8 @@ import {
   HealthPollerService,
   LookupInitializerFacade,
   provideDefaultClient,
+  SseService,
+  SSE_PROVIDER,
   TIME_TRAVEL_STORE_TOKEN,
   TimeTravelStore,
 } from '@bikerental/shared';
@@ -54,5 +56,6 @@ export const appConfig: ApplicationConfig = {
         return environment.timeTravelEnabled ? new TimeTravelStore() : null;
       },
     },
+    { provide: SSE_PROVIDER, useClass: SseService },
   ],
 };

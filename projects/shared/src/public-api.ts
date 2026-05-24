@@ -6,6 +6,9 @@ export * from './app.tokens';
 export * as api from './core/api/generated';
 export { provideDefaultClient } from './core/api/generated/providers';
 
+// SSE
+export * from './core/api/event-source';
+
 // Core — health monitoring
 export * from './core/health/health.model';
 export * from './core/health/health.service';
