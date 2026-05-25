@@ -9,16 +9,22 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Labels, MoneyPipe, TopUpButtonComponent, TopUpDialogComponent } from '@bikerental/shared';
+import {
+  Labels,
+  MoneyPipe,
+  TopUpButtonComponent,
+  TopUpDialogComponent,
+  WithdrawButtonComponent,
+  WithdrawDialogComponent,
+} from '@bikerental/shared';
 import { CustomerLayoutStore } from '../../customer-layout.store';
 import { CustomerFinanceStore } from '@store.customer-finance.store';
-import { WithdrawDialogComponent } from '../../../dialogs/withdraw-dialog/withdraw-dialog.component';
 import { CustomerTransactionsStore } from '../../customer-transactions.store';
 
 @Component({
   selector: 'app-customer-account',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MoneyPipe, TopUpButtonComponent],
+  imports: [MatButtonModule, MoneyPipe, TopUpButtonComponent, WithdrawButtonComponent],
   template: `
     <div class="p-4 md:p-6 max-w-sm">
       <dl class="flex flex-col gap-4 mb-6">
@@ -46,15 +52,10 @@ import { CustomerTransactionsStore } from '../../customer-transactions.store';
 
       <div class="flex gap-3">
         <app-top-up-button (confirm)="openTopUp()"></app-top-up-button>
-        <button
-          mat-stroked-button
-          class="bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200"
-          style="background-color: #fffbeb; color: #92400e; border-color: #fcd34d"
+        <app-withdraw-button
           [disabled]="!financeStore.balance()?.isWithdrawalAvailable"
-          (click)="openWithdraw()"
-        >
-          {{ Labels.CustomerWithdrawButton }}
-        </button>
+          (confirm)="openWithdraw()"
+        ></app-withdraw-button>
       </div>
     </div>
   `,

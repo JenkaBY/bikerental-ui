@@ -3,8 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CustomerFinanceStore } from '../../../../../../shared/src/core/state/customer-finance.store';
-import { WithdrawDialogComponent } from './withdraw-dialog.component';
+import { CustomerFinanceStore, WithdrawDialogComponent } from '@bikerental/shared';
 
 const availableBalance = { amount: 100, currency: 'BYN' };
 
