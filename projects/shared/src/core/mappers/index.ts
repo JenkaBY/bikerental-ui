@@ -9,6 +9,7 @@ export * from './customer.mapper';
 export * from './transaction.mapper';
 export * from './money.mapper';
 export * from './balance.mapper';
+export * from './cost-calculation.mapper';
 export * from './rental.mapper';
 export * from './customer-finance.mapper';
 export * from './user-profile.mapper';

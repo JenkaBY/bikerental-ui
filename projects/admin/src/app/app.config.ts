@@ -20,6 +20,10 @@ import {
   HealthPollerService,
   LookupInitializerFacade,
   provideDefaultClient,
+  SseService,
+  SSE_PROVIDER,
+  TIME_TRAVEL_STORE_TOKEN,
+  TimeTravelStore,
 } from '@bikerental/shared';
 
 interface EnvWithBrand {
@@ -46,5 +50,12 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: environment.defaultLocale },
     { provide: APP_BRAND, useValue: envBrand },
     provideDefaultClient({ basePath: environment.apiUrl }),
+    {
+      provide: TIME_TRAVEL_STORE_TOKEN,
+      useFactory: () => {
+        return environment.timeTravelEnabled ? new TimeTravelStore() : null;
+      },
+    },
+    { provide: SSE_PROVIDER, useClass: SseService },
   ],
 };

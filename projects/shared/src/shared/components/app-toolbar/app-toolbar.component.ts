@@ -5,6 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ToggleButtonComponent } from '../toggle-button/toggle-button.component';
 import { LayoutModeToggleComponent } from '../layout-mode-toggle/layout-mode-toggle.component';
+import { TimeTravelStore } from '../../../core/state/time-travel.store';
+import { TimeTravelDisplayComponent } from '../time-travel-display/time-travel-display.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -15,44 +17,53 @@ import { LayoutModeToggleComponent } from '../layout-mode-toggle/layout-mode-tog
     MatButtonModule,
     ToggleButtonComponent,
     LayoutModeToggleComponent,
+    TimeTravelDisplayComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-toolbar
       color="primary"
-      class="sticky top-0 z-20 shrink-0 flex items-center gap-2 px-4 shadow-md h-14 min-w-0"
+      class="sticky top-0 z-20 shrink-0 flex items-center px-4 shadow-md h-14 min-w-0"
     >
-      @if (showToggle()) {
-        <app-toggle-button
-          [pressed]="menuOpen()"
-          (toggled)="toggleSidebar.emit()"
-          [showText]="false"
-        ></app-toggle-button>
+      <div class="flex-1 flex items-center gap-2 min-w-0">
+        @if (showToggle()) {
+          <app-toggle-button
+            [pressed]="menuOpen()"
+            (toggled)="toggleSidebar.emit()"
+            [showText]="false"
+          ></app-toggle-button>
+        }
+
+        <span
+          class="text-base font-medium truncate min-w-0 hover:cursor-pointer focus:outline-none"
+          (click)="goHome()"
+          tabindex="0"
+          role="button"
+          (keyup.enter)="goHome()"
+          (keyup.space)="goHome()"
+          (keydown.space)="$event.preventDefault()"
+        >
+          {{ title() }}
+        </span>
+      </div>
+
+      @if (timeTravelStore.timeTravelEnabled) {
+        <app-time-travel-display />
       }
 
-      <span
-        class="text-base font-medium truncate flex-1 min-w-0 hover:cursor-pointer focus:outline-none"
-        (click)="goHome()"
-        tabindex="0"
-        role="button"
-        (keyup.enter)="goHome()"
-        (keyup.space)="goHome()"
-        (keydown.space)="$event.preventDefault()"
-      >
-        {{ title() }}
-      </span>
-
-      @if (showDesktopModeToggle()) {
-        <app-layout-mode-toggle></app-layout-mode-toggle>
-      }
-
-      <ng-content></ng-content>
+      <div class="flex-1 flex items-center justify-end gap-2">
+        @if (showDesktopModeToggle()) {
+          <app-layout-mode-toggle></app-layout-mode-toggle>
+        }
+        <ng-content></ng-content>
+      </div>
     </mat-toolbar>
   `,
 })
 export class AppToolbarComponent {
-  title = input.required<string>();
+  protected readonly timeTravelStore = inject(TimeTravelStore);
 
+  title = input.required<string>();
   showToggle = input<boolean>(true);
 
   menuOpen = input<boolean>(false);

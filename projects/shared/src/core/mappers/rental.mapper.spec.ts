@@ -76,18 +76,3 @@ describe('RentalMapper.toRentalRequest', () => {
     expect(result.discountPercent).toBeUndefined();
   });
 });
-
-describe('RentalMapper.toCostCalculationRequest', () => {
-  it('populates equipments from equipmentTypes array and maps durationMinutes (Scenario 3)', () => {
-    const draft: Partial<RentalWrite> = {
-      durationMinutes: 60,
-      discountPercent: 5,
-    };
-
-    const result = RentalMapper.toCostCalculationRequest(draft, ['bike', 'helmet']);
-
-    expect(result.equipments).toEqual([{ equipmentType: 'bike' }, { equipmentType: 'helmet' }]);
-    expect(result.plannedDurationMinutes).toBe(60);
-    expect(result.discountPercent).toBe(5);
-  });
-});

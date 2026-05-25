@@ -153,8 +153,10 @@ jobs:
       - name: Inject Bike Rental API host into all apps
         env:
           BIKE_RENTAL_API: ${{ vars.BIKE_RENTAL_API }}
+          BIKE_TIME_TRAVEL_ENABLED: ${{ vars.BIKE_TIME_TRAVEL_ENABLED }}
         run: |
           sed -i "s|BIKE_API_PLACEHOLDER|${BIKE_RENTAL_API}|g" projects/shared/src/environments/environment.prod.ts
+          sed -i "s|BIKE_TIME_TRAVEL_PLACEHOLDER|${BIKE_TIME_TRAVEL_ENABLED}|g" projects/shared/src/environments/environment.prod.ts
 
       - name: Build gateway
         run: npx ng build gateway --configuration production --base-href /${{ github.event.repository.name }}/
