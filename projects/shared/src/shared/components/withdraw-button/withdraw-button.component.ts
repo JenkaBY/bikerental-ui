@@ -11,7 +11,10 @@ import { Labels } from '../../constant/labels';
     <button
       mat-stroked-button
       class="bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200"
-      style="background-color: #fffbeb; color: #92400e; border-color: #fcd34d"
+      [style.background-color]="disabled() ? '#f3f4f6' : '#fffbeb'"
+      [style.color]="disabled() ? '#6b7280' : '#92400e'"
+      [style.border-color]="disabled() ? '#d1d5db' : '#fcd34d'"
+      [style.cursor]="disabled() ? 'not-allowed' : 'pointer'"
       [disabled]="disabled()"
       (click)="onClick()"
     >

@@ -39,7 +39,7 @@ import type { RentalListItem } from '@bikerental/shared';
         } @else {
           <span class="text-slate-500">
             @if (remainingMinutes(); as mins) {
-              {{ mins | duration }} {{ Labels.MinuteShort }} {{ Labels.Remaining }}
+              {{ mins | duration }} {{ Labels.Remaining }}
             }
             @if (item().expectedReturnAt; as returnAt) {
               @if (remainingMinutes()) {
