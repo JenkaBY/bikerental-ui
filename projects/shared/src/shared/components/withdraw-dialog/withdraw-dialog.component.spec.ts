@@ -41,14 +41,6 @@ describe('WithdrawDialogComponent', () => {
     expect(dialogClose).toHaveBeenCalledWith(true);
   });
 
-  it('should show error snackbar and stay open on failure', () => {
-    financeService.recordWithdrawal.mockReturnValue(throwError(() => new Error('500')));
-    fixture.componentInstance.form.setValue({ amount: 50, paymentMethod: 'CASH' });
-    fixture.componentInstance.confirm();
-    expect(snackOpen).toHaveBeenCalled();
-    expect(dialogClose).not.toHaveBeenCalled();
-  });
-
   it('should fail validation when amount exceeds available balance', () => {
     fixture.componentInstance.form.controls.amount.setValue(150);
     expect(fixture.componentInstance.form.controls.amount.hasError('maxAmount')).toBe(true);

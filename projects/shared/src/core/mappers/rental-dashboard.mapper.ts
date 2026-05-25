@@ -53,7 +53,6 @@ export class RentalDashboardMapper {
       r.plannedDurationMinutes,
       currentDate,
     );
-    console.log('Overdue ', isOverdue, overdueMinutes);
     const firstName = customer?.firstName ?? '';
     const lastName = customer?.lastName ?? '';
     const fullName = [firstName, lastName].filter(Boolean).join(' ');
