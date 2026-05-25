@@ -25,6 +25,7 @@ import {
   RentalStore,
   TopUpDialogComponent,
   MoneyPipe,
+  WithdrawDialogComponent,
 } from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
 import { RentalPricingSectionComponent } from '../rental-create/step2/rental-pricing-section.component';
@@ -109,7 +110,10 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
         </div>
       } @else if (store.id() !== null) {
         <div class="flex-1 overflow-y-auto">
-          <app-rental-customer-panel (topUpRequested)="onTopUpRequested()" />
+          <app-rental-customer-panel
+            (topUpRequested)="onTopUpRequested()"
+            (withdrawRequested)="onWithdrawRequested()"
+          />
           <mat-divider />
           <app-rental-period-section />
           <mat-divider />
@@ -181,6 +185,26 @@ export class RentalDetailComponent {
     this.dialog
       .open(TopUpDialogComponent, {
         data: { customerId },
+        disableClose: true,
+        viewContainerRef: this.viewContainerRef,
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result: boolean | undefined) => {
+        if (result) {
+          this.financeStore.loadById(customerId);
+        }
+      });
+  }
+
+  protected onWithdrawRequested(): void {
+    const customerId = this.store.customerId();
+    if (!customerId) return;
+    const availableBalance = this.financeStore.balance()?.available;
+    this.dialog
+      .open(WithdrawDialogComponent, {
+        data: { customerId, availableBalance },
+        width: '380px',
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })

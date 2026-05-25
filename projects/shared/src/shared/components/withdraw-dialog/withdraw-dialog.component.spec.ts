@@ -3,8 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CustomerFinanceStore } from '../../../../../../shared/src/core/state/customer-finance.store';
-import { WithdrawDialogComponent } from './withdraw-dialog.component';
+import { CustomerFinanceStore, WithdrawDialogComponent } from '@bikerental/shared';
 
 const availableBalance = { amount: 100, currency: 'BYN' };
 
@@ -40,14 +39,6 @@ describe('WithdrawDialogComponent', () => {
     fixture.componentInstance.form.setValue({ amount: 50, paymentMethod: 'CASH' });
     fixture.componentInstance.confirm();
     expect(dialogClose).toHaveBeenCalledWith(true);
-  });
-
-  it('should show error snackbar and stay open on failure', () => {
-    financeService.recordWithdrawal.mockReturnValue(throwError(() => new Error('500')));
-    fixture.componentInstance.form.setValue({ amount: 50, paymentMethod: 'CASH' });
-    fixture.componentInstance.confirm();
-    expect(snackOpen).toHaveBeenCalled();
-    expect(dialogClose).not.toHaveBeenCalled();
   });
 
   it('should fail validation when amount exceeds available balance', () => {

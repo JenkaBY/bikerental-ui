@@ -6,21 +6,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import {
-  CancelButtonComponent,
-  FormErrorMessages,
-  Labels,
-  MaxDecimalsDirective,
-  Money,
-  MoneyPipe,
-  PaymentMethodSelectComponent,
-  UserStore,
-} from '@bikerental/shared';
-import { CustomerFinanceStore } from '@store.customer-finance.store';
-import type { PaymentMethod } from '@ui-models';
-import { maxWithdrawAmountValidator } from './max-amount.validator';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { v4 as uuid } from 'uuid';
+
+import { CancelButtonComponent } from '../cancel-button/cancel-button.component';
+import { FormErrorMessages } from '../../validators/form-error-messages';
+import { Labels } from '../../constant/labels';
+import { MaxDecimalsDirective } from '../../directives/max-decimals.directive';
+import { MoneyPipe } from '../../pipes/money.pipe';
+import { PaymentMethodSelectComponent } from '../payment-method/payment-method.component';
+import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
+import { UserStore } from '../../../core/state/user.store';
+import type { PaymentMethod, Money } from '../../../core/models/transaction.model';
+import { maxWithdrawAmountValidator } from './max-amount.validator';
 
 interface WithdrawDialogData {
   customerId: string;
@@ -29,6 +27,7 @@ interface WithdrawDialogData {
 
 @Component({
   selector: 'app-withdraw-dialog',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CancelButtonComponent,
@@ -38,6 +37,7 @@ interface WithdrawDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatSnackBarModule,
     MoneyPipe,
     PaymentMethodSelectComponent,
     MaxDecimalsDirective,

@@ -10,7 +10,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, tap } from 'rxjs';
-import { Labels, RentalStore, TopUpDialogComponent } from '@bikerental/shared';
+import {
+  CustomerFinanceStore,
+  Labels,
+  RentalStore,
+  TopUpDialogComponent,
+  WithdrawDialogComponent,
+} from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from './rental-customer-panel.component';
 import { RentalDurationControlComponent } from './duration/rental-duration-control.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
@@ -30,7 +36,10 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
   ],
   template: `
     <div class="flex flex-col">
-      <app-rental-customer-panel (topUpRequested)="onTopUpRequested()" />
+      <app-rental-customer-panel
+        (topUpRequested)="onTopUpRequested()"
+        (withdrawRequested)="onWithdrawRequested()"
+      />
       <app-rental-duration-control />
       <app-rental-equipment-section />
       <app-rental-pricing-section />
@@ -40,6 +49,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
 })
 export class RentalStep2Component {
   private readonly store = inject(RentalStore);
+  private readonly financeStore = inject(CustomerFinanceStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -54,6 +64,24 @@ export class RentalStep2Component {
     this.dialog
       .open(TopUpDialogComponent, {
         data: { customerId },
+        disableClose: true,
+        viewContainerRef: this.viewContainerRef,
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result === true) this.store.refreshCustomerBalance();
+      });
+  }
+
+  protected onWithdrawRequested(): void {
+    const customerId = this.store.customer()?.id;
+    if (!customerId) return;
+    const availableBalance = this.financeStore.balance()?.available;
+    this.dialog
+      .open(WithdrawDialogComponent, {
+        data: { customerId, availableBalance },
+        width: '380px',
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })

@@ -63,6 +63,7 @@ export * from './shared/components/cancel-button/cancel-button.component';
 export * from './shared/components/dashboard-card/dashboard-card.component';
 export * from './shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
 export * from './shared/components/top-up-button/top-up-button.component';
+export * from './shared/components/withdraw-button/withdraw-button.component';
 export * from './shared/components/health-indicator/health-indicator.component';
 export * from './shared/components/health-indicator/health-tooltip-line.component';
 export * from './shared/components/health-indicator/health-tooltip-lines.builder';
@@ -71,6 +72,8 @@ export * from './shared/components/layout-mode-toggle/layout-mode-toggle.compone
 export * from './shared/components/logout-button/logout-button.component';
 export * from './shared/components/save-button/save-button.component';
 export * from './shared/components/top-up-dialog/top-up-dialog.component';
+export * from './shared/components/withdraw-dialog/withdraw-dialog.component';
+export * from './shared/components/withdraw-dialog/max-amount.validator';
 export * from './shared/components/shell/shell.component';
 export * from './shared/components/sidebar/sidebar.component';
 export * from './shared/components/sidebar-nav-item/nav-item.model';
