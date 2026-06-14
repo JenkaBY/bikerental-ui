@@ -9,8 +9,9 @@ This repository's AI-assistant configuration was migrated from **GitHub Copilot*
 
 ## Migration decisions
 
-1. **Deprecated configs** are kept on disk, removed from git tracking (`git rm --cached`), and added
-   to `.gitignore` (and excluded from Claude's context via `permissions.deny`).
+1. **Deprecated configs** remain **tracked in git** for historical reference (so the repo, existing
+   clones, and history retain them). They are kept out of Claude's context solely via
+   `permissions.deny` `Read(...)` rules in `.claude/settings.json` — not by git-ignoring them.
 2. **`CLAUDE.md` imports `AGENTS.md`** (`@AGENTS.md`) so `AGENTS.md` remains the single cross-tool
    source of truth, with Claude-specific additions layered on top.
 3. **Skills were copied** (not moved) from `.github/skills/` to `.claude/skills/`; the originals and
@@ -48,15 +49,16 @@ This repository's AI-assistant configuration was migrated from **GitHub Copilot*
 | `.cursor/rules/angular-material-20.mdc` | — (deprecated, not migrated) | Skipped per decision. |
 | `.github/instructions/memory-bank.instructions.md.DISABLED` | — (deprecated) | Already disabled; memory bank retired. |
 | `.vscode/mcp.json` (`"servers"`) | `.mcp.json` (`"mcpServers"`) | Schema key differs between tools. |
-| `memory-bank/` | `architecture.md` / `overview.md` / `requirements/` / Claude memory | Marked obsolete; untracked. |
+| `memory-bank/` | `architecture.md` / `overview.md` / `requirements/` / Claude memory | Marked obsolete; kept tracked. |
 
-## Deprecated (untracked + ignored, kept on disk)
+## Deprecated (kept tracked, excluded from Claude's context)
 
 `.github/copilot-instructions.md`, `.github/instructions/`, `.github/prompts/`, `.github/agents/`,
 `.cursor/`, `.vscode/mcp.json`, and `memory-bank/`.
 
-These were removed from git tracking, added to `.gitignore`, and excluded from Claude's reads via
-`permissions.deny` in `.claude/settings.json`.
+These remain **tracked in git** for historical reference. They are excluded from Claude's reads
+**only** via `permissions.deny` `Read(...)` rules in `.claude/settings.json` — they are *not*
+git-ignored, so existing clones and repo history keep them intact.
 
 **Kept and untouched:** `.github/skills/` (originals), `skills-lock.json`, `.github/workflows/`,
 `.github/CODEOWNERS`, `.spec-workflow/` (tech-agnostic SDD templates), `requirements/`,

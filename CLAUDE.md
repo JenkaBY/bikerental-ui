@@ -73,8 +73,8 @@ matching docs in the same change: `README.md`, `requirements/` specs, and the co
 The legacy `memory-bank/` directory (Cline/Cursor-style "Memory Bank") is **obsolete** — see
 [memory-bank/DEPRECATED.md](memory-bank/DEPRECATED.md). Do **not** read or update it. Its role is
 replaced by `architecture.md` + `overview.md` (machine-readable context), the `requirements/` SDD
-specs, and Claude's own persistent memory. The folder is untracked and excluded from Claude's
-context via `permissions.deny` in `.claude/settings.json`.
+specs, and Claude's own persistent memory. The folder **remains tracked in git** for historical
+reference but is excluded from Claude's context via `permissions.deny` in `.claude/settings.json`.
 
 See [docs/claude-migration.md](docs/claude-migration.md) for the full Copilot/Cursor → Claude
 migration record.
