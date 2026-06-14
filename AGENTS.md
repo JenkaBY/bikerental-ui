@@ -101,8 +101,8 @@ await TestBed.configureTestingModule({
 
 | Path                                               | Purpose                                                     |
 |----------------------------------------------------|-------------------------------------------------------------|
-| `memory-bank/systemPatterns.md`                    | Full architecture, component tree, API integration patterns |
-| `memory-bank/tasks/_index.md`                      | All task IDs, statuses, and dependency chain                |
+| `architecture.md` / `overview.md`                  | Full architecture, component tree, API integration patterns |
+| `requirements/_index.md`                           | All requirement/task IDs, statuses, and dependency chain     |
 | `src/app/core/api/generated/`                      | ⚡ Auto-generated OpenAPI client (never edit manually)       |
 | `src/app/core/mappers/`                            | Converter classes: fromResponse() / toRequest()             |
 | `src/app/core/models/`                             | UI domain objects (what components use)                     |

@@ -48,25 +48,25 @@ github-copilot/
 
 Copy these into your target project:
 
-| Source                                   | Destination                       |
+| Source                                   | Destination (Claude Code)         |
 |------------------------------------------|-----------------------------------|
 | `github-copilot/.spec-workflow/`         | `.spec-workflow/` (project root)  |
-| `github-copilot/agents/`                 | `.github/agents/`                 |
-| `github-copilot/prompts/`                | `.github/prompts/`                |
-| `github-copilot/copilot-instructions.md` | `.github/copilot-instructions.md` |
+| `github-copilot/agents/`                 | `.claude/agents/`                 |
+| `github-copilot/prompts/`                | `.claude/commands/`               |
+| `github-copilot/copilot-instructions.md` | `CLAUDE.md`                       |
 
-Fill in the placeholder sections in `copilot-instructions.md` with your project's conventions.
-See [github-copilot/examples/copilot-instructions.md](.github-copilot/examples/copilot-instructions.md) for a completed
-reference.
+Fill in the placeholder sections in `CLAUDE.md` with your project's conventions (import
+`@AGENTS.md` at the top to keep agent rules in a single canonical file).
 
 After setup your project root will contain:
 
 ```
 your-repo/
-├── .github/
+├── .claude/
 │   ├── agents/
-│   ├── prompts/
-│   └── copilot-instructions.md
+│   ├── commands/
+│   └── settings.json
+├── CLAUDE.md
 ├── .spec-workflow/
 └── (your project files)
 ```
@@ -77,8 +77,8 @@ your-repo/
 
 This phase runs once and provides agents with machine-readable context for your project.
 
-**1. Configure copilot-instructions.md**
-Fill in the placeholder sections in `.github/copilot-instructions.md` with your project's conventions:
+**1. Configure CLAUDE.md**
+Fill in the placeholder sections in `CLAUDE.md` with your project's conventions:
 
 - Project scaffolding rules
 - Database integration rules
@@ -88,7 +88,7 @@ Fill in the placeholder sections in `.github/copilot-instructions.md` with your 
 
 
 **2. Create custom skills**
-For technology-specific guidance, create skill files in `.github/skills/`. These define patterns, best practices, and
+For technology-specific guidance, create skill files in `.claude/skills/`. These define patterns, best practices, and
 implementation standards for your tech stack (e.g., API design, UI patterns, database schemas). Agents reference these
 during task decomposition to generate accurate implementations. See the examples in `github-copilot/examples/skills/`
 for reference patterns.
@@ -111,11 +111,13 @@ points, constraints, key architectural decisions). These files become the refere
 
 ### Phase 2: Deliver features spec-first
 
-Select agents from the **Agents** dropdown in VS Code and run them in order:
+Invoke agents via the **Task tool** (in another agent's prompt) or by typing `@<agent-name>` in
+Claude Code. Run them in order:
 
 **1. `business-analyst` — Write functional requirements**
 Describe the feature. The agent asks clarifying questions, presents a requirement plan for approval, then writes one
-`fr.md` per functional requirement.
+`fr.md` per functional requirement. Because Claude subagents run non-interactively, clarifying questions are returned
+as the final message — answer them and re-invoke the agent to continue.
 
 **2. `architect` — Write system designs**
 Provide the requirements folder path. The agent reads each `fr.md` and produces a tech-agnostic `design.md` covering
@@ -127,7 +129,7 @@ Provide the FR folder path. The agent scans the actual source code and produces 
 
 **4. `dev-manager` — Implement**
 Provide the `checklist.md` path. The agent works through the checklist sequentially, delegating each task file to the
-`dev` sub-agent and updating task status. Stops immediately on any failure and reports the error.
+`dev` sub-agent (via the Task tool) and updating task status. Stops immediately on any failure and reports the error.
 
 ### Output structure
 

@@ -45,3 +45,6 @@ Thumbs.db
 
 # Coverage reports
 /coverage
+
+# Claude Code — local-only settings (project config .claude/settings.json IS tracked)
+.claude/settings.local.json
