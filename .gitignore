@@ -26,7 +26,6 @@ yarn-error.log
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-!.vscode/mcp.json
 .history/*
 
 # Miscellaneous
@@ -45,3 +44,17 @@ Thumbs.db
 
 # Coverage reports
 /coverage
+
+# Claude Code — local-only settings (project config .claude/settings.json IS tracked)
+.claude/settings.local.json
+
+# Deprecated AI assistant configs — migrated to Claude (CLAUDE.md, .claude/, .mcp.json).
+# Kept on disk for reference but untracked; see docs/claude-migration.md.
+.github/copilot-instructions.md
+.github/instructions/
+.github/prompts/
+.github/agents/
+.cursor/
+
+# Legacy "memory bank" — obsolete, superseded by architecture.md / overview.md / requirements/
+memory-bank/
