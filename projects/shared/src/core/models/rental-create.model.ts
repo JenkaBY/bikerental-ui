@@ -1,6 +1,4 @@
 import { Money } from './transaction.model';
-import type { Customer } from './customer.model';
-import type { EquipmentSearchItem } from './equipment.model';
 
 export interface RentalCostBreakdown {
   equipmentType: string;
@@ -27,17 +25,4 @@ export interface RentalWrite {
   specialTariffId?: number;
   specialPrice?: number;
   operatorId: string;
-}
-
-export interface RentalState {
-  id: number | null;
-  customer: Customer | null;
-  equipmentItems: EquipmentSearchItem[];
-  durationMinutes: number;
-  discountPercent: number | undefined;
-  specialPrice: number | undefined;
-  specialPriceEnabled: boolean;
-  isSaving: boolean;
-  isActivating: boolean;
-  isLoading: boolean;
 }

@@ -16,9 +16,9 @@ import {
   type BrokenEquipmentEntry,
   type Customer,
   type EquipmentSearchItem,
-  type RentalDetailState,
   type RentalEquipmentItem,
 } from '@ui-models';
+import type { RentalDetailState } from './rental.state';
 import { RentalDashboardMapper, RentalMapper } from '../mappers';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
