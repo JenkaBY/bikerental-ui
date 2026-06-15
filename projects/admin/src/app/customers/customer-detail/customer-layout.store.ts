@@ -12,7 +12,7 @@ export class CustomerLayoutStore {
   readonly customer = this.customerStore.customer;
   readonly balance = this.financeStore.balance;
 
-  readonly isLoading = computed(() => this.customerStore.loading || this.financeStore.loading);
+  readonly isLoading = computed(() => this.customerStore.loading() || this.financeStore.loading());
 
   init(id: string): void {
     this._customerId.set(id);

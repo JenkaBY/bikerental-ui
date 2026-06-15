@@ -28,7 +28,6 @@ import {
   WithdrawDialogComponent,
 } from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
-import { RentalPricingSectionComponent } from '../rental-create/step2/rental-pricing-section.component';
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
@@ -54,7 +53,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalActionButtonsComponent,
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
-    RentalPricingSectionComponent,
     RentalEquipmentSectionComponent,
     MoneyPipe,
     DurationPipe,
@@ -119,14 +117,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
           <mat-divider />
           @if (!store.isDraft()) {
             <app-rental-cost-section />
-            <mat-divider />
-          }
-          @let enableDiscountSection = false;
-          @if (store.isActive() && enableDiscountSection) {
-            <p class="px-4 py-3 text-sm font-semibold text-slate-600">
-              {{ Labels.ReturnPricing }}
-            </p>
-            <app-rental-pricing-section />
             <mat-divider />
           }
           @if (!store.isDraft()) {

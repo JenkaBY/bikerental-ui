@@ -79,6 +79,12 @@ All shared components are **standalone** with `OnPush` change detection. Dropdow
 
 ## Testing (Vitest)
 
+> **MVP rule — do not write tests.** While the project is in MVP and the design is not finalized,
+> **do not write or update any kind of tests** (unit, integration, component, or e2e) — not even
+> when adding or changing features. Tests would only churn against a moving design. Leave existing
+> tests as-is unless explicitly asked. The guidance below is **deferred** until the design is locked
+> and this rule is lifted.
+
 - Test files: `*.spec.ts` alongside source. Use `vi.fn()` (not `jasmine.spyOn`).
 - Don't test services that just wrap `HttpClient` calls; do test all components and custom service logic.
 - Provide stubs via `TestBed.configureTestingModule` `providers` — never `spyOn` Angular internals.

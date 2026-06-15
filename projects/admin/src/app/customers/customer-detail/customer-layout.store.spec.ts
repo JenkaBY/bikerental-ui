@@ -85,4 +85,13 @@ describe('CustomerLayoutStore', () => {
     await Promise.resolve();
     expect(store.balance()?.available.amount).toBe(200);
   });
+
+  it('isLoading() returns a boolean reflecting signal values, not signal references', async () => {
+    expect(store.isLoading()).toBe(false);
+
+    store.init('1');
+    await Promise.resolve();
+
+    expect(store.isLoading()).toBe(false);
+  });
 });
