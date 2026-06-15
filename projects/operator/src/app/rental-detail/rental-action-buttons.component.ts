@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  ViewContainerRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +17,7 @@ import type { BrokenEquipmentEntry } from '@ui-models';
 import { Labels, RentalStore } from '@bikerental/shared';
 import { BrokenEquipmentSheetComponent } from './broken-equipment-sheet.component';
 import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
+import { ReturnEquipmentDialogComponent } from './return-equipment-dialog/return-equipment-dialog.component';
 
 @Component({
   selector: 'app-rental-action-buttons',
@@ -70,6 +78,7 @@ export class RentalActionButtonsComponent {
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly viewContainerRef = inject(ViewContainerRef);
 
   protected readonly Labels = Labels;
 
@@ -78,17 +87,22 @@ export class RentalActionButtonsComponent {
   );
 
   protected onReturn(): void {
-    this.store
-      .returnEquipment()
+    if (this.store.selectedEquipmentCount() === 0) return;
+
+    this.dialog
+      .open(ReturnEquipmentDialogComponent, {
+        viewContainerRef: this.viewContainerRef,
+        disableClose: true,
+        width: '480px',
+      })
+      .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.snackBar.open(Labels.RentalReturnSuccess, undefined, { duration: 3000 });
-          this.router.navigate(['/rentals']);
-        },
-        error: () => {
-          this.snackBar.open(Labels.RentalReturnError, Labels.Close, { duration: 5000 });
-        },
+      .subscribe((confirmed: boolean | undefined) => {
+        if (!confirmed) return;
+        this.snackBar.open(Labels.RentalReturnSuccess, undefined, { duration: 3000 });
+        this.store.clearSelection();
+        const id = this.store.id();
+        if (id !== null) this.store.loadDetail(id);
       });
   }
 

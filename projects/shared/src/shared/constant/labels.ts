@@ -259,6 +259,16 @@ export class Labels {
   static readonly RentalReturnError = $localize`Failed to return equipment. Please try again.`;
   static readonly RentalCancelError = $localize`Failed to cancel rental. Please try again.`;
 
+  static readonly ReturnDialogTitle = $localize`Confirm equipment return`;
+  static readonly ItemsToReturn = $localize`Items to return`;
+  static readonly EstimatedCost = $localize`Estimated cost`;
+  static readonly TotalEstimated = $localize`Total estimated`;
+  static readonly TotalCurrent = $localize`Total current`;
+  static readonly AmountToRefund = $localize`To refund to customer`;
+  static readonly AmountToCollect = $localize`To collect from customer`;
+  static readonly NoSettlementNeeded = $localize`No settlement needed`;
+  static readonly ConfirmReturnButton = $localize`Confirm return`;
+
   static readonly BrokenEquipmentTitle = $localize`Broken equipment`;
   static readonly BrokenEquipmentSubtitle = $localize`Select items to mark as broken and enter the penalty amount if applicable`;
   static readonly BrokenEquipmentPenaltyUnderDevelopment = $localize`Penalty submission is under development. Broken item tracking will be available in a future update.`;
