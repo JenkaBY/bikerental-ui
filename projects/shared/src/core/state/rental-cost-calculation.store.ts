@@ -2,7 +2,7 @@ import { computed, inject, Injectable } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of, timer } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import type { CostCalculationRequest } from '@api-models';
+import type { CostCalculationV2Request } from '@api-models';
 import type { RentalCostEstimate } from '@ui-models';
 import { CostCalculationMapper } from '../mappers/cost-calculation.mapper';
 import { TariffStore } from './tariff.store';
@@ -21,9 +21,9 @@ export class RentalCostCalculationStore {
     return this.costCalculationMapper.fromState(s, this.tariffStore.specialTariffId());
   });
 
-  readonly resource = rxResource<RentalCostEstimate | null, CostCalculationRequest | null>({
+  readonly resource = rxResource<RentalCostEstimate | null, CostCalculationV2Request | null>({
     params: () => this.calculationRequest(),
-    stream: ({ params }: { params: CostCalculationRequest | null }) => {
+    stream: ({ params }: { params: CostCalculationV2Request | null }) => {
       if (!params) return of(null);
       return timer(300).pipe(
         switchMap(() => this.tariffStore.calculateCost(params)),

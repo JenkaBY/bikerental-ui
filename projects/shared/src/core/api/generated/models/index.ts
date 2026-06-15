@@ -56,6 +56,63 @@ export interface ProblemDetail {
   properties?: Record<string, any>;
 }
 
+/** Request for rental cost calculation V2 (per-equipment return timestamps) */
+export interface CostCalculationV2Request {
+  equipments: Array<EquipmentItemRequest>;
+  startAt: string;
+  plannedDurationMinutes: number;
+  discountPercent?: number;
+  specialTariffId?: number;
+  specialPrice?: number;
+}
+
+/** Single equipment item for V2 cost calculation */
+export interface EquipmentItemRequest {
+  equipmentId: number;
+  equipmentType: string;
+  returnAt?: string;
+}
+
+export interface BreakdownCostDetails {
+  breakdownPatternCode?: string;
+  message?: string;
+  params?: any;
+}
+
+/** Rental cost calculation result */
+export interface CostCalculationResponse {
+  equipmentBreakdowns: Array<EquipmentCostBreakdownResponse>;
+  /** cost without discount applied */
+  subtotal: number;
+  discount?: DiscountDetailResponse;
+  /** cost with discount applied */
+  totalCost: number;
+  effectiveDurationMinutes: number;
+  estimate?: boolean;
+  specialPricingApplied?: boolean;
+}
+
+/** Discount applied */
+export interface DiscountDetailResponse {
+  percent: number;
+  amount: number;
+}
+
+/** Per-equipment cost breakdown */
+export interface EquipmentCostBreakdownResponse {
+  /** Physical equipment unit ID; null for V1 calculations */
+  equipmentId?: number;
+  equipmentType: string;
+  tariffId: number;
+  tariffName: string;
+  pricingType: string;
+  itemCost: number;
+  billedDurationMinutes: number;
+  overtimeMinutes?: number;
+  forgivenMinutes?: number;
+  calculationBreakdown: BreakdownCostDetails;
+}
+
 /** Request body for creating a rental via Fast Path */
 export interface RentalRequest {
   /** Customer UUID */
@@ -74,6 +131,24 @@ export interface RentalRequest {
   discountPercent?: number;
 }
 
+/** Detailed calculation pattern and parameters */
+export interface CalculationDetail {
+  breakdownPatternCode: string;
+  message: string;
+  params?: any;
+}
+
+/** Per-equipment final cost breakdown */
+export interface CostBreakdown {
+  pricingType: string;
+  tariffName: string;
+  billedDurationMinutes: number;
+  overtimeMinutes?: number;
+  forgivenMinutes?: number;
+  itemCost: number;
+  calculationBreakdown: CalculationDetail;
+}
+
 /** Equipment item within rental */
 export interface EquipmentItemResponse {
   /** Equipment ID */
@@ -88,6 +163,8 @@ export interface EquipmentItemResponse {
   tariffId?: number;
   /** Status rental equipment */
   status: string;
+  /** Final cost breakdown; populated only when equipment is returned */
+  breakdown?: CostBreakdown;
 }
 
 /** Full rental details */
@@ -253,49 +330,6 @@ export interface CostCalculationRequest {
   specialTariffId?: number;
   specialPrice?: number;
   rentalDate?: string;
-}
-
-/** Single equipment item for cost calculation */
-export interface EquipmentItemRequest {
-  equipmentType: string;
-}
-
-export interface BreakdownCostDetails {
-  breakdownPatternCode?: string;
-  message?: string;
-  params?: any;
-}
-
-/** Rental cost calculation result */
-export interface CostCalculationResponse {
-  equipmentBreakdowns: Array<EquipmentCostBreakdownResponse>;
-  /** cost without discount applied */
-  subtotal: number;
-  discount?: DiscountDetailResponse;
-  /** cost with discount applied */
-  totalCost: number;
-  effectiveDurationMinutes: number;
-  estimate?: boolean;
-  specialPricingApplied?: boolean;
-}
-
-/** Discount applied */
-export interface DiscountDetailResponse {
-  percent: number;
-  amount: number;
-}
-
-/** Per-equipment cost breakdown */
-export interface EquipmentCostBreakdownResponse {
-  equipmentType: string;
-  tariffId: number;
-  tariffName: string;
-  pricingType: string;
-  itemCost: number;
-  billedDurationMinutes: number;
-  overtimeMinutes?: number;
-  forgivenMinutes?: number;
-  calculationBreakdown: BreakdownCostDetails;
 }
 
 /** Request body for returning rented equipment */

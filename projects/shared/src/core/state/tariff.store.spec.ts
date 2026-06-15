@@ -252,7 +252,7 @@ describe('TariffStore — resolveSpecialTariff', () => {
     getActiveTariffs: vi.fn(() =>
       of([]),
     ) as unknown as (typeof TariffsService.prototype)['getActiveTariffs'],
-    calculateCost: vi.fn(),
+    costCalculations: vi.fn(),
     createTariff: vi.fn(),
     updateTariff: vi.fn(),
     activateTariff: vi.fn(),
