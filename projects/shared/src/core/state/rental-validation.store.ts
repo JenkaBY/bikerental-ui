@@ -1,6 +1,8 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { makeMoney } from '../mappers';
-import { CustomerFinanceStore, RentalCostCalculationStore, RentalStore } from '@bikerental/shared';
+import { CustomerFinanceStore } from './customer-finance.store';
+import { RentalCostCalculationStore } from './rental-cost-calculation.store';
+import { RentalStore } from './rental.store';
 
 @Injectable()
 export class RentalValidationStore {

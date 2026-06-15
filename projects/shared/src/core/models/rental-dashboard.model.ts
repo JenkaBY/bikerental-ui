@@ -36,7 +36,6 @@ export interface ReturnEquipmentWrite {
 export interface RentalDetailState extends RentalState {
   status: string;
   customerId: string;
-  customerBalance?: Money;
   startedAt: Date | null;
   expectedReturnAt?: Date;
   paidDurationMinutes?: number;
