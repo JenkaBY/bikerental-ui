@@ -199,7 +199,10 @@ export class RentalStore {
   }
 
   save() {
-    const { id } = this._state();
+    const { id, customer } = this._state();
+    if (!customer?.id) {
+      return EMPTY;
+    }
     this.patchState({ isSaving: true });
 
     const request$ = id

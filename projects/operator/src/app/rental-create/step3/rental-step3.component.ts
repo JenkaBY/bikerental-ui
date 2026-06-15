@@ -86,7 +86,7 @@ export class RentalStep3Component {
         tap(() => {
           this.store.reset();
           this.snackBar.open(Labels.RentalStarted, Labels.Close, { duration: 3000 });
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/rentals']);
         }),
         catchError(() => {
           this.snackBar.open(Labels.RentalStartError, Labels.Close, { duration: 4000 });
