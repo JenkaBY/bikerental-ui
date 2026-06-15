@@ -108,12 +108,8 @@ export class RentalCardComponent {
   });
 
   protected navigateToDetail(): void {
-    if (this.variant() === 'history' && this.item().status === 'DRAFT') {
-      console.log('open draft is temporary disabled');
-      // void this.router.navigate(['/rentals/new'], {
-      //   queryParams: { rentalId: this.item().id },
-      // });
-      // });
+    if (this.item().status === 'DRAFT') {
+      void this.router.navigate(['/rentals', this.item().id, 'edit']);
       return;
     }
 

@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 import {
   BatchRentalPropertyStore,
   CustomerFinanceStore,
@@ -115,21 +116,15 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
           <mat-divider />
           <app-rental-period-section />
           <mat-divider />
-          @if (!store.isDraft()) {
-            <app-rental-cost-section />
-            <mat-divider />
-          }
-          @if (!store.isDraft()) {
-            <app-rental-equipment-section
-              [equipmentItems]="store.rentalEquipmentItems()"
-              [isDebt]="store.isDebt()"
-            />
-          }
+          <app-rental-cost-section />
+          <mat-divider />
+          <app-rental-equipment-section
+            [equipmentItems]="store.rentalEquipmentItems()"
+            [isDebt]="store.isDebt()"
+          />
         </div>
 
-        @if (!store.isDraft()) {
-          <app-rental-action-buttons />
-        }
+        <app-rental-action-buttons />
       }
     </div>
   `,
@@ -137,6 +132,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
 export class RentalDetailComponent {
   protected readonly store = inject(RentalStore);
   private readonly location = inject(Location);
+  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly destroyRef = inject(DestroyRef);
@@ -160,6 +156,13 @@ export class RentalDetailComponent {
       const id = this.rentalId();
       if (!isNaN(id) && id > 0) {
         this.store.loadDetail(id);
+      }
+    });
+
+    effect(() => {
+      if (this.store.isLoading() || this.store.loadError() || this.store.id() === null) return;
+      if (this.store.isDraft()) {
+        void this.router.navigate(['/rentals', this.store.id(), 'edit']);
       }
     });
   }
