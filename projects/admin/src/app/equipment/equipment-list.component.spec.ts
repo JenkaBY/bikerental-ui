@@ -5,9 +5,7 @@ import { vi } from 'vitest';
 import { EquipmentListComponent } from './equipment-list.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Equipment, EquipmentStatus, EquipmentType } from '@ui-models';
-import { EquipmentStore } from '@store.equipment.store';
-import { EquipmentTypeStore } from '@store.equipment-type.store';
-import { EquipmentStatusStore } from '@store.equipment-status.store';
+import { EquipmentStatusStore, EquipmentStore, EquipmentTypeStore } from '@bikerental/shared';
 
 describe('EquipmentListComponent', () => {
   let fixture: ComponentFixture<EquipmentListComponent>;

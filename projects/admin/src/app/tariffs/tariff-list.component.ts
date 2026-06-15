@@ -18,8 +18,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Tariff } from '@ui-models';
-import { TariffStore } from '@store.tariff.store';
-import { Labels } from '@bikerental/shared';
+import { Labels, TariffStore } from '@bikerental/shared';
 import { MatDialog } from '@angular/material/dialog';
 import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.component';
 

@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { CancelButtonComponent } from '../../cancel-button/cancel-button.component';
-import { CustomerStore } from '@store.customer.store';
+import { CustomerStore } from '../../../../core/state/customer.store';
 import { FormErrorMessages } from '../../../validators/form-error-messages';
 import { Labels } from '../../../constant/labels';
 import { CustomerFormProvider } from '../customer-form.provider';

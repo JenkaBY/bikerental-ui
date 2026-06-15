@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { PaymentMethodSelectComponent } from '@bikerental/shared';
+import { PaymentMethodSelectComponent } from './payment-method.component';
 import type { PaymentMethod } from '@ui-models';
 
 describe('PaymentMethodSelectComponent', () => {

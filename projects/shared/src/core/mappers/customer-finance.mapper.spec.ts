@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CustomerFinanceMapper } from '@bikerental/shared';
+import { CustomerFinanceMapper } from './customer-finance.mapper';
 import type { CustomerDepositWrite, CustomerWithdrawalWrite } from '../models';
 
 describe('CustomerFinanceMapper', () => {

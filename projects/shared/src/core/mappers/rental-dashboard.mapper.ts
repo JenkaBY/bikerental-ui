@@ -9,11 +9,11 @@ import type {
   BrokenEquipmentEntry,
   Customer,
   EquipmentSearchItem,
-  RentalDetailState,
   RentalEquipmentItem,
   RentalListItem,
   ReturnEquipmentWrite,
 } from '@ui-models';
+import type { RentalDetailState } from '../state/rental.state';
 import { makeMoney } from './money.mapper';
 
 export class RentalDashboardMapper {

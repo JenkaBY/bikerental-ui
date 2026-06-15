@@ -1,4 +1,13 @@
-import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
+import {
+  computed,
+  DestroyRef,
+  inject,
+  Injectable,
+  InjectionToken,
+  Injector,
+  runInInjectionContext,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
@@ -7,14 +16,18 @@ import {
   type BrokenEquipmentEntry,
   type Customer,
   type EquipmentSearchItem,
-  type RentalDetailState,
   type RentalEquipmentItem,
 } from '@ui-models';
+import type { RentalDetailState } from './rental.state';
 import { RentalDashboardMapper, RentalMapper } from '../mappers';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
 import { UserStore } from './user.store';
 import { TariffStore } from './tariff.store';
+
+export const RENTAL_VALIDATION_STORE_FOR_DELEGATION = new InjectionToken<{
+  isBalanceSufficient: () => boolean;
+}>('RentalValidationStoreForDelegation');
 
 @Injectable()
 export class RentalStore {
@@ -24,6 +37,7 @@ export class RentalStore {
   private readonly customerFinanceStore = inject(CustomerFinanceStore);
   private readonly tariffStore = inject(TariffStore);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   private readonly _state = signal<RentalDetailState>({
     id: null,
@@ -46,7 +60,7 @@ export class RentalStore {
     isReturning: false,
   });
 
-  patchState(partial: Partial<ReturnType<typeof this._state>>) {
+  private patchState(partial: Partial<ReturnType<typeof this._state>>) {
     this._state.update((s) => ({ ...s, ...partial }));
   }
 
@@ -55,9 +69,15 @@ export class RentalStore {
   readonly id = computed(() => this._state().id);
   readonly customer = computed(() => this._state().customer);
   readonly customerBalance = computed(() => this.customerFinanceStore.balance());
-  readonly isBalanceSufficient = computed(
-    () => (this.customerFinanceStore.balance()?.available.amount ?? 0) >= 0,
-  );
+  readonly isBalanceSufficient = computed(() => {
+    const validationStore = runInInjectionContext(this.injector, () =>
+      inject(RENTAL_VALIDATION_STORE_FOR_DELEGATION, { optional: true }),
+    );
+    if (validationStore) {
+      return validationStore.isBalanceSufficient();
+    }
+    return (this.customerFinanceStore.balance()?.available.amount ?? 0) >= 0;
+  });
   readonly equipmentItems = computed(() => this._state().equipmentItems);
   readonly specialPriceEnabled = computed(() => this._state().specialPriceEnabled);
   readonly operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
@@ -192,6 +212,10 @@ export class RentalStore {
     return request$.pipe(finalize(() => this.patchState({ isSaving: false })));
   }
 
+  private applyDetail(state: Partial<RentalDetailState>): void {
+    this.patchState(state);
+  }
+
   private mapToRequest() {
     const s = this._state();
     return {
@@ -267,7 +291,7 @@ export class RentalStore {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((state) => {
-        this.patchState(state);
+        this.applyDetail(state);
         this.setCustomer(state.customer || null);
       });
   }

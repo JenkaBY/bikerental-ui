@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
+  CustomerFinanceStore,
   Labels,
   MoneyPipe,
   TopUpButtonComponent,
@@ -18,7 +19,6 @@ import {
   WithdrawDialogComponent,
 } from '@bikerental/shared';
 import { CustomerLayoutStore } from '../../customer-layout.store';
-import { CustomerFinanceStore } from '@store.customer-finance.store';
 import { CustomerTransactionsStore } from '../../customer-transactions.store';
 
 @Component({

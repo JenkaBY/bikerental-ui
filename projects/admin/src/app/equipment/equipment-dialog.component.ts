@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CancelButtonComponent,
   EQUIPMENT_CONDITIONS,
+  EquipmentStore,
   EquipmentTypeDropdownComponent,
   FormErrorMessages,
   Labels,
@@ -27,7 +28,6 @@ import {
   EquipmentType,
   EquipmentWrite,
 } from '@ui-models';
-import { EquipmentStore } from '@store.equipment.store';
 
 export interface EquipmentDialogData {
   equipment?: Equipment;

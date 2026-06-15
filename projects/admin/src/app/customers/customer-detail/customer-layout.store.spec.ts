@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { api, CustomerStore } from '@bikerental/shared';
-import { CustomerFinanceStore } from '@store.customer-finance.store';
+import { api, CustomerFinanceStore, CustomerStore } from '@bikerental/shared';
 import { CustomerLayoutStore } from './customer-layout.store';
 
 const makeCustomersService = () => ({
@@ -84,5 +83,14 @@ describe('CustomerLayoutStore', () => {
     financeStore.refreshBalance();
     await Promise.resolve();
     expect(store.balance()?.available.amount).toBe(200);
+  });
+
+  it('isLoading() returns a boolean reflecting signal values, not signal references', async () => {
+    expect(store.isLoading()).toBe(false);
+
+    store.init('1');
+    await Promise.resolve();
+
+    expect(store.isLoading()).toBe(false);
   });
 });

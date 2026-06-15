@@ -30,6 +30,20 @@ Backend JSON  →  core/api/generated/  →  core/mappers/  →  core/models/  �
 - **Services in `core/api/`** inject generated services and apply mappers internally; their public signatures always use domain types
 - **Regeneration**: Run `npm run generate:api` when backend OpenAPI spec changes; this overwrites `core/api/generated/**` (never edit manually)
 
+## Shared Import Convention (enforced by lint)
+
+- **Cross-project code** (`projects/admin`, `projects/operator`, `projects/gateway`) MUST import
+  shared symbols from **`@bikerental/shared`** — never a deep relative path into
+  `projects/shared/src` (e.g. `../../../shared/src/...`), and never the `@store.*` alias. One barrel
+  import line per file.
+- **Inside the `shared` library** (`projects/shared/**`) use **relative paths** between modules
+  (e.g. `./user.store`, `../state/time.store`). Never import the `@bikerental/shared` barrel from
+  inside `shared` (self-import causes circular module-init / duplicate-class-identity bugs), and
+  never use `@store.*` either.
+- The `no-restricted-imports` rule in the root `eslint.config.js` enforces both directions and runs
+  in CI, so `npm run lint` fails on any violation. Generated client code under
+  `core/api/generated/**` is exempt (already in the config `ignores`).
+
 ## Angular Patterns
 
 - **Standalone components only** — no NgModules; declare `imports: []` per component
@@ -78,6 +92,12 @@ The `shared/components/` folder contains patterns and reusable UI components:
 All shared components are **standalone** with `OnPush` change detection. Dropdowns implement `ControlValueAccessor` for seamless reactive form integration.
 
 ## Testing (Vitest)
+
+> **MVP rule — do not write tests.** While the project is in MVP and the design is not finalized,
+> **do not write or update any kind of tests** (unit, integration, component, or e2e) — not even
+> when adding or changing features. Tests would only churn against a moving design. Leave existing
+> tests as-is unless explicitly asked. The guidance below is **deferred** until the design is locked
+> and this rule is lifted.
 
 - Test files: `*.spec.ts` alongside source. Use `vi.fn()` (not `jasmine.spyOn`).
 - Don't test services that just wrap `HttpClient` calls; do test all components and custom service logic.

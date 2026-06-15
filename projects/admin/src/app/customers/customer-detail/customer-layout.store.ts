@@ -1,6 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { CustomerStore } from '@bikerental/shared';
-import { CustomerFinanceStore } from '@store.customer-finance.store';
+import { CustomerFinanceStore, CustomerStore } from '@bikerental/shared';
 
 @Injectable()
 export class CustomerLayoutStore {
@@ -12,7 +11,7 @@ export class CustomerLayoutStore {
   readonly customer = this.customerStore.customer;
   readonly balance = this.financeStore.balance;
 
-  readonly isLoading = computed(() => this.customerStore.loading || this.financeStore.loading);
+  readonly isLoading = computed(() => this.customerStore.loading() || this.financeStore.loading());
 
   init(id: string): void {
     this._customerId.set(id);

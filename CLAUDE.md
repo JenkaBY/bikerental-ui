@@ -61,6 +61,11 @@ are technology-agnostic; do not edit them per-feature.
 - **Lifecycle & navigation** — `provideAppInitializer()` for non-blocking background data load
   (return `Promise.resolve()` immediately); enable `withComponentInputBinding()` and treat the URL
   as the source of truth for IDs; reset `pageIndex` to 0 in the store whenever filters/IDs change.
+- **Shared import convention (lint-enforced)** — cross-project code (`admin`/`operator`/`gateway`)
+  imports shared symbols only from `@bikerental/shared` (never a deep `projects/shared/src` relative
+  path, never `@store.*`); inside the `shared` library use relative paths between modules (never the
+  `@bikerental/shared` barrel — self-import causes cyclic init — and never `@store.*`). The
+  `no-restricted-imports` rule in the root `eslint.config.js` enforces both and runs in CI.
 
 ## Keep docs in sync with code
 

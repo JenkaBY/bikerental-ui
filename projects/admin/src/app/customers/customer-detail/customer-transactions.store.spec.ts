@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { api } from '@bikerental/shared';
 import { CustomerTransactionsStore } from './customer-transactions.store';
-import { FinanceService } from '../../../../../shared/src/core/api/generated';
 import { CustomerLayoutStore } from './customer-layout.store';
 
 describe('CustomerTransactionsStore', () => {
@@ -28,7 +28,7 @@ describe('CustomerTransactionsStore', () => {
     TestBed.configureTestingModule({
       providers: [
         CustomerTransactionsStore,
-        { provide: FinanceService, useValue: financeService },
+        { provide: api.FinanceService, useValue: financeService },
         { provide: CustomerLayoutStore, useValue: layoutStore },
       ],
     });
@@ -113,7 +113,7 @@ describe('CustomerTransactionsStore', () => {
     TestBed.configureTestingModule({
       providers: [
         CustomerTransactionsStore,
-        { provide: FinanceService, useValue: finance },
+        { provide: api.FinanceService, useValue: finance },
         { provide: CustomerLayoutStore, useValue: noIdLayout },
       ],
     });

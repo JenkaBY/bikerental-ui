@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { EquipmentTypeDropdownComponent } from './equipment-type-dropdown.component';
-import { EquipmentTypeStore } from '@store.equipment-type.store';
+import { EquipmentTypeStore } from '../../../core/state/equipment-type.store';
 import { EquipmentType } from '@ui-models';
 
 const mockTypes: EquipmentType[] = [

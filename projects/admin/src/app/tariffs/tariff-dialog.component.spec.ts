@@ -5,10 +5,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TariffStore } from '@store.tariff.store';
-import { PricingTypeStore } from '@store.pricing-type.store';
 import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.component';
-import { EquipmentTypeDropdownComponent, Labels } from '@bikerental/shared';
+import {
+  EquipmentTypeDropdownComponent,
+  Labels,
+  PricingTypeStore,
+  TariffStore,
+} from '@bikerental/shared';
 import { Tariff, TariffStatus } from '@ui-models';
 
 function withTariffFlags(base: Omit<Tariff, 'isActive' | 'isSpecial'>): Tariff {

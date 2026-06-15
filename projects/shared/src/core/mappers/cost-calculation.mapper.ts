@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import type { CostCalculationRequest, CostCalculationResponse } from '@api-models';
-import type { RentalCostEstimate, RentalDetailState, RentalState, RentalWrite } from '@ui-models';
+import type { RentalCostEstimate, RentalWrite } from '@ui-models';
+import type { RentalDetailState, RentalState } from '../state/rental.state';
 import { makeMoney } from './money.mapper';
-import { TimeStore } from '@store.time.store';
+import { TimeStore } from '../state/time.store';
 
 @Injectable({ providedIn: 'root' })
 export class CostCalculationMapper {

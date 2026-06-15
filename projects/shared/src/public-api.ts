@@ -87,6 +87,9 @@ export * from './shared/components/customer/customer-form.provider';
 // Shared UI — constants
 export * from './shared/constant/labels';
 
+// Shared UI — presentation/meta maps (rental + equipment-item status)
+export * from './shared/rental-status.meta';
+
 // Shared UI — pipes
 export * from './shared/pipes/truncate.pipe';
 export * from './shared/pipes/money.pipe';

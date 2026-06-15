@@ -12,11 +12,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
-import { Labels, TruncatePipe } from '@bikerental/shared';
+import {
+  EquipmentStatusStore,
+  EquipmentStore,
+  EquipmentTypeStore,
+  Labels,
+  TruncatePipe,
+} from '@bikerental/shared';
 import { Equipment } from '@ui-models';
-import { EquipmentStore } from '@store.equipment.store';
-import { EquipmentTypeStore } from '@store.equipment-type.store';
-import { EquipmentStatusStore } from '@store.equipment-status.store';
 
 @Component({
   selector: 'app-equipment-list',

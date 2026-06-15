@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { throwError } from 'rxjs';
 import { EquipmentTypeDialogComponent } from './equipment-type-dialog.component';
-import { EquipmentTypeStore } from '@store.equipment-type.store';
+import { EquipmentTypeStore } from '@bikerental/shared';
 import { HttpErrorResponse } from '@angular/common/http';
 
 function makeStore(err: unknown) {

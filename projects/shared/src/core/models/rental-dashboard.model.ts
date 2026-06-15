@@ -1,5 +1,3 @@
-import type { Money } from './transaction.model';
-import type { RentalState } from './rental-create.model';
 import type { EquipmentSearchItem } from './equipment.model';
 
 export interface RentalListItem {
@@ -31,22 +29,4 @@ export interface ReturnEquipmentWrite {
   equipmentItemIds: number[];
   discountPercent?: number;
   specialPrice?: number;
-}
-
-export interface RentalDetailState extends RentalState {
-  status: string;
-  customerId: string;
-  customerBalance?: Money;
-  startedAt: Date | null;
-  expectedReturnAt?: Date;
-  paidDurationMinutes?: number;
-  estimatedCost?: Money;
-  finalCost?: Money;
-  debtAmount?: Money;
-  isActive: boolean;
-  isDebt: boolean;
-  isOverdue: boolean;
-  overdueMinutes?: number;
-  brokenEquipmentEntries: BrokenEquipmentEntry[];
-  isReturning: boolean;
 }

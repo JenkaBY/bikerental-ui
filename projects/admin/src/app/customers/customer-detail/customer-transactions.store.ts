@@ -1,15 +1,14 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, EMPTY, finalize, map } from 'rxjs';
 import type { CustomerTransactionResponse, PageCustomerTransactionResponse } from '@api-models';
-import { CustomerTransaction, TransactionMapper } from '@bikerental/shared';
+import { api, CustomerTransaction, TransactionMapper } from '@bikerental/shared';
 import { CustomerLayoutStore } from './customer-layout.store';
-import { FinanceService } from '../../../../../shared/src/core/api/generated';
 
 const PAGE_SIZE = 10;
 
 @Injectable()
 export class CustomerTransactionsStore {
-  private readonly financeService = inject(FinanceService);
+  private readonly financeService = inject(api.FinanceService);
   private readonly layoutStore = inject(CustomerLayoutStore);
 
   private readonly _transactions = signal<CustomerTransaction[]>([]);

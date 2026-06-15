@@ -8,7 +8,7 @@ import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialo
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Equipment, EquipmentStatus } from '@ui-models';
-import { EquipmentStore } from '@store.equipment.store';
+import { EquipmentStore } from '@bikerental/shared';
 
 describe('EquipmentDialogComponent', () => {
   let fixture: ComponentFixture<EquipmentDialogComponent>;

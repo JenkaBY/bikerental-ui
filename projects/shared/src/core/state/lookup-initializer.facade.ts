@@ -5,7 +5,7 @@ import { EquipmentTypeStore } from './equipment-type.store';
 import { PricingTypeStore } from './pricing-type.store';
 import { TariffStore } from './tariff.store';
 import { LookupConfig } from '../models/lookup-config.model';
-import { UserStore } from '@store.user.store';
+import { UserStore } from './user.store';
 
 @Injectable({ providedIn: 'root' })
 export class LookupInitializerFacade {

@@ -23,14 +23,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FALLBACK_PRICING_TYPE, PricingTypeSlug, Tariff, TariffWrite } from '@ui-models';
-import { PricingTypeStore } from '@store.pricing-type.store';
-import { TariffStore } from '@store.tariff.store';
 import {
   CancelButtonComponent,
   EquipmentTypeDropdownComponent,
   FormErrorMessages,
   Labels,
+  PricingTypeStore,
   SaveButtonComponent,
+  TariffStore,
 } from '@bikerental/shared';
 import { DegressiveHourlyParamsComponent } from './degressive-hourly-params.component';
 import { FlatHourlyParamsComponent } from './flat-hourly-params.component';

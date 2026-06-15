@@ -4,6 +4,7 @@ import {
   CustomerFinanceStore,
   Labels,
   RENTAL_STORE_TOKEN,
+  RENTAL_VALIDATION_STORE_FOR_DELEGATION,
   RentalCostCalculationStore,
   RentalStore,
   RentalValidationStore,
@@ -22,6 +23,7 @@ import { RentalStep3Component } from './step3/rental-step3.component';
     RentalStore,
     RentalValidationStore,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
+    { provide: RENTAL_VALIDATION_STORE_FOR_DELEGATION, useExisting: RentalValidationStore },
   ],
   imports: [RentalStep1Component, RentalStep2Component, RentalStep3Component],
   template: `
