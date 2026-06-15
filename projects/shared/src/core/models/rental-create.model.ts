@@ -1,6 +1,7 @@
 import { Money } from './transaction.model';
 
 export interface RentalCostBreakdown {
+  equipmentId?: number;
   equipmentType: string;
   tariffId: number;
   itemCost: Money;

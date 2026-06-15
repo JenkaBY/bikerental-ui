@@ -45,6 +45,7 @@ export * from './core/state/rental-store.token';
 export * from './core/state/batch-rental-property.store';
 export * from './core/state/rental-list.store';
 export * from './core/state/rental-cost-calculation.store';
+export * from './core/state/return-equipment-cost.store';
 export * from './core/state/rental-validation.store';
 export * from './core/state/user.store';
 export * from './core/state/time-travel.store';

@@ -1,4 +1,5 @@
 import type { EquipmentSearchItem } from './equipment.model';
+import type { Money } from './transaction.model';
 
 export interface RentalListItem {
   readonly id: number;
@@ -17,6 +18,8 @@ export interface RentalListItem {
 export interface RentalEquipmentItem extends EquipmentSearchItem {
   readonly statusSlug: string;
   readonly isReturned: boolean;
+  readonly estimatedCost: Money;
+  readonly finalCost?: Money;
 }
 
 export interface BrokenEquipmentEntry {
@@ -29,4 +32,11 @@ export interface ReturnEquipmentWrite {
   equipmentItemIds: number[];
   discountPercent?: number;
   specialPrice?: number;
+}
+
+export type ReturnSettlementKind = 'refund' | 'collect' | 'none';
+
+export interface ReturnSettlement {
+  readonly kind: ReturnSettlementKind;
+  readonly amount: Money;
 }

@@ -39,6 +39,7 @@ export class CostCalculationMapper {
       discountPercent: response.discount?.percent,
       discountAmount: makeMoney(response.discount?.amount ?? 0),
       equipmentBreakdowns: response.equipmentBreakdowns.map((b) => ({
+        equipmentId: b.equipmentId,
         equipmentType: b.equipmentType,
         tariffId: b.tariffId,
         itemCost: makeMoney(b.itemCost),

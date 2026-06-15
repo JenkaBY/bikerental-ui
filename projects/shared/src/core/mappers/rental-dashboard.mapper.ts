@@ -97,6 +97,8 @@ export class RentalDashboardMapper {
           type: eq?.type ?? { slug: '', name: '', isForSpecialTariff: false },
           statusSlug: item.status,
           isReturned: item.status === 'RETURNED',
+          estimatedCost: makeMoney(item.estimatedCost),
+          finalCost: item.finalCost != null ? makeMoney(item.finalCost) : undefined,
         };
       },
     );
