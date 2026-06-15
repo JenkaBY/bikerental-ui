@@ -8,7 +8,8 @@ import type { Mock } from 'vitest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { FormGroup } from '@angular/forms';
 import { finalize, of } from 'rxjs';
-import { CustomerCreateDialogComponent, CustomerStore } from '@bikerental/shared';
+import { CustomerCreateDialogComponent } from './customer-create-dialog.component';
+import { CustomerStore } from '../../../../../core/state/customer.store';
 
 const VALID_FORM_VALUE = {
   phone: '+375291234567',

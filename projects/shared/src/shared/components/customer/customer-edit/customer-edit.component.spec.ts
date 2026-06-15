@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { CustomerEditComponent } from '@bikerental/shared';
+import { CustomerEditComponent } from './customer-edit.component';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import type { Customer, CustomerWrite } from '@ui-models';
 
