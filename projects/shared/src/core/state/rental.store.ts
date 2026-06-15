@@ -46,7 +46,7 @@ export class RentalStore {
     isReturning: false,
   });
 
-  patchState(partial: Partial<ReturnType<typeof this._state>>) {
+  private patchState(partial: Partial<ReturnType<typeof this._state>>) {
     this._state.update((s) => ({ ...s, ...partial }));
   }
 
@@ -192,6 +192,10 @@ export class RentalStore {
     return request$.pipe(finalize(() => this.patchState({ isSaving: false })));
   }
 
+  private applyDetail(state: Partial<RentalDetailState>): void {
+    this.patchState(state);
+  }
+
   private mapToRequest() {
     const s = this._state();
     return {
@@ -267,7 +271,7 @@ export class RentalStore {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((state) => {
-        this.patchState(state);
+        this.applyDetail(state);
         this.setCustomer(state.customer || null);
       });
   }
