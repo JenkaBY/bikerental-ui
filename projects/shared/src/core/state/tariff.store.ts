@@ -1,7 +1,11 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, defaultIfEmpty, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { CostCalculationRequest, CostCalculationResponse, TariffsService } from '../api/generated';
+import {
+  CostCalculationV2Request,
+  CostCalculationResponse,
+  TariffsService,
+} from '../api/generated';
 import { Tariff, TariffWrite } from '../models';
 import { TariffMapper } from '../mappers';
 import { EquipmentTypeStore } from './equipment-type.store';
@@ -139,7 +143,7 @@ export class TariffStore {
     );
   }
 
-  calculateCost(request: CostCalculationRequest): Observable<CostCalculationResponse> {
-    return this.service.calculateCost(request);
+  calculateCost(request: CostCalculationV2Request): Observable<CostCalculationResponse> {
+    return this.service.costCalculations(request);
   }
 }

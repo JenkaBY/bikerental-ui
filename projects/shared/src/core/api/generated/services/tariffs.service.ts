@@ -24,10 +24,11 @@ import {
   RequestOptions,
   TariffV2Response,
   TariffV2Request,
+  CostCalculationV2Request,
+  CostCalculationResponse,
   Pageable,
   PageTariffV2Response,
   CostCalculationRequest,
-  CostCalculationResponse,
   TariffSelectionV2Response,
   PricingTypeResponse,
 } from '../models';
@@ -129,6 +130,51 @@ export class TariffsService {
     };
 
     return this.httpClient.put(url, tariffV2Request, requestOptions);
+  }
+
+  costCalculations(
+    costCalculationV2Request: CostCalculationV2Request,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<CostCalculationResponse>;
+  costCalculations(
+    costCalculationV2Request: CostCalculationV2Request,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<CostCalculationResponse>>;
+  costCalculations(
+    costCalculationV2Request: CostCalculationV2Request,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<CostCalculationResponse>>;
+  /** Supports normal mode (per-equipment billing from global startAt) and SPECIAL mode (fixed group price) */
+  costCalculations(
+    costCalculationV2Request: CostCalculationV2Request,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/tariffs/calculations`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.put(url, costCalculationV2Request, requestOptions);
   }
 
   getAllTariffs(

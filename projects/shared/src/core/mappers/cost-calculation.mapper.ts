@@ -1,38 +1,29 @@
 import { inject, Injectable } from '@angular/core';
-import type { CostCalculationRequest, CostCalculationResponse } from '@api-models';
-import type { RentalCostEstimate, RentalWrite } from '@ui-models';
+import type { CostCalculationV2Request, CostCalculationResponse } from '@api-models';
+import type { RentalCostEstimate } from '@ui-models';
 import type { RentalDetailState, RentalState } from '../state/rental.state';
 import { makeMoney } from './money.mapper';
-import { TimeStore } from '../state/time.store';
+import { TIME_TRAVEL_STORE_TOKEN } from '../state/time-travel-store.token';
 
 @Injectable({ providedIn: 'root' })
 export class CostCalculationMapper {
-  private readonly timeStore = inject(TimeStore);
-
-  toRequest(draft: Partial<RentalWrite>, equipmentTypes: string[]): CostCalculationRequest {
-    return {
-      equipments: equipmentTypes.map((equipmentType) => ({ equipmentType })),
-      plannedDurationMinutes: draft.durationMinutes ?? 0,
-      ...(draft.discountPercent !== undefined && { discountPercent: draft.discountPercent }),
-      ...(draft.specialTariffId !== undefined && { specialTariffId: draft.specialTariffId }),
-      ...(draft.specialPrice !== undefined && { specialPrice: draft.specialPrice }),
-    };
-  }
+  private readonly timeTravelStore = inject(TIME_TRAVEL_STORE_TOKEN, { optional: true });
 
   fromState(
     draft: RentalState | RentalDetailState,
     specialTariffId: number | null,
-  ): CostCalculationRequest {
-    const actualDuration =
-      'startedAt' in draft && draft.startedAt
-        ? Math.floor(
-            (this.timeStore.getCurrentDate().getTime() - draft.startedAt.getTime()) / 60_000,
-          )
-        : undefined;
+  ): CostCalculationV2Request {
+    const startedAt = 'startedAt' in draft ? draft.startedAt : null;
+    const now = this.timeTravelStore?.getCurrentTime() ?? new Date();
+    const returnAt = startedAt ? now.toISOString() : undefined;
     return {
-      equipments: draft.equipmentItems.map((e) => ({ equipmentType: e.type.slug })),
+      equipments: draft.equipmentItems.map((e) => ({
+        equipmentId: e.id,
+        equipmentType: e.type.slug,
+        returnAt,
+      })),
+      startAt: (startedAt ?? now).toISOString(),
       plannedDurationMinutes: draft.durationMinutes,
-      actualDurationMinutes: actualDuration,
       discountPercent: draft.specialPriceEnabled ? undefined : draft.discountPercent,
       specialPrice: draft.specialPriceEnabled ? draft.specialPrice : undefined,
       specialTariffId: draft.specialPriceEnabled ? (specialTariffId ?? undefined) : undefined,
