@@ -4,8 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, Subject, throwError } from 'rxjs';
 import { Tariff, TariffStatus } from '@ui-models';
-import { TariffStore } from '@store.tariff.store';
-import { Labels } from '@bikerental/shared';
+import { Labels, TariffStore } from '@bikerental/shared';
 import { TariffListComponent } from './tariff-list.component';
 import { TariffDialogComponent } from './tariff-dialog.component';
 

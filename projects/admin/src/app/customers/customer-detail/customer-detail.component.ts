@@ -4,11 +4,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { CustomerStore, Labels, MoneyPipe } from '@bikerental/shared';
+import { CustomerFinanceStore, CustomerStore, Labels, MoneyPipe } from '@bikerental/shared';
 import { CustomerLayoutStore } from './customer-layout.store';
 import { CustomerRentalsStore } from './customer-rentals.store';
 import { CustomerTransactionsStore } from './customer-transactions.store';
-import { CustomerFinanceStore } from '@store.customer-finance.store';
 import { filter, map } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 

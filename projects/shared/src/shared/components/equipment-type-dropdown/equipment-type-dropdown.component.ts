@@ -10,7 +10,7 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { EquipmentTypeStore } from '@store.equipment-type.store';
+import { EquipmentTypeStore } from '../../../core/state/equipment-type.store';
 import { Labels } from '../../constant/labels';
 
 @Component({

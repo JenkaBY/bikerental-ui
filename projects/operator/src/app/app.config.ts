@@ -20,9 +20,9 @@ import {
   provideDefaultClient,
   SseService,
   SSE_PROVIDER,
+  TIME_TRAVEL_STORE_TOKEN,
   TimeTravelStore,
 } from '@bikerental/shared';
-import { TIME_TRAVEL_STORE_TOKEN } from '@store.time-travel-store.token';
 
 interface EnvWithBrand {
   brand?: string;

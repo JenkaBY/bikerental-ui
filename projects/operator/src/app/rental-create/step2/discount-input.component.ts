@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, input, output, signal } fro
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Labels } from '@bikerental/shared';
-import { MaxDecimalsDirective } from '../../../../../shared/src/shared/directives/max-decimals.directive';
+import { Labels, MaxDecimalsDirective } from '@bikerental/shared';
 
 @Component({
   selector: 'app-discount-input',

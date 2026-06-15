@@ -30,6 +30,20 @@ Backend JSON  →  core/api/generated/  →  core/mappers/  →  core/models/  �
 - **Services in `core/api/`** inject generated services and apply mappers internally; their public signatures always use domain types
 - **Regeneration**: Run `npm run generate:api` when backend OpenAPI spec changes; this overwrites `core/api/generated/**` (never edit manually)
 
+## Shared Import Convention (enforced by lint)
+
+- **Cross-project code** (`projects/admin`, `projects/operator`, `projects/gateway`) MUST import
+  shared symbols from **`@bikerental/shared`** — never a deep relative path into
+  `projects/shared/src` (e.g. `../../../shared/src/...`), and never the `@store.*` alias. One barrel
+  import line per file.
+- **Inside the `shared` library** (`projects/shared/**`) use **relative paths** between modules
+  (e.g. `./user.store`, `../state/time.store`). Never import the `@bikerental/shared` barrel from
+  inside `shared` (self-import causes circular module-init / duplicate-class-identity bugs), and
+  never use `@store.*` either.
+- The `no-restricted-imports` rule in the root `eslint.config.js` enforces both directions and runs
+  in CI, so `npm run lint` fails on any violation. Generated client code under
+  `core/api/generated/**` is exempt (already in the config `ignores`).
+
 ## Angular Patterns
 
 - **Standalone components only** — no NgModules; declare `imports: []` per component

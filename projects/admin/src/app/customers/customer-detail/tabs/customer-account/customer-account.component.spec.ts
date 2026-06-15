@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
-import { CustomerFinanceStore } from '@store.customer-finance.store';
+import { CustomerFinanceStore } from '@bikerental/shared';
 import { CustomerAccountComponent } from './customer-account.component';
 import { CustomerLayoutStore } from '../../customer-layout.store';
 import { CustomerTransactionsStore } from '../../customer-transactions.store';

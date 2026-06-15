@@ -5,10 +5,10 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EquipmentTypeStore } from '@store.equipment-type.store';
 import { EquipmentType, EquipmentTypeWrite } from '@ui-models';
 import {
   CancelButtonComponent,
+  EquipmentTypeStore,
   FormErrorMessages,
   Labels,
   SaveButtonComponent,
