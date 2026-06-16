@@ -1,4 +1,5 @@
 import type { EquipmentSearchItem } from './equipment.model';
+import type { RentalCostBreakdown } from './rental-create.model';
 import type { Money } from './transaction.model';
 
 export interface RentalListItem {
@@ -20,6 +21,7 @@ export interface RentalEquipmentItem extends EquipmentSearchItem {
   readonly isReturned: boolean;
   readonly estimatedCost: Money;
   readonly finalCost?: Money;
+  readonly breakdown?: RentalCostBreakdown;
 }
 
 export interface BrokenEquipmentEntry {
