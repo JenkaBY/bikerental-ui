@@ -163,6 +163,8 @@ export interface EquipmentItemResponse {
   tariffId?: number;
   /** Status rental equipment */
   status: string;
+  /** Actual return time (null if not returned or rental not cancelled) */
+  actualReturnAt?: string;
   /** Final cost breakdown; populated only when equipment is returned */
   breakdown?: CostBreakdown;
 }

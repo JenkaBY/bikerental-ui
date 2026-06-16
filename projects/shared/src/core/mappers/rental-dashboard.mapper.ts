@@ -99,6 +99,16 @@ export class RentalDashboardMapper {
           isReturned: item.status === 'RETURNED',
           estimatedCost: makeMoney(item.estimatedCost),
           finalCost: item.finalCost != null ? makeMoney(item.finalCost) : undefined,
+          breakdown: item.breakdown
+            ? {
+                equipmentId: item.equipmentId,
+                equipmentType: eq?.type?.slug ?? '',
+                tariffId: item.tariffId ?? 0,
+                itemCost: makeMoney(item.finalCost ?? item.breakdown.itemCost),
+                calculationMessage: item.breakdown.calculationBreakdown?.message ?? '',
+              }
+            : undefined,
+          returnedAt: item.actualReturnAt ? new Date(item.actualReturnAt) : undefined,
         };
       },
     );

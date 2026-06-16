@@ -241,6 +241,7 @@ export class Labels {
   static readonly Retry = $localize`Retry`;
   static readonly CurrentCost = $localize`Current cost`;
   static readonly FinalCost = $localize`Final cost`;
+  static readonly ReturnedAt = $localize`returned at`;
   static readonly ShowDetails = $localize`Show details`;
   static readonly CollapseDetails = $localize`Collapse`;
   static readonly Subtotal = $localize`Subtotal`;
