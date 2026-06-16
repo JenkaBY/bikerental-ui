@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -9,7 +10,7 @@ import { Labels, MoneyPipe, RentalCostCalculationStore, RentalStore } from '@bik
   selector: 'app-rental-cost-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RentalCostCalculationStore],
-  imports: [MatButtonModule, MatDividerModule, MatProgressSpinnerModule, MoneyPipe],
+  imports: [MatButtonModule, MatDividerModule, MatProgressSpinnerModule, MoneyPipe, DatePipe],
   template: `
     <div class="px-4 py-3">
       <div class="flex items-center justify-between">
@@ -36,11 +37,20 @@ import { Labels, MoneyPipe, RentalCostCalculationStore, RentalStore } from '@bik
 
       @if (expanded() && costStore.totalCost(); as total) {
         <div class="mt-2 space-y-1">
-          @for (item of rentalStore.equipmentItems(); track item.id) {
+          @for (item of rentalStore.rentalEquipmentItems(); track item.id) {
             @if (breakdownFor(item.id); as bd) {
-              <div class="flex justify-between text-xs text-slate-500">
-                <span>{{ item.model }}&nbsp;·&nbsp;{{ bd.calculationMessage }}</span>
-                <span>{{ bd.itemCost | money }}</span>
+              <div
+                class="flex justify-between gap-3 border-b border-slate-100 pb-1 text-xs text-slate-500 last:border-b-0 last:pb-0"
+              >
+                <span class="min-w-0">
+                  {{ item.model }}&nbsp;·&nbsp;{{ bd.calculationMessage }}
+                  @if (item.isReturned && item.returnedAt; as returnedAt) {
+                    <span class="text-slate-400"
+                      >({{ Labels.ReturnedAt }}: {{ returnedAt | date: 'short' }})</span
+                    >
+                  }
+                </span>
+                <span class="shrink-0 whitespace-nowrap">{{ bd.itemCost | money }}</span>
               </div>
             }
           }

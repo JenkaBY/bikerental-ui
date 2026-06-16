@@ -22,6 +22,7 @@ export interface RentalEquipmentItem extends EquipmentSearchItem {
   readonly estimatedCost: Money;
   readonly finalCost?: Money;
   readonly breakdown?: RentalCostBreakdown;
+  readonly returnedAt?: Date;
 }
 
 export interface BrokenEquipmentEntry {

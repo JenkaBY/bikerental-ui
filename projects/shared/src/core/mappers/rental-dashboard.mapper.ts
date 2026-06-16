@@ -108,6 +108,7 @@ export class RentalDashboardMapper {
                 calculationMessage: item.breakdown.calculationBreakdown?.message ?? '',
               }
             : undefined,
+          returnedAt: item.actualReturnAt ? new Date(item.actualReturnAt) : undefined,
         };
       },
     );
