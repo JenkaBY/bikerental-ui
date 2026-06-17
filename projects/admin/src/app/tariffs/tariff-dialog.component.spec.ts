@@ -61,7 +61,7 @@ const mockTariff: Tariff = withTariffFlags({
     title: 'Flat hourly',
     description: 'Flat hourly rate',
   },
-  params: { hourlyPrice: 100 },
+  params: { hourlyPrice: 100, minimumDurationMinutes: 30, minimumDurationSurcharge: 5 },
   validFrom: new Date('2026-01-01'),
   status: TariffStatus.ACTIVE,
 });
@@ -181,6 +181,8 @@ describe('TariffDialogComponent — create mode', () => {
     switchTo(component, 'FLAT_HOURLY');
     component.form.controls.validFrom.setValue(new Date('2026-01-01'));
     params(component)['hourlyPrice'].setValue(10);
+    params(component)['minimumDurationMinutes'].setValue(30);
+    params(component)['minimumDurationSurcharge'].setValue(5);
     component.save();
 
     expect(store.create).toHaveBeenCalledOnce();
@@ -188,6 +190,8 @@ describe('TariffDialogComponent — create mode', () => {
     expect(write.name).toBe('My Tariff');
     expect(write.pricingType).toBe('FLAT_HOURLY');
     expect(write.params.hourlyPrice).toBe(10);
+    expect(write.params.minimumDurationMinutes).toBe(30);
+    expect(write.params.minimumDurationSurcharge).toBe(5);
   });
 
   it('sends empty params object for SPECIAL pricing type', async () => {
@@ -207,6 +211,8 @@ describe('TariffDialogComponent — create mode', () => {
     switchTo(component, 'FLAT_HOURLY');
     component.form.controls.validFrom.setValue(new Date('2026-01-01'));
     params(component)['hourlyPrice'].setValue(10);
+    params(component)['minimumDurationMinutes'].setValue(30);
+    params(component)['minimumDurationSurcharge'].setValue(5);
     component.save();
 
     expect(dialogRef.close).toHaveBeenCalledWith(true);
@@ -218,6 +224,8 @@ describe('TariffDialogComponent — create mode', () => {
     switchTo(component, 'FLAT_HOURLY');
     component.form.controls.validFrom.setValue(new Date('2026-01-01'));
     params(component)['hourlyPrice'].setValue(10);
+    params(component)['minimumDurationMinutes'].setValue(30);
+    params(component)['minimumDurationSurcharge'].setValue(5);
     component.save();
 
     expect(store.saving()).toBe(false);
@@ -285,11 +293,14 @@ describe('TariffDialogComponent — edit mode', () => {
 describe('TariffDialogComponent — pricing type switching', () => {
   beforeEach(() => TestBed.resetTestingModule());
 
-  it('FLAT_HOURLY — hourlyPrice required', async () => {
+  it('FLAT_HOURLY — hourlyPrice, minimumDurationMinutes, minimumDurationSurcharge required', async () => {
     const { component } = await setup();
     switchTo(component, 'FLAT_HOURLY');
-    params(component)['hourlyPrice'].setValue(null);
-    expect(params(component)['hourlyPrice'].hasError('required')).toBe(true);
+    const p = params(component);
+    ['hourlyPrice', 'minimumDurationMinutes', 'minimumDurationSurcharge'].forEach((field) => {
+      p[field].setValue(null);
+      expect(p[field].hasError('required')).toBe(true);
+    });
   });
 
   it('DEGRESSIVE_HOURLY — firstHourPrice, hourlyDiscount, minimumHourlyPrice, minimumDurationMinutes, minimumDurationSurcharge required', async () => {

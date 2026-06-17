@@ -62,7 +62,7 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
 
       <app-return-settlement-summary
         [totalEstimated]="costStore.totalEstimated()"
-        [totalCurrent]="costStore.totalCurrent()"
+        [cost]="costStore.estimate()"
         [settlement]="costStore.settlement()"
         [isCalculating]="costStore.isCalculating()"
       />
