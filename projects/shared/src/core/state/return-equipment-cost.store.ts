@@ -26,14 +26,13 @@ export class ReturnEquipmentCostStore {
     return this.rentalStore.rentalEquipmentItems().filter((item) => selectedIds.has(item.id));
   });
 
-  private readonly calculationRequest = computed(() => {
+  private readonly calculationRequest = computed<CostCalculationV2Request | null>(() => {
     const s = this.rentalStore.state();
     const selected = this.selectedItems();
     if (selected.length === 0) return null;
-    if (s.specialPriceEnabled && !s.specialPrice) return null;
     return this.costCalculationMapper.fromState(
-      { ...s, equipmentItems: selected },
-      this.tariffStore.specialTariffId(),
+      { ...s, equipmentItems: selected, specialPriceEnabled: false, specialPrice: undefined },
+      null,
     );
   });
 
@@ -49,7 +48,7 @@ export class ReturnEquipmentCostStore {
     },
   });
 
-  readonly estimate = computed(() => this.resource.value());
+  readonly estimate = computed(() => this.resource.value() ?? null);
   readonly isCalculating = this.resource.isLoading;
 
   readonly breakdownByEquipmentId = computed<Map<number, RentalCostBreakdown>>(() => {
