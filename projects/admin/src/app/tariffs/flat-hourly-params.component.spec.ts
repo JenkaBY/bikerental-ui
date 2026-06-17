@@ -14,6 +14,12 @@ describe('FlatHourlyParamsComponent', () => {
       hourlyPrice:
         (ctrls && ctrls['hourlyPrice']) ??
         new FormControl<number | null>(null, [Validators.min(0.01)]),
+      minimumDurationMinutes:
+        (ctrls && ctrls['minimumDurationMinutes']) ??
+        new FormControl<number | null>(null, [Validators.min(1)]),
+      minimumDurationSurcharge:
+        (ctrls && ctrls['minimumDurationSurcharge']) ??
+        new FormControl<number | null>(null, [Validators.min(0.01)]),
     });
 
     await TestBed.configureTestingModule({
@@ -39,6 +45,18 @@ describe('FlatHourlyParamsComponent', () => {
     await createComponent();
     const text = fixture.nativeElement.textContent;
     expect(text).toContain(Labels.HourlyPrice);
+  });
+
+  it('renders label for minimum duration minutes field', async () => {
+    await createComponent();
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain(Labels.MinimumDurationMinutes);
+  });
+
+  it('renders label for minimum duration surcharge field', async () => {
+    await createComponent();
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain(Labels.MinimumDurationSurcharge);
   });
 
   it('shows description when provided', async () => {
@@ -81,13 +99,57 @@ describe('FlatHourlyParamsComponent', () => {
     expect(found).toBe(true);
   });
 
+  it('shows required error for minimumDurationMinutes when control has required error', async () => {
+    const minimumDurationMinutes = new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(1),
+    ]);
+    await createComponent({ minimumDurationMinutes });
+    minimumDurationMinutes.markAsTouched();
+    minimumDurationMinutes.updateValueAndValidity();
+    fixture.detectChanges();
+
+    const errors = fixture.nativeElement.querySelectorAll('mat-error');
+    const found = (Array.from(errors) as Element[]).some((e: Element) =>
+      Boolean(e.textContent && e.textContent.includes(FormErrorMessages.required)),
+    );
+    expect(found).toBe(true);
+  });
+
+  it('shows required error for minimumDurationSurcharge when control has required error', async () => {
+    const minimumDurationSurcharge = new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0.01),
+    ]);
+    await createComponent({ minimumDurationSurcharge });
+    minimumDurationSurcharge.markAsTouched();
+    minimumDurationSurcharge.updateValueAndValidity();
+    fixture.detectChanges();
+
+    const errors = fixture.nativeElement.querySelectorAll('mat-error');
+    const found = (Array.from(errors) as Element[]).some((e: Element) =>
+      Boolean(e.textContent && e.textContent.includes(FormErrorMessages.required)),
+    );
+    expect(found).toBe(true);
+  });
+
   it('shows no errors when value is valid', async () => {
     const hourlyPrice = new FormControl<number | null>(10, [
       Validators.required,
       Validators.min(0.01),
     ]);
-    await createComponent({ hourlyPrice });
+    const minimumDurationMinutes = new FormControl<number | null>(30, [
+      Validators.required,
+      Validators.min(1),
+    ]);
+    const minimumDurationSurcharge = new FormControl<number | null>(5, [
+      Validators.required,
+      Validators.min(0.01),
+    ]);
+    await createComponent({ hourlyPrice, minimumDurationMinutes, minimumDurationSurcharge });
     hourlyPrice.updateValueAndValidity();
+    minimumDurationMinutes.updateValueAndValidity();
+    minimumDurationSurcharge.updateValueAndValidity();
     fixture.detectChanges();
 
     const errors = fixture.nativeElement.querySelectorAll('mat-error');

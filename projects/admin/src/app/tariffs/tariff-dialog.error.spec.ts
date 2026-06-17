@@ -61,7 +61,7 @@ const tariffFixture: Tariff = withTariffFlags({
     title: 'Flat hourly',
     description: 'Flat hourly rate',
   },
-  params: { hourlyPrice: 50 },
+  params: { hourlyPrice: 50, minimumDurationMinutes: 30, minimumDurationSurcharge: 5 },
   validFrom: new Date('2026-01-01'),
   status: TariffStatus.ACTIVE,
 });
@@ -130,9 +130,10 @@ function fillFlatHourly(component: TariffDialogComponent) {
   component.form.controls.name.setValue('Test');
   component.form.controls.pricingType.setValue('FLAT_HOURLY');
   component.form.controls.validFrom.setValue(new Date('2026-01-01'));
-  ((component.form.controls.params as FormGroup).controls['hourlyPrice'] as FormControl).setValue(
-    10,
-  );
+  const p = (component.form.controls.params as FormGroup).controls;
+  (p['hourlyPrice'] as FormControl).setValue(10);
+  (p['minimumDurationMinutes'] as FormControl).setValue(30);
+  (p['minimumDurationSurcharge'] as FormControl).setValue(5);
 }
 
 describe('TariffDialogComponent — error handling', () => {
