@@ -276,6 +276,8 @@ export class TariffDialogComponent {
         break;
       case 'FLAT_HOURLY':
         p['hourlyPrice'].setValidators([Validators.required, Validators.min(0.01)]);
+        p['minimumDurationMinutes'].setValidators([Validators.required, Validators.min(1)]);
+        p['minimumDurationSurcharge'].setValidators([Validators.required, Validators.min(0.01)]);
         break;
       case 'DAILY':
         p['dailyPrice'].setValidators([Validators.required, Validators.min(0.01)]);

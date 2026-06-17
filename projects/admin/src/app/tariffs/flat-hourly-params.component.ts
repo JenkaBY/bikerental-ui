@@ -25,6 +25,34 @@ import { FormErrorMessages, Labels } from '@bikerental/shared';
           <mat-error>{{ errors.mustBePositive }}</mat-error>
         }
       </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ labels.MinimumDurationMinutes }}</mat-label>
+        <input matInput type="number" min="1" step="1" formControlName="minimumDurationMinutes" />
+        @if (group().controls['minimumDurationMinutes'].hasError('required')) {
+          <mat-error>{{ errors.required }}</mat-error>
+        }
+        @if (group().controls['minimumDurationMinutes'].hasError('min')) {
+          <mat-error>{{ errors.mustBePositive }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ labels.MinimumDurationSurcharge }}</mat-label>
+        <input
+          matInput
+          type="number"
+          min="0.01"
+          step="0.01"
+          formControlName="minimumDurationSurcharge"
+        />
+        @if (group().controls['minimumDurationSurcharge'].hasError('required')) {
+          <mat-error>{{ errors.required }}</mat-error>
+        }
+        @if (group().controls['minimumDurationSurcharge'].hasError('min')) {
+          <mat-error>{{ errors.mustBePositive }}</mat-error>
+        }
+      </mat-form-field>
     </div>
   `,
 })
