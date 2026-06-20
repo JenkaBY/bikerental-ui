@@ -149,6 +149,22 @@
         </context-group>
       </trans-unit>
 
+      <trans-unit id="8289847376326923058" datatype="html">
+        <source>A new version is available.</source>
+        <target>Доступна новая версия.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="7967484035994732534" datatype="html">
+        <source>Reload</source>
+        <target>Обновить</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+        </context-group>
+      </trans-unit>
+
     </body>
   </file>
 </xliff>

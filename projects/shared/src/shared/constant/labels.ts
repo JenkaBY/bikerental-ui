@@ -279,4 +279,7 @@ export class Labels {
 
   static readonly TimeTravelDialogTitle = $localize`Server Time`;
   static readonly TimeTravelReset = $localize`Reset`;
+
+  static readonly PwaUpdateAvailable = $localize`A new version is available.`;
+  static readonly PwaUpdateReload = $localize`Reload`;
 }

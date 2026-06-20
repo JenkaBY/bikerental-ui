@@ -1,6 +1,7 @@
 ﻿import {
   ApplicationConfig,
   inject,
+  isDevMode,
   LOCALE_ID,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
@@ -9,7 +10,9 @@ import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
+import { PwaUpdateService } from './core/pwa-update.service';
 import {
   APP_BRAND,
   BRAND,
@@ -37,6 +40,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([errorInterceptor])),
     provideAppInitializer(() => {
       inject(HealthPollerService);
+      inject(PwaUpdateService).init();
       registerLocaleData(localeRu, 'ru');
       const lookupFacade = inject(LookupInitializerFacade);
       lookupFacade
@@ -59,5 +63,9 @@ export const appConfig: ApplicationConfig = {
       },
     },
     { provide: SSE_PROVIDER, useClass: SseService },
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 };
