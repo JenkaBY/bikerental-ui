@@ -213,6 +213,17 @@ export class Labels {
   static readonly SearchEquipmentPlaceholder = $localize`Search by UID or model...`;
   static readonly ScanQr = $localize`Scan QR`;
   static readonly ComingSoon = $localize`Coming soon`;
+  static readonly ScanEquipmentTitle = $localize`Scan equipment QR`;
+  static readonly CameraPermissionDenied = $localize`Camera access was denied. Allow it in your browser settings or enter the UID manually.`;
+  static readonly NoCameraFound = $localize`No camera found. Enter the UID manually.`;
+  static readonly ScannerError = $localize`Could not start the scanner. Enter the UID manually.`;
+  static readonly EquipmentNotAvailableOrNotFound = $localize`Equipment not available or not found`;
+  static readonly EquipmentAlreadyAdded = $localize`Equipment already added`;
+  static readonly EquipmentAdded = $localize`Equipment added`;
+  static readonly ScanToReturn = $localize`Scan equipment QR`;
+  static readonly ScanEquipmentToReturnTitle = $localize`Scan equipment to return`;
+  static readonly NoActiveRentalForEquipment = $localize`No active or draft rental holds this equipment`;
+  static readonly OpenActiveRentals = $localize`Open active rentals`;
   static readonly DiscountPercent = $localize`Discount (%)`;
   static readonly SpecialPrice = $localize`Special Price`;
   static readonly SpecialPriceModeLabel = $localize`Special price mode`;

@@ -9,9 +9,18 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs';
-import { EquipmentSearchItem, EquipmentSearchStore, Labels, RentalStore } from '@bikerental/shared';
+import { filter, switchMap } from 'rxjs';
+import {
+  EquipmentScanResolverService,
+  EquipmentSearchItem,
+  EquipmentSearchStore,
+  Labels,
+  QrScanDialogComponent,
+  RentalStore,
+} from '@bikerental/shared';
 import { EquipmentItemRowComponent } from './equipment-item-row.component';
 
 @Component({
@@ -57,8 +66,8 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
         <button
           mat-icon-button
           type="button"
-          disabled
-          [matTooltip]="Labels.ComingSoon"
+          (click)="openScanner()"
+          [matTooltip]="Labels.ScanQr"
           [attr.aria-label]="Labels.ScanQr"
         >
           <mat-icon>qr_code_scanner</mat-icon>
@@ -80,6 +89,9 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
 export class RentalEquipmentSectionComponent {
   protected readonly equipmentSearchStore = inject(EquipmentSearchStore);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly scanResolver = inject(EquipmentScanResolverService);
 
   protected readonly store = inject(RentalStore);
   protected readonly Labels = Labels;
@@ -109,5 +121,37 @@ export class RentalEquipmentSectionComponent {
     this.store.addEquipmentItem(item);
     this.searchControl.setValue('', { emitEvent: false });
     this.equipmentSearchStore.search(null);
+  }
+
+  protected openScanner(): void {
+    this.dialog
+      .open(QrScanDialogComponent, {
+        data: { title: Labels.ScanEquipmentTitle },
+        width: '420px',
+      })
+      .afterClosed()
+      .pipe(
+        filter((uid): uid is string => typeof uid === 'string' && uid.length > 0),
+        switchMap((uid) => this.scanResolver.resolve(uid)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((item) => this.handleScanned(item));
+  }
+
+  private handleScanned(item: EquipmentSearchItem | null): void {
+    if (!item) {
+      this.notify(Labels.EquipmentNotAvailableOrNotFound);
+      return;
+    }
+    if (this.selectedIds().has(item.id)) {
+      this.notify(Labels.EquipmentAlreadyAdded);
+      return;
+    }
+    this.store.addEquipmentItem(item);
+    this.notify(Labels.EquipmentAdded);
+  }
+
+  private notify(message: string): void {
+    this.snackBar.open(message, undefined, { duration: 3000 });
   }
 }

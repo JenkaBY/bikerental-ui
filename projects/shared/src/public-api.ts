@@ -40,10 +40,12 @@ export * from './core/state/customer.store';
 export * from './core/state/customer-finance.store';
 export * from './core/state/customer-list.store';
 export * from './core/state/equipment-search.store';
+export * from './core/state/equipment-scan-resolver.service';
 export * from './core/state/rental.store';
 export * from './core/state/rental-store.token';
 export * from './core/state/batch-rental-property.store';
 export * from './core/state/rental-list.store';
+export * from './core/state/rental-lookup.store';
 export * from './core/state/rental-cost-calculation.store';
 export * from './core/state/return-equipment-cost.store';
 export * from './core/state/rental-validation.store';
@@ -85,6 +87,10 @@ export * from './shared/components/customer/customer-view/customer-view.componen
 export * from './shared/components/customer/customer-edit/customer-edit.component';
 export * from './shared/components/customer/customer-create-dialog/customer-create-dialog.component';
 export * from './shared/components/customer/customer-form.provider';
+export * from './shared/components/qr-scanner/barcode-scanner.service';
+export * from './shared/components/qr-scanner/qr-payload-parser';
+export * from './shared/components/qr-scanner/qr-scanner.component';
+export * from './shared/components/qr-scanner/qr-scan-dialog.component';
 // Shared UI — constants
 export * from './shared/constant/labels';
 

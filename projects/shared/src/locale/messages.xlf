@@ -112,7 +112,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">253</context>
+          <context context-type="linenumber">260</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6670300039089012837" datatype="html">
@@ -1422,445 +1422,494 @@
           <context context-type="linenumber">215</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="2585648657866972859" datatype="html">
+        <source>Scan equipment QR</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">216</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="950968261372128080" datatype="html">
+        <source>Camera access was denied. Allow it in your browser settings or enter the UID manually.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">217</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="968790547388012021" datatype="html">
+        <source>No camera found. Enter the UID manually.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">218</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8590928266463115143" datatype="html">
+        <source>Could not start the scanner. Enter the UID manually.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">219</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8837018813314144398" datatype="html">
+        <source>Equipment not available or not found</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">220</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9198254071022487800" datatype="html">
+        <source>Equipment already added</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">221</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7707566640961508463" datatype="html">
+        <source>Equipment added</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">222</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="6131874190146381475" datatype="html">
         <source>Discount (%)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">216</context>
+          <context context-type="linenumber">223</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7022230822227375351" datatype="html">
         <source>Special Price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">217</context>
+          <context context-type="linenumber">224</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2683949323091985445" datatype="html">
         <source>Special price mode</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">218</context>
+          <context context-type="linenumber">225</context>
         </context-group>
       </trans-unit>
       <trans-unit id="134739170443756963" datatype="html">
         <source>Total Cost</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">219</context>
+          <context context-type="linenumber">226</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8995395396300239865" datatype="html">
         <source>Balance after payment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">220</context>
+          <context context-type="linenumber">227</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2763657205631765858" datatype="html">
         <source>Insufficient balance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">221</context>
+          <context context-type="linenumber">228</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7853863501333515694" datatype="html">
         <source>Save Draft</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">222</context>
+          <context context-type="linenumber">229</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3885497195825665706" datatype="html">
         <source>Next</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">223</context>
+          <context context-type="linenumber">230</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6007741375673620406" datatype="html">
         <source>Draft saved</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">224</context>
+          <context context-type="linenumber">231</context>
         </context-group>
       </trans-unit>
       <trans-unit id="327707735880776972" datatype="html">
         <source>Add at least one item to proceed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">225</context>
+          <context context-type="linenumber">232</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4161392338332801026" datatype="html">
         <source>No available equipment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">226</context>
+          <context context-type="linenumber">233</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9150441794849052641" datatype="html">
         <source>Start Rental</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">228</context>
+          <context context-type="linenumber">235</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1563900741430348460" datatype="html">
         <source>Rental started</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">229</context>
+          <context context-type="linenumber">236</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3389534946730950942" datatype="html">
         <source>Failed to start rental. Please try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">230</context>
+          <context context-type="linenumber">237</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1234709746630139322" datatype="html">
         <source>Confirmation</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">231</context>
+          <context context-type="linenumber">238</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8890553633144307762" datatype="html">
         <source>Back</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">232</context>
+          <context context-type="linenumber">239</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5855064093477812175" datatype="html">
         <source>Top Up Balance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">233</context>
+          <context context-type="linenumber">240</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5959808464631801423" datatype="html">
         <source>Rental Summary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">234</context>
+          <context context-type="linenumber">241</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9202721859514046311" datatype="html">
         <source>Shortfall</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="linenumber">242</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1642972066115158058" datatype="html">
         <source>Customer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">243</context>
         </context-group>
       </trans-unit>
       <trans-unit id="734934965373819800" datatype="html">
         <source>Go back</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">237</context>
+          <context context-type="linenumber">244</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8301607290798892665" datatype="html">
         <source>Rental #</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">238</context>
+          <context context-type="linenumber">245</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7989584202803202902" datatype="html">
         <source>Expected</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">239</context>
+          <context context-type="linenumber">246</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7779648334054253001" datatype="html">
         <source>Balance will be charged automatically once topped up</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">240</context>
+          <context context-type="linenumber">247</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7934833136974560675" datatype="html">
         <source>Retry</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">241</context>
+          <context context-type="linenumber">248</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3224625806300134345" datatype="html">
         <source>Current cost</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">242</context>
+          <context context-type="linenumber">249</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7570497464647708841" datatype="html">
         <source>Final cost</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">243</context>
+          <context context-type="linenumber">250</context>
         </context-group>
       </trans-unit>
       <trans-unit id="999324731198156271" datatype="html">
         <source>returned at</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">244</context>
+          <context context-type="linenumber">251</context>
         </context-group>
       </trans-unit>
       <trans-unit id="611729245991331208" datatype="html">
         <source>Show details</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">245</context>
+          <context context-type="linenumber">252</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4929778113156900100" datatype="html">
         <source>Collapse</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">246</context>
+          <context context-type="linenumber">253</context>
         </context-group>
       </trans-unit>
       <trans-unit id="870418232806327600" datatype="html">
         <source>Subtotal</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">247</context>
+          <context context-type="linenumber">254</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4808411315981120788" datatype="html">
         <source>Discount</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">248</context>
+          <context context-type="linenumber">255</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3448462145758383019" datatype="html">
         <source>Total</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">249</context>
+          <context context-type="linenumber">256</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7775969965209662102" datatype="html">
         <source>Special price applied</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">250</context>
+          <context context-type="linenumber">257</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8349382277170120747" datatype="html">
         <source>Return pricing</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">251</context>
+          <context context-type="linenumber">258</context>
         </context-group>
       </trans-unit>
       <trans-unit id="926699132303861371" datatype="html">
         <source>Return equipment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">252</context>
+          <context context-type="linenumber">259</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3364219004869569300" datatype="html">
         <source>Cancel rental</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">254</context>
+          <context context-type="linenumber">261</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4394652747843847150" datatype="html">
         <source>Keep rental</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">255</context>
+          <context context-type="linenumber">262</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3665851996298117465" datatype="html">
         <source>Yes, cancel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">256</context>
+          <context context-type="linenumber">263</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8220359201442894086" datatype="html">
         <source>Are you sure you want to cancel this rental?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">257</context>
+          <context context-type="linenumber">264</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5893823328091423220" datatype="html">
         <source>Equipment returned successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">258</context>
+          <context context-type="linenumber">265</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1972909952787235529" datatype="html">
         <source>Rental cancelled</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">259</context>
+          <context context-type="linenumber">266</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4016931958385737356" datatype="html">
         <source>Failed to return equipment. Please try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">260</context>
+          <context context-type="linenumber">267</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4109394147410040453" datatype="html">
         <source>Failed to cancel rental. Please try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">261</context>
+          <context context-type="linenumber">268</context>
         </context-group>
       </trans-unit>
       <trans-unit id="117970124145204170" datatype="html">
         <source>Confirm equipment return</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">263</context>
+          <context context-type="linenumber">270</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6028478408041521022" datatype="html">
         <source>Items to return</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">264</context>
+          <context context-type="linenumber">271</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2510741784888393227" datatype="html">
         <source>Estimated cost</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">265</context>
+          <context context-type="linenumber">272</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5059681815117906346" datatype="html">
         <source>Total estimated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">266</context>
+          <context context-type="linenumber">273</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2900261536371569111" datatype="html">
         <source>Total current</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">267</context>
+          <context context-type="linenumber">274</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5228192978221723149" datatype="html">
         <source>To refund to customer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">268</context>
+          <context context-type="linenumber">275</context>
         </context-group>
       </trans-unit>
       <trans-unit id="492943134388214466" datatype="html">
         <source>To collect from customer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">269</context>
+          <context context-type="linenumber">276</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3670262938241245512" datatype="html">
         <source>No settlement needed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">270</context>
+          <context context-type="linenumber">277</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6198725350693835071" datatype="html">
         <source>Confirm return</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">271</context>
+          <context context-type="linenumber">278</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7186684323280821498" datatype="html">
         <source>Broken equipment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">273</context>
+          <context context-type="linenumber">280</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7594178224127024658" datatype="html">
         <source>Select items to mark as broken and enter the penalty amount if applicable</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">274</context>
+          <context context-type="linenumber">281</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7899669121303725564" datatype="html">
         <source>Penalty submission is under development. Broken item tracking will be available in a future update.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">275</context>
+          <context context-type="linenumber">282</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6248006894045700323" datatype="html">
         <source>items already returned</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">276</context>
+          <context context-type="linenumber">283</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4391289919356861627" datatype="html">
         <source>Apply</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">277</context>
+          <context context-type="linenumber">284</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6744302823449503977" datatype="html">
         <source>BYN</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">278</context>
+          <context context-type="linenumber">285</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3167384339147596450" datatype="html">
         <source>Server Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">280</context>
+          <context context-type="linenumber">287</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7808756054397155068" datatype="html">
         <source>Reset</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">281</context>
+          <context context-type="linenumber">288</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8289847376326923058" datatype="html">
         <source>A new version is available.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">283</context>
+          <context context-type="linenumber">290</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7967484035994732534" datatype="html">
         <source>Reload</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">284</context>
+          <context context-type="linenumber">291</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">
