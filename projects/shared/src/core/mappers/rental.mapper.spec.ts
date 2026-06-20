@@ -11,7 +11,11 @@ describe('RentalMapper', () => {
       status: 'ACTIVE',
       startedAt: '2024-01-02T10:00:00Z',
       expectedReturnAt: '2024-01-03T12:00:00Z',
-      equipmentIds: [1, 2, 3],
+      equipments: [
+        { equipmentId: 1, status: 'ACTIVE' },
+        { equipmentId: 2, status: 'ACTIVE' },
+        { equipmentId: 3, status: 'ACTIVE' },
+      ],
     } as unknown as RentalSummaryResponse;
 
     const out = RentalMapper.fromRentalSummary(resp);
