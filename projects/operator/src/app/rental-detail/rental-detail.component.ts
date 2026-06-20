@@ -139,8 +139,11 @@ export class RentalDetailComponent {
   private readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly id = input.required<string>();
+  readonly selectUid = input<string>();
 
   readonly rentalId = computed(() => Number(this.id()));
+
+  private preselectApplied = false;
 
   protected readonly Labels = Labels;
 
@@ -163,6 +166,17 @@ export class RentalDetailComponent {
       if (this.store.isLoading() || this.store.loadError() || this.store.id() === null) return;
       if (this.store.isDraft()) {
         void this.router.navigate(['/rentals', this.store.id(), 'edit']);
+      }
+    });
+
+    effect(() => {
+      const uid = this.selectUid();
+      if (!uid || this.preselectApplied) return;
+      if (this.store.isLoading() || this.store.id() === null) return;
+      const match = this.store.rentalEquipmentItems().find((item) => item.uid === uid);
+      if (match) {
+        this.store.selectEquipmentItem(match.id);
+        this.preselectApplied = true;
       }
     });
   }
