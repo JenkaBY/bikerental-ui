@@ -14,6 +14,8 @@ import { QR_PAYLOAD_PARSER } from './qr-payload-parser';
 
 export type QrScanError = 'permission-denied' | 'no-camera' | 'engine';
 
+const SCAN_INTERVAL_MS = 120;
+
 @Component({
   selector: 'app-qr-scanner',
   standalone: true,
@@ -37,7 +39,7 @@ export class QrScannerComponent {
 
   private stream: MediaStream | null = null;
   private detector: QrDetector | null = null;
-  private rafId = 0;
+  private timerId: ReturnType<typeof setTimeout> | null = null;
   private lastValue: string | null = null;
   private running = false;
 
@@ -96,15 +98,15 @@ export class QrScannerComponent {
           // transient decode error — keep scanning
         }
       }
-      this.rafId = requestAnimationFrame(() => void tick());
+      if (this.running) this.timerId = setTimeout(() => void tick(), SCAN_INTERVAL_MS);
     };
-    this.rafId = requestAnimationFrame(() => void tick());
+    void tick();
   }
 
   private stop(): void {
     this.running = false;
-    if (this.rafId) cancelAnimationFrame(this.rafId);
-    this.rafId = 0;
+    if (this.timerId !== null) clearTimeout(this.timerId);
+    this.timerId = null;
     this.lastValue = null;
     this.detector = null;
     this.stream?.getTracks().forEach((track) => track.stop());
