@@ -24,7 +24,7 @@ export class RentalListStore {
 
   private readonly activeResource = rxResource<RentalListItem[], void>({
     stream: () =>
-      this.rentalsService.getRentals({ page: 0, size: 100 }, 'ACTIVE').pipe(
+      this.rentalsService.getRentals({ page: 0, size: 100 }, ['ACTIVE']).pipe(
         switchMap((page) => this.enrichItems(page.items ?? [])),
         catchError(() => of<RentalListItem[]>([])),
       ),
@@ -34,7 +34,7 @@ export class RentalListStore {
     params: () => this.historyParams(),
     stream: ({ params }) => {
       if (!params) return of([]);
-      const statusApi = params.filter === 'ALL' ? undefined : params.filter;
+      const statusApi = params.filter === 'ALL' || !params.filter ? undefined : [params.filter];
       return this.rentalsService
         .getRentals(
           { page: 0, size: 100 },
@@ -71,7 +71,9 @@ export class RentalListStore {
     const customerIds = [
       ...new Set(items.map((r) => r.customerId).filter((id): id is string => id != null)),
     ];
-    const equipmentIds = [...new Set(items.flatMap((r) => r.equipmentIds ?? []))];
+    const equipmentIds = [
+      ...new Set(items.flatMap((r) => (r.equipments ?? []).map((e) => e.equipmentId))),
+    ];
     return forkJoin({
       customers:
         customerIds.length > 0 ? this.customersService.getCustomersBatch(customerIds) : of([]),

@@ -152,7 +152,7 @@ export class EquipmentsCatalogueService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageEquipmentResponse>>;
-  /** Returns paginated equipment list filtered by status, type, and/or free-text search across uid, serial number, and model */
+  /** Returns paginated equipment list filtered by status, type, and/or free-text search: exact match on uid, case-insensitive substring match on serial number and model */
   searchEquipments(
     arg3: Pageable,
     status?: string,
