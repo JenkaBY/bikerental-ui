@@ -3,14 +3,12 @@
     "target": "http://localhost:4201",
     "secure": false,
     "changeOrigin": true,
-    "autoRewrite": true,
     "logLevel": "warn"
   },
   "/operator": {
     "target": "http://localhost:4202",
     "secure": false,
     "changeOrigin": true,
-    "autoRewrite": true,
     "logLevel": "warn"
   }
 }

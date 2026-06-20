@@ -38,6 +38,10 @@
   TECHNOLOGY: html5-qrcode 2.3.x
   USED_BY: operator (return flow QrScannerComponent in shared)
 
+- CATEGORY: PWA / Service Worker
+  TECHNOLOGY: @angular/service-worker 21.2.x (ngsw); manifest + ngsw-config.json; SwUpdate reload prompt
+  USED_BY: operator only (installable + app-shell offline; API and SSE stay network-only)
+
 - CATEGORY: Testing
   TECHNOLOGY: Vitest 4.x + @vitest/coverage-v8 + jsdom
   USED_BY: gateway, admin, operator, shared

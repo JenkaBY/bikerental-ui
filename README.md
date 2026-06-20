@@ -9,7 +9,7 @@ The latest stable version is available at: https://jenkaby.github.io/bikerental-
 ## Modules
 
 - **Admin** (desktop-first, ≥22" 1080p) — CRUD management of equipment, types, statuses, tariffs, customers, rental/payment history, users
-- **Operator** (mobile-first) — rental creation, QR code equipment scanning, return flow, active rentals dashboard
+- **Operator** (mobile-first, installable PWA) — rental creation, QR code equipment scanning, return flow, active rentals dashboard
 
 ## Prerequisites
 
@@ -76,6 +76,32 @@ To enable deployment, configure your repository:
 
 1. Go to **Settings → Pages**
 2. Set **Source** to **GitHub Actions**
+
+## PWA (Operator)
+
+The **operator** app is a Progressive Web App, so staff can install it on a phone and it boots from
+cache when the network is flaky. It uses Angular's first-party service worker (`@angular/service-worker`).
+
+- **Scope:** *installable + app-shell offline* — the app shell, JS/CSS, icons and fonts are cached for
+  offline boot. Live data (backend API and the dev TimeTravel SSE stream) stays **network-only** and is
+  never cached.
+- **Config:**
+  - `projects/operator/public/manifest.webmanifest` + `projects/operator/public/icons/` — installability
+    metadata and icons (operator-scoped assets, wired as a second asset input in `angular.json`).
+  - `projects/operator/ngsw-config.json` — caching rules (app shell `prefetch`, assets `lazy`). Referenced
+    by the operator build's `serviceWorker` option.
+  - `provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode(), … })` in `app.config.ts`. The service
+    worker is **disabled in `ng serve`** — to test it, build production and serve the output (see below).
+  - `PwaUpdateService` (`projects/operator/src/app/core/`) shows a "new version available — Reload" snackbar
+    via `SwUpdate` when a new build is deployed.
+- **i18n:** the build is per-locale, so each locale folder (`dist/operator/browser/{en,ru}/`) gets its own
+  `ngsw.json` + `ngsw-worker.js`, scoped to `/operator/<locale>/`.
+- **Test the service worker locally** (it is off under `ng serve`):
+
+  ```bash
+  ng build operator --configuration production
+  npx http-server -p 8080 -c-1 dist/operator/browser/en   # use an incognito window
+  ```
 
 ## i18n
 
