@@ -21,8 +21,9 @@
   ENTRY_FILES: `projects/admin/src/main.ts`, `projects/admin/src/app/app.config.ts`, `projects/admin/src/app/app.routes.ts`
 
 - PATH: `projects/operator/`
-  PURPOSE: Mobile-first rental workflow SPA — rental creation, QR return, active-rentals dashboard
+  PURPOSE: Mobile-first rental workflow SPA (installable PWA) — rental creation, QR return, active-rentals dashboard
   ENTRY_FILES: `projects/operator/src/main.ts`, `projects/operator/src/app/app.config.ts`, `projects/operator/src/app/app.routes.ts`
+  PWA_FILES: `projects/operator/ngsw-config.json` (caching rules), `projects/operator/public/manifest.webmanifest`, `projects/operator/public/icons/`, `projects/operator/src/app/core/pwa-update.service.ts` (SwUpdate reload prompt); `serviceWorker` + second `public` asset input wired in `angular.json`
 
 - PATH: `projects/shared/`
   PURPOSE: Angular library — generated API client, domain mappers, domain models, signal stores, shared UI components, i18n constants, interceptors, and health monitoring

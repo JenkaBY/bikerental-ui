@@ -63,6 +63,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "lan": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.lan.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -75,6 +86,11 @@
             },
             "development": {
               "buildTarget": "gateway:build:development"
+            },
+            "lan": {
+              "buildTarget": "gateway:build:lan",
+              "host": "0.0.0.0",
+              "allowedHosts": [".trycloudflare.com"]
             }
           },
           "defaultConfiguration": "development"
@@ -171,6 +187,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "lan": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.lan.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -183,6 +210,11 @@
             },
             "development": {
               "buildTarget": "admin:build:development"
+            },
+            "lan": {
+              "buildTarget": "admin:build:lan",
+              "host": "0.0.0.0",
+              "allowedHosts": [".trycloudflare.com"]
             }
           },
           "defaultConfiguration": "development"
@@ -239,11 +271,16 @@
             "baseHref": "/operator/",
             "outputPath": "dist/operator",
             "i18nMissingTranslation": "ignore",
+            "serviceWorker": "projects/operator/ngsw-config.json",
             "tsConfig": "projects/operator/tsconfig.app.json",
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "projects/operator/public"
               }
             ],
             "styles": [
@@ -279,6 +316,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "lan": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.lan.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -291,6 +339,11 @@
             },
             "development": {
               "buildTarget": "operator:build:development"
+            },
+            "lan": {
+              "buildTarget": "operator:build:lan",
+              "host": "0.0.0.0",
+              "allowedHosts": [".trycloudflare.com"]
             }
           },
           "defaultConfiguration": "development"
