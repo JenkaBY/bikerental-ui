@@ -63,7 +63,7 @@ export class RentalDashboardMapper {
       customerPhone: customer?.phone ?? '',
       customerName: fullName || undefined,
       startedAt,
-      equipmentNames: (r.equipmentIds ?? []).map((id) => equipmentNameMap.get(id) ?? ''),
+      equipmentNames: (r.equipments ?? []).map((e) => equipmentNameMap.get(e.equipmentId) ?? ''),
       expectedReturnAt: r.expectedReturnAt ? new Date(r.expectedReturnAt) : undefined,
       isActive,
       isDebt,

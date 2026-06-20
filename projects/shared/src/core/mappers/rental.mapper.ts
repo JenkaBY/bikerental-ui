@@ -10,7 +10,7 @@ export class RentalMapper {
       startedAt: r.startedAt ? new Date(r.startedAt) : new Date(0),
       expectedReturnAt: r.expectedReturnAt ? new Date(r.expectedReturnAt) : undefined,
       estimatedCost: makeMoney(0),
-      equipmentIds: r.equipmentIds ?? [],
+      equipmentIds: (r.equipments ?? []).map((e) => e.equipmentId),
     };
   }
 

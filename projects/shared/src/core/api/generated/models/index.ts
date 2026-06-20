@@ -479,14 +479,24 @@ export interface PageRentalSummaryResponse {
   pageRequest?: PageRequest;
 }
 
+/** Equipment item within a rental summary */
+export interface RentalSummaryEquipmentResponse {
+  /** Equipment ID */
+  equipmentId: number;
+  /** Equipment UID */
+  equipmentUid?: string;
+  /** Rental equipment status */
+  status: string;
+}
+
 /** Compact rental summary for list views */
 export interface RentalSummaryResponse {
   /** Rental ID */
   id: number;
   /** Customer UUID */
   customerId: string;
-  /** List of rented equipment IDs */
-  equipmentIds?: Array<number>;
+  /** Rented equipment items */
+  equipments?: Array<RentalSummaryEquipmentResponse>;
   /** Rental status */
   status: string;
   /** Rental start time */

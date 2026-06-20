@@ -94,7 +94,7 @@ export class RentalsService {
 
   getRentals(
     arg5: Pageable,
-    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
+    status?: Array<'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
     customerId?: string,
     equipmentUid?: string,
     from?: string,
@@ -104,7 +104,7 @@ export class RentalsService {
   ): Observable<PageRentalSummaryResponse>;
   getRentals(
     arg5: Pageable,
-    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
+    status?: Array<'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
     customerId?: string,
     equipmentUid?: string,
     from?: string,
@@ -114,7 +114,7 @@ export class RentalsService {
   ): Observable<HttpResponse<PageRentalSummaryResponse>>;
   getRentals(
     arg5: Pageable,
-    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
+    status?: Array<'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
     customerId?: string,
     equipmentUid?: string,
     from?: string,
@@ -122,10 +122,10 @@ export class RentalsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageRentalSummaryResponse>>;
-  /** Returns a paginated list of rentals filtered by status, customer or equipment UID */
+  /** Returns a paginated list of rentals filtered by one or more statuses, customer or equipment UID */
   getRentals(
     arg5: Pageable,
-    status?: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT',
+    status?: Array<'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
     customerId?: string,
     equipmentUid?: string,
     from?: string,
