@@ -1,6 +1,6 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
+import { catchError, finalize, map, of } from 'rxjs';
 import { RentalsService } from '../api/generated';
 
 const HELD_STATUSES = new Set(['RESERVED', 'RENTED']);
@@ -23,27 +23,16 @@ export class RentalLookupStore {
     this._notFound.set(false);
     this._foundRentalId.set(null);
 
-    forkJoin([
-      this.rentalsService.getRentals({ size: 50 }, 'ACTIVE', undefined, uid),
-      this.rentalsService.getRentals({ size: 50 }, 'DRAFT', undefined, uid),
-    ])
+    this.rentalsService
+      .getRentals({ size: 50 }, ['ACTIVE', 'DRAFT'], undefined, uid)
       .pipe(
-        map(([active, draft]) => {
-          const ids = [...(active.items ?? []), ...(draft.items ?? [])].map((r) => r.id);
-          return [...new Set(ids)];
-        }),
-        switchMap((rentalIds) => {
-          if (rentalIds.length === 0) return of<number | null>(null);
-          return forkJoin(rentalIds.map((id) => this.rentalsService.getRentalById(id))).pipe(
-            map((rentals) => {
-              const match = rentals.find((rental) =>
-                (rental.equipmentItems ?? []).some(
-                  (item) => item.equipmentUid === uid && HELD_STATUSES.has(item.status),
-                ),
-              );
-              return match?.id ?? null;
-            }),
+        map((page) => {
+          const match = (page.items ?? []).find((rental) =>
+            (rental.equipments ?? []).some(
+              (item) => item.equipmentUid === uid && HELD_STATUSES.has(item.status),
+            ),
           );
+          return match?.id ?? null;
         }),
         catchError(() => of<number | null>(null)),
         finalize(() => this._loading.set(false)),
