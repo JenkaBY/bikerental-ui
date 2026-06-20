@@ -1,6 +1,6 @@
 {
-  "name": "Bikerental Operator",
-  "short_name": "Operator",
+  "name": "ЗОЖик",
+  "short_name": "ЗОЖик",
   "description": "Bike rental operator panel — rentals and equipment return.",
   "start_url": "./",
   "scope": "./",
