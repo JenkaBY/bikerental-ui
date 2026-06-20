@@ -220,6 +220,10 @@ export class Labels {
   static readonly EquipmentNotAvailableOrNotFound = $localize`Equipment not available or not found`;
   static readonly EquipmentAlreadyAdded = $localize`Equipment already added`;
   static readonly EquipmentAdded = $localize`Equipment added`;
+  static readonly ScanToReturn = $localize`Scan equipment QR`;
+  static readonly ScanEquipmentToReturnTitle = $localize`Scan equipment to return`;
+  static readonly NoActiveRentalForEquipment = $localize`No active or draft rental holds this equipment`;
+  static readonly OpenActiveRentals = $localize`Open active rentals`;
   static readonly DiscountPercent = $localize`Discount (%)`;
   static readonly SpecialPrice = $localize`Special Price`;
   static readonly SpecialPriceModeLabel = $localize`Special price mode`;
