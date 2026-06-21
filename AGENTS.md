@@ -44,6 +44,29 @@ Backend JSON  →  core/api/generated/  →  core/mappers/  →  core/models/  �
   in CI, so `npm run lint` fails on any violation. Generated client code under
   `core/api/generated/**` is exempt (already in the config `ignores`).
 
+## API Error Handling (enforced)
+
+Backend errors are RFC 7807 `ProblemDetail` bodies tagged with a stable code in `properties.code`
+(e.g. `finance.insufficient_balance`). The shared toolkit lives in `core/errors/` and is exported
+from `@bikerental/shared`. Rules:
+
+- **Never call `MatSnackBar.open(...)` directly for errors** — inject `NotificationService` and use
+  `error()` / `warn()` / `info()` / `success()`. (Success toasts in components stay allowed.)
+- **Never surface a raw `HttpErrorResponse` / `err.message`.** Parse with `ApiErrorParser.parse(err)`
+  to a typed `ApiError`, then resolve copy with `ErrorMessageResolver.resolve(apiError)`.
+- **Bind backend validation errors to forms** with `applyServerErrors(form, apiError)` — it sets a
+  `server` error on the matching control and returns unmatched messages for a summary. Render with
+  `@if (ctrl.hasError('server')) { <mat-error>{{ ctrl.getError('server') }}</mat-error> }`.
+- **Register every new backend error code** in `core/errors/error-code.ts` +
+  `core/errors/error-message.catalog.ts` (a `$localize` template). The resolver's
+  `code → status → generic` fallback is a stopgap, not a substitute for real copy.
+- **Dialogs/forms that handle errors locally** must send the request with
+  `SUPPRESS_ERROR_NOTIFICATION` (see `suppressErrorNotification()`) so the global interceptor does
+  not also toast — avoids double notifications.
+- All error strings are `$localize`d (no raw literals), per the i18n rules below.
+
+The detailed recipe lives in the `error-handling` skill.
+
 ## Angular Patterns
 
 - **Standalone components only** — no NgModules; declare `imports: []` per component

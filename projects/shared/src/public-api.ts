@@ -14,6 +14,9 @@ export * from './core/health/health.model';
 export * from './core/health/health.service';
 export * from './core/health/health-poller.service';
 
+// Core — error handling toolkit (typed ApiError, parser, resolver, notifications)
+export * from './core/errors';
+
 // Core — HTTP interceptors
 export * from './core/interceptors/error.interceptor';
 export * from './core/interceptors/error.service';
