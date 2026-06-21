@@ -54,8 +54,7 @@ are technology-agnostic; do not edit them per-feature.
 - **Smart vs dumb** — smart/page components own DI, router inputs, and store orchestration; dumb
   components use `input()`/`output()` + `OnPush` only. Keep components < 200 lines; push logic into
   services/stores.
-- **Error handling layering** — success notifications in **components**; domain errors in **stores**
-  via `catchError`; system errors (404/500) in a global `HttpInterceptor`.
+- **Error handling** — rules in `AGENTS.md` → *API Error Handling*; recipes with code snippets in the `error-handling` skill.
 - **Logging** — use a custom `LoggerService` with levels (DEBUG/INFO/WARN/ERROR); never log PII —
   log IDs and event context only.
 - **Lifecycle & navigation** — `provideAppInitializer()` for non-blocking background data load
