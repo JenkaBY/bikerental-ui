@@ -72,6 +72,14 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.HOLD_REQUIRED]: $localize`A payment hold is required before this action can proceed.`,
   [ErrorCode.EQUIPMENT_NOT_AVAILABLE]: rentalEquipmentNotAvailableMessage,
 
+  // Identity (authentication & accounts)
+  [ErrorCode.AUTH_REQUIRED]: $localize`Your session has expired. Please sign in again.`,
+  [ErrorCode.ACCESS_DENIED]: $localize`You do not have permission to perform this action.`,
+  [ErrorCode.USERNAME_DUPLICATE]: $localize`This username is already taken.`,
+  [ErrorCode.EMAIL_DUPLICATE]: $localize`This email address is already in use.`,
+  [ErrorCode.PASSWORD_POLICY_VIOLATION]: $localize`The password does not meet the required policy (8–20 characters, at least one letter and one digit).`,
+  [ErrorCode.PASSWORD_INVALID_CURRENT]: $localize`The current password is incorrect.`,
+
   // ── Field-level validation codes (matched against FieldError.code) ────────
   // Derived from Bean Validation annotations as validation.<snake_case_annotation_name>
   // resolveFieldErrorMessage() uses these before falling back to field.message
