@@ -17,6 +17,9 @@ export * from './core/health/health-poller.service';
 // Core — error handling toolkit (typed ApiError, parser, resolver, notifications)
 export * from './core/errors';
 
+// Core — OIDC authentication (provider helper, service, interceptor, guards, screens)
+export * from './core/auth';
+
 // Core — HTTP interceptors
 export * from './core/interceptors/error.interceptor';
 export * from './core/interceptors/error.service';
