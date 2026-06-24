@@ -1,10 +1,22 @@
 import { Routes } from '@angular/router';
+import {
+  adminGuard,
+  authGuard,
+  ChangePasswordComponent,
+  ForbiddenComponent,
+  LoginCallbackComponent,
+  mustChangePasswordGuard,
+} from '@bikerental/shared';
 import { AdminLayoutComponent } from './layout/admin-layout.component';
 
 export const routes: Routes = [
+  { path: 'login/callback', component: LoginCallbackComponent },
+  { path: 'forbidden', component: ForbiddenComponent },
+  { path: 'change-password', component: ChangePasswordComponent, canActivate: [authGuard] },
   {
     path: '',
     component: AdminLayoutComponent,
+    canActivate: [authGuard, mustChangePasswordGuard, adminGuard],
     children: [
       { path: '', redirectTo: 'equipment', pathMatch: 'full' },
       {
