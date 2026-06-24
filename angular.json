@@ -34,8 +34,13 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/shared/src/styles.css"
             ],
-            "polyfills": ["@angular/localize/init"],
-            "localize": ["ru", "en"]
+            "polyfills": [
+              "@angular/localize/init"
+            ],
+            "localize": [
+              "ru",
+              "en"
+            ]
           },
           "configurations": {
             "production": {
@@ -90,7 +95,9 @@
             "lan": {
               "buildTarget": "gateway:build:lan",
               "host": "0.0.0.0",
-              "allowedHosts": [".trycloudflare.com"]
+              "allowedHosts": [
+                ".trycloudflare.com"
+              ]
             }
           },
           "defaultConfiguration": "development"
@@ -104,16 +111,29 @@
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageInclude": ["projects/gateway/src/**/*.ts"],
-              "coverageExclude": ["projects/gateway/src/**/*.spec.ts"],
-              "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
+              "coverageInclude": [
+                "projects/gateway/src/**/*.ts"
+              ],
+              "coverageExclude": [
+                "projects/gateway/src/**/*.spec.ts"
+              ],
+              "coverageReporters": [
+                "lcov",
+                "html",
+                "text-summary",
+                "json-summary",
+                "json"
+              ]
             }
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/gateway/src/**/*.ts", "projects/gateway/src/**/*.html"]
+            "lintFilePatterns": [
+              "projects/gateway/src/**/*.ts",
+              "projects/gateway/src/**/*.html"
+            ]
           }
         },
         "extract-i18n": {
@@ -158,8 +178,13 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/shared/src/styles.css"
             ],
-            "polyfills": ["@angular/localize/init"],
-            "localize": ["ru", "en"]
+            "polyfills": [
+              "@angular/localize/init"
+            ],
+            "localize": [
+              "ru",
+              "en"
+            ]
           },
           "configurations": {
             "production": {
@@ -186,7 +211,8 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "baseHref": "/"
             },
             "lan": {
               "optimization": false,
@@ -214,7 +240,9 @@
             "lan": {
               "buildTarget": "admin:build:lan",
               "host": "0.0.0.0",
-              "allowedHosts": [".trycloudflare.com"]
+              "allowedHosts": [
+                ".trycloudflare.com"
+              ]
             }
           },
           "defaultConfiguration": "development"
@@ -228,16 +256,29 @@
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageInclude": ["projects/admin/src/**/*.ts"],
-              "coverageExclude": ["projects/admin/src/**/*.spec.ts"],
-              "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
+              "coverageInclude": [
+                "projects/admin/src/**/*.ts"
+              ],
+              "coverageExclude": [
+                "projects/admin/src/**/*.spec.ts"
+              ],
+              "coverageReporters": [
+                "lcov",
+                "html",
+                "text-summary",
+                "json-summary",
+                "json"
+              ]
             }
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/admin/src/**/*.ts", "projects/admin/src/**/*.html"]
+            "lintFilePatterns": [
+              "projects/admin/src/**/*.ts",
+              "projects/admin/src/**/*.html"
+            ]
           }
         },
         "extract-i18n": {
@@ -292,8 +333,13 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/shared/src/styles.css"
             ],
-            "polyfills": ["@angular/localize/init"],
-            "localize": ["ru", "en"]
+            "polyfills": [
+              "@angular/localize/init"
+            ],
+            "localize": [
+              "ru",
+              "en"
+            ]
           },
           "configurations": {
             "production": {
@@ -348,7 +394,9 @@
             "lan": {
               "buildTarget": "operator:build:lan",
               "host": "0.0.0.0",
-              "allowedHosts": [".trycloudflare.com"]
+              "allowedHosts": [
+                ".trycloudflare.com"
+              ]
             }
           },
           "defaultConfiguration": "development"
@@ -362,16 +410,29 @@
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageInclude": ["projects/operator/src/**/*.ts"],
-              "coverageExclude": ["projects/operator/src/**/*.spec.ts"],
-              "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
+              "coverageInclude": [
+                "projects/operator/src/**/*.ts"
+              ],
+              "coverageExclude": [
+                "projects/operator/src/**/*.spec.ts"
+              ],
+              "coverageReporters": [
+                "lcov",
+                "html",
+                "text-summary",
+                "json-summary",
+                "json"
+              ]
             }
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/operator/src/**/*.ts", "projects/operator/src/**/*.html"]
+            "lintFilePatterns": [
+              "projects/operator/src/**/*.ts",
+              "projects/operator/src/**/*.html"
+            ]
           }
         },
         "extract-i18n": {
@@ -415,26 +476,39 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "projects/shared/tsconfig.spec.json",
-            "setupFiles": ["projects/shared/src/test-setup.ts"]
+            "setupFiles": [
+              "projects/shared/src/test-setup.ts"
+            ]
           },
           "configurations": {
             "ci": {
               "watch": false,
               "coverage": true,
-              "coverageInclude": ["projects/shared/src/**/*.ts"],
+              "coverageInclude": [
+                "projects/shared/src/**/*.ts"
+              ],
               "coverageExclude": [
                 "projects/shared/**/core/api/generated/**",
                 "projects/shared/src/**/*.spec.ts",
                 "projects/shared/src/test-setup.ts"
               ],
-              "coverageReporters": ["lcov", "html", "text-summary", "json-summary", "json"]
+              "coverageReporters": [
+                "lcov",
+                "html",
+                "text-summary",
+                "json-summary",
+                "json"
+              ]
             }
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/shared/src/**/*.ts", "projects/shared/src/**/*.html"]
+            "lintFilePatterns": [
+              "projects/shared/src/**/*.ts",
+              "projects/shared/src/**/*.html"
+            ]
           }
         }
       }
