@@ -5,7 +5,6 @@ import { EquipmentTypeStore } from './equipment-type.store';
 import { PricingTypeStore } from './pricing-type.store';
 import { TariffStore } from './tariff.store';
 import { LookupConfig } from '../models/lookup-config.model';
-import { UserStore } from './user.store';
 
 @Injectable({ providedIn: 'root' })
 export class LookupInitializerFacade {
@@ -13,13 +12,10 @@ export class LookupInitializerFacade {
   private readonly equipmentTypeStore = inject(EquipmentTypeStore);
   private readonly pricingTypeStore = inject(PricingTypeStore);
   private readonly tariffStore = inject(TariffStore);
-  private readonly userStore = inject(UserStore);
 
   init(config: LookupConfig): Observable<unknown> {
     console.log('Background initialization started...');
     const tasks: Observable<unknown>[] = [];
-    // TODO Remove after real Auth will be enabled
-    this.userStore.login().subscribe();
 
     if (config.loadEquipmentStatus) {
       tasks.push(
