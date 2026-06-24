@@ -25,6 +25,7 @@ import {
   SSE_PROVIDER,
   TIME_TRAVEL_STORE_TOKEN,
   TimeTravelStore,
+  UserStore,
 } from '@bikerental/shared';
 
 interface EnvWithBrand {
@@ -42,6 +43,8 @@ export const appConfig: ApplicationConfig = {
       inject(HealthPollerService);
       inject(PwaUpdateService).init();
       registerLocaleData(localeRu, 'ru');
+      // TODO: temporary dev seed until the operator app gets its own OIDC auth.
+      inject(UserStore).seedDevUser();
       const lookupFacade = inject(LookupInitializerFacade);
       lookupFacade
         .init({
