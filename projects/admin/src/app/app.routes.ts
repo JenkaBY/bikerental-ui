@@ -4,13 +4,11 @@ import {
   authGuard,
   ChangePasswordComponent,
   ForbiddenComponent,
-  LoginCallbackComponent,
   mustChangePasswordGuard,
 } from '@bikerental/shared';
 import { AdminLayoutComponent } from './layout/admin-layout.component';
 
 export const routes: Routes = [
-  { path: 'login/callback', component: LoginCallbackComponent },
   { path: 'forbidden', component: ForbiddenComponent },
   { path: 'change-password', component: ChangePasswordComponent, canActivate: [authGuard] },
   {

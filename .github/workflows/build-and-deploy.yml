@@ -215,18 +215,83 @@ jobs:
             sed -i "s|BASE_PLACEHOLDER|${BASE}|g; s|APP_PLACEHOLDER|${app}|g" "staging/${app}/index.html"
           done
 
-      - name: Add 404.html for SPA routing
+      # GitHub Pages only ever serves the 404.html at the SITE ROOT — nested
+      # 404.html files (admin/en/404.html, etc.) are never looked up and are
+      # dead weight. This single root 404.html inspects the requested path,
+      # works out which app/locale directory actually has a real index.html,
+      # and bounces there with the original path+query preserved in a
+      # `redirect` param (classic GH Pages SPA trick). The matching
+      # restore-script (injected below) puts the real URL back via
+      # history.replaceState before Angular bootstraps, so deep links like
+      # the OIDC `/admin/en/login/callback?code=...` survive the 404 hop
+      # instead of losing their query string.
+      - name: Add smart 404.html for SPA routing
         run: |
-          # gateway
-          cp staging/index.html staging/404.html
-          cp staging/en/index.html staging/en/404.html
-          cp staging/ru/index.html staging/ru/404.html
-          # admin
-          cp staging/admin/en/index.html staging/admin/en/404.html
-          cp staging/admin/ru/index.html staging/admin/ru/404.html
-          # operator
-          cp staging/operator/en/index.html staging/operator/en/404.html
-          cp staging/operator/ru/index.html staging/operator/ru/404.html
+          BASE="/${{ github.event.repository.name }}"
+          cat > staging/404.html << 'HTMLEOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <title>Bike Rental</title>
+              <script>
+                (function () {
+                  var base = 'BASE_PLACEHOLDER/';
+                  var path = window.location.pathname;
+                  var rel = path.indexOf(base) === 0 ? path.slice(base.length) : path.replace(/^\//, '');
+                  var segments = rel.split('/').filter(Boolean);
+                  var apps = ['admin', 'operator'];
+                  var locales = ['en', 'ru'];
+                  var appDir;
+                  if (apps.indexOf(segments[0]) !== -1) {
+                    var locale = locales.indexOf(segments[1]) !== -1 ? segments[1] : 'en';
+                    appDir = segments[0] + '/' + locale;
+                  } else if (locales.indexOf(segments[0]) !== -1) {
+                    appDir = segments[0];
+                  } else {
+                    appDir = 'en';
+                  }
+                  var original = path + window.location.search + window.location.hash;
+                  window.location.replace(base + appDir + '/?redirect=' + encodeURIComponent(original));
+                })();
+              </script>
+            </head>
+            <body></body>
+          </html>
+          HTMLEOF
+          sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/404.html
+
+      # Companion to the 404.html above: restores the original deep-link URL
+      # (path + query, e.g. ?code=...&state=... from the OIDC callback)
+      # before Angular bootstraps, so the Router sees the real route instead
+      # of the bounce URL with a `redirect` query param.
+      - name: Inject SPA path-restore script into app entry points
+        run: |
+          cat > restore-script.html << 'HTMLEOF'
+            <script>
+              (function () {
+                var params = new URLSearchParams(window.location.search);
+                var redirect = params.get('redirect');
+                if (redirect) {
+                  history.replaceState(null, '', redirect);
+                }
+              })();
+            </script>
+          HTMLEOF
+          node -e "
+            const fs = require('fs');
+            const snippet = fs.readFileSync('restore-script.html', 'utf8');
+            const files = [
+              'staging/en/index.html', 'staging/ru/index.html',
+              'staging/admin/en/index.html', 'staging/admin/ru/index.html',
+              'staging/operator/en/index.html', 'staging/operator/ru/index.html',
+            ];
+            for (const f of files) {
+              const text = fs.readFileSync(f, 'utf8');
+              fs.writeFileSync(f, text.replace('<head>', '<head>' + snippet));
+            }
+          "
+          rm restore-script.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

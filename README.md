@@ -56,7 +56,7 @@ The project uses GitHub Actions for continuous integration and deployment:
 - **Trigger**: Push/PR to `main`/`master` branch or manual dispatch
 - **Pipeline**: Lint & Format → Unit Tests → Build → Deploy to GitHub Pages
 - **Gate job**: `CI` — aggregates all check results; fails if any job failed
-- **SPA routing**: `404.html` is generated from `index.html` per locale for client-side routing support
+- **SPA routing**: a single path-aware `404.html` at the site root recovers deep links (see below)
 
 ### Deployed layout & routing
 
@@ -72,33 +72,40 @@ Pages site is laid out as:
 /<repo>/operator/{en,ru}/ → operator SPA
 ```
 
-Two build steps make this work on static hosting:
+Three build steps make this work on static hosting:
 
 - **Create per-app locale redirects** — a bare `/<repo>/admin/` (or `/operator/`) has no `index.html`
   because the real entry points live under `…/admin/en/` and `…/admin/ru/`. This step writes an
-  `index.html` at each app root that forwards to the default (`en`) locale. Without it those URLs fall
-  through to the site `404.html` and bounce to the gateway.
-- **Add 404.html for SPA routing** — GitHub Pages is static and has no history-API fallback, so deep
-  links (and the OIDC `…/login/callback?code=…` redirect) would 404. Each locale folder gets a
-  `404.html` copy of its `index.html`; Pages serves it with the original URL + query string intact, so
-  the Angular router boots and `angular-auth-oidc-client` can process the authorization code.
+  `index.html` at each app root that forwards to the default (`en`) locale.
+- **Add smart 404.html for SPA routing** — GitHub Pages only ever serves **one** `404.html`, the one at
+  the site root; nested copies (e.g. `admin/en/404.html`) are never looked up. The root `404.html`
+  inspects the requested path, works out which app/locale directory has the real `index.html`, and
+  redirects there with the original path + query string packed into a `redirect` param — this is what
+  lets deep links (and the OIDC `…/login/callback?code=…&state=…` redirect) survive instead of losing
+  their query string to a blind bounce.
+- **Inject SPA path-restore script into app entry points** — the companion half of the previous step.
+  A small inline script is injected as the first thing in each app/locale `index.html`'s `<head>`. It
+  reads the `redirect` param and calls `history.replaceState(...)` to put the original URL back
+  *before* Angular bootstraps, so the Router sees `/login/callback?code=…` instead of the bounce URL.
 
 ### OIDC redirect URIs (admin auth)
 
-The admin SPA computes its OAuth `redirect_uri` from `document.baseURI` (the app's mount path), so the
-**backend OAuth client must register the exact callback URL for each context** it runs in:
+The admin SPA computes its OAuth `redirect_uri` from `document.baseURI` (the app's mount path) — it
+points at that base path directly rather than a synthetic `/login/callback` route, so it always
+resolves to a real `index.html` on static hosting instead of depending on the 404 SPA-fallback trick.
+`redirect_uri` and `post_logout_redirect_uri` are therefore the same URL, and the **backend OAuth
+client must register it for each context** the app runs in:
 
-| Context | Mount | `redirect_uri` to register |
-|---------|-------|----------------------------|
-| `ng serve admin` (direct) | `:4201/admin/` | `http://localhost:4201/admin/login/callback` |
-| Gateway proxy | `:4200/admin/` | `http://localhost:4200/admin/login/callback` |
-| GitHub Pages (per locale) | `…/admin/{en,ru}/` | `https://<user>.github.io/<repo>/admin/{en,ru}/login/callback` |
+| Context | Mount | `redirect_uri` / `post_logout_redirect_uri` to register |
+|---------|-------|----------------------------------------------------------|
+| `ng serve admin` (direct) | `:4201/admin/` | `http://localhost:4201/admin/` |
+| Gateway proxy | `:4200/admin/` | `http://localhost:4200/admin/` |
+| GitHub Pages (per locale) | `…/admin/{en,ru}/` | `https://<user>.github.io/<repo>/admin/{en,ru}/` |
 
-Register the matching `post_logout_redirect_uri` (each mount base, e.g. `…/admin/en/`) and add the
-corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be reachable over
-**public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is blocked as mixed content).
-Set the public API base via the `BIKE_RENTAL_API` repository variable (injected into
-`environment.prod.ts` by the **Inject Bike Rental API host** step).
+Add the corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be
+reachable over **public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is
+blocked as mixed content). Set the public API base via the `BIKE_RENTAL_API` repository variable
+(injected into `environment.prod.ts` by the **Inject Bike Rental API host** step).
 
 ### Blocking Merges on Failed Build
 
