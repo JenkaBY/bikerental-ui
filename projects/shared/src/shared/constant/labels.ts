@@ -296,7 +296,6 @@ export class Labels {
 
   // Authentication
   static readonly Logout = $localize`Logout`;
-  static readonly SigningIn = $localize`Signing in...`;
   static readonly ChangePasswordTitle = $localize`Change your password`;
   static readonly ChangePasswordSubtitle = $localize`Your password must be updated before you can continue.`;
   static readonly CurrentPassword = $localize`Current password`;

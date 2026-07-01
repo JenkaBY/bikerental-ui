@@ -90,20 +90,22 @@ Three build steps make this work on static hosting:
 
 ### OIDC redirect URIs (admin auth)
 
-The admin SPA computes its OAuth `redirect_uri` from `document.baseURI` (the app's mount path), so the
-**backend OAuth client must register the exact callback URL for each context** it runs in:
+The admin SPA computes its OAuth `redirect_uri` from `document.baseURI` (the app's mount path) — it
+points at that base path directly rather than a synthetic `/login/callback` route, so it always
+resolves to a real `index.html` on static hosting instead of depending on the 404 SPA-fallback trick.
+`redirect_uri` and `post_logout_redirect_uri` are therefore the same URL, and the **backend OAuth
+client must register it for each context** the app runs in:
 
-| Context | Mount | `redirect_uri` to register |
-|---------|-------|----------------------------|
-| `ng serve admin` (direct) | `:4201/admin/` | `http://localhost:4201/admin/login/callback` |
-| Gateway proxy | `:4200/admin/` | `http://localhost:4200/admin/login/callback` |
-| GitHub Pages (per locale) | `…/admin/{en,ru}/` | `https://<user>.github.io/<repo>/admin/{en,ru}/login/callback` |
+| Context | Mount | `redirect_uri` / `post_logout_redirect_uri` to register |
+|---------|-------|----------------------------------------------------------|
+| `ng serve admin` (direct) | `:4201/admin/` | `http://localhost:4201/admin/` |
+| Gateway proxy | `:4200/admin/` | `http://localhost:4200/admin/` |
+| GitHub Pages (per locale) | `…/admin/{en,ru}/` | `https://<user>.github.io/<repo>/admin/{en,ru}/` |
 
-Register the matching `post_logout_redirect_uri` (each mount base, e.g. `…/admin/en/`) and add the
-corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be reachable over
-**public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is blocked as mixed content).
-Set the public API base via the `BIKE_RENTAL_API` repository variable (injected into
-`environment.prod.ts` by the **Inject Bike Rental API host** step).
+Add the corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be
+reachable over **public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is
+blocked as mixed content). Set the public API base via the `BIKE_RENTAL_API` repository variable
+(injected into `environment.prod.ts` by the **Inject Bike Rental API host** step).
 
 ### Blocking Merges on Failed Build
 

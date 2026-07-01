@@ -6,6 +6,5 @@ export * from './auth.guard';
 export * from './admin.guard';
 export * from './must-change-password.guard';
 export * from './password-policy.validator';
-export * from './login-callback.component';
 export * from './change-password.component';
 export * from './forbidden.component';
