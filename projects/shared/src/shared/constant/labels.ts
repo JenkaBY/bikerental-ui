@@ -293,4 +293,18 @@ export class Labels {
 
   static readonly PwaUpdateAvailable = $localize`A new version is available.`;
   static readonly PwaUpdateReload = $localize`Reload`;
+
+  // Authentication
+  static readonly Logout = $localize`Logout`;
+  static readonly SigningIn = $localize`Signing in...`;
+  static readonly ChangePasswordTitle = $localize`Change your password`;
+  static readonly ChangePasswordSubtitle = $localize`Your password must be updated before you can continue.`;
+  static readonly CurrentPassword = $localize`Current password`;
+  static readonly NewPassword = $localize`New password`;
+  static readonly ConfirmPassword = $localize`Confirm new password`;
+  static readonly ChangePasswordCta = $localize`Update password`;
+  static readonly PasswordChanged = $localize`Password updated`;
+  static readonly AccessDeniedTitle = $localize`Access denied`;
+  static readonly AccessDeniedDetail = $localize`You do not have permission to view this page.`;
+  static readonly BackToHome = $localize`Back to home`;
 }

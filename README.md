@@ -56,7 +56,49 @@ The project uses GitHub Actions for continuous integration and deployment:
 - **Trigger**: Push/PR to `main`/`master` branch or manual dispatch
 - **Pipeline**: Lint & Format → Unit Tests → Build → Deploy to GitHub Pages
 - **Gate job**: `CI` — aggregates all check results; fails if any job failed
-- **SPA routing**: `404.html` is generated from `index.html` for client-side routing support
+- **SPA routing**: `404.html` is generated from `index.html` per locale for client-side routing support
+
+### Deployed layout & routing
+
+Each app is built under its own base href and Angular i18n emits a **per-locale subdirectory**, so the
+Pages site is laid out as:
+
+```
+/<repo>/                  → gateway (root redirect → /<repo>/en/)
+/<repo>/{en,ru}/          → gateway shell
+/<repo>/admin/            → redirect → /<repo>/admin/en/   (Create per-app locale redirects step)
+/<repo>/admin/{en,ru}/    → admin SPA
+/<repo>/operator/         → redirect → /<repo>/operator/en/
+/<repo>/operator/{en,ru}/ → operator SPA
+```
+
+Two build steps make this work on static hosting:
+
+- **Create per-app locale redirects** — a bare `/<repo>/admin/` (or `/operator/`) has no `index.html`
+  because the real entry points live under `…/admin/en/` and `…/admin/ru/`. This step writes an
+  `index.html` at each app root that forwards to the default (`en`) locale. Without it those URLs fall
+  through to the site `404.html` and bounce to the gateway.
+- **Add 404.html for SPA routing** — GitHub Pages is static and has no history-API fallback, so deep
+  links (and the OIDC `…/login/callback?code=…` redirect) would 404. Each locale folder gets a
+  `404.html` copy of its `index.html`; Pages serves it with the original URL + query string intact, so
+  the Angular router boots and `angular-auth-oidc-client` can process the authorization code.
+
+### OIDC redirect URIs (admin auth)
+
+The admin SPA computes its OAuth `redirect_uri` from `document.baseURI` (the app's mount path), so the
+**backend OAuth client must register the exact callback URL for each context** it runs in:
+
+| Context | Mount | `redirect_uri` to register |
+|---------|-------|----------------------------|
+| `ng serve admin` (direct) | `:4201/admin/` | `http://localhost:4201/admin/login/callback` |
+| Gateway proxy | `:4200/admin/` | `http://localhost:4200/admin/login/callback` |
+| GitHub Pages (per locale) | `…/admin/{en,ru}/` | `https://<user>.github.io/<repo>/admin/{en,ru}/login/callback` |
+
+Register the matching `post_logout_redirect_uri` (each mount base, e.g. `…/admin/en/`) and add the
+corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be reachable over
+**public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is blocked as mixed content).
+Set the public API base via the `BIKE_RENTAL_API` repository variable (injected into
+`environment.prod.ts` by the **Inject Bike Rental API host** step).
 
 ### Blocking Merges on Failed Build
 

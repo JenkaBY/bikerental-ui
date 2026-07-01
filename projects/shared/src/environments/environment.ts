@@ -4,5 +4,5 @@ export const environment = {
   healthPollIntervalMs: 300_000,
   defaultLocale: 'ru',
   brand: 'Bike Rental',
-  timeTravelEnabled: true,
+  timeTravelEnabled: false,
 };

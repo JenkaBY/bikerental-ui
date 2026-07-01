@@ -31,6 +31,14 @@ export const ErrorCode = {
   INSUFFICIENT_FUNDS: 'rental.insufficient_funds',
   HOLD_REQUIRED: 'rental.hold.required',
   EQUIPMENT_NOT_AVAILABLE: 'rental.equipment.not_available',
+
+  // identity.* — authentication & accounts
+  AUTH_REQUIRED: 'identity.authentication.required',
+  ACCESS_DENIED: 'identity.access.denied',
+  USERNAME_DUPLICATE: 'identity.username.duplicate',
+  EMAIL_DUPLICATE: 'identity.email.duplicate',
+  PASSWORD_POLICY_VIOLATION: 'identity.password.policy_violation',
+  PASSWORD_INVALID_CURRENT: 'identity.password.invalid_current',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -57,6 +65,10 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.INSUFFICIENT_FUNDS,
   ErrorCode.HOLD_REQUIRED,
   ErrorCode.EQUIPMENT_NOT_AVAILABLE,
+  ErrorCode.USERNAME_DUPLICATE,
+  ErrorCode.EMAIL_DUPLICATE,
+  ErrorCode.PASSWORD_POLICY_VIOLATION,
+  ErrorCode.PASSWORD_INVALID_CURRENT,
 ]);
 
 export function isValidationCode(code: string): boolean {

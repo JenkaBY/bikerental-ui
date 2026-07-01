@@ -191,6 +191,30 @@ jobs:
           HTMLEOF
           sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/index.html
 
+      # Each app is built into per-locale subdirectories (admin/en, admin/ru, ...).
+      # A bare /admin/ or /operator/ URL has no index.html, so without this it would
+      # fall through to the site 404.html and bounce to the gateway. This adds an
+      # entry index.html per app that forwards to the default (en) locale — which is
+      # also the URL the OIDC redirect_uri / app links should target.
+      - name: Create per-app locale redirects
+        run: |
+          BASE="/${{ github.event.repository.name }}"
+          for app in admin operator; do
+            cat > "staging/${app}/index.html" << 'HTMLEOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <title>Bike Rental</title>
+              <meta http-equiv="refresh" content="0; url=BASE_PLACEHOLDER/APP_PLACEHOLDER/en/" />
+              <script>window.location.replace('BASE_PLACEHOLDER/APP_PLACEHOLDER/en/');</script>
+            </head>
+            <body></body>
+          </html>
+          HTMLEOF
+            sed -i "s|BASE_PLACEHOLDER|${BASE}|g; s|APP_PLACEHOLDER|${app}|g" "staging/${app}/index.html"
+          done
+
       - name: Add 404.html for SPA routing
         run: |
           # gateway

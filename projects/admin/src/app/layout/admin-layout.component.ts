@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { RouterOutlet } from '@angular/router';
 import {
   APP_BRAND,
+  AuthService,
   HealthIndicatorComponent,
   LogoutButtonComponent,
   NavItem,
@@ -32,12 +33,13 @@ export class AdminLayoutComponent {
   protected brand = inject(APP_BRAND);
   protected title = $localize`Admin Dashboard`;
   protected sidenavOpened = signal(true);
+  private readonly auth = inject(AuthService);
 
   protected onToggleSidebar() {
     this.sidenavOpened.update((v) => !v);
   }
 
   protected onLogout() {
-    console.log('logout requested from admin layout');
+    this.auth.logout();
   }
 }

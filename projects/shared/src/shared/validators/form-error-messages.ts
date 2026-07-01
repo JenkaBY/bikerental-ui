@@ -23,4 +23,9 @@ export class FormErrorMessages {
   static readonly birthDateFuture = $localize`Birth date must be in the past`;
   static readonly withdrawAmountExceedsAvailable = $localize`Amount exceeds available balance`;
   static readonly maxDecimalPlaces = $localize`Maximum 2 decimal places allowed`;
+  // Password change
+  static readonly passwordRequired = $localize`Password is required`;
+  static readonly passwordLength = $localize`Must be between 8 and 20 characters`;
+  static readonly passwordComposition = $localize`Must contain at least one letter and one digit`;
+  static readonly passwordsMismatch = $localize`Passwords do not match`;
 }

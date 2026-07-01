@@ -1,9 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { DEFAULT_USER_PREFERENCES, UserPreferences, UserProfile } from '@ui-models';
 import { LocaleRedirectService } from '../locale-redirect.service';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
-import { UserProfileMapper, UserProfileResponse } from '../mappers';
 
 const PREFERENCES_STORAGE_KEY = 'user_preferences';
 
@@ -33,27 +30,6 @@ export class UserStore {
     });
   }
 
-  login(): Observable<void> {
-    const fakeAdmin = {
-      firstName: 'IliveInUserStore',
-      lastName: 'DeleteMe',
-      roles: ['ADMIN'],
-      email: 'fake_email@gmail.com',
-      id: '00000000-0000-0000-0000-000000000000',
-    } as UserProfileResponse;
-
-    return of(fakeAdmin).pipe(
-      map((response) => UserProfileMapper.fromResponse(response)),
-      tap((user) => {
-        this._currentUser.set(user);
-      }),
-      map(() => undefined),
-      catchError(() => {
-        return EMPTY;
-      }),
-    );
-  }
-
   setUser(profile: UserProfile): void {
     this._currentUser.set(profile);
   }
@@ -68,5 +44,20 @@ export class UserStore {
     if (patch.language !== undefined && patch.language !== currentLanguage) {
       this.localeRedirect.redirect(patch.language);
     }
+  }
+
+  // TODO: temporary dev seed for the operator app until its OIDC auth lands.
+  seedDevUser(): void {
+    this._currentUser.set({
+      id: '00000000-0000-0000-0000-000000000000',
+      username: 'dev-operator',
+      email: '',
+      displayName: 'Dev Operator',
+      roles: ['OPERATOR'],
+      isAdmin: false,
+      isOperator: true,
+      mustChangePassword: false,
+      status: 'ACTIVE',
+    });
   }
 }
