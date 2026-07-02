@@ -274,12 +274,16 @@ export class Labels {
   static readonly ReturnDialogTitle = $localize`Confirm equipment return`;
   static readonly ItemsToReturn = $localize`Items to return`;
   static readonly EstimatedCost = $localize`Estimated cost`;
-  static readonly TotalEstimated = $localize`Total estimated`;
   static readonly TotalCurrent = $localize`Total current`;
   static readonly AmountToRefund = $localize`To refund to customer`;
   static readonly AmountToCollect = $localize`To collect from customer`;
   static readonly NoSettlementNeeded = $localize`No settlement needed`;
   static readonly ConfirmReturnButton = $localize`Confirm return`;
+
+  static readonly AddEquipmentButton = $localize`Add equipment`;
+  static readonly AddEquipmentDialogTitle = $localize`Add equipment to rental`;
+  static readonly AddEquipmentBillingNote = $localize`New items are billed only for the remaining time — the rental's return time does not change.`;
+  static readonly RentalAddEquipmentSuccess = $localize`Equipment added to rental`;
 
   static readonly BrokenEquipmentTitle = $localize`Broken equipment`;
   static readonly BrokenEquipmentSubtitle = $localize`Select items to mark as broken and enter the penalty amount if applicable`;

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -19,7 +27,6 @@ import {
   EquipmentSearchStore,
   Labels,
   QrScanDialogComponent,
-  RentalStore,
 } from '@bikerental/shared';
 import { EquipmentItemRowComponent } from './equipment-item-row.component';
 
@@ -38,7 +45,7 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
     EquipmentItemRowComponent,
   ],
   template: `
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-1">
       <div class="flex gap-2">
         <mat-form-field appearance="outline" class="flex-1">
           <mat-label>{{ Labels.Equipment }}</mat-label>
@@ -75,11 +82,8 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
       </div>
 
       <div class="flex flex-col gap-2">
-        @for (item of store.equipmentItems(); track item.id) {
-          <app-equipment-item-row
-            [item]="item"
-            (removeRequested)="store.removeEquipmentItem($event)"
-          />
+        @for (item of items(); track item.id) {
+          <app-equipment-item-row [item]="item" (removeRequested)="itemRemoved.emit($event)" />
         }
       </div>
     </div>
@@ -93,13 +97,14 @@ export class RentalEquipmentSectionComponent {
   private readonly snackBar = inject(MatSnackBar);
   private readonly scanResolver = inject(EquipmentScanResolverService);
 
-  protected readonly store = inject(RentalStore);
+  readonly items = input.required<EquipmentSearchItem[]>();
+  readonly itemAdded = output<EquipmentSearchItem>();
+  readonly itemRemoved = output<number>();
+
   protected readonly Labels = Labels;
   protected readonly searchControl = new FormControl<string>('', { nonNullable: true });
 
-  private readonly selectedIds = computed(
-    () => new Set(this.store.equipmentItems().map((e) => e.id)),
-  );
+  private readonly selectedIds = computed(() => new Set(this.items().map((e) => e.id)));
 
   protected readonly searchResults = computed(() =>
     this.equipmentSearchStore.results().filter((r) => !this.selectedIds().has(r.id)),
@@ -118,7 +123,7 @@ export class RentalEquipmentSectionComponent {
 
   protected onEquipmentSelected(event: MatAutocompleteSelectedEvent): void {
     const item = event.option.value as EquipmentSearchItem;
-    this.store.addEquipmentItem(item);
+    this.itemAdded.emit(item);
     this.searchControl.setValue('', { emitEvent: false });
     this.equipmentSearchStore.search(null);
   }
@@ -147,7 +152,7 @@ export class RentalEquipmentSectionComponent {
       this.notify(Labels.EquipmentAlreadyAdded);
       return;
     }
-    this.store.addEquipmentItem(item);
+    this.itemAdded.emit(item);
     this.notify(Labels.EquipmentAdded);
   }
 

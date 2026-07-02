@@ -31,4 +31,5 @@ export interface RentalDetailState extends RentalState {
   overdueMinutes?: number;
   brokenEquipmentEntries: BrokenEquipmentEntry[];
   isReturning: boolean;
+  isAddingEquipment: boolean;
 }

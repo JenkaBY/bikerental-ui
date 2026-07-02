@@ -10,16 +10,25 @@ import type {
   RentalEquipmentItem,
   ReturnSettlement,
 } from '@ui-models';
+import { FinanceService } from '../api/generated';
 import { CostCalculationMapper } from '../mappers/cost-calculation.mapper';
 import { makeMoney } from '../mappers/money.mapper';
+import { toIsoDate } from '../../shared/utils/date.util';
 import { TariffStore } from './tariff.store';
 import { RentalStore } from './rental.store';
+
+interface HeldAmountParams {
+  rentalId: number;
+  customerId: string;
+  startedAt: Date | null;
+}
 
 @Injectable()
 export class ReturnEquipmentCostStore {
   private readonly tariffStore = inject(TariffStore);
   private readonly rentalStore = inject(RentalStore);
   private readonly costCalculationMapper = inject(CostCalculationMapper);
+  private readonly financeService = inject(FinanceService);
 
   readonly selectedItems = computed<RentalEquipmentItem[]>(() => {
     const selectedIds = this.rentalStore.selectedEquipmentItemIds();
@@ -59,18 +68,48 @@ export class ReturnEquipmentCostStore {
     return map;
   });
 
-  readonly totalEstimated = computed<Money>(() => {
-    const items = this.selectedItems();
-    const sum = items.reduce((acc, item) => acc + item.estimatedCost.amount, 0);
-    return makeMoney(sum, items[0]?.estimatedCost.currency);
+  readonly totalCurrent = computed<Money | null>(() => this.estimate()?.totalCost ?? null);
+
+  private readonly heldAmountParams = computed<HeldAmountParams | null>(() => {
+    const rentalId = this.rentalStore.id();
+    const customerId = this.rentalStore.customerId();
+    if (rentalId === null || !customerId) return null;
+    return { rentalId, customerId, startedAt: this.rentalStore.startedAt() };
   });
 
-  readonly totalCurrent = computed<Money | null>(() => this.estimate()?.totalCost ?? null);
+  private readonly heldAmountResource = rxResource<Money | null, HeldAmountParams | null>({
+    params: () => this.heldAmountParams(),
+    stream: ({ params }: { params: HeldAmountParams | null }) => {
+      if (!params) return of(null);
+      const fromDate = toIsoDate(params.startedAt ?? new Date(0));
+      const toDate = toIsoDate(new Date());
+      return this.financeService
+        .getTransactionHistory(
+          params.customerId,
+          { fromDate, toDate, sourceId: String(params.rentalId), sourceType: 'RENTAL' },
+          { page: 0, size: 100 },
+        )
+        .pipe(
+          map((page) => {
+            const holdTotal = (page.items ?? [])
+              .filter((t) => t.type === 'HOLD')
+              .reduce((sum, t) => sum + t.amount, 0);
+            return makeMoney(holdTotal);
+          }),
+          catchError(() => of(null)),
+        );
+    },
+  });
+
+  // The rental-scoped HOLD transaction from the ledger — the amount actually reserved
+  // for this specific rental (not the customer's account-wide reserved balance).
+  readonly heldAmount = computed<Money | null>(() => this.heldAmountResource.value() ?? null);
 
   readonly settlement = computed<ReturnSettlement | null>(() => {
     const current = this.totalCurrent();
-    if (!current) return null;
-    const diff = this.totalEstimated().amount - current.amount;
+    const held = this.heldAmount();
+    if (!current || !held) return null;
+    const diff = held.amount - current.amount;
     const amount = makeMoney(Math.abs(diff), current.currency);
     if (diff > 0) return { kind: 'refund', amount };
     if (diff < 0) return { kind: 'collect', amount };

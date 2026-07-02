@@ -61,7 +61,7 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
       <mat-divider />
 
       <app-return-settlement-summary
-        [totalEstimated]="costStore.totalEstimated()"
+        [heldAmount]="costStore.heldAmount()"
         [cost]="costStore.estimate()"
         [settlement]="costStore.settlement()"
         [isCalculating]="costStore.isCalculating()"

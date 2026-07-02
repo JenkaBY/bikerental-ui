@@ -354,6 +354,14 @@ export interface CostCalculationRequest {
   rentalDate?: string;
 }
 
+/** Request body for adding equipment to an active rental */
+export interface AddRentalEquipmentRequest {
+  /** List of Equipment IDs to add to the rental */
+  equipmentIds: Array<number>;
+  /** Operator identifier */
+  operatorId: string;
+}
+
 /** Request body for returning rented equipment */
 export interface ReturnEquipmentRequest {
   /** Rental ID */

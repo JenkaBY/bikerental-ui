@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Labels, mapEquipmentItemStatus, RentalStore } from '@bikerental/shared';
@@ -24,7 +24,7 @@ import type { RentalEquipmentItem } from '@bikerental/shared';
         }
       </div>
 
-      @for (item of equipmentItems(); track item.id) {
+      @for (item of sortedItems(); track item.id) {
         <div
           class="flex items-center gap-3 px-4 py-3 border-t border-slate-100"
           [class.opacity-40]="item.isReturned"
@@ -50,6 +50,10 @@ export class RentalEquipmentSectionComponent {
 
   protected readonly store = inject(RentalStore);
   protected readonly Labels = Labels;
+
+  protected readonly sortedItems = computed(() =>
+    [...this.equipmentItems()].sort((a, b) => Number(a.isReturned) - Number(b.isReturned)),
+  );
 
   protected isChecked(item: RentalEquipmentItem): boolean {
     return item.isReturned || this.store.selectedEquipmentItemIds().has(item.id);
