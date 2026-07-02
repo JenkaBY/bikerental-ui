@@ -21,15 +21,16 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  RentalRequest,
-  RequestOptions,
-  RentalResponse,
+  AddRentalEquipmentRequest,
   Pageable,
-  PageRentalSummaryResponse,
-  ReturnEquipmentRequest,
-  RentalReturnResponse,
-  RentalLifecycleRequest,
   PageAvailableEquipmentResponse,
+  PageRentalSummaryResponse,
+  RentalLifecycleRequest,
+  RentalRequest,
+  RentalResponse,
+  RentalReturnResponse,
+  RequestOptions,
+  ReturnEquipmentRequest,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -217,6 +218,55 @@ export class RentalsService {
     };
 
     return this.httpClient.post(url, rentalRequest, requestOptions);
+  }
+
+  addEquipment(
+    rentalId: number,
+    addRentalEquipmentRequest: AddRentalEquipmentRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<RentalResponse>;
+  addEquipment(
+    rentalId: number,
+    addRentalEquipmentRequest: AddRentalEquipmentRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<RentalResponse>>;
+  addEquipment(
+    rentalId: number,
+    addRentalEquipmentRequest: AddRentalEquipmentRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<RentalResponse>>;
+  /** Adds new equipment to an ACTIVE rental. The added equipment starts now and shares the rental's expected return time; the rental's estimated cost is recalculated. No payment is taken until return. */
+  addEquipment(
+    rentalId: number,
+    addRentalEquipmentRequest: AddRentalEquipmentRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/${rentalId}/equipments`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, addRentalEquipmentRequest, requestOptions);
   }
 
   returnEquipment(
