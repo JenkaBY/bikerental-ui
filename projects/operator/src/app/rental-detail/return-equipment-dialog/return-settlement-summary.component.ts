@@ -41,8 +41,8 @@ import type {
         <mat-divider class="!my-1" />
 
         <div class="flex justify-between text-sm text-slate-500">
-          <span>{{ Labels.TotalEstimated }}</span>
-          <span>{{ totalEstimated() | money }}</span>
+          <span>{{ Labels.CustomerBalanceReserved }}</span>
+          <span>{{ heldAmount() | money }}</span>
         </div>
 
         @if (settlement(); as s) {
@@ -63,7 +63,7 @@ import type {
   `,
 })
 export class ReturnSettlementSummaryComponent {
-  readonly totalEstimated = input.required<Money>();
+  readonly heldAmount = input.required<Money | null>();
   readonly cost = input<RentalCostEstimate | null>(null);
   readonly settlement = input<ReturnSettlement | null>(null);
   readonly isCalculating = input(false);

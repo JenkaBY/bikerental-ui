@@ -274,7 +274,6 @@ export class Labels {
   static readonly ReturnDialogTitle = $localize`Confirm equipment return`;
   static readonly ItemsToReturn = $localize`Items to return`;
   static readonly EstimatedCost = $localize`Estimated cost`;
-  static readonly TotalEstimated = $localize`Total estimated`;
   static readonly TotalCurrent = $localize`Total current`;
   static readonly AmountToRefund = $localize`To refund to customer`;
   static readonly AmountToCollect = $localize`To collect from customer`;
