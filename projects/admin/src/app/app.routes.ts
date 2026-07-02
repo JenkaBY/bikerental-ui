@@ -101,7 +101,7 @@ export const routes: Routes = [
       {
         path: 'users',
         loadComponent: () =>
-          import('./users/user-placeholder.component').then((m) => m.UserPlaceholderComponent),
+          import('./users/users-list.component').then((m) => m.UsersListComponent),
       },
     ],
   },

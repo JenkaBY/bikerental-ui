@@ -306,4 +306,62 @@ export class Labels {
   static readonly AccessDeniedTitle = $localize`Access denied`;
   static readonly AccessDeniedDetail = $localize`You do not have permission to view this page.`;
   static readonly BackToHome = $localize`Back to home`;
+
+  // ── User Management ───────────────────────────────────────────────────────
+
+  static readonly UsersListTitle = $localize`Users`;
+  static readonly NewUserButton = $localize`New User`;
+  static readonly UsersEmptyState = $localize`No users found`;
+  static readonly UsersLoadError = $localize`Failed to load users`;
+  static readonly UserColumnUsername = $localize`Username`;
+  static readonly UserColumnEmail = $localize`Email`;
+  static readonly UserColumnDisplayName = $localize`Display name`;
+  static readonly UserColumnRoles = $localize`Roles`;
+  static readonly UserColumnStatus = $localize`Status`;
+  static readonly UserColumnLastLogin = $localize`Last login`;
+  static readonly UserColumnActions = $localize`Actions`;
+  static readonly UserStatusActive = $localize`Active`;
+  static readonly UserStatusDisabled = $localize`Disabled`;
+  static readonly UserLastLoginNever = $localize`Never`;
+  static readonly UserEditTooltip = $localize`Edit`;
+  static readonly UserResetPasswordTooltip = $localize`Reset password`;
+  static readonly UserActivateTooltip = $localize`Activate`;
+  static readonly UserDeactivateTooltip = $localize`Deactivate`;
+  static readonly UserProtectedTooltip = $localize`This is a protected system account and cannot be modified here`;
+
+  static readonly CreateUserDialogTitle = $localize`New User`;
+  static readonly UserUsernameLabel = $localize`Username`;
+  static readonly UserEmailLabel = $localize`Email`;
+  static readonly UserDisplayNameLabel = $localize`Display name`;
+  static readonly UserRolesLabel = $localize`Roles`;
+  static readonly UserPasswordLabel = $localize`Password (optional)`;
+  static readonly UserPasswordHint = $localize`Leave blank to auto-generate a temporary password`;
+  static readonly CreateUserConfirmButton = $localize`Create`;
+  static readonly CreateUserSuccessNoReveal = $localize`User created successfully`;
+  static readonly CreateUserError = $localize`Failed to create user`;
+
+  static readonly EditUserDialogTitle = $localize`Edit User`;
+  static readonly UserStatusLabel = $localize`Status`;
+  static readonly SaveUserButton = $localize`Save`;
+  static readonly EditUserError = $localize`Failed to update user`;
+
+  static readonly DeactivateUserDialogTitle = $localize`Deactivate user`;
+  static readonly DeactivateUserDialogMessage = $localize`This will disable the account and revoke all of its active sessions. The user will no longer be able to sign in until reactivated.`;
+  static readonly DeactivateUserConfirmButton = $localize`Deactivate`;
+  static readonly DeactivateUserError = $localize`Failed to deactivate user`;
+  static readonly ActivateUserError = $localize`Failed to activate user`;
+
+  static readonly ResetPasswordDialogTitle = $localize`Reset password`;
+  static readonly ResetPasswordDialogMessage = $localize`This will issue a new temporary password, force the user to change it at next login, and revoke all of their active sessions.`;
+  static readonly ResetPasswordConfirmButton = $localize`Reset password`;
+  static readonly ResetPasswordError = $localize`Failed to reset password`;
+
+  static readonly TemporaryPasswordDialogTitle = $localize`Temporary password`;
+  static readonly TemporaryPasswordWarning = $localize`This password is shown only once and cannot be retrieved again. Copy it now and share it securely with the user.`;
+  static readonly TemporaryPasswordCopyButton = $localize`Copy`;
+  static readonly TemporaryPasswordCopiedConfirmation = $localize`Copied to clipboard`;
+  static readonly TemporaryPasswordCopyFailed = $localize`Copy failed — select and copy the password manually`;
+  static readonly TemporaryPasswordDoneButton = $localize`Done`;
+  static readonly TemporaryPasswordShowButton = $localize`Show password`;
+  static readonly TemporaryPasswordHideButton = $localize`Hide password`;
 }
