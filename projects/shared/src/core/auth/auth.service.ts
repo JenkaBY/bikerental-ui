@@ -1,17 +1,21 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
-import { catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { catchError, finalize, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { IdentityService } from '../api/generated';
 import { UserProfileMapper } from '../mappers';
 import { UserStore } from '../state/user.store';
 import { readAccessTokenClaims } from './auth.token-claims';
+
+const RETURN_URL_STORAGE_KEY = 'auth_return_url';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly oidc = inject(OidcSecurityService);
   private readonly identity = inject(IdentityService);
   private readonly userStore = inject(UserStore);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly _roles = signal<string[]>([]);
@@ -25,6 +29,8 @@ export class AuthService {
   readonly isAdmin = computed(() => this._roles().includes('ADMIN'));
   readonly isOperator = computed(() => this._roles().includes('OPERATOR'));
 
+  private refreshInFlight$: Observable<LoginResponse> | null = null;
+
   checkAuth(): Observable<LoginResponse> {
     return this.oidc.checkAuth().pipe(
       switchMap((result) => {
@@ -33,12 +39,14 @@ export class AuthService {
           return of(result);
         }
         this.hydrate();
+        this.restoreReturnUrl();
         return this.syncClaims(result);
       }),
     );
   }
 
-  login(): void {
+  login(returnUrl?: string): void {
+    this.saveReturnUrl(returnUrl ?? this.router.url);
     this.oidc.authorize();
   }
 
@@ -48,9 +56,16 @@ export class AuthService {
   }
 
   refresh(): Observable<LoginResponse> {
-    return this.oidc
-      .forceRefreshSession()
-      .pipe(switchMap((result) => (result.isAuthenticated ? this.syncClaims(result) : of(result))));
+    if (!this.refreshInFlight$) {
+      this.refreshInFlight$ = this.oidc.forceRefreshSession().pipe(
+        switchMap((result) => (result.isAuthenticated ? this.syncClaims(result) : of(result))),
+        finalize(() => {
+          this.refreshInFlight$ = null;
+        }),
+        shareReplay(1),
+      );
+    }
+    return this.refreshInFlight$;
   }
 
   hydrate(): void {
@@ -88,5 +103,29 @@ export class AuthService {
     this._roles.set([]);
     this._uid.set(null);
     this._mustChangePassword.set(false);
+  }
+
+  private saveReturnUrl(url: string): void {
+    if (!url || url === '/' || url.startsWith('/forbidden') || url.startsWith('/change-password')) {
+      return;
+    }
+    try {
+      sessionStorage.setItem(RETURN_URL_STORAGE_KEY, url);
+    } catch {
+      // Ignore storage failures (e.g. private browsing) — worst case the user lands on the default route.
+    }
+  }
+
+  private restoreReturnUrl(): void {
+    let returnUrl: string | null;
+    try {
+      returnUrl = sessionStorage.getItem(RETURN_URL_STORAGE_KEY);
+      sessionStorage.removeItem(RETURN_URL_STORAGE_KEY);
+    } catch {
+      return;
+    }
+    if (returnUrl && returnUrl !== this.router.url) {
+      void this.router.navigateByUrl(returnUrl);
+    }
   }
 }
