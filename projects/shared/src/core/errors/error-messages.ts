@@ -71,6 +71,8 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.INSUFFICIENT_FUNDS]: insufficientFundsMessage,
   [ErrorCode.HOLD_REQUIRED]: $localize`A payment hold is required before this action can proceed.`,
   [ErrorCode.EQUIPMENT_NOT_AVAILABLE]: rentalEquipmentNotAvailableMessage,
+  [ErrorCode.STATUS_INVALID]: rentalStatusInvalidMessage,
+  [ErrorCode.WINDOW_ELAPSED]: $localize`This rental is overdue — return it before adding more equipment.`,
 
   // Identity (authentication & accounts)
   [ErrorCode.AUTH_REQUIRED]: $localize`Your session has expired. Please sign in again.`,
@@ -151,6 +153,14 @@ function rentalEquipmentNotAvailableMessage(params: Record<string, unknown>): st
     return $localize`Equipment ${ids.map(String).join(', ')}:ids: is already rented out.`;
   }
   return $localize`The selected equipment is already rented out.`;
+}
+
+function rentalStatusInvalidMessage(params: Record<string, unknown>): string {
+  const currentStatus = params['currentStatus'];
+  if (typeof currentStatus === 'string' && currentStatus.length > 0) {
+    return $localize`This rental is no longer active (current status: ${currentStatus}:currentStatus:).`;
+  }
+  return $localize`This rental is no longer active.`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

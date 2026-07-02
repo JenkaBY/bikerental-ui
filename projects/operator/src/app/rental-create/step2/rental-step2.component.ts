@@ -41,14 +41,18 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
         (withdrawRequested)="onWithdrawRequested()"
       />
       <app-rental-duration-control />
-      <app-rental-equipment-section />
+      <app-rental-equipment-section
+        [items]="store.equipmentItems()"
+        (itemAdded)="store.addEquipmentItem($event)"
+        (itemRemoved)="store.removeEquipmentItem($event)"
+      />
       <app-rental-pricing-section />
     </div>
     <app-rental-cost-footer (nextRequested)="onNext()" (saveDraftRequested)="onSaveDraft()" />
   `,
 })
 export class RentalStep2Component {
-  private readonly store = inject(RentalStore);
+  protected readonly store = inject(RentalStore);
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
