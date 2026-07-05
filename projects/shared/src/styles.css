@@ -70,3 +70,9 @@ mat-sidenav {
   background-color: #b45309 !important;
   border-color: #b45309 !important;
 }
+
+/* Material's adjacent-button spacing selector doesn't reach across custom-component
+   wrappers (e.g. app-form-cancel-button), so dialog action buttons can end up flush. */
+mat-dialog-actions {
+  gap: 8px;
+}
