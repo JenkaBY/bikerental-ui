@@ -80,26 +80,30 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
 
         <mat-divider class="!my-2" />
 
-        @if (hasDiscount() && subtotal(); as sub) {
-          <div class="flex justify-between">
-            <span>{{ Labels.Subtotal }}</span>
-            <span>{{ sub | money }}</span>
-          </div>
-        }
-        @if (hasDiscount() && discountAmount(); as discAmt) {
-          <div class="flex justify-between text-green-600">
-            <span>{{ Labels.DiscountLabel }}&nbsp;&minus;{{ rentalStore.discountPercent() }}%</span>
-            <span>&minus;{{ discAmt | money }}</span>
-          </div>
-        }
-        @if (rentalStore.specialPriceEnabled()) {
-          <div class="flex justify-between">
-            <span>{{ Labels.SpecialPrice }}</span>
-            <span>{{ rentalStore.estimatedCost() | money }}</span>
-          </div>
-        }
+        @if (hasPricingBreakdown()) {
+          @if (hasDiscount() && subtotal(); as sub) {
+            <div class="flex justify-between">
+              <span>{{ Labels.Subtotal }}</span>
+              <span>{{ sub | money }}</span>
+            </div>
+          }
+          @if (hasDiscount() && discountAmount(); as discAmt) {
+            <div class="flex justify-between text-green-600">
+              <span
+                >{{ Labels.DiscountLabel }}&nbsp;&minus;{{ rentalStore.discountPercent() }}%</span
+              >
+              <span>&minus;{{ discAmt | money }}</span>
+            </div>
+          }
+          @if (rentalStore.specialPriceEnabled()) {
+            <div class="flex justify-between">
+              <span>{{ Labels.SpecialPrice }}</span>
+              <span>{{ rentalStore.estimatedCost() | money }}</span>
+            </div>
+          }
 
-        <mat-divider class="!my-2" />
+          <mat-divider class="!my-2" />
+        }
 
         @if (rentalStore.estimatedCost(); as total) {
           <div class="flex justify-between font-semibold">
@@ -186,6 +190,10 @@ export class SigningDialogComponent {
     const percent = this.rentalStore.discountPercent();
     return !this.rentalStore.specialPriceEnabled() && percent != null && percent > 0;
   });
+
+  protected readonly hasPricingBreakdown = computed(
+    () => this.hasDiscount() || this.rentalStore.specialPriceEnabled(),
+  );
 
   protected readonly discountAmount = computed<Money | null>(() => {
     if (!this.hasDiscount()) return null;
