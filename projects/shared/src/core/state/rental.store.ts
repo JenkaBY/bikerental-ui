@@ -339,8 +339,9 @@ export class RentalStore {
     this.loadDetail$(id).subscribe();
   }
 
-  loadDetail$(id: number): Observable<Partial<RentalDetailState>> {
-    this.patchState({ isLoading: true });
+  loadDetail$(id: number, options?: { silent?: boolean }): Observable<Partial<RentalDetailState>> {
+    const silent = options?.silent ?? false;
+    if (!silent) this.patchState({ isLoading: true });
     this.loadError.set(false);
 
     return this.rentalsService.getRentalById(id).pipe(
@@ -357,7 +358,9 @@ export class RentalStore {
         this.applyDetail(state);
         this.setCustomer(state.customer || null);
       }),
-      finalize(() => this.patchState({ isLoading: false })),
+      finalize(() => {
+        if (!silent) this.patchState({ isLoading: false });
+      }),
       catchError(() => {
         this.loadError.set(true);
         return EMPTY;

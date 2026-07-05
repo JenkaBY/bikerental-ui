@@ -329,6 +329,28 @@ signing» не открывал диалог подписания — вмест
 - Место: `projects/operator/src/app/rental-create/rental-create.component.ts` (второй `effect()`
   в конструкторе).
 
+**Round 2 — настоящая причина найдена (первый фикс не устранял проблему полностью):**
+
+Симптом воспроизводился и на `/rentals/new` (не только в режиме редактирования), т.е. не зависел от
+guard-эффекта из round 1 — тот действительно был отдельным багом, но не единственным.
+
+- **Причина:** `RentalStore.loadDetail$()` в самом начале синхронно делает
+  `this.patchState({ isLoading: true })`. Этот же `loadDetail$()` вызывается из
+  `onSendToSigning()` **после** перевода в `AWAITING_SIGNATURE`, чтобы подтянуть обогащённые данные
+  перед открытием диалога (S-6). Но `isLoading` — тот же флаг, на который завязан
+  `RentalCreateComponent.isBusy()` (`@if (isBusy()) { спиннер } @else { <app-rental-step3 …> }`).
+  Как только `isLoading` становился `true`, `@else`-ветка со степпером (и живым
+  `app-rental-step3`) заменялась на спиннер загрузки — это и есть тот «белый экран на мгновение».
+  Уничтожение `RentalStep3Component` обрывало (`takeUntilDestroyed`) уже стартовавший `GET`
+  (отсюда canceled в сети) и всю цепочку `onSendToSigning()`, включая последующий
+  `signingFlow.openDialog()` — диалог просто не успевал открыться.
+- **Фикс:** `loadDetail$()` теперь принимает `{ silent?: boolean }`; при `silent: true` не трогает
+  `isLoading` ни в начале, ни в `finalize`. `onSendToSigning()` вызывает
+  `this.store.loadDetail$(id, { silent: true })` — обновление данных перед диалогом больше не
+  переключает `RentalCreateComponent` в состояние «занято» и не сносит степпер.
+- Место: `projects/shared/src/core/state/rental.store.ts` (`loadDetail$`),
+  `projects/operator/src/app/rental-create/step3/rental-step3.component.ts` (`onSendToSigning`).
+
 ---
 
 ## Раздел R. Экран аренды и списки (FE)

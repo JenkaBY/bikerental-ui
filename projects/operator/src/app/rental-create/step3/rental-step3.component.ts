@@ -135,7 +135,7 @@ export class RentalStep3Component {
           if (version === null) return of(null);
           const id = this.store.id();
           if (id === null) return of(null);
-          return this.store.loadDetail$(id).pipe(
+          return this.store.loadDetail$(id, { silent: true }).pipe(
             switchMap(() =>
               this.signingFlow.openDialog(id, version, this.viewContainerRef).pipe(
                 switchMap((outcome) => {
