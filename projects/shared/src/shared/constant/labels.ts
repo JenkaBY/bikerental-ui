@@ -429,4 +429,10 @@ export class Labels {
   static readonly AgreementSigned = $localize`Agreement signed`;
   static readonly AgreementVersion = $localize`version`;
   static readonly DownloadAgreementPdf = $localize`Download PDF`;
+  static readonly AgreementPdf = $localize`Agreement PDF`;
+
+  static readonly ConsentPrefix = $localize`I have fully read and agree to`;
+  static readonly ConsentFrom = $localize`from`;
+  static readonly ReadFull = $localize`Read`;
+  static readonly Collapse = $localize`Collapse`;
 }

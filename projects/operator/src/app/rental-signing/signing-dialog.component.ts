@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -29,9 +31,11 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButtonModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    DatePipe,
     DurationPipe,
     MoneyPipe,
     SignaturePadComponent,
@@ -40,9 +44,22 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
     <h2 mat-dialog-title>{{ Labels.SigningDialogTitle }}</h2>
     <mat-dialog-content class="flex flex-col gap-4">
       @if (signingStore.template(); as template) {
-        <div class="max-h-48 overflow-y-auto rounded border border-slate-200 p-3 text-sm">
-          <h3 class="font-semibold mb-2">{{ template.title }}</h3>
-          <p class="whitespace-pre-wrap">{{ template.content }}</p>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="font-semibold">{{ template.title }}</h3>
+            <button mat-button type="button" (click)="toggleExpanded()">
+              {{ expanded() ? Labels.Collapse : Labels.ReadFull }}
+            </button>
+          </div>
+          @if (expanded()) {
+            <div class="max-h-48 overflow-y-auto rounded border border-slate-200 p-3 text-sm">
+              <p class="whitespace-pre-wrap">{{ template.content }}</p>
+            </div>
+          }
+          <mat-checkbox [checked]="consented()" (change)="onConsentChanged($event.checked)">
+            {{ Labels.ConsentPrefix }} {{ template.title }} {{ Labels.ConsentFrom }}
+            {{ template.activatedAt | date: 'mediumDate' }}
+          </mat-checkbox>
         </div>
       }
 
@@ -74,12 +91,14 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
       <app-signature-pad (emptyChanged)="onPadEmptyChanged($event)" />
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="onCancel()">{{ Labels.Cancel }}</button>
+      <button mat-button class="btn-caution" type="button" (click)="onCancel()">
+        {{ Labels.Cancel }}
+      </button>
       <button
         mat-flat-button
         color="primary"
         type="button"
-        [disabled]="padEmpty() || signingStore.isSigning()"
+        [disabled]="padEmpty() || !consented() || signingStore.isSigning()"
         (click)="onSign()"
       >
         @if (signingStore.isSigning()) {
@@ -104,11 +123,21 @@ export class SigningDialogComponent {
   private readonly pad = viewChild.required(SignaturePadComponent);
 
   protected readonly padEmpty = signal(true);
+  protected readonly expanded = signal(false);
+  protected readonly consented = signal(false);
 
   protected readonly equipmentItems = this.rentalStore.rentalEquipmentItems;
 
   protected onPadEmptyChanged(empty: boolean): void {
     this.padEmpty.set(empty);
+  }
+
+  protected toggleExpanded(): void {
+    this.expanded.update((value) => !value);
+  }
+
+  protected onConsentChanged(checked: boolean): void {
+    this.consented.set(checked);
   }
 
   protected onCancel(): void {

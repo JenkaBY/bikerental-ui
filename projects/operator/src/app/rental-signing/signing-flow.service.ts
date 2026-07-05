@@ -32,8 +32,8 @@ export class SigningFlowService {
               data: { rentalId, version },
               disableClose: true,
               viewContainerRef,
-              width: '640px',
-              maxWidth: '95vw',
+              width: 'min(640px, 100vw)',
+              maxWidth: '100vw',
             },
           )
           .afterClosed()

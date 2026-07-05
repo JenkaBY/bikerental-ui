@@ -103,6 +103,7 @@ export class SignaturePadComponent {
   protected onPointerDown(event: PointerEvent): void {
     if (this.disabled() || this.activePointerId !== null) return;
     event.preventDefault();
+    this.syncCanvasSize();
     this.activePointerId = event.pointerId;
     this.canvasRef().nativeElement.setPointerCapture(event.pointerId);
     this.strokes.push([this.toCanvasPoint(event)]);
@@ -137,11 +138,27 @@ export class SignaturePadComponent {
     this.redraw();
   }
 
+  private syncCanvasSize(): void {
+    const canvas = this.canvasRef().nativeElement;
+    const dpr = window.devicePixelRatio || 1;
+    const { width, height } = canvas.getBoundingClientRect();
+    const expectedWidth = Math.max(1, Math.round(width * dpr));
+    const expectedHeight = Math.max(1, Math.round(height * dpr));
+    if (
+      Math.abs(canvas.width - expectedWidth) > 1 ||
+      Math.abs(canvas.height - expectedHeight) > 1
+    ) {
+      this.resizeCanvas();
+    }
+  }
+
   private context(): CanvasRenderingContext2D {
     const canvas = this.canvasRef().nativeElement;
     const ctx = canvas.getContext('2d')!;
-    const dpr = window.devicePixelRatio || 1;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const { width, height } = canvas.getBoundingClientRect();
+    const scaleX = width > 0 ? canvas.width / width : 1;
+    const scaleY = height > 0 ? canvas.height / height : 1;
+    ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     ctx.lineWidth = STROKE_WIDTH;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
