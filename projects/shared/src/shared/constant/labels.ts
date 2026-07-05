@@ -410,4 +410,7 @@ export class Labels {
 
   static readonly AgreementPdfPreviewDialogTitle = $localize`PDF Preview`;
   static readonly DownloadPdfButton = $localize`Download`;
+
+  static readonly SignatureClear = $localize`Clear`;
+  static readonly SignatureHint = $localize`Sign here`;
 }
