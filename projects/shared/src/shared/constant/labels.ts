@@ -368,4 +368,7 @@ export class Labels {
   static readonly TemporaryPasswordDoneButton = $localize`Done`;
   static readonly TemporaryPasswordShowButton = $localize`Show password`;
   static readonly TemporaryPasswordHideButton = $localize`Hide password`;
+
+  static readonly SignatureClear = $localize`Clear`;
+  static readonly SignatureHint = $localize`Sign here`;
 }

@@ -100,6 +100,7 @@ export * from './shared/components/qr-scanner/barcode-scanner.service';
 export * from './shared/components/qr-scanner/qr-payload-parser';
 export * from './shared/components/qr-scanner/qr-scanner.component';
 export * from './shared/components/qr-scanner/qr-scan-dialog.component';
+export * from './shared/components/signature-pad/signature-pad.component';
 // Shared UI — constants
 export * from './shared/constant/labels';
 
