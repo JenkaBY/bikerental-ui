@@ -173,6 +173,8 @@ export interface EquipmentItemResponse {
 export interface RentalResponse {
   /** Rental ID */
   id: number;
+  /** Optimistic-lock version, starts at 0 */
+  version: number;
   /** Customer UUID */
   customerId: string;
   /** List of equipment items in this rental */
@@ -281,14 +283,6 @@ export interface EquipmentStatusResponse {
   allowedTransitions: Array<string>;
 }
 
-export interface SetTimeRequest {
-  instant: string;
-}
-
-export interface TimeResponse {
-  instant: string;
-}
-
 /** Request body for creating or updating a customer profile */
 export interface CustomerRequest {
   /** Customer phone number */
@@ -352,6 +346,18 @@ export interface CostCalculationRequest {
   specialTariffId?: number;
   specialPrice?: number;
   rentalDate?: string;
+}
+
+export interface SignAgreementRequest {
+  signaturePng: string;
+  rentalVersion: number;
+  templateId: number;
+  operatorId: string;
+}
+
+export interface SignatureCreatedResponse {
+  signatureId?: number;
+  signedAt?: string;
 }
 
 /** Request body for adding equipment to an active rental */
@@ -483,8 +489,29 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
+export interface AgreementTemplateRequest {
+  title: string;
+  content: string;
+}
+
+export interface AgreementTemplateResponse {
+  id?: number;
+  versionNumber?: number;
+  title?: string;
+  content?: string;
+  status?: 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
+  createdAt?: string;
+  activatedAt?: string;
+  deactivatedAt?: string;
+}
+
+export interface AgreementPdfPreviewRequest {
+  title: string;
+  content: string;
+}
+
 export interface RentalLifecycleRequest {
-  status: 'ACTIVE' | 'CANCELLED';
+  status: 'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'CANCELLED';
   operatorId: string;
 }
 
@@ -564,6 +591,13 @@ export interface RentalSummaryResponse {
   actualDurationMinutes?: number;
 }
 
+export interface SignatureSummaryResponse {
+  signatureId?: number;
+  templateId?: number;
+  templateVersionNumber?: number;
+  signedAt?: string;
+}
+
 /** Equipment available for a new rental */
 export interface AvailableEquipmentResponse {
   /** Equipment ID */
@@ -633,10 +667,6 @@ export interface PageEquipmentResponse {
   pageRequest?: PageRequest;
 }
 
-export interface SseEmitter {
-  timeout?: number;
-}
-
 /** Compact customer info returned in search results */
 export interface CustomerSearchResponse {
   /** Customer UUID */
@@ -647,6 +677,16 @@ export interface CustomerSearchResponse {
   firstName?: string;
   /** Last name */
   lastName?: string;
+}
+
+export interface AgreementTemplateSummaryResponse {
+  id?: number;
+  versionNumber?: number;
+  title?: string;
+  status?: 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
+  createdAt?: string;
+  activatedAt?: string;
+  deactivatedAt?: string;
 }
 
 /** Request Options for Angular HttpClient requests */
