@@ -9,6 +9,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import type { Money } from '@bikerental/shared';
@@ -40,6 +41,7 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
     MatButtonModule,
     MatCheckboxModule,
     MatDialogModule,
+    MatDividerModule,
     MatIconModule,
     MatProgressSpinnerModule,
     DurationPipe,
@@ -76,8 +78,10 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
           </div>
         }
 
+        <mat-divider class="!my-2" />
+
         @if (hasDiscount() && subtotal(); as sub) {
-          <div class="flex justify-between mt-1">
+          <div class="flex justify-between">
             <span>{{ Labels.Subtotal }}</span>
             <span>{{ sub | money }}</span>
           </div>
@@ -94,8 +98,11 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
             <span>{{ rentalStore.estimatedCost() | money }}</span>
           </div>
         }
+
+        <mat-divider class="!my-2" />
+
         @if (rentalStore.estimatedCost(); as total) {
-          <div class="flex justify-between font-semibold mt-1">
+          <div class="flex justify-between font-semibold">
             <span>{{ Labels.Total }}</span>
             <span>{{ total | money }}</span>
           </div>
