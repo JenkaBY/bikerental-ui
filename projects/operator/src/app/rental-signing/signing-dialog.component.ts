@@ -1,10 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import type { Money } from '@bikerental/shared';
 import {
   AgreementSigningStore,
   ApiError,
@@ -40,53 +48,83 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
     MoneyPipe,
     SignaturePadComponent,
   ],
+  styles: `
+    .signing-consent-toggle {
+      all: unset;
+      cursor: pointer;
+      color: #2563eb;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+  `,
   template: `
     <h2 mat-dialog-title>{{ Labels.SigningDialogTitle }}</h2>
     <mat-dialog-content class="flex flex-col gap-4">
-      @if (signingStore.template(); as template) {
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center justify-between gap-2">
-            <h3 class="font-semibold">{{ template.title }}</h3>
-            <button mat-button type="button" (click)="toggleExpanded()">
-              {{ expanded() ? Labels.Collapse : Labels.ReadFull }}
-            </button>
-          </div>
-          @if (expanded()) {
-            <div class="max-h-48 overflow-y-auto rounded border border-slate-200 p-3 text-sm">
-              <p class="whitespace-pre-wrap">{{ template.content }}</p>
-            </div>
-          }
-          <mat-checkbox [checked]="consented()" (change)="onConsentChanged($event.checked)">
-            {{ Labels.ConsentPrefix }} {{ template.title }} {{ Labels.ConsentFrom }}
-            {{ template.activatedAt | date: 'mediumDate' }}
-          </mat-checkbox>
-        </div>
-      }
-
       <div class="rounded border border-slate-200 p-3 text-sm flex flex-col gap-1">
         <h3 class="font-semibold mb-1">{{ Labels.SigningSummaryTitle }}</h3>
         <div>{{ rentalStore.customer()?.firstName }} {{ rentalStore.customer()?.lastName }}</div>
         <div class="text-slate-500">{{ rentalStore.customer()?.phone }}</div>
         @for (item of equipmentItems(); track item.id) {
-          <div class="flex justify-between">
-            <span>{{ item.model }} ({{ item.uid }})</span>
+          <div class="flex justify-between gap-2">
+            <span class="min-w-0">
+              {{ item.model }} ({{ item.uid }}) &middot;
+              {{ rentalStore.durationMinutes() | duration }}
+            </span>
             @if (item.estimatedCost; as cost) {
-              <span>{{ cost | money }}</span>
+              <span class="shrink-0 whitespace-nowrap">{{ cost | money }}</span>
             }
           </div>
         }
-        <div class="flex justify-between mt-1">
-          <span>{{ Labels.Duration }}</span>
-          <span>{{ rentalStore.durationMinutes() | duration }}</span>
-        </div>
+
+        @if (hasDiscount() && subtotal(); as sub) {
+          <div class="flex justify-between mt-1">
+            <span>{{ Labels.Subtotal }}</span>
+            <span>{{ sub | money }}</span>
+          </div>
+        }
+        @if (hasDiscount() && discountAmount(); as discAmt) {
+          <div class="flex justify-between text-green-600">
+            <span>{{ Labels.DiscountLabel }}&nbsp;&minus;{{ rentalStore.discountPercent() }}%</span>
+            <span>&minus;{{ discAmt | money }}</span>
+          </div>
+        }
+        @if (rentalStore.specialPriceEnabled()) {
+          <div class="flex justify-between">
+            <span>{{ Labels.SpecialPrice }}</span>
+            <span>{{ rentalStore.estimatedCost() | money }}</span>
+          </div>
+        }
         @if (rentalStore.estimatedCost(); as total) {
-          <div class="flex justify-between font-semibold">
+          <div class="flex justify-between font-semibold mt-1">
             <span>{{ Labels.Total }}</span>
             <span>{{ total | money }}</span>
           </div>
         }
         <p class="text-xs text-slate-500 mt-2">{{ Labels.SignatureStartNote }}</p>
       </div>
+
+      @if (signingStore.template(); as template) {
+        <div class="flex flex-col gap-1">
+          <mat-checkbox [checked]="consented()" (change)="onConsentChanged($event.checked)">
+            <span>
+              {{ Labels.ConsentPrefix }}
+              <span class="underline"
+                >{{ template.title }} {{ Labels.ConsentFrom }}
+                {{ template.activatedAt | date: 'mediumDate' }}</span
+              >.
+              <button type="button" class="signing-consent-toggle" (click)="toggleExpanded($event)">
+                {{ expanded() ? Labels.Collapse : Labels.ReadFull }}
+              </button>
+            </span>
+          </mat-checkbox>
+          <p class="text-sm text-slate-600 pl-8">{{ Labels.ConsentSignBelowNote }}</p>
+          @if (expanded()) {
+            <div class="max-h-48 overflow-y-auto rounded border border-slate-200 p-3 text-sm">
+              <p class="whitespace-pre-wrap">{{ template.content }}</p>
+            </div>
+          }
+        </div>
+      }
 
       <app-signature-pad (emptyChanged)="onPadEmptyChanged($event)" />
     </mat-dialog-content>
@@ -128,11 +166,36 @@ export class SigningDialogComponent {
 
   protected readonly equipmentItems = this.rentalStore.rentalEquipmentItems;
 
+  protected readonly subtotal = computed<Money | null>(() => {
+    const items = this.equipmentItems();
+    if (items.length === 0) return null;
+    const amount = items.reduce((sum, item) => sum + (item.estimatedCost?.amount ?? 0), 0);
+    const currency =
+      items.find((item) => item.estimatedCost)?.estimatedCost?.currency ??
+      this.rentalStore.estimatedCost()?.currency ??
+      'BYN';
+    return { amount, currency };
+  });
+
+  protected readonly hasDiscount = computed(() => {
+    const percent = this.rentalStore.discountPercent();
+    return !this.rentalStore.specialPriceEnabled() && percent != null && percent > 0;
+  });
+
+  protected readonly discountAmount = computed<Money | null>(() => {
+    if (!this.hasDiscount()) return null;
+    const sub = this.subtotal();
+    const total = this.rentalStore.estimatedCost();
+    if (!sub || !total) return null;
+    return { amount: sub.amount - total.amount, currency: sub.currency };
+  });
+
   protected onPadEmptyChanged(empty: boolean): void {
     this.padEmpty.set(empty);
   }
 
-  protected toggleExpanded(): void {
+  protected toggleExpanded(event: Event): void {
+    event.stopPropagation();
     this.expanded.update((value) => !value);
   }
 

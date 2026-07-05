@@ -434,4 +434,5 @@ export class Labels {
   static readonly ConsentFrom = $localize`from`;
   static readonly ReadFull = $localize`Read`;
   static readonly Collapse = $localize`Collapse`;
+  static readonly ConsentSignBelowNote = $localize`By signing below, I agree to the terms specified in the agreement.`;
 }
