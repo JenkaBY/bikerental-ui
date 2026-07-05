@@ -12,7 +12,7 @@ import type { RentalEquipmentItem } from '@bikerental/shared';
     <div class="flex flex-col">
       <div class="flex items-center justify-between px-4 py-3">
         <span class="text-sm font-semibold text-slate-600">{{ Labels.Equipment }}</span>
-        @if (!isDebt()) {
+        @if (!isDebt() && !disabled()) {
           <div class="flex gap-1">
             <button mat-button type="button" (click)="onSelectAll()">
               {{ Labels.SelectAll }}
@@ -31,7 +31,7 @@ import type { RentalEquipmentItem } from '@bikerental/shared';
         >
           <mat-checkbox
             [checked]="isChecked(item)"
-            [disabled]="item.isReturned || isDebt()"
+            [disabled]="item.isReturned || isDebt() || disabled()"
             (change)="onCheckboxChange(item, $event.checked)"
           />
           <div class="flex-1 min-w-0">
@@ -47,6 +47,7 @@ import type { RentalEquipmentItem } from '@bikerental/shared';
 export class RentalEquipmentSectionComponent {
   readonly equipmentItems = input.required<RentalEquipmentItem[]>();
   readonly isDebt = input(false);
+  readonly disabled = input(false);
 
   protected readonly store = inject(RentalStore);
   protected readonly Labels = Labels;

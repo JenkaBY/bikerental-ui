@@ -35,7 +35,6 @@ import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-cust
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
-import { RentalAgreementSectionComponent } from './rental-agreement-section.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
 
 @Component({
@@ -61,7 +60,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalActionButtonsComponent,
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
-    RentalAgreementSectionComponent,
     RentalEquipmentSectionComponent,
     MoneyPipe,
     DurationPipe,
@@ -69,13 +67,31 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
   template: `
     <div class="flex flex-col h-full">
       <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 shrink-0">
-        <button mat-icon-button (click)="onBack()" [attr.aria-label]="Labels.GoBack">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <h1 class="text-lg font-semibold text-slate-800">
-          {{ Labels.RentalPrefix }}{{ rentalId() }}
-        </h1>
-        <span [class]="statusBadgeClasses()">{{ statusLabel() }}</span>
+        <div class="flex items-center gap-2 min-w-0">
+          <button mat-icon-button (click)="onBack()" [attr.aria-label]="Labels.GoBack">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <h1 class="text-lg font-semibold text-slate-800 truncate">
+            {{ Labels.RentalPrefix }}{{ rentalId() }}
+          </h1>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          @if (signatureStore.summary()) {
+            <button
+              mat-flat-button
+              class="btn-utility"
+              [disabled]="signatureStore.isDownloading()"
+              (click)="signatureStore.downloadPdf(rentalId())"
+            >
+              @if (signatureStore.isDownloading()) {
+                <mat-spinner diameter="18" />
+              } @else {
+                {{ Labels.AgreementPdf }}
+              }
+            </button>
+          }
+          <span [class]="statusBadgeClasses()">{{ statusLabel() }}</span>
+        </div>
       </div>
 
       @if (store.isActive() && store.isOverdue()) {
@@ -106,15 +122,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
         </div>
       }
 
-      @if (store.isAwaitingSignature()) {
-        <div
-          class="bg-purple-50 border-b border-purple-200 px-4 py-2 flex items-center gap-2 text-purple-700 text-sm shrink-0"
-        >
-          <mat-icon class="!text-base">draw</mat-icon>
-          <span>{{ Labels.AwaitingSignatureBanner }}</span>
-        </div>
-      }
-
       @if (store.isLoading()) {
         <div class="flex justify-center py-8">
           <mat-spinner diameter="40" />
@@ -136,18 +143,10 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
           <app-rental-cost-section />
           <mat-divider />
 
-          @if (signatureStore.summary(); as summary) {
-            <app-rental-agreement-section
-              [summary]="summary"
-              [isDownloading]="signatureStore.isDownloading()"
-              (downloadRequested)="signatureStore.downloadPdf(rentalId())"
-            />
-            <mat-divider />
-          }
-
           <app-rental-equipment-section
             [equipmentItems]="store.rentalEquipmentItems()"
             [isDebt]="store.isDebt()"
+            [disabled]="store.isAwaitingSignature()"
           />
         </div>
 
