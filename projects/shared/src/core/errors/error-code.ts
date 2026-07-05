@@ -48,6 +48,15 @@ export const ErrorCode = {
   AGREEMENT_TEMPLATE_NOT_DELETABLE: 'agreement.template.not_deletable',
   AGREEMENT_TEMPLATE_CONCURRENT_ACTIVATION: 'agreement.template.concurrent_activation',
   AGREEMENT_PDF_RENDERING_FAILED: 'agreement.pdf.rendering_failed',
+
+  // agreement.* — signing flow (FR-03)
+  AGREEMENT_TEMPLATE_NO_ACTIVE: 'agreement.template.no_active',
+  AGREEMENT_TEMPLATE_NOT_ACTIVE: 'agreement.template.not_active',
+  AGREEMENT_SIGNING_ALREADY_SIGNED: 'agreement.signing.already_signed',
+  AGREEMENT_SIGNING_RENTAL_VERSION_MISMATCH: 'agreement.signing.rental_version_mismatch',
+  AGREEMENT_SIGNING_RENTAL_NOT_AWAITING_SIGNATURE:
+    'agreement.signing.rental_not_awaiting_signature',
+  AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE: 'agreement.signing.invalid_signature_image',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -85,6 +94,12 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.AGREEMENT_TEMPLATE_NOT_DELETABLE,
   ErrorCode.AGREEMENT_TEMPLATE_CONCURRENT_ACTIVATION,
   ErrorCode.AGREEMENT_PDF_RENDERING_FAILED,
+  ErrorCode.AGREEMENT_TEMPLATE_NO_ACTIVE,
+  ErrorCode.AGREEMENT_TEMPLATE_NOT_ACTIVE,
+  ErrorCode.AGREEMENT_SIGNING_ALREADY_SIGNED,
+  ErrorCode.AGREEMENT_SIGNING_RENTAL_VERSION_MISMATCH,
+  ErrorCode.AGREEMENT_SIGNING_RENTAL_NOT_AWAITING_SIGNATURE,
+  ErrorCode.AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE,
 ]);
 
 export function isValidationCode(code: string): boolean {

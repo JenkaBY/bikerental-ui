@@ -61,6 +61,7 @@ export * from './core/state/time-travel.store';
 export * from './core/state/time-travel-store.token';
 export * from './core/state/time.store';
 export * from './core/state/agreement-template.store';
+export * from './core/state/agreement-signing.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';

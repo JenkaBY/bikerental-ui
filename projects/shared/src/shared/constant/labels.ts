@@ -413,4 +413,15 @@ export class Labels {
 
   static readonly SignatureClear = $localize`Clear`;
   static readonly SignatureHint = $localize`Sign here`;
+
+  static readonly SendToSigning = $localize`Send to signing`;
+  static readonly ContinueSigning = $localize`Continue signing`;
+  static readonly CancelSigning = $localize`Cancel signing`;
+  static readonly AwaitingSignatureBanner = $localize`Waiting for the customer to sign the agreement`;
+  static readonly AgreementSignedSuccess = $localize`Agreement signed — rental started`;
+  static readonly RentalStatusAwaitingSignature = $localize`Awaiting signature`;
+  static readonly SignatureStartNote = $localize`The rental starts at the moment of signing`;
+  static readonly SignButton = $localize`Sign`;
+  static readonly SigningDialogTitle = $localize`Rental Agreement`;
+  static readonly SigningSummaryTitle = $localize`Summary`;
 }

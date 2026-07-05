@@ -9,6 +9,13 @@ export const RentalStatus: Record<string, RentalStatusMeta> = {
     label: Labels.RentalStatusDraft,
     badgeClasses: 'bg-gray-100 text-gray-600',
   },
+  AWAITING_SIGNATURE: {
+    slug: 'AWAITING_SIGNATURE',
+    color: 'accent',
+    labelKey: 'rentalStatus.awaitingSignature',
+    label: Labels.RentalStatusAwaitingSignature,
+    badgeClasses: 'bg-purple-100 text-purple-700',
+  },
   ACTIVE: {
     slug: 'ACTIVE',
     color: 'primary',

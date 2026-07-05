@@ -17,3 +17,4 @@ export * from './equipment-search-item.mapper';
 export * from './rental-dashboard.mapper';
 export * from './managed-user.mapper';
 export * from './agreement-template.mapper';
+export * from './agreement-signature.mapper';

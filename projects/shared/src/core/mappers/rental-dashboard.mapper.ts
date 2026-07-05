@@ -116,6 +116,7 @@ export class RentalDashboardMapper {
     return {
       id: r.id,
       status: r.status,
+      version: r.version,
       customerId: r.customerId,
       customer,
       equipmentItems,
