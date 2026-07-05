@@ -52,6 +52,7 @@ const STROKE_WIDTH = 2.5;
       <div class="flex justify-end">
         <button
           mat-stroked-button
+          class="btn-caution"
           type="button"
           [disabled]="isEmpty() || disabled()"
           (click)="clear()"

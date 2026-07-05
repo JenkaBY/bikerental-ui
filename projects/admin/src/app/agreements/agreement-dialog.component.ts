@@ -94,7 +94,7 @@ export interface AgreementDialogData {
       }
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button [disabled]="previewing()" (click)="previewPdf()">
+      <button mat-flat-button class="btn-utility" [disabled]="previewing()" (click)="previewPdf()">
         {{ previewing() ? Labels.GeneratingPdfButton : Labels.PreviewPdfButton }}
       </button>
       <app-form-cancel-button />
