@@ -7,6 +7,7 @@ import { AgreementTemplateMapper } from '../mappers';
 import type {
   AgreementTemplate,
   AgreementTemplateSummary,
+  AgreementTemplateVariable,
   AgreementTemplateWrite,
 } from '../models';
 
@@ -22,6 +23,8 @@ interface AgreementTemplateState {
   busyIds: ReadonlySet<number>;
   sortColumn: AgreementTemplateSortColumn;
   sortDirection: AgreementTemplateSortDirection;
+  variables: AgreementTemplateVariable[];
+  isLoadingVariables: boolean;
 }
 
 @Injectable()
@@ -37,6 +40,8 @@ export class AgreementTemplateStore {
     busyIds: new Set<number>(),
     sortColumn: 'createdAt',
     sortDirection: 'desc',
+    variables: [],
+    isLoadingVariables: false,
   });
 
   readonly templates = computed(() => this._state().templates);
@@ -47,6 +52,8 @@ export class AgreementTemplateStore {
   readonly busyIds = computed(() => this._state().busyIds);
   readonly sortColumn = computed(() => this._state().sortColumn);
   readonly sortDirection = computed(() => this._state().sortDirection);
+  readonly variables = computed(() => this._state().variables);
+  readonly isLoadingVariables = computed(() => this._state().isLoadingVariables);
 
   readonly sortedTemplates = computed(() => {
     const { templates, sortColumn, sortDirection } = this._state();
@@ -143,6 +150,22 @@ export class AgreementTemplateStore {
       map(() => undefined),
       finalize(() => this.setBusy(id, false)),
     );
+  }
+
+  loadVariables(): void {
+    if (this._state().variables.length > 0 || this._state().isLoadingVariables) return;
+
+    this.patch({ isLoadingVariables: true });
+    this.service
+      .findVariables()
+      .pipe(
+        map((responses) => responses.map(AgreementTemplateMapper.fromVariableResponse)),
+        finalize(() => this.patch({ isLoadingVariables: false })),
+      )
+      .subscribe({
+        next: (variables) => this.patch({ variables }),
+        error: () => undefined,
+      });
   }
 
   previewPdf(write: AgreementTemplateWrite): Observable<Blob> {

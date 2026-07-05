@@ -18,3 +18,9 @@ export interface AgreementTemplateWrite {
   title: string;
   content: string;
 }
+
+export interface AgreementTemplateVariable {
+  readonly key: string;
+  readonly description: string;
+  readonly example?: string;
+}

@@ -19,9 +19,9 @@ import {
   ApiErrorParser,
   Labels,
   NotificationService,
-  resolveErrorMessage,
   RentalStore,
   RentalValidationStore,
+  resolveErrorMessage,
   TopUpDialogComponent,
 } from '@bikerental/shared';
 import { RentalActivateButtonComponent } from './rental-activate-button.component';

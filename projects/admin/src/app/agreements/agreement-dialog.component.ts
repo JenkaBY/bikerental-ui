@@ -5,6 +5,7 @@ import {
   inject,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,6 +18,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
@@ -48,6 +50,7 @@ export interface AgreementDialogData {
     TextFieldModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
@@ -80,6 +83,7 @@ export interface AgreementDialogData {
           <mat-form-field appearance="outline">
             <mat-label>{{ Labels.AgreementContentLabel }}</mat-label>
             <textarea
+              #contentTextarea
               matInput
               formControlName="content"
               cdkTextareaAutosize
@@ -93,6 +97,44 @@ export interface AgreementDialogData {
               <mat-error>{{ form.controls.content.getError('server') }}</mat-error>
             }
           </mat-form-field>
+
+          <div class="border border-slate-200 rounded">
+            <button
+              type="button"
+              class="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm font-medium text-slate-700"
+              (click)="variablesExpanded.set(!variablesExpanded())"
+            >
+              {{ Labels.VariablesReferenceTitle }}
+              <mat-icon>{{ variablesExpanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+            @if (variablesExpanded()) {
+              <div class="border-t border-slate-200 px-3 py-2 flex flex-col gap-2">
+                <p class="text-xs text-slate-500">{{ Labels.VariablesReferenceHint }}</p>
+                @if (store.variables().length === 0) {
+                  <p class="text-sm text-slate-500">{{ Labels.VariablesReferenceEmpty }}</p>
+                } @else {
+                  @for (variable of store.variables(); track variable.key) {
+                    <button
+                      type="button"
+                      class="text-left rounded border border-slate-100 hover:bg-slate-50 px-2 py-1"
+                      [disabled]="data.readonly"
+                      (click)="insertVariable(variable.key)"
+                    >
+                      <span class="font-mono text-sm text-blue-700"
+                        >{{ '{{' + variable.key + '}}' }}</span
+                      >
+                      <span class="block text-xs text-slate-600">{{ variable.description }}</span>
+                      @if (variable.example) {
+                        <span class="block text-xs text-slate-400">
+                          {{ Labels.VariablesReferenceExampleLabel }}: {{ variable.example }}
+                        </span>
+                      }
+                    </button>
+                  }
+                }
+              </div>
+            }
+          </div>
         </form>
       }
     </mat-dialog-content>
@@ -121,7 +163,7 @@ export class AgreementDialogComponent implements OnInit {
 
   private readonly dialogRef =
     inject<MatDialogRef<AgreementDialogComponent, boolean>>(MatDialogRef);
-  private readonly store = inject(AgreementTemplateStore);
+  protected readonly store = inject(AgreementTemplateStore);
   private readonly dialog = inject(MatDialog);
   private readonly notifications = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
@@ -136,8 +178,15 @@ export class AgreementDialogComponent implements OnInit {
   });
 
   protected readonly dialogTitle = signal(this.resolveTitle());
+  protected readonly variablesExpanded = signal(false);
+
+  private readonly contentTextarea = viewChild<{ nativeElement: HTMLTextAreaElement }>(
+    'contentTextarea',
+  );
 
   ngOnInit(): void {
+    this.store.loadVariables();
+
     if (this.data.readonly) {
       this.form.disable();
     }
@@ -208,6 +257,32 @@ export class AgreementDialogComponent implements OnInit {
           this.notifications.error(apiError.detail || Labels.PreviewPdfButton);
         },
       });
+  }
+
+  insertVariable(key: string): void {
+    if (this.data.readonly) return;
+
+    const placeholder = `{{${key}}}`;
+    const textarea = this.contentTextarea()?.nativeElement;
+    const control = this.form.controls.content;
+    const current = control.value;
+
+    if (!textarea) {
+      control.setValue(current + placeholder);
+      return;
+    }
+
+    const start = textarea.selectionStart ?? current.length;
+    const end = textarea.selectionEnd ?? current.length;
+    const next = current.slice(0, start) + placeholder + current.slice(end);
+    control.setValue(next);
+    control.markAsDirty();
+
+    const cursor = start + placeholder.length;
+    queueMicrotask(() => {
+      textarea.focus();
+      textarea.setSelectionRange(cursor, cursor);
+    });
   }
 
   private resolveTitle(): string {

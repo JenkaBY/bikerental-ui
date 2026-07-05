@@ -410,6 +410,11 @@ export class Labels {
   static readonly PreviewPdfButton = $localize`Preview PDF`;
   static readonly GeneratingPdfButton = $localize`Generating PDF...`;
 
+  static readonly VariablesReferenceTitle = $localize`Available variables`;
+  static readonly VariablesReferenceHint = $localize`Click a variable to insert it into the content at the cursor.`;
+  static readonly VariablesReferenceEmpty = $localize`No variables available`;
+  static readonly VariablesReferenceExampleLabel = $localize`Example`;
+
   static readonly AgreementPdfPreviewDialogTitle = $localize`PDF Preview`;
   static readonly DownloadPdfButton = $localize`Download`;
 

@@ -3,10 +3,12 @@ import type {
   AgreementTemplateRequest,
   AgreementTemplateResponse,
   AgreementTemplateSummaryResponse,
+  AgreementTemplateVariableResponse,
 } from '@api-models';
 import type {
   AgreementTemplate,
   AgreementTemplateSummary,
+  AgreementTemplateVariable,
   AgreementTemplateWrite,
 } from '../models/agreement-template.model';
 
@@ -41,6 +43,14 @@ export class AgreementTemplateMapper {
     return {
       title: w.title,
       content: w.content,
+    };
+  }
+
+  static fromVariableResponse(r: AgreementTemplateVariableResponse): AgreementTemplateVariable {
+    return {
+      key: r.key ?? '',
+      description: r.description ?? '',
+      example: r.example ?? undefined,
     };
   }
 }
