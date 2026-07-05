@@ -14,11 +14,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import type { BrokenEquipmentEntry } from '@ui-models';
-import { Labels, RentalStore } from '@bikerental/shared';
+import { Labels, NotificationService, RentalStore } from '@bikerental/shared';
 import { AddEquipmentDialogComponent } from './add-equipment-dialog/add-equipment-dialog.component';
 import { BrokenEquipmentSheetComponent } from './broken-equipment-sheet.component';
 import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
 import { ReturnEquipmentDialogComponent } from './return-equipment-dialog/return-equipment-dialog.component';
+import { SigningFlowService } from '../rental-signing/signing-flow.service';
 
 @Component({
   selector: 'app-rental-action-buttons',
@@ -78,6 +79,23 @@ import { ReturnEquipmentDialogComponent } from './return-equipment-dialog/return
           🔧 {{ Labels.BrokenEquipment }}
         </button>
       }
+
+      @if (store.isAwaitingSignature()) {
+        <button mat-flat-button color="primary" class="w-full" (click)="onContinueSigning()">
+          {{ Labels.ContinueSigning }}
+        </button>
+        <button mat-stroked-button class="w-full" (click)="onCancelSigning()">
+          {{ Labels.CancelSigning }}
+        </button>
+        <button
+          mat-flat-button
+          class="w-full !bg-amber-400 !text-white"
+          [disabled]="store.isSaving()"
+          (click)="onCancel()"
+        >
+          {{ Labels.CancelRental }}
+        </button>
+      }
     </div>
   `,
 })
@@ -89,6 +107,8 @@ export class RentalActionButtonsComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly signingFlow = inject(SigningFlowService);
+  private readonly notifications = inject(NotificationService);
 
   protected readonly Labels = Labels;
 
@@ -171,5 +191,27 @@ export class RentalActionButtonsComponent {
             },
           });
       });
+  }
+
+  protected onContinueSigning(): void {
+    const id = this.store.id();
+    const version = this.store.version();
+    if (id === null || version === null) return;
+
+    this.signingFlow
+      .openDialog(id, version, this.viewContainerRef)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((outcome) => {
+        if (outcome === 'signed') {
+          this.store.loadDetail(id);
+          this.notifications.success(Labels.AgreementSignedSuccess);
+        } else if (outcome === 'failed') {
+          this.store.loadDetail(id);
+        }
+      });
+  }
+
+  protected onCancelSigning(): void {
+    this.store.cancelSigning().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 }

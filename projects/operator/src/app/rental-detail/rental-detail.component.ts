@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import {
+  AgreementSigningStore,
   BatchRentalPropertyStore,
   CustomerFinanceStore,
   DurationPipe,
@@ -28,6 +29,7 @@ import {
   MoneyPipe,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
+import { SigningFlowService } from '../rental-signing/signing-flow.service';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
@@ -43,6 +45,8 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     CustomerFinanceStore,
     BatchRentalPropertyStore,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
+    AgreementSigningStore,
+    SigningFlowService,
   ],
   imports: [
     DatePipe,
@@ -95,6 +99,15 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
             }
             {{ Labels.DebtAutoCharge }}
           </span>
+        </div>
+      }
+
+      @if (store.isAwaitingSignature()) {
+        <div
+          class="bg-purple-50 border-b border-purple-200 px-4 py-2 flex items-center gap-2 text-purple-700 text-sm shrink-0"
+        >
+          <mat-icon class="!text-base">draw</mat-icon>
+          <span>{{ Labels.AwaitingSignatureBanner }}</span>
         </div>
       }
 
