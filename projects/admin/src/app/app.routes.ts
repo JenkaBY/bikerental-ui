@@ -42,6 +42,11 @@ export const routes: Routes = [
           import('./tariffs/tariff-list.component').then((m) => m.TariffListComponent),
       },
       {
+        path: 'agreements',
+        loadComponent: () =>
+          import('./agreements/agreement-list.component').then((m) => m.AgreementListComponent),
+      },
+      {
         path: 'customers',
         loadComponent: () =>
           import('./customers/customer-list.component').then((m) => m.CustomerListComponent),
