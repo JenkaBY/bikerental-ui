@@ -6,7 +6,6 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -43,7 +42,6 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
     MatDialogModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    DatePipe,
     DurationPipe,
     MoneyPipe,
     SignaturePadComponent,
@@ -61,9 +59,11 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
     <h2 mat-dialog-title>{{ Labels.SigningDialogTitle }}</h2>
     <mat-dialog-content class="flex flex-col gap-4">
       <div class="rounded border border-slate-200 p-3 text-sm flex flex-col gap-1">
-        <h3 class="font-semibold mb-1">{{ Labels.SigningSummaryTitle }}</h3>
-        <div>{{ rentalStore.customer()?.firstName }} {{ rentalStore.customer()?.lastName }}</div>
-        <div class="text-slate-500">{{ rentalStore.customer()?.phone }}</div>
+        <div>
+          {{ rentalStore.customer()?.firstName }} {{ rentalStore.customer()?.lastName }} ({{
+            rentalStore.customer()?.phone
+          }})
+        </div>
         @for (item of equipmentItems(); track item.id) {
           <div class="flex justify-between gap-2">
             <span class="min-w-0">
@@ -107,17 +107,15 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
         <div class="flex flex-col gap-1">
           <mat-checkbox [checked]="consented()" (change)="onConsentChanged($event.checked)">
             <span>
-              {{ Labels.ConsentPrefix }}
-              <span class="underline"
-                >{{ template.title }} {{ Labels.ConsentFrom }}
-                {{ template.activatedAt | date: 'mediumDate' }}</span
-              >.
+              {{ Labels.ConsentPrefix }} "<span class="underline">{{ template.title }}</span
+              >"
+              {{ Labels.ConsentSuffix }}
               <button type="button" class="signing-consent-toggle" (click)="toggleExpanded($event)">
-                {{ expanded() ? Labels.Collapse : Labels.ReadFull }}
+                {{ expanded() ? Labels.HideAgreement : Labels.ViewAgreement }}
               </button>
             </span>
           </mat-checkbox>
-          <p class="text-sm text-slate-600 pl-8">{{ Labels.ConsentSignBelowNote }}</p>
+          <p class="text-xs text-slate-500 pl-8">{{ Labels.ConsentSignBelowNote }}</p>
           @if (expanded()) {
             <div class="max-h-48 overflow-y-auto rounded border border-slate-200 p-3 text-sm">
               <p class="whitespace-pre-wrap">{{ template.content }}</p>

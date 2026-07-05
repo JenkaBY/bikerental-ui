@@ -424,15 +424,14 @@ export class Labels {
   static readonly SignatureStartNote = $localize`The rental starts at the moment of signing`;
   static readonly SignButton = $localize`Sign`;
   static readonly SigningDialogTitle = $localize`Rental Agreement`;
-  static readonly SigningSummaryTitle = $localize`Summary`;
   static readonly AgreementSigned = $localize`Agreement signed`;
   static readonly AgreementVersion = $localize`version`;
   static readonly DownloadAgreementPdf = $localize`Download PDF`;
   static readonly AgreementPdf = $localize`Agreement PDF`;
 
-  static readonly ConsentPrefix = $localize`I have fully read and agree to`;
-  static readonly ConsentFrom = $localize`from`;
-  static readonly ReadFull = $localize`Read`;
-  static readonly Collapse = $localize`Collapse`;
-  static readonly ConsentSignBelowNote = $localize`By signing below, I agree to the terms specified in the agreement.`;
+  static readonly ConsentPrefix = $localize`I confirm that I have read and fully accept the terms of`;
+  static readonly ConsentSuffix = $localize`(the "Agreement").`;
+  static readonly ViewAgreement = $localize`View Agreement`;
+  static readonly HideAgreement = $localize`Hide Agreement`;
+  static readonly ConsentSignBelowNote = $localize`By signing below, I confirm that I have reviewed the safety rules for using the rented equipment described in the Agreement, agree to comply with them, and confirm that my signature constitutes my informed and voluntary acceptance of the Agreement.`;
 }
