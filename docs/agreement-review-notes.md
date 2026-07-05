@@ -284,6 +284,14 @@
 - Место: `projects/operator/src/app/rental-signing/signing-dialog.component.ts`
   (`subtotal`/`hasDiscount`/`discountAmount` computed-сигналы).
 
+### S-7 · Кнопки Cancel signing / Continue signing в один ряд 🔲
+
+**Суть:** на экране выбора «подписать или отменить подписание» расположить кнопки в один ряд:
+слева — **Cancel signing**, справа — **Continue signing**. Под этим рядом — отдельной строкой
+**Cancel rental**.
+
+- Не реализовывать сейчас — только задача на улучшение.
+
 ---
 
 ## Раздел R. Экран аренды и списки (FE)
