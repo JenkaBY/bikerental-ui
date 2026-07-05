@@ -135,23 +135,27 @@ export class RentalStep3Component {
           if (version === null) return of(null);
           const id = this.store.id();
           if (id === null) return of(null);
-          return this.signingFlow.openDialog(id, version, this.viewContainerRef).pipe(
-            switchMap((outcome) => {
-              const rentalId = this.store.id();
-              if (rentalId === null) return of(null);
-              if (outcome === 'signed') {
-                this.store.loadDetail(rentalId);
-                this.notifications.success(Labels.AgreementSignedSuccess);
-                this.store.reset();
-                void this.router.navigate(['/rentals', rentalId]);
-                return of(null);
-              }
-              if (outcome === 'cancelled') {
-                return this.store.cancelSigning();
-              }
-              this.store.loadDetail(rentalId);
-              return of(null);
-            }),
+          return this.store.loadDetail$(id).pipe(
+            switchMap(() =>
+              this.signingFlow.openDialog(id, version, this.viewContainerRef).pipe(
+                switchMap((outcome) => {
+                  const rentalId = this.store.id();
+                  if (rentalId === null) return of(null);
+                  if (outcome === 'signed') {
+                    this.store.loadDetail(rentalId);
+                    this.notifications.success(Labels.AgreementSignedSuccess);
+                    this.store.reset();
+                    void this.router.navigate(['/rentals', rentalId]);
+                    return of(null);
+                  }
+                  if (outcome === 'cancelled') {
+                    return this.store.cancelSigning();
+                  }
+                  this.store.loadDetail(rentalId);
+                  return of(null);
+                }),
+              ),
+            ),
           );
         }),
         takeUntilDestroyed(this.destroyRef),

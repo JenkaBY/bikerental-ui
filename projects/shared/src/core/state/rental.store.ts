@@ -336,32 +336,34 @@ export class RentalStore {
   }
 
   loadDetail(id: number): void {
+    this.loadDetail$(id).subscribe();
+  }
+
+  loadDetail$(id: number): Observable<Partial<RentalDetailState>> {
     this.patchState({ isLoading: true });
     this.loadError.set(false);
 
-    this.rentalsService
-      .getRentalById(id)
-      .pipe(
-        switchMap((rental) => {
-          const equipmentIds = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
-          return this.batchRentalPropertyStore
-            .fetch$({ equipmentIds, customerId: rental.customerId ?? null })
-            .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
-        }),
-        map(({ rental, customer, equipmentItems }) =>
-          RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
-        ),
-        finalize(() => this.patchState({ isLoading: false })),
-        catchError(() => {
-          this.loadError.set(true);
-          return EMPTY;
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((state) => {
+    return this.rentalsService.getRentalById(id).pipe(
+      switchMap((rental) => {
+        const equipmentIds = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
+        return this.batchRentalPropertyStore
+          .fetch$({ equipmentIds, customerId: rental.customerId ?? null })
+          .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
+      }),
+      map(({ rental, customer, equipmentItems }) =>
+        RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
+      ),
+      tap((state) => {
         this.applyDetail(state);
         this.setCustomer(state.customer || null);
-      });
+      }),
+      finalize(() => this.patchState({ isLoading: false })),
+      catchError(() => {
+        this.loadError.set(true);
+        return EMPTY;
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    );
   }
 
   reset(): void {
