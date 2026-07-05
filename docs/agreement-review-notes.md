@@ -290,13 +290,17 @@
 - Место: `projects/operator/src/app/rental-signing/signing-dialog.component.ts`
   (`subtotal`/`hasDiscount`/`discountAmount` computed-сигналы).
 
-### S-7 · Кнопки Cancel signing / Continue signing в один ряд 🔲
+### S-7 · Кнопки Cancel signing / Continue signing в один ряд ✅
 
 **Суть:** на экране выбора «подписать или отменить подписание» расположить кнопки в один ряд:
 слева — **Cancel signing**, справа — **Continue signing**. Под этим рядом — отдельной строкой
 **Cancel rental**.
 
-- Не реализовывать сейчас — только задача на улучшение.
+- Реализовано: `Cancel signing` (`mat-stroked-button`, слева) и `Continue signing`
+  (`mat-flat-button color="primary"`, справа) теперь в одном `flex gap-2` ряду (`flex-1` каждая);
+  `Cancel rental` остаётся отдельной строкой `w-full` под этим рядом.
+- Место: `projects/operator/src/app/rental-detail/rental-action-buttons.component.ts`
+  (блок `@if (store.isAwaitingSignature())`).
 
 ---
 
@@ -351,10 +355,10 @@
 |---|---|
 | **BE** | P-1, P-2, P-3, P-4, P-5 (PDF-часть) |
 | **BE+FE** | A-1 ✅ |
-| **FE** | D-1 🔄, D-2 ✅, D-3 ✅, D-4 ✅, A-2 ✅, A-3 ✅, S-1 ✅, S-2 ✅, S-3 ✅, S-4 ✅, S-5 ✅, S-6 ✅, S-7 🔲, R-1 ✅, R-2 ✅, R-3 ✅, R-4 ✅ |
+| **FE** | D-1 🔄, D-2 ✅, D-3 ✅, D-4 ✅, A-2 ✅, A-3 ✅, S-1 ✅, S-2 ✅, S-3 ✅, S-4 ✅, S-5 ✅, S-6 ✅, S-7 ✅, R-1 ✅, R-2 ✅, R-3 ✅, R-4 ✅ |
 
-Все FE-пункты (кроме S-7, задачи на будущее) реализованы в ветке `feature/agreement-review-fixes`
-(база — `feature/agreement-slice-4`). Round 1 — 4 логических коммита по группам: дизайн-система →
+Все FE-пункты реализованы в ветке `feature/agreement-review-fixes` (база —
+`feature/agreement-slice-4`). Round 1 — 4 логических коммита по группам: дизайн-система →
 admin-шаблоны → экран подписания → карточка/списки аренд. Round 2 (правки по скриншотам после
 первого прохода) — 2 доп. коммита: зазор между кнопками диалогов (D-4) и переработка экрана
 подписания (S-3/S-4 доводка + новый S-5). A-1 реализован отдельно после появления бэкенд-контракта

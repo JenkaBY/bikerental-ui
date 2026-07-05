@@ -81,12 +81,14 @@ import { SigningFlowService } from '../rental-signing/signing-flow.service';
       }
 
       @if (store.isAwaitingSignature()) {
-        <button mat-flat-button color="primary" class="w-full" (click)="onContinueSigning()">
-          {{ Labels.ContinueSigning }}
-        </button>
-        <button mat-stroked-button class="w-full" (click)="onCancelSigning()">
-          {{ Labels.CancelSigning }}
-        </button>
+        <div class="flex gap-2">
+          <button mat-stroked-button class="flex-1" (click)="onCancelSigning()">
+            {{ Labels.CancelSigning }}
+          </button>
+          <button mat-flat-button color="primary" class="flex-1" (click)="onContinueSigning()">
+            {{ Labels.ContinueSigning }}
+          </button>
+        </div>
         <button
           mat-flat-button
           class="w-full !bg-amber-400 !text-white"
