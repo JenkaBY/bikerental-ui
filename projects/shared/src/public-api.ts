@@ -60,6 +60,7 @@ export * from './core/state/managed-user.store';
 export * from './core/state/time-travel.store';
 export * from './core/state/time-travel-store.token';
 export * from './core/state/time.store';
+export * from './core/state/agreement-template.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';

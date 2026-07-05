@@ -368,4 +368,46 @@ export class Labels {
   static readonly TemporaryPasswordDoneButton = $localize`Done`;
   static readonly TemporaryPasswordShowButton = $localize`Show password`;
   static readonly TemporaryPasswordHideButton = $localize`Hide password`;
+
+  static readonly AgreementsNavLabel = $localize`Agreements`;
+  static readonly AgreementsListTitle = $localize`Agreement Templates`;
+  static readonly NewTemplateButton = $localize`New template`;
+  static readonly AgreementColumnVersion = $localize`Version`;
+  static readonly AgreementColumnTitle = $localize`Title`;
+  static readonly AgreementColumnStatus = $localize`Status`;
+  static readonly AgreementColumnCreatedAt = $localize`Created`;
+  static readonly AgreementColumnActivatedAt = $localize`Activated`;
+  static readonly AgreementColumnDeactivatedAt = $localize`Deactivated`;
+  static readonly AgreementColumnActions = $localize`Actions`;
+  static readonly AgreementStatusDraft = $localize`Draft`;
+  static readonly AgreementStatusActive = $localize`Active`;
+  static readonly AgreementStatusDeactivated = $localize`Deactivated`;
+  static readonly AgreementEmptyState = $localize`No agreement templates found`;
+
+  static readonly AgreementEditTooltip = $localize`Edit`;
+  static readonly AgreementViewTooltip = $localize`View`;
+  static readonly AgreementActivateTooltip = $localize`Activate`;
+  static readonly AgreementDeleteTooltip = $localize`Delete`;
+
+  static readonly ActivateAgreementDialogTitle = $localize`Activate this template?`;
+  static readonly ActivateAgreementDialogMessage = $localize`Activating this template will immediately deactivate the currently active version. Deactivated templates can never be edited or re-activated.`;
+  static readonly ActivateAgreementConfirmButton = $localize`Activate`;
+  static readonly ActivateAgreementSuccess = $localize`Template activated`;
+
+  static readonly DeleteAgreementDialogTitle = $localize`Delete this template?`;
+  static readonly DeleteAgreementDialogMessage = $localize`This draft template will be permanently deleted. This action cannot be undone.`;
+  static readonly DeleteAgreementConfirmButton = $localize`Delete`;
+  static readonly DeleteAgreementSuccess = $localize`Template deleted`;
+
+  static readonly CreateAgreementDialogTitle = $localize`New Agreement Template`;
+  static readonly EditAgreementDialogTitle = $localize`Edit Agreement Template`;
+  static readonly ViewAgreementDialogTitle = $localize`Agreement Template`;
+  static readonly AgreementTitleLabel = $localize`Title`;
+  static readonly AgreementContentLabel = $localize`Content`;
+  static readonly SaveAgreementSuccess = $localize`Template saved`;
+  static readonly PreviewPdfButton = $localize`Preview PDF`;
+  static readonly GeneratingPdfButton = $localize`Generating PDF...`;
+
+  static readonly AgreementPdfPreviewDialogTitle = $localize`PDF Preview`;
+  static readonly DownloadPdfButton = $localize`Download`;
 }
