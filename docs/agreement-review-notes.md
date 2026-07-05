@@ -305,6 +305,30 @@
 - Место: `projects/operator/src/app/rental-detail/rental-action-buttons.component.ts`
   (блок `@if (store.isAwaitingSignature())`).
 
+### S-8 · «Send to signing» на шаге 3 не открывал диалог подписания, а перезагружал экран ✅
+
+**Симптом:** при редактировании существующего DRAFT-рентала (`/rentals/:id/edit`) клик по «Send to
+signing» не открывал диалог подписания — вместо этого экран на мгновение бледнел (переход между
+страницами) и пользователь оказывался обратно на карточке аренды. В сети виден отменённый (canceled)
+`GET /rentals/{id}`.
+
+- **Причина:** в `rental-create.component.ts` есть guard-эффект, который редиректит из режима
+  редактирования на карточку аренды (`/rentals/:id`), как только `store.status()` перестаёт быть
+  `'DRAFT'` — задумывался для случая, когда статус аренды меняется извне (например, в другой
+  вкладке). Но `RentalStore.sendToSigning()` сам переводит статус в `AWAITING_SIGNATURE` **до**
+  того, как диалог подписания успевает открыться (`rental-step3.component.ts` → `onSendToSigning()`:
+  `save()` → `sendToSigning()` → `loadDetail$()` → `signingFlow.openDialog()`). Guard-эффект видел
+  смену статуса и тут же вызывал `router.navigate(['/rentals', id])`, что уничтожало
+  `RentalStep3Component` и обрывало (`takeUntilDestroyed`) ещё не завершившийся запрос
+  `loadDetail$()` — отсюда canceled `GET`, а диалог так и не открывался.
+- **Фикс:** guard-эффект больше не редиректит при статусе `AWAITING_SIGNATURE` — этот статус уже
+  штатно обрабатывается собственной подпиской `onSendToSigning()` (открытие диалога, `cancelSigning()`
+  возвращает `DRAFT` при отмене, успешное подписание само вызывает навигацию на карточку аренды).
+  Редирект по-прежнему срабатывает для остальных статусов (`ACTIVE`/`CANCELLED`/…), т.е. если аренда
+  изменилась извне не через локальный флоу подписания.
+- Место: `projects/operator/src/app/rental-create/rental-create.component.ts` (второй `effect()`
+  в конструкторе).
+
 ---
 
 ## Раздел R. Экран аренды и списки (FE)
@@ -358,7 +382,7 @@
 |---|---|
 | **BE** | P-1, P-2, P-3, P-4, P-5 (PDF-часть) |
 | **BE+FE** | A-1 ✅ |
-| **FE** | D-1 🔄, D-2 ✅, D-3 ✅, D-4 ✅, A-2 ✅, A-3 ✅, S-1 ✅, S-2 ✅, S-3 ✅, S-4 ✅, S-5 ✅, S-6 ✅, S-7 ✅, R-1 ✅, R-2 ✅, R-3 ✅, R-4 ✅ |
+| **FE** | D-1 🔄, D-2 ✅, D-3 ✅, D-4 ✅, A-2 ✅, A-3 ✅, S-1 ✅, S-2 ✅, S-3 ✅, S-4 ✅, S-5 ✅, S-6 ✅, S-7 ✅, S-8 ✅, R-1 ✅, R-2 ✅, R-3 ✅, R-4 ✅ |
 
 Все FE-пункты реализованы в ветке `feature/agreement-review-fixes` (база —
 `feature/agreement-slice-4`). Round 1 — 4 логических коммита по группам: дизайн-система →
