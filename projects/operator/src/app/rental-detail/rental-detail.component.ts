@@ -24,6 +24,7 @@ import {
   Labels,
   mapRentalStatus,
   RENTAL_STORE_TOKEN,
+  RentalSignatureStore,
   RentalStore,
   TopUpDialogComponent,
   MoneyPipe,
@@ -34,6 +35,7 @@ import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-cust
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
+import { RentalAgreementSectionComponent } from './rental-agreement-section.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
 
 @Component({
@@ -47,6 +49,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
     AgreementSigningStore,
     SigningFlowService,
+    RentalSignatureStore,
   ],
   imports: [
     DatePipe,
@@ -58,6 +61,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalActionButtonsComponent,
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
+    RentalAgreementSectionComponent,
     RentalEquipmentSectionComponent,
     MoneyPipe,
     DurationPipe,
@@ -131,6 +135,16 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
           <mat-divider />
           <app-rental-cost-section />
           <mat-divider />
+
+          @if (signatureStore.summary(); as summary) {
+            <app-rental-agreement-section
+              [summary]="summary"
+              [isDownloading]="signatureStore.isDownloading()"
+              (downloadRequested)="signatureStore.downloadPdf(rentalId())"
+            />
+            <mat-divider />
+          }
+
           <app-rental-equipment-section
             [equipmentItems]="store.rentalEquipmentItems()"
             [isDebt]="store.isDebt()"
@@ -150,6 +164,7 @@ export class RentalDetailComponent {
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  protected readonly signatureStore = inject(RentalSignatureStore);
 
   readonly id = input.required<string>();
   readonly selectUid = input<string>();
@@ -179,6 +194,15 @@ export class RentalDetailComponent {
       if (this.store.isLoading() || this.store.loadError() || this.store.id() === null) return;
       if (this.store.isDraft()) {
         void this.router.navigate(['/rentals', this.store.id(), 'edit']);
+      }
+    });
+
+    effect(() => {
+      const status = this.store.status();
+      const id = this.store.id();
+      if (id === null) return;
+      if (status === 'ACTIVE' || status === 'COMPLETED' || status === 'DEBT') {
+        this.signatureStore.load(id);
       }
     });
 
