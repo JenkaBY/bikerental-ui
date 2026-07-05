@@ -17,6 +17,16 @@
 
 **Status:** All tasks implemented; lint and dev builds (admin/operator/gateway) pass.
 
+## Code-review refactors (user FIXME feedback)
+
+- Moved all transient UI state into `AgreementTemplateStore`: dialog `loading`/`saving`/
+  `previewing` flags (`isFetchingDetail`/`isSaving`/`isPreviewing`), the per-row `busy` record
+  (`busyIds: ReadonlySet<number>`), and sorting (`sortColumn`/`sortDirection`/`toggleSort()`/
+  `sortedTemplates` computed). Components only render store computeds now.
+- Replaced the `statusLabel` switch with a `STATUS_LABELS` record map.
+- Collapsed `openCreateDialog`/`openEditDialog`/`openViewDialog` into one private
+  `openTemplateDialog(data)` (plus a shared `confirmThen` helper for the two confirm flows).
+
 ## Ad-hoc fixes discovered during the test stage
 
 - `agreement-template.store.ts`: removed unused `tap` import (lint error left by task-008 snippet).
