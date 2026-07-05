@@ -388,6 +388,8 @@ export class Labels {
   static readonly AgreementViewTooltip = $localize`View`;
   static readonly AgreementActivateTooltip = $localize`Activate`;
   static readonly AgreementDeleteTooltip = $localize`Delete`;
+  static readonly AgreementCopyTooltip = $localize`Copy`;
+  static readonly AgreementCopySuccess = $localize`Template copied`;
 
   static readonly ActivateAgreementDialogTitle = $localize`Activate this template?`;
   static readonly ActivateAgreementDialogMessage = $localize`Activating this template will immediately deactivate the currently active version. Deactivated templates can never be edited or re-activated.`;

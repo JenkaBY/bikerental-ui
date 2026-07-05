@@ -4,9 +4,11 @@ import {
   DestroyRef,
   inject,
   OnInit,
+  signal,
   ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -162,6 +164,14 @@ const DIALOG_SIZE = { width: '80vw', maxWidth: '1000px', height: '85vh' } as con
                       <mat-icon>visibility</mat-icon>
                     </button>
                   }
+                  <button
+                    mat-icon-button
+                    [disabled]="copyingIds().has(row.id)"
+                    [matTooltip]="Labels.AgreementCopyTooltip"
+                    (click)="onCopy(row)"
+                  >
+                    <mat-icon>content_copy</mat-icon>
+                  </button>
                 </div>
               </td>
             </ng-container>
@@ -195,6 +205,8 @@ export class AgreementListComponent implements OnInit {
   private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly notifications = inject(NotificationService);
+
+  protected readonly copyingIds = signal<ReadonlySet<number>>(new Set());
 
   ngOnInit(): void {
     this.store.load();
@@ -248,6 +260,43 @@ export class AgreementListComponent implements OnInit {
       },
       () => this.mutate(this.store.delete(row.id), Labels.DeleteAgreementSuccess),
     );
+  }
+
+  onCopy(row: AgreementTemplateSummary): void {
+    this.setCopying(row.id, true);
+    this.store
+      .getById(row.id)
+      .pipe(
+        switchMap((template) =>
+          this.store.create({ title: template.title, content: template.content }),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (copy) => {
+          this.setCopying(row.id, false);
+          this.notifications.success(Labels.AgreementCopySuccess);
+          this.store.load();
+          this.openEditDialog(copy);
+        },
+        error: (err) => {
+          this.setCopying(row.id, false);
+          const apiError = ApiErrorParser.parse(err);
+          this.notifications.error(resolveErrorMessage(apiError));
+        },
+      });
+  }
+
+  private setCopying(id: number, copying: boolean): void {
+    this.copyingIds.update((ids) => {
+      const next = new Set(ids);
+      if (copying) {
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+      return next;
+    });
   }
 
   private openTemplateDialog(data: AgreementDialogData): void {

@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -44,6 +45,7 @@ export interface AgreementDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    TextFieldModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
@@ -80,8 +82,9 @@ export interface AgreementDialogData {
             <textarea
               matInput
               formControlName="content"
-              rows="20"
-              class="font-mono text-sm"
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="10"
+              class="font-mono text-sm resize-y"
             ></textarea>
             @if (form.controls.content.hasError('required') && form.controls.content.touched) {
               <mat-error>{{ FormErrorMessages.required }}</mat-error>
