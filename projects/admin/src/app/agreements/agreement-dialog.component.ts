@@ -123,9 +123,9 @@ export class AgreementDialogComponent implements OnInit {
   private readonly notifications = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly loading = signal(false);
-  protected readonly saving = signal(false);
-  protected readonly previewing = signal(false);
+  protected readonly loading = this.store.isFetchingDetail;
+  protected readonly saving = this.store.isSaving;
+  protected readonly previewing = this.store.isPreviewing;
 
   protected readonly form = new FormGroup({
     title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -143,17 +143,14 @@ export class AgreementDialogComponent implements OnInit {
       return;
     }
 
-    this.loading.set(true);
     this.store
       .getById(this.data.templateId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (template) => {
           this.form.patchValue({ title: template.title, content: template.content });
-          this.loading.set(false);
         },
         error: (err) => {
-          this.loading.set(false);
           const apiError = ApiErrorParser.parse(err);
           this.notifications.error(apiError.detail || Labels.AgreementsListTitle);
           this.dialogRef.close(false);
@@ -166,7 +163,6 @@ export class AgreementDialogComponent implements OnInit {
 
     clearServerErrors(this.form);
     const write: AgreementTemplateWrite = this.form.getRawValue();
-    this.saving.set(true);
 
     const call$ =
       this.data.templateId != null
@@ -175,12 +171,10 @@ export class AgreementDialogComponent implements OnInit {
 
     call$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.saving.set(false);
         this.notifications.success(Labels.SaveAgreementSuccess);
         this.dialogRef.close(true);
       },
       error: (err) => {
-        this.saving.set(false);
         const apiError = ApiErrorParser.parse(err);
         const summary = applyServerErrors(this.form, apiError);
         if (summary.length) this.notifications.error(summary.join(' '));
@@ -190,14 +184,12 @@ export class AgreementDialogComponent implements OnInit {
 
   previewPdf(): void {
     const { title, content } = this.form.getRawValue();
-    this.previewing.set(true);
 
     this.store
       .previewPdf({ title, content })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob) => {
-          this.previewing.set(false);
           this.dialog.open<AgreementPdfPreviewDialogComponent, AgreementPdfPreviewDialogData, void>(
             AgreementPdfPreviewDialogComponent,
             {
@@ -209,7 +201,6 @@ export class AgreementDialogComponent implements OnInit {
           );
         },
         error: (err) => {
-          this.previewing.set(false);
           const apiError = ApiErrorParser.parse(err);
           this.notifications.error(apiError.detail || Labels.PreviewPdfButton);
         },
