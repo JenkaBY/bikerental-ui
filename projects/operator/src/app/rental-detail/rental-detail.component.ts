@@ -1,4 +1,4 @@
-import { DatePipe, Location } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -157,7 +157,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
 })
 export class RentalDetailComponent {
   protected readonly store = inject(RentalStore);
-  private readonly location = inject(Location);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly financeStore = inject(CustomerFinanceStore);
@@ -218,7 +217,7 @@ export class RentalDetailComponent {
   }
 
   protected onBack(): void {
-    this.location.back();
+    void this.router.navigate(['/rentals']);
   }
 
   protected onTopUpRequested(): void {
