@@ -218,6 +218,30 @@
   Интерактивное слово переименовано **Прочитать/Свернуть → View Agreement/Hide Agreement**
   (`Labels.ViewAgreement`/`Labels.HideAgreement`). `Labels.ConsentFrom`/`ReadFull`/`Collapse`/
   `SigningSummaryTitle` удалены как более не используемые.
+- Между строками сводки (оборудование / подытог-скидка-спецена / итого) добавлены `mat-divider`
+  для визуального разделения (тот же паттерн, что в `rental-cost-section.component.ts`).
+
+### S-6 · В сводке диалога подписания не выводилась полная стоимость ✅
+
+**Симптом:** при первом переходе к подписанию (кнопка «Send to signing» на шаге 3 создания аренды)
+в блоке сводки не показывалась ни цена позиции оборудования, ни «Итого» — блок цены был полностью
+пустым, хотя бэкенд (`calculations` XHR) возвращал корректный `totalCost`.
+
+- **Причина:** `RentalStore.sendToSigning()` при переходе в `AWAITING_SIGNATURE` обновляет в сторе
+  только `{status, version}` — не `estimatedCost` и не позиции оборудования с ценой. Диалог
+  подписания открывался сразу после этого патча, поэтому `rentalStore.estimatedCost()` оставался
+  `undefined`, а весь блок «Итого» (`@if (rentalStore.estimatedCost(); …)`) не рендерился вовсе;
+  то же самое — с ценой по каждой позиции (`item.estimatedCost`), т.к. в сторе всё ещё лежали
+  «сырые» `EquipmentSearchItem` без цены (обогащённые данные приходят только через `loadDetail`).
+  Путь «Continue signing» из карточки аренды не страдал — там `loadDetail()` уже вызывается при
+  входе на страницу.
+- **Фикс:** добавлен `RentalStore.loadDetail$(id): Observable<Partial<RentalDetailState>>` —
+  вариант существующего `loadDetail()`, возвращающий Observable вместо fire-and-forget подписки.
+  В `rental-step3.component.ts` (`onSendToSigning()`) перед открытием диалога подписания теперь
+  ожидается `store.loadDetail$(id)`, что подтягивает вычисленную бэкендом стоимость и обогащённые
+  позиции оборудования до отображения сводки.
+- Место: `projects/shared/src/core/state/rental.store.ts` (`loadDetail$`),
+  `projects/operator/src/app/rental-create/step3/rental-step3.component.ts` (`onSendToSigning`).
 
 ### S-4 · MatDialog подписи шире экрана мобильного устройства ✅
 
@@ -313,7 +337,7 @@
 |---|---|
 | **BE** | P-1, P-2, P-3, P-4, P-5 (PDF-часть) |
 | **BE+FE** | A-1 (заблокировано на BE) |
-| **FE** | D-1 🔄, D-2 ✅, D-3 ✅, D-4 ✅, A-2 ✅, A-3 ✅, S-1 ✅, S-2 ✅, S-3 ✅, S-4 ✅, S-5 ✅, R-1 ✅, R-2 ✅, R-3 ✅, R-4 ✅ |
+| **FE** | D-1 🔄, D-2 ✅, D-3 ✅, D-4 ✅, A-2 ✅, A-3 ✅, S-1 ✅, S-2 ✅, S-3 ✅, S-4 ✅, S-5 ✅, S-6 ✅, R-1 ✅, R-2 ✅, R-3 ✅, R-4 ✅ |
 
 Все FE-пункты (кроме A-1, заблокированного на бэке) реализованы в ветке
 `feature/agreement-review-fixes` (база — `feature/agreement-slice-4`). Round 1 — 4 логических
