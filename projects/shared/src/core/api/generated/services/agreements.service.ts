@@ -13,21 +13,20 @@ import {
   HttpContextToken,
   HttpEvent,
   HttpHeaders,
-  HttpParams,
   HttpResponse,
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
-import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
+  AgreementPdfPreviewRequest,
+  AgreementTemplateRequest,
+  AgreementTemplateResponse,
+  AgreementTemplateSummaryResponse,
+  AgreementTemplateVariableResponse,
   RequestOptions,
   SignAgreementRequest,
   SignatureCreatedResponse,
-  AgreementTemplateSummaryResponse,
-  AgreementTemplateRequest,
-  AgreementTemplateResponse,
-  AgreementPdfPreviewRequest,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -422,6 +421,43 @@ export class AgreementsService {
     };
 
     return this.httpClient.patch(url, null, requestOptions);
+  }
+
+  findVariables(
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<Array<AgreementTemplateVariableResponse>>;
+  findVariables(
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<Array<AgreementTemplateVariableResponse>>>;
+  findVariables(
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<Array<AgreementTemplateVariableResponse>>>;
+  /** Returns the catalog of {{key}} placeholders that can be used in agreement template content and are substituted with customer/rental data when the PDF is rendered */
+  findVariables(
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/agreements/variables`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
   }
 
   getActive(

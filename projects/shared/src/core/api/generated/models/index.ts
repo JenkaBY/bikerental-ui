@@ -701,6 +701,12 @@ export interface AgreementTemplateSummaryResponse {
   deactivatedAt?: string;
 }
 
+export interface AgreementTemplateVariableResponse {
+  key?: string;
+  description?: string;
+  example?: string;
+}
+
 /** Request Options for Angular HttpClient requests */
 export interface RequestOptions<TResponseType extends 'arraybuffer' | 'blob' | 'json' | 'text'> {
   headers?: HttpHeaders;
