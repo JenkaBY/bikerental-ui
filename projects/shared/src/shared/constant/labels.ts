@@ -424,4 +424,7 @@ export class Labels {
   static readonly SignButton = $localize`Sign`;
   static readonly SigningDialogTitle = $localize`Rental Agreement`;
   static readonly SigningSummaryTitle = $localize`Summary`;
+  static readonly AgreementSigned = $localize`Agreement signed`;
+  static readonly AgreementVersion = $localize`version`;
+  static readonly DownloadAgreementPdf = $localize`Download PDF`;
 }
