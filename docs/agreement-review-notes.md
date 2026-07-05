@@ -96,6 +96,9 @@
   `GET /api/agreements/variables`, закэширован на время жизни стора). Клик по переменной вставляет
   `{{key}}` в textarea в позицию курсора (`insertVariable()`), в readonly-режиме вставка отключена.
   Подстановка значений в Preview PDF — уже на бэке, отдельного FE-кода не требует.
+  Список переменных отображается компактными карточками-баджами (`flex-wrap`, плейсхолдер в
+  моно-шрифте + краткое описание в одну строку, `example` — во всплывающей подсказке `title`),
+  а не полноширинными строками — меньше скролла при большом числе переменных.
 - Место: `projects/admin/src/app/agreements/agreement-dialog.component.ts`,
   `projects/shared/src/core/state/agreement-template.store.ts` (`loadVariables`),
   `projects/shared/src/core/mappers/agreement-template.mapper.ts` (`fromVariableResponse`),

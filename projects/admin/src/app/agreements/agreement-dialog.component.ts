@@ -113,24 +113,33 @@ export interface AgreementDialogData {
                 @if (store.variables().length === 0) {
                   <p class="text-sm text-slate-500">{{ Labels.VariablesReferenceEmpty }}</p>
                 } @else {
-                  @for (variable of store.variables(); track variable.key) {
-                    <button
-                      type="button"
-                      class="text-left rounded border border-slate-100 hover:bg-slate-50 px-2 py-1"
-                      [disabled]="data.readonly"
-                      (click)="insertVariable(variable.key)"
-                    >
-                      <span class="font-mono text-sm text-blue-700"
-                        >{{ '{{' + variable.key + '}}' }}</span
+                  <div class="flex flex-wrap gap-2">
+                    @for (variable of store.variables(); track variable.key) {
+                      <button
+                        type="button"
+                        class="text-left rounded-full border border-slate-200 hover:bg-slate-50 pl-2 pr-3 py-1 flex items-center gap-1.5 max-w-full"
+                        [disabled]="data.readonly"
+                        [title]="
+                          variable.example
+                            ? variable.description +
+                              ' — ' +
+                              Labels.VariablesReferenceExampleLabel +
+                              ': ' +
+                              variable.example
+                            : variable.description
+                        "
+                        (click)="insertVariable(variable.key)"
                       >
-                      <span class="block text-xs text-slate-600">{{ variable.description }}</span>
-                      @if (variable.example) {
-                        <span class="block text-xs text-slate-400">
-                          {{ Labels.VariablesReferenceExampleLabel }}: {{ variable.example }}
-                        </span>
-                      }
-                    </button>
-                  }
+                        <span
+                          class="font-mono text-xs text-blue-700 bg-blue-50 rounded px-1.5 py-0.5 shrink-0"
+                          >{{ '{{' + variable.key + '}}' }}</span
+                        >
+                        <span class="text-xs text-slate-600 truncate">{{
+                          variable.description
+                        }}</span>
+                      </button>
+                    }
+                  </div>
                 }
               </div>
             }
