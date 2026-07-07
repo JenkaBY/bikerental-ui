@@ -406,6 +406,24 @@ export interface SettlementResponse {
   recordedAt: string;
 }
 
+/** Request body for creating a rental directly in AWAITING_SIGNATURE */
+export interface RentalForSigningRequest {
+  /** Customer UUID */
+  customerId: string;
+  /** List of Equipment IDs to rent; at least one is required */
+  equipmentIds: Array<number>;
+  /** Planned rental duration in minutes */
+  duration: number;
+  /** Operator identifier */
+  operatorId: string;
+  /** Id of a SPECIAL-type tariff; mutually exclusive with discountPercent */
+  specialTariffId?: number;
+  /** Operator-provided fixed total; required when specialTariffId is set */
+  specialPrice?: number;
+  /** Discount percentage applied to the non-special subtotal (0-100); ignored when specialTariffId is set */
+  discountPercent?: number;
+}
+
 /** Request body for recording a fund withdrawal */
 export interface RecordWithdrawalRequest {
   /** Client-generated UUID sent with every request to ensure exactly-once submission */
