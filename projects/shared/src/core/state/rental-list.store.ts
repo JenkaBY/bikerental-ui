@@ -9,8 +9,8 @@ import type { RentalSummaryResponse } from '@api-models';
 import { toIsoDate } from '../../shared/utils/date.util';
 
 export interface RentalFilter {
-  dateFrom: Date;
-  dateTo: Date;
+  dateFrom?: Date;
+  dateTo?: Date;
   filter: 'ALL' | 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT' | undefined;
 }
 
@@ -68,7 +68,15 @@ export class RentalListStore {
     this.activeResource.reload();
   }
 
-  loadHistory(dateFrom: Date, dateTo: Date, filter: RentalFilter['filter'] = 'ALL'): void {
+  loadByFilter(filter: RentalFilter['filter'] = 'ALL'): void {
+    this.loadHistory(undefined, undefined, filter);
+  }
+
+  loadHistory(
+    dateFrom: Date | undefined,
+    dateTo: Date | undefined,
+    filter: RentalFilter['filter'] = 'ALL',
+  ): void {
     this.historyParams.set({ dateFrom, dateTo, filter });
   }
 
