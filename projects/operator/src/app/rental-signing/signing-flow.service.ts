@@ -1,4 +1,4 @@
-import { Injectable, inject, ViewContainerRef } from '@angular/core';
+import { inject, Injectable, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
@@ -23,7 +23,7 @@ export class SigningFlowService {
     version: number,
     viewContainerRef: ViewContainerRef,
   ): Observable<SigningOutcome> {
-    return this.signingStore.loadActiveTemplate().pipe(
+    return this.signingStore.loadRentalAgreement(rentalId).pipe(
       switchMap(() =>
         this.dialog
           .open<SigningDialogComponent, { rentalId: number; version: number }, SigningDialogResult>(

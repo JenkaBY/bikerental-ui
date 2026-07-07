@@ -24,3 +24,10 @@ export interface AgreementTemplateVariable {
   readonly description: string;
   readonly example?: string;
 }
+
+export interface RentalAgreement {
+  readonly templateId: number;
+  readonly versionNumber?: number;
+  readonly title: string;
+  readonly content: string;
+}

@@ -5,11 +5,11 @@ import { AgreementsService } from '../api/generated';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { AgreementSignatureMapper } from '../mappers/agreement-signature.mapper';
 import { AgreementTemplateMapper } from '../mappers/agreement-template.mapper';
-import type { AgreementTemplate } from '../models/agreement-template.model';
+import type { RentalAgreement } from '../models/agreement-template.model';
 import type { SignatureCreated } from '../models/agreement-signature.model';
 
 interface AgreementSigningState {
-  template: AgreementTemplate | null;
+  template: RentalAgreement | null;
   isLoadingTemplate: boolean;
   isSigning: boolean;
 }
@@ -28,13 +28,15 @@ export class AgreementSigningStore {
   readonly isLoadingTemplate = computed(() => this._state().isLoadingTemplate);
   readonly isSigning = computed(() => this._state().isSigning);
 
-  loadActiveTemplate(): Observable<AgreementTemplate> {
+  loadRentalAgreement(rentalId: number): Observable<RentalAgreement> {
     this._state.update((s) => ({ ...s, isLoadingTemplate: true }));
-    return this.service.getActive(undefined, { context: suppressErrorNotification() }).pipe(
-      map(AgreementTemplateMapper.fromResponse),
-      tap((template) => this._state.update((s) => ({ ...s, template }))),
-      finalize(() => this._state.update((s) => ({ ...s, isLoadingTemplate: false }))),
-    );
+    return this.service
+      .getRentalAgreement(rentalId, undefined, { context: suppressErrorNotification() })
+      .pipe(
+        map(AgreementTemplateMapper.fromRentalAgreementResponse),
+        tap((template) => this._state.update((s) => ({ ...s, template }))),
+        finalize(() => this._state.update((s) => ({ ...s, isLoadingTemplate: false }))),
+      );
   }
 
   sign(
@@ -43,7 +45,7 @@ export class AgreementSigningStore {
     rentalVersion: number,
     operatorId: string,
   ): Observable<SignatureCreated> {
-    const templateId = this._state().template?.id ?? 0;
+    const templateId = this._state().template?.templateId ?? 0;
     this._state.update((s) => ({ ...s, isSigning: true }));
     return this.service
       .sign(rentalId, { signaturePng, rentalVersion, templateId, operatorId }, undefined, {

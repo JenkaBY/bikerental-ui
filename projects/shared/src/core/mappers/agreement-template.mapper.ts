@@ -4,12 +4,14 @@ import type {
   AgreementTemplateResponse,
   AgreementTemplateSummaryResponse,
   AgreementTemplateVariableResponse,
+  RentalAgreementResponse,
 } from '@api-models';
 import type {
   AgreementTemplate,
   AgreementTemplateSummary,
   AgreementTemplateVariable,
   AgreementTemplateWrite,
+  RentalAgreement,
 } from '../models/agreement-template.model';
 
 export class AgreementTemplateMapper {
@@ -51,6 +53,15 @@ export class AgreementTemplateMapper {
       key: r.key ?? '',
       description: r.description ?? '',
       example: r.example ?? undefined,
+    };
+  }
+
+  static fromRentalAgreementResponse(r: RentalAgreementResponse): RentalAgreement {
+    return {
+      templateId: r.templateId ?? 0,
+      versionNumber: r.versionNumber ?? undefined,
+      title: r.title ?? '',
+      content: r.content ?? '',
     };
   }
 }
