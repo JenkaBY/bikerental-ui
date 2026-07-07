@@ -18,9 +18,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { EMPTY, of, type Observable } from 'rxjs';
+import { EMPTY, type Observable, of } from 'rxjs';
 import { catchError, exhaustMap, filter, map, tap } from 'rxjs/operators';
-import type { Money } from '@bikerental/shared';
 import {
   AgreementSigningStore,
   ApiErrorParser,
@@ -88,14 +87,14 @@ import { CancelRentalDialogComponent } from '../rental-detail/cancel-rental-dial
 
           <mat-divider class="!my-2" />
 
-          @if (hasPricingBreakdown()) {
-            @if (hasDiscount() && subtotal(); as sub) {
+          @if (store.hasPricingBreakdown()) {
+            @if (store.hasDiscount() && store.subtotal(); as sub) {
               <div class="flex justify-between">
                 <span>{{ Labels.Subtotal }}</span>
                 <span>{{ sub | money }}</span>
               </div>
             }
-            @if (hasDiscount() && discountAmount(); as discAmt) {
+            @if (store.hasDiscount() && store.discountAmount(); as discAmt) {
               <div class="flex justify-between text-green-600">
                 <span>{{ Labels.DiscountLabel }}&nbsp;&minus;{{ store.discountPercent() }}%</span>
                 <span>&minus;{{ discAmt | money }}</span>
@@ -218,34 +217,6 @@ export class RentalAgreementComponent {
   );
 
   private readonly signingVersion = computed(() => this.navVersion ?? this.store.version() ?? 0);
-
-  protected readonly subtotal = computed<Money | null>(() => {
-    const items = this.equipmentItems();
-    if (items.length === 0) return null;
-    const amount = items.reduce((sum, item) => sum + (item.estimatedCost?.amount ?? 0), 0);
-    const currency =
-      items.find((item) => item.estimatedCost)?.estimatedCost?.currency ??
-      this.store.estimatedCost()?.currency ??
-      'BYN';
-    return { amount, currency };
-  });
-
-  protected readonly hasDiscount = computed(() => {
-    const percent = this.store.discountPercent();
-    return !this.store.specialPriceEnabled() && percent != null && percent > 0;
-  });
-
-  protected readonly hasPricingBreakdown = computed(
-    () => this.hasDiscount() || this.store.specialPriceEnabled(),
-  );
-
-  protected readonly discountAmount = computed<Money | null>(() => {
-    if (!this.hasDiscount()) return null;
-    const sub = this.subtotal();
-    const total = this.store.estimatedCost();
-    if (!sub || !total) return null;
-    return { amount: sub.amount - total.amount, currency: sub.currency };
-  });
 
   constructor() {
     this.navVersion =

@@ -1,18 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import type { Money } from '@bikerental/shared';
 import {
   AgreementSigningStore,
   ApiError,
@@ -80,14 +72,14 @@ export type SigningDialogResult = 'signed' | 'cancelled' | { error: ApiError };
 
         <mat-divider class="!my-2" />
 
-        @if (hasPricingBreakdown()) {
-          @if (hasDiscount() && subtotal(); as sub) {
+        @if (rentalStore.hasPricingBreakdown()) {
+          @if (rentalStore.hasDiscount() && rentalStore.subtotal(); as sub) {
             <div class="flex justify-between">
               <span>{{ Labels.Subtotal }}</span>
               <span>{{ sub | money }}</span>
             </div>
           }
-          @if (hasDiscount() && discountAmount(); as discAmt) {
+          @if (rentalStore.hasDiscount() && rentalStore.discountAmount(); as discAmt) {
             <div class="flex justify-between text-green-600">
               <span
                 >{{ Labels.DiscountLabel }}&nbsp;&minus;{{ rentalStore.discountPercent() }}%</span
@@ -174,34 +166,6 @@ export class SigningDialogComponent {
   protected readonly consented = signal(false);
 
   protected readonly equipmentItems = this.rentalStore.rentalEquipmentItems;
-
-  protected readonly subtotal = computed<Money | null>(() => {
-    const items = this.equipmentItems();
-    if (items.length === 0) return null;
-    const amount = items.reduce((sum, item) => sum + (item.estimatedCost?.amount ?? 0), 0);
-    const currency =
-      items.find((item) => item.estimatedCost)?.estimatedCost?.currency ??
-      this.rentalStore.estimatedCost()?.currency ??
-      'BYN';
-    return { amount, currency };
-  });
-
-  protected readonly hasDiscount = computed(() => {
-    const percent = this.rentalStore.discountPercent();
-    return !this.rentalStore.specialPriceEnabled() && percent != null && percent > 0;
-  });
-
-  protected readonly hasPricingBreakdown = computed(
-    () => this.hasDiscount() || this.rentalStore.specialPriceEnabled(),
-  );
-
-  protected readonly discountAmount = computed<Money | null>(() => {
-    if (!this.hasDiscount()) return null;
-    const sub = this.subtotal();
-    const total = this.rentalStore.estimatedCost();
-    if (!sub || !total) return null;
-    return { amount: sub.amount - total.amount, currency: sub.currency };
-  });
 
   protected onPadEmptyChanged(empty: boolean): void {
     this.padEmpty.set(empty);

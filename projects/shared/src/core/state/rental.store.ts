@@ -11,16 +11,17 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { RentalsService } from '../api/generated';
 import type { AddRentalEquipmentRequest } from '../api/generated';
+import { RentalsService } from '../api/generated';
 import {
   type BrokenEquipmentEntry,
   type Customer,
   type EquipmentSearchItem,
+  type Money,
   type RentalEquipmentItem,
 } from '@ui-models';
 import type { RentalDetailState } from './rental.state';
-import { RentalDashboardMapper, RentalMapper } from '../mappers';
+import { makeMoney, RentalDashboardMapper, RentalMapper } from '../mappers';
 import { suppressErrorNotification } from '../errors';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
@@ -123,6 +124,32 @@ export class RentalStore {
   readonly paidDurationMinutes = computed(() => this._state().paidDurationMinutes);
   readonly estimatedCost = computed(() => this._state().estimatedCost);
   readonly brokenEquipmentEntries = computed(() => this._state().brokenEquipmentEntries);
+
+  readonly subtotal = computed<Money | null>(() => {
+    const items = this.rentalEquipmentItems();
+    if (items.length === 0) return null;
+    const amount = items.reduce((sum, item) => sum + (item.estimatedCost?.amount ?? 0), 0);
+    const currency =
+      items.find((item) => item.estimatedCost)?.estimatedCost?.currency ??
+      this.estimatedCost()?.currency ??
+      undefined;
+    return makeMoney(amount, currency);
+  });
+
+  readonly hasDiscount = computed(() => {
+    const percent = this.discountPercent();
+    return !this.specialPriceEnabled() && percent != null && percent > 0;
+  });
+
+  readonly hasPricingBreakdown = computed(() => this.hasDiscount() || this.specialPriceEnabled());
+
+  readonly discountAmount = computed<Money | null>(() => {
+    if (!this.hasDiscount()) return null;
+    const sub = this.subtotal();
+    const total = this.estimatedCost();
+    if (!sub || !total) return null;
+    return makeMoney(sub.amount - total.amount, sub.currency);
+  });
 
   setBrokenEquipmentEntries(entries: BrokenEquipmentEntry[]): void {
     this.patchState({ brokenEquipmentEntries: entries });
