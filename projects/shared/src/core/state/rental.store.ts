@@ -11,16 +11,17 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { RentalsService } from '../api/generated';
 import type { AddRentalEquipmentRequest } from '../api/generated';
+import { RentalsService } from '../api/generated';
 import {
   type BrokenEquipmentEntry,
   type Customer,
   type EquipmentSearchItem,
+  type Money,
   type RentalEquipmentItem,
 } from '@ui-models';
 import type { RentalDetailState } from './rental.state';
-import { RentalDashboardMapper, RentalMapper } from '../mappers';
+import { makeMoney, RentalDashboardMapper, RentalMapper } from '../mappers';
 import { suppressErrorNotification } from '../errors';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
@@ -109,6 +110,9 @@ export class RentalStore {
   readonly isAwaitingSignature = computed(() => this._state().status === 'AWAITING_SIGNATURE');
   readonly version = computed(() => this._state().version);
   readonly isSendingToSigning = computed(() => this._isSendingToSigning());
+  readonly canSendToSigning = computed(
+    () => this.isSelectedAnyEquipment() && this.isBalanceSufficient() && !this.isSendingToSigning(),
+  );
   readonly isActive = computed(() => this._state().isActive);
   readonly isDebt = computed(() => this._state().isDebt);
   readonly isOverdue = computed(() => this._state().isOverdue);
@@ -120,6 +124,32 @@ export class RentalStore {
   readonly paidDurationMinutes = computed(() => this._state().paidDurationMinutes);
   readonly estimatedCost = computed(() => this._state().estimatedCost);
   readonly brokenEquipmentEntries = computed(() => this._state().brokenEquipmentEntries);
+
+  readonly subtotal = computed<Money | null>(() => {
+    const items = this.rentalEquipmentItems();
+    if (items.length === 0) return null;
+    const amount = items.reduce((sum, item) => sum + (item.estimatedCost?.amount ?? 0), 0);
+    const currency =
+      items.find((item) => item.estimatedCost)?.estimatedCost?.currency ??
+      this.estimatedCost()?.currency ??
+      undefined;
+    return makeMoney(amount, currency);
+  });
+
+  readonly hasDiscount = computed(() => {
+    const percent = this.discountPercent();
+    return !this.specialPriceEnabled() && percent != null && percent > 0;
+  });
+
+  readonly hasPricingBreakdown = computed(() => this.hasDiscount() || this.specialPriceEnabled());
+
+  readonly discountAmount = computed<Money | null>(() => {
+    if (!this.hasDiscount()) return null;
+    const sub = this.subtotal();
+    const total = this.estimatedCost();
+    if (!sub || !total) return null;
+    return makeMoney(sub.amount - total.amount, sub.currency);
+  });
 
   setBrokenEquipmentEntries(entries: BrokenEquipmentEntry[]): void {
     this.patchState({ brokenEquipmentEntries: entries });
@@ -160,6 +190,10 @@ export class RentalStore {
   removeEquipmentItem(id: number): void {
     const newItems = this._state().equipmentItems.filter((e) => e.id !== id);
     this.patchState({ equipmentItems: newItems });
+
+    if (this._state().id !== null) {
+      this.save().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    }
   }
 
   setDiscountPercent(percent: number | null): void {
@@ -299,7 +333,25 @@ export class RentalStore {
     if (id === null) throw new Error('No rental id in store');
     return this.rentalsService
       .updateLifecycle(id, { status: 'CANCELLED', operatorId: this.operatorId() })
-      .pipe(map(() => undefined as void));
+      .pipe(
+        tap((r) => this.patchState({ status: r.status, version: r.version })),
+        map(() => undefined as void),
+      );
+  }
+
+  createAwaitingSignature(): Observable<number> {
+    const { customer, equipmentItems } = this._state();
+    if (!customer?.id || equipmentItems.length === 0) {
+      return EMPTY;
+    }
+    this._isSendingToSigning.set(true);
+    return this.rentalsService
+      .initForSigning(this.mapToRequest(), undefined, { context: suppressErrorNotification() })
+      .pipe(
+        tap((r) => this.patchState({ id: r.id, status: r.status, version: r.version })),
+        map((r) => r.version),
+        finalize(() => this._isSendingToSigning.set(false)),
+      );
   }
 
   sendToSigning(): Observable<number> {
@@ -320,6 +372,12 @@ export class RentalStore {
         map((r) => r.version),
         finalize(() => this._isSendingToSigning.set(false)),
       );
+  }
+
+  proceedToSigning(): Observable<number> {
+    return this._state().id === null
+      ? this.createAwaitingSignature()
+      : this.save().pipe(switchMap(() => this.sendToSigning()));
   }
 
   cancelSigning(): Observable<void> {

@@ -3,22 +3,27 @@ import {
   Component,
   DestroyRef,
   inject,
-  output,
   ViewContainerRef,
 } from '@angular/core';
+import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, filter, of, tap } from 'rxjs';
 import {
+  ApiErrorParser,
   CustomerFinanceStore,
   Labels,
   MOBILE_FORM_DIALOG_CONFIG,
+  NotificationService,
   RentalStore,
   RentalValidationStore,
+  resolveErrorMessage,
   TopUpDialogComponent,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
+import { CancelRentalDialogComponent } from '../../rental-detail/cancel-rental-dialog.component';
 import { RentalCustomerPanelComponent } from './rental-customer-panel.component';
 import { RentalDurationControlComponent } from './duration/rental-duration-control.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
@@ -54,6 +59,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
       (nextRequested)="onNext()"
       (saveDraftRequested)="onSaveDraft()"
       (topUpRequested)="onTopUpRequested()"
+      (cancelRequested)="onCancel()"
     />
   `,
 })
@@ -64,9 +70,10 @@ export class RentalStep2Component {
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
+  private readonly notifications = inject(NotificationService);
   protected readonly validationStore = inject(RentalValidationStore);
-
-  readonly stepAdvanced = output<void>();
 
   protected onTopUpRequested(): void {
     const customerId = this.store.customer()?.id;
@@ -105,22 +112,63 @@ export class RentalStep2Component {
   }
 
   protected onSaveDraft(): void {
+    const wasNew = this.store.id() === null;
     this.store
       .save()
       .pipe(
-        tap(() => this.snackBar.open(Labels.DraftSaved, Labels.Close, { duration: 3000 })),
+        tap(() => {
+          this.snackBar.open(Labels.DraftSaved, Labels.Close, { duration: 3000 });
+          const id = this.store.id();
+          if (wasNew && id !== null) this.location.replaceState(`/rentals/${id}/edit`);
+        }),
         catchError(() => of(undefined)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
 
-  protected onNext(): void {
-    this.store
-      .save()
+  protected onCancel(): void {
+    this.dialog
+      .open(CancelRentalDialogComponent, { disableClose: false })
+      .afterClosed()
       .pipe(
-        tap(() => this.stepAdvanced.emit()),
-        catchError(() => of(undefined)),
+        filter((confirmed): confirmed is true => !!confirmed),
+        exhaustMap(() => {
+          if (this.store.id() === null) return of(undefined);
+          return this.store.cancelRental().pipe(
+            tap(() => this.notifications.success(Labels.RentalCancelSuccess)),
+            catchError((err: unknown) => {
+              const apiError = ApiErrorParser.parse(err);
+              this.notifications.error(resolveErrorMessage(apiError));
+              return EMPTY;
+            }),
+          );
+        }),
+        tap(() => {
+          this.store.reset();
+          void this.router.navigate(['/rentals']);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
+  protected onNext(): void {
+    const wasNew = this.store.id() === null;
+    this.store
+      .proceedToSigning()
+      .pipe(
+        tap((version) => {
+          const id = this.store.id();
+          if (id === null) return;
+          if (wasNew) this.location.replaceState(`/rentals/${id}/edit`);
+          void this.router.navigate(['/rentals', id, 'agreement'], { state: { version } });
+        }),
+        catchError((err: unknown) => {
+          const apiError = ApiErrorParser.parse(err);
+          this.notifications.error(resolveErrorMessage(apiError));
+          return of(undefined);
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();

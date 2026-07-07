@@ -21,16 +21,17 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  RentalRequest,
-  RequestOptions,
-  RentalResponse,
-  Pageable,
-  PageRentalSummaryResponse,
   AddRentalEquipmentRequest,
-  ReturnEquipmentRequest,
-  RentalReturnResponse,
-  RentalLifecycleRequest,
+  Pageable,
   PageAvailableEquipmentResponse,
+  PageRentalSummaryResponse,
+  RentalForSigningRequest,
+  RentalLifecycleRequest,
+  RentalRequest,
+  RentalResponse,
+  RentalReturnResponse,
+  RequestOptions,
+  ReturnEquipmentRequest,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -346,6 +347,51 @@ export class RentalsService {
     };
 
     return this.httpClient.post(url, null, requestOptions);
+  }
+
+  initForSigning(
+    rentalForSigningRequest: RentalForSigningRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<RentalResponse>;
+  initForSigning(
+    rentalForSigningRequest: RentalForSigningRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<RentalResponse>>;
+  initForSigning(
+    rentalForSigningRequest: RentalForSigningRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<RentalResponse>>;
+  /** Creates a rental and moves it to AWAITING_SIGNATURE in one atomic step: validates, holds funds and returns the rental with its version (signing fencing token). Requires at least one equipment. */
+  initForSigning(
+    rentalForSigningRequest: RentalForSigningRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/awaiting-signature`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, rentalForSigningRequest, requestOptions);
   }
 
   updateLifecycle(

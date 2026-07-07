@@ -33,6 +33,7 @@ export const ErrorCode = {
   EQUIPMENT_NOT_AVAILABLE: 'rental.equipment.not_available',
   STATUS_INVALID: 'rental.status.invalid',
   WINDOW_ELAPSED: 'rental.window.elapsed',
+  ACTIVATION_NOT_READY: 'rental.activation.not_ready',
 
   // identity.* — authentication & accounts
   AUTH_REQUIRED: 'identity.authentication.required',
@@ -85,6 +86,7 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.EQUIPMENT_NOT_AVAILABLE,
   ErrorCode.STATUS_INVALID,
   ErrorCode.WINDOW_ELAPSED,
+  ErrorCode.ACTIVATION_NOT_READY,
   ErrorCode.USERNAME_DUPLICATE,
   ErrorCode.EMAIL_DUPLICATE,
   ErrorCode.PASSWORD_POLICY_VIOLATION,
