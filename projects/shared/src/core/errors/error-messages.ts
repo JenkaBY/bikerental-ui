@@ -73,6 +73,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.EQUIPMENT_NOT_AVAILABLE]: rentalEquipmentNotAvailableMessage,
   [ErrorCode.STATUS_INVALID]: rentalStatusInvalidMessage,
   [ErrorCode.WINDOW_ELAPSED]: $localize`This rental is overdue — return it before adding more equipment.`,
+  [ErrorCode.ACTIVATION_NOT_READY]: $localize`The rental could not be prepared for signing — please review the details and try again.`,
 
   // Identity (authentication & accounts)
   [ErrorCode.AUTH_REQUIRED]: $localize`Your session has expired. Please sign in again.`,

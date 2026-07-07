@@ -21,7 +21,6 @@ import {
 } from '@bikerental/shared';
 import { RentalStep1Component } from './step1/rental-step1.component';
 import { RentalStep2Component } from './step2/rental-step2.component';
-import { RentalStep3Component } from './step3/rental-step3.component';
 
 @Component({
   selector: 'app-rental-create',
@@ -35,7 +34,7 @@ import { RentalStep3Component } from './step3/rental-step3.component';
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
     { provide: RENTAL_VALIDATION_STORE_FOR_DELEGATION, useExisting: RentalValidationStore },
   ],
-  imports: [MatButtonModule, RentalStep1Component, RentalStep2Component, RentalStep3Component],
+  imports: [MatButtonModule, RentalStep1Component, RentalStep2Component],
   template: `
     @if (isBusy()) {
       <div class="flex h-full items-center justify-center">
@@ -52,10 +51,7 @@ import { RentalStep3Component } from './step3/rental-step3.component';
           <app-rental-step1 (customerSelected)="activeStep.set(1)" />
         }
         @case (1) {
-          <app-rental-step2 (stepAdvanced)="activeStep.set(2)" />
-        }
-        @case (2) {
-          <app-rental-step3 (stepBack)="activeStep.set(1)" />
+          <app-rental-step2 />
         }
       }
     }

@@ -109,6 +109,9 @@ export class RentalStore {
   readonly isAwaitingSignature = computed(() => this._state().status === 'AWAITING_SIGNATURE');
   readonly version = computed(() => this._state().version);
   readonly isSendingToSigning = computed(() => this._isSendingToSigning());
+  readonly canSendToSigning = computed(
+    () => this.isSelectedAnyEquipment() && this.isBalanceSufficient() && !this.isSendingToSigning(),
+  );
   readonly isActive = computed(() => this._state().isActive);
   readonly isDebt = computed(() => this._state().isDebt);
   readonly isOverdue = computed(() => this._state().isOverdue);
@@ -302,6 +305,21 @@ export class RentalStore {
       .pipe(map(() => undefined as void));
   }
 
+  createAwaitingSignature(): Observable<number> {
+    const { customer, equipmentItems } = this._state();
+    if (!customer?.id || equipmentItems.length === 0) {
+      return EMPTY;
+    }
+    this._isSendingToSigning.set(true);
+    return this.rentalsService
+      .initForSigning(this.mapToRequest(), undefined, { context: suppressErrorNotification() })
+      .pipe(
+        tap((r) => this.patchState({ id: r.id, status: r.status, version: r.version })),
+        map((r) => r.version),
+        finalize(() => this._isSendingToSigning.set(false)),
+      );
+  }
+
   sendToSigning(): Observable<number> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
@@ -320,6 +338,12 @@ export class RentalStore {
         map((r) => r.version),
         finalize(() => this._isSendingToSigning.set(false)),
       );
+  }
+
+  proceedToSigning(): Observable<number> {
+    return this._state().id === null
+      ? this.createAwaitingSignature()
+      : this.save().pipe(switchMap(() => this.sendToSigning()));
   }
 
   cancelSigning(): Observable<void> {
