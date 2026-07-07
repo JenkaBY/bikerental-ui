@@ -13,12 +13,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Location } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { of, type Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { EMPTY, of, type Observable } from 'rxjs';
+import { catchError, exhaustMap, filter, map, tap } from 'rxjs/operators';
 import type { Money } from '@bikerental/shared';
 import {
   AgreementSigningStore,
@@ -34,6 +35,7 @@ import {
   resolveErrorMessage,
   SignaturePadComponent,
 } from '@bikerental/shared';
+import { CancelRentalDialogComponent } from '../rental-detail/cancel-rental-dialog.component';
 
 @Component({
   selector: 'app-rental-agreement',
@@ -145,6 +147,14 @@ import {
         <app-signature-pad (emptyChanged)="onPadEmptyChanged($event)" />
 
         <div class="flex gap-2">
+          <button
+            mat-stroked-button
+            class="flex-1 !text-red-600 !border-red-400"
+            type="button"
+            (click)="onCancel()"
+          >
+            {{ Labels.Cancel }}
+          </button>
           <button matButton="outlined" class="flex-1" type="button" (click)="onBack()">
             {{ Labels.Back }}
           </button>
@@ -180,6 +190,7 @@ export class RentalAgreementComponent {
   private readonly location = inject(Location);
   private readonly notifications = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dialog = inject(MatDialog);
 
   readonly id = input<string>();
 
@@ -277,6 +288,28 @@ export class RentalAgreementComponent {
 
   protected onBack(): void {
     this.location.back();
+  }
+
+  protected onCancel(): void {
+    this.dialog
+      .open(CancelRentalDialogComponent, { disableClose: false })
+      .afterClosed()
+      .pipe(
+        filter((confirmed): confirmed is true => !!confirmed),
+        exhaustMap(() =>
+          this.store.cancelRental().pipe(
+            tap(() => this.notifications.success(Labels.RentalCancelSuccess)),
+            catchError((err: unknown) => {
+              const apiError = ApiErrorParser.parse(err);
+              this.notifications.error(resolveErrorMessage(apiError));
+              return EMPTY;
+            }),
+          ),
+        ),
+        tap(() => void this.router.navigate(['/rentals'])),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   protected onSign(): void {

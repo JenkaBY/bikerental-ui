@@ -163,6 +163,10 @@ export class RentalStore {
   removeEquipmentItem(id: number): void {
     const newItems = this._state().equipmentItems.filter((e) => e.id !== id);
     this.patchState({ equipmentItems: newItems });
+
+    if (this._state().id !== null) {
+      this.save().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    }
   }
 
   setDiscountPercent(percent: number | null): void {
@@ -302,7 +306,10 @@ export class RentalStore {
     if (id === null) throw new Error('No rental id in store');
     return this.rentalsService
       .updateLifecycle(id, { status: 'CANCELLED', operatorId: this.operatorId() })
-      .pipe(map(() => undefined as void));
+      .pipe(
+        tap((r) => this.patchState({ status: r.status, version: r.version })),
+        map(() => undefined as void),
+      );
   }
 
   createAwaitingSignature(): Observable<number> {

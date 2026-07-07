@@ -56,6 +56,14 @@ import { RentalBalanceWarningComponent } from '../step3/rental-balance-warning.c
         <button
           mat-stroked-button
           type="button"
+          class="flex-1 !text-red-600 !border-red-400"
+          (click)="cancelRequested.emit()"
+        >
+          {{ Labels.Cancel }}
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
           class="flex-1"
           [disabled]="isSavingRental"
           (click)="saveDraftRequested.emit()"
@@ -89,5 +97,6 @@ export class RentalCostFooterComponent {
   readonly nextRequested = output<void>();
   readonly saveDraftRequested = output<void>();
   readonly topUpRequested = output<void>();
+  readonly cancelRequested = output<void>();
   protected readonly makeMoney = makeMoney;
 }

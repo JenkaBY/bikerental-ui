@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, filter, of, tap } from 'rxjs';
 import {
   ApiErrorParser,
   CustomerFinanceStore,
@@ -23,6 +23,7 @@ import {
   TopUpDialogComponent,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
+import { CancelRentalDialogComponent } from '../../rental-detail/cancel-rental-dialog.component';
 import { RentalCustomerPanelComponent } from './rental-customer-panel.component';
 import { RentalDurationControlComponent } from './duration/rental-duration-control.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
@@ -58,6 +59,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
       (nextRequested)="onNext()"
       (saveDraftRequested)="onSaveDraft()"
       (topUpRequested)="onTopUpRequested()"
+      (cancelRequested)="onCancel()"
     />
   `,
 })
@@ -110,11 +112,42 @@ export class RentalStep2Component {
   }
 
   protected onSaveDraft(): void {
+    const wasNew = this.store.id() === null;
     this.store
       .save()
       .pipe(
-        tap(() => this.snackBar.open(Labels.DraftSaved, Labels.Close, { duration: 3000 })),
+        tap(() => {
+          this.snackBar.open(Labels.DraftSaved, Labels.Close, { duration: 3000 });
+          const id = this.store.id();
+          if (wasNew && id !== null) this.location.replaceState(`/rentals/${id}/edit`);
+        }),
         catchError(() => of(undefined)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
+  protected onCancel(): void {
+    this.dialog
+      .open(CancelRentalDialogComponent, { disableClose: false })
+      .afterClosed()
+      .pipe(
+        filter((confirmed): confirmed is true => !!confirmed),
+        exhaustMap(() => {
+          if (this.store.id() === null) return of(undefined);
+          return this.store.cancelRental().pipe(
+            tap(() => this.notifications.success(Labels.RentalCancelSuccess)),
+            catchError((err: unknown) => {
+              const apiError = ApiErrorParser.parse(err);
+              this.notifications.error(resolveErrorMessage(apiError));
+              return EMPTY;
+            }),
+          );
+        }),
+        tap(() => {
+          this.store.reset();
+          void this.router.navigate(['/rentals']);
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
