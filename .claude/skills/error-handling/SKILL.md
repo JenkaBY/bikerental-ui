@@ -24,6 +24,9 @@ All backend errors are RFC 7807 `ProblemDetail` bodies with a stable code in `pr
 The global `errorInterceptor` already parses every failed request, records `ApiError` on
 `ErrorService.lastError`, and toasts via `NotificationService` unless the request opted out.
 
+For flattening a dialog-confirm → request → error chain (avoiding nested `.subscribe()`), see the
+`angular-rxjs-streams` skill — it reuses this `EMPTY`/`ApiErrorParser` recipe inside `catchError`.
+
 ## Recipe: domain error in a store/component
 
 When you handle an error locally, **suppress the global toast** and show your own contextual message:

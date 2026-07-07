@@ -364,3 +364,5 @@ export class Data {
 ```
 
 For advanced patterns, see [references/http-patterns.md](references/http-patterns.md).
+For chaining a request after a dialog confirm/router event without nested subscribes, see the
+`angular-rxjs-streams` skill.
