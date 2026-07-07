@@ -61,12 +61,12 @@ import { CancelRentalDialogComponent } from '../rental-detail/cancel-rental-dial
     }
   `,
   template: `
-    <div class="flex flex-col gap-4 p-4">
+    <div class="flex flex-col gap-4">
       <div class="flex items-center gap-2">
         <button mat-icon-button type="button" (click)="onBack()" [attr.aria-label]="Labels.Back">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <h1 class="text-lg font-semibold text-slate-800">{{ Labels.SigningDialogTitle }}</h1>
+        <h1 class="text-lg font-semibold text-slate-800 m-0">{{ Labels.SigningDialogTitle }}</h1>
       </div>
 
       @if (isReady()) {
