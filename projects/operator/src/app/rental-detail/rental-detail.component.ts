@@ -23,11 +23,12 @@ import {
   DurationPipe,
   Labels,
   mapRentalStatus,
+  MOBILE_FORM_DIALOG_CONFIG,
+  MoneyPipe,
   RENTAL_STORE_TOKEN,
   RentalSignatureStore,
   RentalStore,
   TopUpDialogComponent,
-  MoneyPipe,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
 import { SigningFlowService } from '../rental-signing/signing-flow.service';
@@ -226,6 +227,7 @@ export class RentalDetailComponent {
 
     this.dialog
       .open(TopUpDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
@@ -245,8 +247,8 @@ export class RentalDetailComponent {
     const availableBalance = this.financeStore.balance()?.available;
     this.dialog
       .open(WithdrawDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId, availableBalance },
-        width: '380px',
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })

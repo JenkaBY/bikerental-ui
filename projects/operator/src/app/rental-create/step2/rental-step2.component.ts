@@ -13,6 +13,7 @@ import { catchError, of, tap } from 'rxjs';
 import {
   CustomerFinanceStore,
   Labels,
+  MOBILE_FORM_DIALOG_CONFIG,
   RentalStore,
   RentalValidationStore,
   TopUpDialogComponent,
@@ -73,6 +74,7 @@ export class RentalStep2Component {
 
     this.dialog
       .open(TopUpDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId, initialAmount: this.validationStore.balanceShortfall()?.amount },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
@@ -90,8 +92,8 @@ export class RentalStep2Component {
     const availableBalance = this.financeStore.balance()?.available;
     this.dialog
       .open(WithdrawDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId, availableBalance },
-        width: '380px',
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })

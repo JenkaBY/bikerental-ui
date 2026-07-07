@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CustomerFinanceStore,
   Labels,
+  MOBILE_FORM_DIALOG_CONFIG,
   MoneyPipe,
   TopUpButtonComponent,
   TopUpDialogComponent,
@@ -74,8 +75,8 @@ export class CustomerAccountComponent {
   public openTopUp(): void {
     this.dialog
       .open(TopUpDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId: this.layoutStore.customerId() },
-        width: '380px',
         viewContainerRef: this.viewContainerRef,
       })
       .afterClosed()
@@ -93,8 +94,8 @@ export class CustomerAccountComponent {
     const bal = this.financeStore.balance();
     this.dialog
       .open(WithdrawDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId: this.layoutStore.customerId(), availableBalance: bal?.available },
-        width: '380px',
         viewContainerRef: this.viewContainerRef,
       })
       .afterClosed()

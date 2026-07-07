@@ -18,6 +18,7 @@ import {
   AgreementSigningStore,
   ApiErrorParser,
   Labels,
+  MOBILE_FORM_DIALOG_CONFIG,
   NotificationService,
   RentalStore,
   RentalValidationStore,
@@ -171,6 +172,7 @@ export class RentalStep3Component {
 
     this.dialog
       .open(TopUpDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId, initialAmount: this.validationStore.balanceShortfall()?.amount },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
