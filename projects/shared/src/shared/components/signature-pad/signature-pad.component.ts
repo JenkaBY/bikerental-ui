@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Labels } from '../../constant/labels';
 
 interface Point {
@@ -26,41 +27,39 @@ const STROKE_WIDTH = 2.5;
   selector: 'app-signature-pad',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, MatTooltipModule],
   template: `
-    <div class="flex flex-col gap-2">
-      <div
-        class="relative w-full overflow-hidden rounded-lg border border-slate-300 bg-white"
-        [style.height.px]="height()"
-      >
-        <canvas
-          #canvas
-          class="absolute inset-0 h-full w-full touch-none select-none"
-          (pointerdown)="onPointerDown($event)"
-          (pointermove)="onPointerMove($event)"
-          (pointerup)="onPointerEnd($event)"
-          (pointercancel)="onPointerEnd($event)"
-        ></canvas>
-        @if (isEmpty()) {
-          <span
-            class="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-slate-400"
-          >
-            {{ Labels.SignatureHint }}
-          </span>
-        }
-      </div>
-      <div class="flex justify-end">
-        <button
-          mat-stroked-button
-          class="btn-caution"
-          type="button"
-          [disabled]="isEmpty() || disabled()"
-          (click)="clear()"
+    <div
+      class="relative w-full overflow-hidden rounded-lg border border-slate-300 bg-white"
+      [style.height.px]="height()"
+    >
+      <canvas
+        #canvas
+        class="absolute inset-0 h-full w-full touch-none select-none"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerEnd($event)"
+        (pointercancel)="onPointerEnd($event)"
+      ></canvas>
+      @if (isEmpty()) {
+        <span
+          class="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-slate-400"
         >
-          <mat-icon>backspace</mat-icon>
-          {{ Labels.SignatureClear }}
-        </button>
-      </div>
+          {{ Labels.SignatureHint }}
+        </span>
+      }
+      <button
+        mat-mini-fab
+        color="basic"
+        type="button"
+        class="!absolute top-2 right-2 z-10 !shadow-md border border-slate-300"
+        [disabled]="isEmpty() || disabled()"
+        [attr.aria-label]="Labels.SignatureClear"
+        [matTooltip]="Labels.SignatureClear"
+        (click)="clear()"
+      >
+        <mat-icon>change_circle</mat-icon>
+      </button>
     </div>
   `,
 })
