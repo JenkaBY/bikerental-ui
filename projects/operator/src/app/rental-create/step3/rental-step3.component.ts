@@ -113,8 +113,9 @@ export class RentalStep3Component {
           this.snackBar.open(Labels.RentalStarted, Labels.Close, { duration: 3000 });
           this.router.navigate(['/rentals']);
         }),
-        catchError(() => {
-          this.snackBar.open(Labels.RentalStartError, Labels.Close, { duration: 4000 });
+        catchError((err: unknown) => {
+          const apiError = ApiErrorParser.parse(err);
+          this.notifications.error(resolveErrorMessage(apiError));
           return of(undefined);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -128,7 +129,8 @@ export class RentalStep3Component {
       .pipe(
         switchMap(() => this.store.sendToSigning()),
         catchError((err: unknown) => {
-          this.notifications.error(resolveErrorMessage(ApiErrorParser.parse(err)));
+          const apiError = ApiErrorParser.parse(err);
+          this.notifications.error(resolveErrorMessage(apiError));
           return of(null);
         }),
         switchMap((version) => {
@@ -169,7 +171,7 @@ export class RentalStep3Component {
 
     this.dialog
       .open(TopUpDialogComponent, {
-        data: { customerId },
+        data: { customerId, initialAmount: this.validationStore.balanceShortfall()?.amount },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })

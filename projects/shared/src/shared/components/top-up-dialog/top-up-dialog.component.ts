@@ -20,6 +20,7 @@ import { MaxDecimalsDirective } from '../../directives/max-decimals.directive';
 
 interface TopUpDialogData {
   customerId: string;
+  initialAmount?: number;
 }
 
 @Component({
@@ -80,7 +81,7 @@ export class TopUpDialogComponent {
   protected errorShown = false;
 
   public readonly form = new FormGroup({
-    amount: new FormControl<number | null>(null, [
+    amount: new FormControl<number | null>(this.data.initialAmount ?? null, [
       Validators.required,
       Validators.min(0.01),
       maxDecimalPlacesValidator(2),

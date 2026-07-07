@@ -14,6 +14,7 @@ import {
   CustomerFinanceStore,
   Labels,
   RentalStore,
+  RentalValidationStore,
   TopUpDialogComponent,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
@@ -48,7 +49,11 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
       />
       <app-rental-pricing-section />
     </div>
-    <app-rental-cost-footer (nextRequested)="onNext()" (saveDraftRequested)="onSaveDraft()" />
+    <app-rental-cost-footer
+      (nextRequested)="onNext()"
+      (saveDraftRequested)="onSaveDraft()"
+      (topUpRequested)="onTopUpRequested()"
+    />
   `,
 })
 export class RentalStep2Component {
@@ -58,6 +63,7 @@ export class RentalStep2Component {
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  protected readonly validationStore = inject(RentalValidationStore);
 
   readonly stepAdvanced = output<void>();
 
@@ -67,7 +73,7 @@ export class RentalStep2Component {
 
     this.dialog
       .open(TopUpDialogComponent, {
-        data: { customerId },
+        data: { customerId, initialAmount: this.validationStore.balanceShortfall()?.amount },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
