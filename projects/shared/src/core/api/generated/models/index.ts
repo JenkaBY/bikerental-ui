@@ -173,6 +173,8 @@ export interface EquipmentItemResponse {
 export interface RentalResponse {
   /** Rental ID */
   id: number;
+  /** Optimistic-lock version, starts at 0 */
+  version: number;
   /** Customer UUID */
   customerId: string;
   /** List of equipment items in this rental */
@@ -354,6 +356,18 @@ export interface CostCalculationRequest {
   rentalDate?: string;
 }
 
+export interface SignAgreementRequest {
+  signaturePng: string;
+  rentalVersion: number;
+  templateId: number;
+  operatorId: string;
+}
+
+export interface SignatureCreatedResponse {
+  signatureId?: number;
+  signedAt?: string;
+}
+
 /** Request body for adding equipment to an active rental */
 export interface AddRentalEquipmentRequest {
   /** List of Equipment IDs to add to the rental */
@@ -483,8 +497,29 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
+export interface AgreementTemplateRequest {
+  title: string;
+  content: string;
+}
+
+export interface AgreementTemplateResponse {
+  id?: number;
+  versionNumber?: number;
+  title?: string;
+  content?: string;
+  status?: 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
+  createdAt?: string;
+  activatedAt?: string;
+  deactivatedAt?: string;
+}
+
+export interface AgreementPdfPreviewRequest {
+  title: string;
+  content: string;
+}
+
 export interface RentalLifecycleRequest {
-  status: 'ACTIVE' | 'CANCELLED';
+  status: 'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'CANCELLED';
   operatorId: string;
 }
 
@@ -562,6 +597,20 @@ export interface RentalSummaryResponse {
   plannedDurationMinutes: number;
   /** Actual duration in minutes (null until returned) */
   actualDurationMinutes?: number;
+}
+
+export interface SignatureSummaryResponse {
+  signatureId?: number;
+  templateId?: number;
+  templateVersionNumber?: number;
+  signedAt?: string;
+}
+
+export interface RentalAgreementResponse {
+  templateId?: number;
+  versionNumber?: number;
+  title?: string;
+  content?: string;
 }
 
 /** Equipment available for a new rental */
@@ -647,6 +696,22 @@ export interface CustomerSearchResponse {
   firstName?: string;
   /** Last name */
   lastName?: string;
+}
+
+export interface AgreementTemplateSummaryResponse {
+  id?: number;
+  versionNumber?: number;
+  title?: string;
+  status?: 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
+  createdAt?: string;
+  activatedAt?: string;
+  deactivatedAt?: string;
+}
+
+export interface AgreementTemplateVariableResponse {
+  key?: string;
+  description?: string;
+  example?: string;
 }
 
 /** Request Options for Angular HttpClient requests */

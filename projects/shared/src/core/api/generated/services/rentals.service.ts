@@ -21,16 +21,16 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  AddRentalEquipmentRequest,
-  Pageable,
-  PageAvailableEquipmentResponse,
-  PageRentalSummaryResponse,
-  RentalLifecycleRequest,
   RentalRequest,
-  RentalResponse,
-  RentalReturnResponse,
   RequestOptions,
+  RentalResponse,
+  Pageable,
+  PageRentalSummaryResponse,
+  AddRentalEquipmentRequest,
   ReturnEquipmentRequest,
+  RentalReturnResponse,
+  RentalLifecycleRequest,
+  PageAvailableEquipmentResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -95,7 +95,7 @@ export class RentalsService {
 
   getRentals(
     arg5: Pageable,
-    status?: Array<'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
+    status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
     customerId?: string,
     equipmentUid?: string,
     from?: string,
@@ -105,7 +105,7 @@ export class RentalsService {
   ): Observable<PageRentalSummaryResponse>;
   getRentals(
     arg5: Pageable,
-    status?: Array<'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
+    status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
     customerId?: string,
     equipmentUid?: string,
     from?: string,
@@ -115,7 +115,7 @@ export class RentalsService {
   ): Observable<HttpResponse<PageRentalSummaryResponse>>;
   getRentals(
     arg5: Pageable,
-    status?: Array<'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
+    status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
     customerId?: string,
     equipmentUid?: string,
     from?: string,
@@ -126,7 +126,7 @@ export class RentalsService {
   /** Returns a paginated list of rentals filtered by one or more statuses, customer or equipment UID */
   getRentals(
     arg5: Pageable,
-    status?: Array<'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
+    status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
     customerId?: string,
     equipmentUid?: string,
     from?: string,
@@ -366,7 +366,7 @@ export class RentalsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalResponse>>;
-  /** Transitions a rental to ACTIVE or CANCELLED status */
+  /** Transitions a rental to AWAITING_SIGNATURE, DRAFT, ACTIVE or CANCELLED status. The response carries the rental version used as the signing fencing token. */
   updateLifecycle(
     rentalId: number,
     rentalLifecycleRequest: RentalLifecycleRequest,

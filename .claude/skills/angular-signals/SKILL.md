@@ -301,3 +301,5 @@ export class Auth {
 ```
 
 For advanced patterns including resource(), see [references/signal-patterns.md](references/signal-patterns.md).
+For chaining RxJS at boundaries (dialogs, HTTP, router) without nested subscribes, see the
+`angular-rxjs-streams` skill.

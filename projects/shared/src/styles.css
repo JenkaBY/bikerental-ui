@@ -47,3 +47,32 @@ mat-sidenav {
 .bottom-nav-item.bottom-nav-active mat-icon {
   color: rgb(99, 102, 241) !important;
 }
+
+/* Semantic button tokens (agreement-review-notes.md D-1) — one source of truth across apps */
+.btn-utility {
+  background-color: #0d9488 !important;
+  border-color: #0d9488 !important;
+  color: #fff !important;
+}
+
+.btn-utility:hover:not(:disabled) {
+  background-color: #0f766e !important;
+  border-color: #0f766e !important;
+}
+
+.btn-caution {
+  background-color: #d97706 !important;
+  border-color: #d97706 !important;
+  color: #fff !important;
+}
+
+.btn-caution:hover:not(:disabled) {
+  background-color: #b45309 !important;
+  border-color: #b45309 !important;
+}
+
+/* Material's adjacent-button spacing selector doesn't reach across custom-component
+   wrappers (e.g. app-form-cancel-button), so dialog action buttons can end up flush. */
+mat-dialog-actions {
+  gap: 8px;
+}

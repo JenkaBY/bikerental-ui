@@ -10,12 +10,19 @@ import {
   RentalStore,
   RentalValidationStore,
 } from '@bikerental/shared';
+import { RentalBalanceWarningComponent } from '../step3/rental-balance-warning.component';
 
 @Component({
   selector: 'app-rental-cost-footer',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatProgressSpinnerModule, MatChipsModule, MoneyPipe],
+  imports: [
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
+    MoneyPipe,
+    RentalBalanceWarningComponent,
+  ],
   template: `
     <div class="bg-white border-t border-slate-200 shadow-lg px-4 py-3 flex flex-col gap-2">
       <div class="flex items-center justify-between">
@@ -43,11 +50,7 @@ import {
         </div>
       }
 
-      @if (!isBalanceSufficient) {
-        <div class="text-xs font-medium text-red-600 bg-red-50 rounded px-2 py-1">
-          {{ Labels.InsufficientBalance }}
-        </div>
-      }
+      <app-rental-balance-warning (topUpRequested)="topUpRequested.emit()" />
 
       <div class="flex gap-2 mt-1">
         <button
@@ -85,5 +88,6 @@ export class RentalCostFooterComponent {
 
   readonly nextRequested = output<void>();
   readonly saveDraftRequested = output<void>();
+  readonly topUpRequested = output<void>();
   protected readonly makeMoney = makeMoney;
 }

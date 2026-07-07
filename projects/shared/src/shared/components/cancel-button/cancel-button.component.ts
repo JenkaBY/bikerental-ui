@@ -8,7 +8,7 @@ import { Labels } from '../../constant/labels';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, MatDialogModule],
-  template: ` <button mat-button mat-dialog-close>{{ msg.Cancel }}</button> `,
+  template: ` <button mat-button class="btn-caution" mat-dialog-close>{{ msg.Cancel }}</button> `,
 })
 export class CancelButtonComponent {
   readonly msg = Labels;

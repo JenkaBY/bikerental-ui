@@ -368,4 +368,75 @@ export class Labels {
   static readonly TemporaryPasswordDoneButton = $localize`Done`;
   static readonly TemporaryPasswordShowButton = $localize`Show password`;
   static readonly TemporaryPasswordHideButton = $localize`Hide password`;
+
+  static readonly AgreementsNavLabel = $localize`Agreements`;
+  static readonly AgreementsListTitle = $localize`Agreement Templates`;
+  static readonly NewTemplateButton = $localize`New template`;
+  static readonly AgreementColumnVersion = $localize`Version`;
+  static readonly AgreementColumnTitle = $localize`Title`;
+  static readonly AgreementColumnStatus = $localize`Status`;
+  static readonly AgreementColumnCreatedAt = $localize`Created`;
+  static readonly AgreementColumnActivatedAt = $localize`Activated`;
+  static readonly AgreementColumnDeactivatedAt = $localize`Deactivated`;
+  static readonly AgreementColumnActions = $localize`Actions`;
+  static readonly AgreementStatusDraft = $localize`Draft`;
+  static readonly AgreementStatusActive = $localize`Active`;
+  static readonly AgreementStatusDeactivated = $localize`Deactivated`;
+  static readonly AgreementEmptyState = $localize`No agreement templates found`;
+
+  static readonly AgreementEditTooltip = $localize`Edit`;
+  static readonly AgreementViewTooltip = $localize`View`;
+  static readonly AgreementActivateTooltip = $localize`Activate`;
+  static readonly AgreementDeleteTooltip = $localize`Delete`;
+  static readonly AgreementCopyTooltip = $localize`Copy`;
+  static readonly AgreementCopySuccess = $localize`Template copied`;
+
+  static readonly ActivateAgreementDialogTitle = $localize`Activate this template?`;
+  static readonly ActivateAgreementDialogMessage = $localize`Activating this template will immediately deactivate the currently active version. Deactivated templates can never be edited or re-activated.`;
+  static readonly ActivateAgreementConfirmButton = $localize`Activate`;
+  static readonly ActivateAgreementSuccess = $localize`Template activated`;
+
+  static readonly DeleteAgreementDialogTitle = $localize`Delete this template?`;
+  static readonly DeleteAgreementDialogMessage = $localize`This draft template will be permanently deleted. This action cannot be undone.`;
+  static readonly DeleteAgreementConfirmButton = $localize`Delete`;
+  static readonly DeleteAgreementSuccess = $localize`Template deleted`;
+
+  static readonly CreateAgreementDialogTitle = $localize`New Agreement Template`;
+  static readonly EditAgreementDialogTitle = $localize`Edit Agreement Template`;
+  static readonly ViewAgreementDialogTitle = $localize`Agreement Template`;
+  static readonly AgreementTitleLabel = $localize`Title`;
+  static readonly AgreementContentLabel = $localize`Content`;
+  static readonly SaveAgreementSuccess = $localize`Template saved`;
+  static readonly PreviewPdfButton = $localize`Preview PDF`;
+  static readonly GeneratingPdfButton = $localize`Generating PDF...`;
+
+  static readonly VariablesReferenceTitle = $localize`Available variables`;
+  static readonly VariablesReferenceHint = $localize`Click a variable to insert it into the content at the cursor.`;
+  static readonly VariablesReferenceEmpty = $localize`No variables available`;
+  static readonly VariablesReferenceExampleLabel = $localize`Example`;
+
+  static readonly AgreementPdfPreviewDialogTitle = $localize`PDF Preview`;
+  static readonly DownloadPdfButton = $localize`Download`;
+
+  static readonly SignatureClear = $localize`Clear`;
+  static readonly SignatureHint = $localize`Sign here`;
+
+  static readonly SendToSigning = $localize`Send to signing`;
+  static readonly ContinueSigning = $localize`Continue signing`;
+  static readonly CancelSigning = $localize`Cancel signing`;
+  static readonly AgreementSignedSuccess = $localize`Agreement signed — rental started`;
+  static readonly RentalStatusAwaitingSignature = $localize`Awaiting signature`;
+  static readonly SignatureStartNote = $localize`The rental starts at the moment of signing`;
+  static readonly SignButton = $localize`Sign`;
+  static readonly SigningDialogTitle = $localize`Rental Agreement`;
+  static readonly AgreementSigned = $localize`Agreement signed`;
+  static readonly AgreementVersion = $localize`version`;
+  static readonly DownloadAgreementPdf = $localize`Download PDF`;
+  static readonly AgreementPdf = $localize`Agreement PDF`;
+
+  static readonly ConsentPrefix = $localize`I confirm that I have read and fully accept the terms of`;
+  static readonly ConsentSuffix = $localize`(the "Agreement").`;
+  static readonly ViewAgreement = $localize`View Agreement`;
+  static readonly HideAgreement = $localize`Hide Agreement`;
+  static readonly ConsentSignBelowNote = $localize`By signing below, I confirm that I have reviewed the safety rules for using the rented equipment described in the Agreement, agree to comply with them, and confirm that my signature constitutes my informed and voluntary acceptance of the Agreement.`;
 }

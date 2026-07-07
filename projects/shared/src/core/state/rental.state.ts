@@ -18,6 +18,7 @@ export interface RentalState {
 
 export interface RentalDetailState extends RentalState {
   status: string;
+  version: number | null;
   customerId: string;
   startedAt: Date | null;
   expectedReturnAt?: Date;

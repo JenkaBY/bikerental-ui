@@ -4,6 +4,7 @@ import {
   APP_BRAND,
   AuthService,
   HealthIndicatorComponent,
+  Labels,
   LogoutButtonComponent,
   NavItem,
   ShellComponent,
@@ -15,6 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   // TODO remove completely.
   // { label: $localize`Equipment Statuses`, route: 'equipment-statuses', icon: 'toggle_on' },
   { label: $localize`Tariffs`, route: 'tariffs', icon: 'payments' },
+  { label: Labels.AgreementsNavLabel, route: 'agreements', icon: 'history_edu' },
   { label: $localize`Customers`, route: 'customers', icon: 'people' },
   { label: $localize`Rentals`, route: 'rentals', icon: 'receipt_long' },
   { label: $localize`Payments`, route: 'payments', icon: 'account_balance_wallet' },

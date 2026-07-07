@@ -1,4 +1,4 @@
-import { DatePipe, Location } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,17 +17,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import {
+  AgreementSigningStore,
   BatchRentalPropertyStore,
   CustomerFinanceStore,
   DurationPipe,
   Labels,
   mapRentalStatus,
+  MOBILE_FORM_DIALOG_CONFIG,
+  MoneyPipe,
   RENTAL_STORE_TOKEN,
+  RentalSignatureStore,
   RentalStore,
   TopUpDialogComponent,
-  MoneyPipe,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
+import { SigningFlowService } from '../rental-signing/signing-flow.service';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
@@ -43,6 +47,9 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     CustomerFinanceStore,
     BatchRentalPropertyStore,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
+    AgreementSigningStore,
+    SigningFlowService,
+    RentalSignatureStore,
   ],
   imports: [
     DatePipe,
@@ -61,13 +68,31 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
   template: `
     <div class="flex flex-col h-full">
       <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 shrink-0">
-        <button mat-icon-button (click)="onBack()" [attr.aria-label]="Labels.GoBack">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <h1 class="text-lg font-semibold text-slate-800">
-          {{ Labels.RentalPrefix }}{{ rentalId() }}
-        </h1>
-        <span [class]="statusBadgeClasses()">{{ statusLabel() }}</span>
+        <div class="flex items-center gap-2 min-w-0">
+          <button mat-icon-button (click)="onBack()" [attr.aria-label]="Labels.GoBack">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <h1 class="text-lg font-semibold text-slate-800 truncate">
+            {{ Labels.RentalPrefix }}{{ rentalId() }}
+          </h1>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          @if (signatureStore.summary()) {
+            <button
+              mat-flat-button
+              class="btn-utility"
+              [disabled]="signatureStore.isDownloading()"
+              (click)="signatureStore.downloadPdf(rentalId())"
+            >
+              @if (signatureStore.isDownloading()) {
+                <mat-spinner diameter="18" />
+              } @else {
+                {{ Labels.AgreementPdf }}
+              }
+            </button>
+          }
+          <span [class]="statusBadgeClasses()">{{ statusLabel() }}</span>
+        </div>
       </div>
 
       @if (store.isActive() && store.isOverdue()) {
@@ -118,9 +143,11 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
           <mat-divider />
           <app-rental-cost-section />
           <mat-divider />
+
           <app-rental-equipment-section
             [equipmentItems]="store.rentalEquipmentItems()"
             [isDebt]="store.isDebt()"
+            [disabled]="store.isAwaitingSignature()"
           />
         </div>
 
@@ -131,12 +158,12 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
 })
 export class RentalDetailComponent {
   protected readonly store = inject(RentalStore);
-  private readonly location = inject(Location);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  protected readonly signatureStore = inject(RentalSignatureStore);
 
   readonly id = input.required<string>();
   readonly selectUid = input<string>();
@@ -170,6 +197,15 @@ export class RentalDetailComponent {
     });
 
     effect(() => {
+      const status = this.store.status();
+      const id = this.store.id();
+      if (id === null) return;
+      if (status === 'ACTIVE' || status === 'COMPLETED' || status === 'DEBT') {
+        this.signatureStore.load(id);
+      }
+    });
+
+    effect(() => {
       const uid = this.selectUid();
       if (!uid || this.preselectApplied) return;
       if (this.store.isLoading() || this.store.id() === null) return;
@@ -182,7 +218,7 @@ export class RentalDetailComponent {
   }
 
   protected onBack(): void {
-    this.location.back();
+    void this.router.navigate(['/rentals']);
   }
 
   protected onTopUpRequested(): void {
@@ -191,6 +227,7 @@ export class RentalDetailComponent {
 
     this.dialog
       .open(TopUpDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
@@ -210,8 +247,8 @@ export class RentalDetailComponent {
     const availableBalance = this.financeStore.balance()?.available;
     this.dialog
       .open(WithdrawDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId, availableBalance },
-        width: '380px',
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })

@@ -53,6 +53,7 @@ export class RentalStore {
     isActivating: false,
     isLoading: false,
     status: '',
+    version: null,
     customerId: '',
     startedAt: null,
     isActive: false,
@@ -96,6 +97,7 @@ export class RentalStore {
   readonly isSelectedAnyEquipment = computed(() => this._state().equipmentItems.length > 0);
 
   readonly loadError = signal(false);
+  private readonly _isSendingToSigning = signal(false);
   readonly selectedEquipmentItemIds = signal<Set<number>>(new Set<number>());
   readonly selectedEquipmentCount = computed(() => this.selectedEquipmentItemIds().size);
   readonly rentalEquipmentItems = computed(
@@ -104,6 +106,9 @@ export class RentalStore {
 
   readonly status = computed(() => this._state().status);
   readonly isDraft = computed(() => this._state().status === 'DRAFT');
+  readonly isAwaitingSignature = computed(() => this._state().status === 'AWAITING_SIGNATURE');
+  readonly version = computed(() => this._state().version);
+  readonly isSendingToSigning = computed(() => this._isSendingToSigning());
   readonly isActive = computed(() => this._state().isActive);
   readonly isDebt = computed(() => this._state().isDebt);
   readonly isOverdue = computed(() => this._state().isOverdue);
@@ -297,33 +302,71 @@ export class RentalStore {
       .pipe(map(() => undefined as void));
   }
 
+  sendToSigning(): Observable<number> {
+    const id = this._state().id;
+    if (id === null) throw new Error('No rental id in store');
+    this._isSendingToSigning.set(true);
+    return this.rentalsService
+      .updateLifecycle(
+        id,
+        { status: 'AWAITING_SIGNATURE', operatorId: this.operatorId() },
+        undefined,
+        {
+          context: suppressErrorNotification(),
+        },
+      )
+      .pipe(
+        tap((r) => this.patchState({ status: r.status, version: r.version })),
+        map((r) => r.version),
+        finalize(() => this._isSendingToSigning.set(false)),
+      );
+  }
+
+  cancelSigning(): Observable<void> {
+    const id = this._state().id;
+    if (id === null) throw new Error('No rental id in store');
+    return this.rentalsService
+      .updateLifecycle(id, { status: 'DRAFT', operatorId: this.operatorId() }, undefined, {
+        context: suppressErrorNotification(),
+      })
+      .pipe(
+        tap((r) => this.patchState({ status: r.status, version: r.version })),
+        map(() => undefined as void),
+      );
+  }
+
   loadDetail(id: number): void {
-    this.patchState({ isLoading: true });
+    this.loadDetail$(id).subscribe();
+  }
+
+  loadDetail$(id: number, options?: { silent?: boolean }): Observable<Partial<RentalDetailState>> {
+    const silent = options?.silent ?? false;
+    if (!silent) this.patchState({ isLoading: true });
     this.loadError.set(false);
 
-    this.rentalsService
-      .getRentalById(id)
-      .pipe(
-        switchMap((rental) => {
-          const equipmentIds = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
-          return this.batchRentalPropertyStore
-            .fetch$({ equipmentIds, customerId: rental.customerId ?? null })
-            .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
-        }),
-        map(({ rental, customer, equipmentItems }) =>
-          RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
-        ),
-        finalize(() => this.patchState({ isLoading: false })),
-        catchError(() => {
-          this.loadError.set(true);
-          return EMPTY;
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((state) => {
+    return this.rentalsService.getRentalById(id).pipe(
+      switchMap((rental) => {
+        const equipmentIds = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
+        return this.batchRentalPropertyStore
+          .fetch$({ equipmentIds, customerId: rental.customerId ?? null })
+          .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
+      }),
+      map(({ rental, customer, equipmentItems }) =>
+        RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
+      ),
+      tap((state) => {
         this.applyDetail(state);
         this.setCustomer(state.customer || null);
-      });
+      }),
+      finalize(() => {
+        if (!silent) this.patchState({ isLoading: false });
+      }),
+      catchError(() => {
+        this.loadError.set(true);
+        return EMPTY;
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    );
   }
 
   reset(): void {

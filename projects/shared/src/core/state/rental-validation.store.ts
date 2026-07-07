@@ -31,7 +31,7 @@ export class RentalValidationStore {
 
   readonly balanceShortfall = computed(() => {
     const balance = this.projectedBalance();
-    if (!balance) return null;
-    return { amount: Math.abs(balance.amount), currency: balance.currency };
+    if (balance.amount >= 0) return null;
+    return { amount: Math.round(Math.abs(balance.amount) * 100) / 100, currency: balance.currency };
   });
 }

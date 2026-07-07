@@ -37,9 +37,10 @@ const FILTER_OPTIONS: { value: string; label: string }[] = [
       </div>
     </div>
     <div class="px-4 py-2 text-sm text-slate-500">
-      {{ today | date: 'd MMMM yyyy' }}&nbsp;&middot;&nbsp;{{ totalRecords() }}&nbsp;{{
-        Labels.Records
-      }}
+      @if (activeFilter() !== 'DRAFT') {
+        {{ today | date: 'd MMMM yyyy' }}&nbsp;&middot;&nbsp;
+      }
+      {{ totalRecords() }}&nbsp;{{ Labels.Records }}
     </div>
     <app-rental-history-card-list />
   `,
@@ -67,7 +68,11 @@ export class RentalHistoryTabComponent {
   constructor() {
     effect(() => {
       const currentFilter = this.activeFilter();
-      this.store.loadHistory(this.today, this.today, currentFilter as RentalFilter['filter']);
+      if (currentFilter === 'DRAFT') {
+        this.store.loadByFilter(currentFilter as RentalFilter['filter']);
+      } else {
+        this.store.loadHistory(this.today, this.today, currentFilter as RentalFilter['filter']);
+      }
     });
   }
 

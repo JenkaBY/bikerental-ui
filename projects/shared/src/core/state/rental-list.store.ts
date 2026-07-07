@@ -9,9 +9,17 @@ import type { RentalSummaryResponse } from '@api-models';
 import { toIsoDate } from '../../shared/utils/date.util';
 
 export interface RentalFilter {
-  dateFrom: Date;
-  dateTo: Date;
+  dateFrom?: Date;
+  dateTo?: Date;
   filter: 'ALL' | 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT' | undefined;
+}
+
+type RentalStatusApiParam = Parameters<RentalsService['getRentals']>[1];
+
+function toStatusApiParam(filter: RentalFilter['filter']): RentalStatusApiParam {
+  if (filter === 'ALL' || !filter) return undefined;
+  if (filter === 'DRAFT') return ['DRAFT', 'AWAITING_SIGNATURE'];
+  return [filter];
 }
 
 @Injectable()
@@ -34,7 +42,7 @@ export class RentalListStore {
     params: () => this.historyParams(),
     stream: ({ params }) => {
       if (!params) return of([]);
-      const statusApi = params.filter === 'ALL' || !params.filter ? undefined : [params.filter];
+      const statusApi = toStatusApiParam(params.filter);
       return this.rentalsService
         .getRentals(
           { page: 0, size: 100 },
@@ -60,7 +68,15 @@ export class RentalListStore {
     this.activeResource.reload();
   }
 
-  loadHistory(dateFrom: Date, dateTo: Date, filter: RentalFilter['filter'] = 'ALL'): void {
+  loadByFilter(filter: RentalFilter['filter'] = 'ALL'): void {
+    this.loadHistory(undefined, undefined, filter);
+  }
+
+  loadHistory(
+    dateFrom: Date | undefined,
+    dateTo: Date | undefined,
+    filter: RentalFilter['filter'] = 'ALL',
+  ): void {
     this.historyParams.set({ dateFrom, dateTo, filter });
   }
 

@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CustomerFinanceStore,
   Labels,
+  MOBILE_FORM_DIALOG_CONFIG,
   RentalStore,
   ReturnEquipmentCostStore,
   TopUpDialogComponent,
@@ -123,6 +124,7 @@ export class ReturnEquipmentDialogComponent {
     if (!customerId) return;
     this.dialog
       .open(TopUpDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
@@ -140,8 +142,8 @@ export class ReturnEquipmentDialogComponent {
     const availableBalance = this.financeStore.balance()?.available;
     this.dialog
       .open(WithdrawDialogComponent, {
+        ...MOBILE_FORM_DIALOG_CONFIG,
         data: { customerId, availableBalance },
-        width: '380px',
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })

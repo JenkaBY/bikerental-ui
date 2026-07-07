@@ -82,6 +82,22 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.PASSWORD_POLICY_VIOLATION]: $localize`The password does not meet the required policy (8–20 characters, at least one letter and one digit).`,
   [ErrorCode.PASSWORD_INVALID_CURRENT]: $localize`The current password is incorrect.`,
 
+  // Agreement template lifecycle
+  [ErrorCode.AGREEMENT_TEMPLATE_NOT_EDITABLE]: agreementTemplateNotEditableMessage,
+  [ErrorCode.AGREEMENT_TEMPLATE_NOT_ACTIVATABLE]: agreementTemplateNotActivatableMessage,
+  [ErrorCode.AGREEMENT_TEMPLATE_NOT_DELETABLE]: agreementTemplateNotDeletableMessage,
+  [ErrorCode.AGREEMENT_TEMPLATE_CONCURRENT_ACTIVATION]: $localize`Another template was activated concurrently. The list has been refreshed — please retry.`,
+  [ErrorCode.AGREEMENT_PDF_RENDERING_FAILED]: $localize`The PDF could not be generated. Please try again.`,
+
+  // Agreement signing flow (FR-03)
+  [ErrorCode.AGREEMENT_TEMPLATE_NO_ACTIVE]: $localize`There is no active agreement version. Ask an administrator to activate one.`,
+  [ErrorCode.AGREEMENT_TEMPLATE_NOT_ACTIVE]: agreementTemplateNotActiveMessage,
+  [ErrorCode.AGREEMENT_SIGNING_ALREADY_SIGNED]: $localize`This rental has already been signed and is now active.`,
+  [ErrorCode.AGREEMENT_SIGNING_RENTAL_VERSION_MISMATCH]: $localize`The rental data changed since this screen was loaded. It has been reloaded — please review and try again.`,
+  [ErrorCode.AGREEMENT_SIGNING_RENTAL_NOT_AWAITING_SIGNATURE]:
+    agreementSigningRentalNotAwaitingSignatureMessage,
+  [ErrorCode.AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE]: $localize`The signature image is invalid. Please sign again.`,
+
   // ── Field-level validation codes (matched against FieldError.code) ────────
   // Derived from Bean Validation annotations as validation.<snake_case_annotation_name>
   // resolveFieldErrorMessage() uses these before falling back to field.message
@@ -161,6 +177,49 @@ function rentalStatusInvalidMessage(params: Record<string, unknown>): string {
     return $localize`This rental is no longer active (current status: ${currentStatus}:currentStatus:).`;
   }
   return $localize`This rental is no longer active.`;
+}
+
+function agreementTemplateNotEditableMessage(params: Record<string, unknown>): string {
+  const currentStatus = params['currentStatus'];
+  if (typeof currentStatus === 'string' && currentStatus.length > 0) {
+    return $localize`This template can no longer be edited (current status: ${currentStatus}:currentStatus:).`;
+  }
+  return $localize`This template can no longer be edited.`;
+}
+
+function agreementTemplateNotActivatableMessage(params: Record<string, unknown>): string {
+  const currentStatus = params['currentStatus'];
+  if (typeof currentStatus === 'string' && currentStatus.length > 0) {
+    return $localize`This template cannot be activated (current status: ${currentStatus}:currentStatus:).`;
+  }
+  return $localize`This template cannot be activated.`;
+}
+
+function agreementTemplateNotDeletableMessage(params: Record<string, unknown>): string {
+  const currentStatus = params['currentStatus'];
+  if (typeof currentStatus === 'string' && currentStatus.length > 0) {
+    return $localize`This template cannot be deleted (current status: ${currentStatus}:currentStatus:).`;
+  }
+  return $localize`This template cannot be deleted.`;
+}
+
+function agreementTemplateNotActiveMessage(params: Record<string, unknown>): string {
+  const requestedTemplateId = params['requestedTemplateId'];
+  const activeTemplateId = params['activeTemplateId'];
+  if (requestedTemplateId != null && activeTemplateId != null) {
+    return $localize`The agreement text changed since this screen was loaded (was version ${String(requestedTemplateId)}:requestedTemplateId:, now ${String(activeTemplateId)}:activeTemplateId:). Please review the updated text and try again.`;
+  }
+  return $localize`The agreement text changed since this screen was loaded. Please review the updated text and try again.`;
+}
+
+function agreementSigningRentalNotAwaitingSignatureMessage(
+  params: Record<string, unknown>,
+): string {
+  const currentStatus = params['currentStatus'];
+  if (typeof currentStatus === 'string' && currentStatus.length > 0) {
+    return $localize`This rental is no longer awaiting signature (current status: ${currentStatus}:currentStatus:).`;
+  }
+  return $localize`This rental is no longer awaiting signature.`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

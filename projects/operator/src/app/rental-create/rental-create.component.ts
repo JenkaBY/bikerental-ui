@@ -97,7 +97,8 @@ export class RentalCreateComponent {
     effect(() => {
       if (this.numericId() === null) return;
       if (this.store.isLoading() || this.store.loadError() || this.store.id() === null) return;
-      if (this.store.status() !== 'DRAFT') {
+      const status = this.store.status();
+      if (status !== 'DRAFT' && status !== 'AWAITING_SIGNATURE') {
         void this.router.navigate(['/rentals', this.store.id()]);
       }
     });
