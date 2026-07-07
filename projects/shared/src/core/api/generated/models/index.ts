@@ -606,6 +606,13 @@ export interface SignatureSummaryResponse {
   signedAt?: string;
 }
 
+export interface RentalAgreementResponse {
+  templateId?: number;
+  versionNumber?: number;
+  title?: string;
+  content?: string;
+}
+
 /** Equipment available for a new rental */
 export interface AvailableEquipmentResponse {
   /** Equipment ID */

@@ -24,6 +24,7 @@ import {
   AgreementTemplateResponse,
   AgreementTemplateSummaryResponse,
   AgreementTemplateVariableResponse,
+  RentalAgreementResponse,
   RequestOptions,
   SignAgreementRequest,
   SignatureCreatedResponse,
@@ -421,6 +422,47 @@ export class AgreementsService {
     };
 
     return this.httpClient.patch(url, null, requestOptions);
+  }
+
+  getRentalAgreement(
+    rentalId: number,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<RentalAgreementResponse>;
+  getRentalAgreement(
+    rentalId: number,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<RentalAgreementResponse>>;
+  getRentalAgreement(
+    rentalId: number,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<RentalAgreementResponse>>;
+  /** Returns the active agreement template's title and content with all placeholders substituted with the rental's customer and cost data, so the customer reads the exact text they will sign. Available only while the rental is AWAITING_SIGNATURE. */
+  getRentalAgreement(
+    rentalId: number,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/${rentalId}/agreement`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
   }
 
   findVariables(
