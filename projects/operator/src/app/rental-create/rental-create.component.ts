@@ -94,7 +94,13 @@ export class RentalCreateComponent {
       if (this.numericId() === null) return;
       if (this.store.isLoading() || this.store.loadError() || this.store.id() === null) return;
       const status = this.store.status();
-      if (status !== 'DRAFT' && status !== 'AWAITING_SIGNATURE') {
+      if (status === 'AWAITING_SIGNATURE') {
+        void this.router.navigate(['/rentals', this.store.id(), 'agreement'], {
+          state: { version: this.store.version() },
+        });
+        return;
+      }
+      if (status !== 'DRAFT') {
         void this.router.navigate(['/rentals', this.store.id()]);
       }
     });

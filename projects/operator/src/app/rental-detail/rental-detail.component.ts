@@ -17,7 +17,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import {
-  AgreementSigningStore,
   BatchRentalPropertyStore,
   CustomerFinanceStore,
   DurationPipe,
@@ -31,7 +30,6 @@ import {
   TopUpDialogComponent,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
-import { SigningFlowService } from '../rental-signing/signing-flow.service';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
@@ -47,8 +45,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     CustomerFinanceStore,
     BatchRentalPropertyStore,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
-    AgreementSigningStore,
-    SigningFlowService,
     RentalSignatureStore,
   ],
   imports: [
@@ -147,7 +143,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
           <app-rental-equipment-section
             [equipmentItems]="store.rentalEquipmentItems()"
             [isDebt]="store.isDebt()"
-            [disabled]="store.isAwaitingSignature()"
           />
         </div>
 
@@ -193,6 +188,10 @@ export class RentalDetailComponent {
       if (this.store.isLoading() || this.store.loadError() || this.store.id() === null) return;
       if (this.store.isDraft()) {
         void this.router.navigate(['/rentals', this.store.id(), 'edit']);
+        return;
+      }
+      if (this.store.isAwaitingSignature()) {
+        void this.router.navigate(['/rentals', this.store.id(), 'agreement']);
       }
     });
 

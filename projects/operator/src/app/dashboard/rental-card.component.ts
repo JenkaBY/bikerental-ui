@@ -112,6 +112,10 @@ export class RentalCardComponent {
       void this.router.navigate(['/rentals', this.item().id, 'edit']);
       return;
     }
+    if (this.item().status === 'AWAITING_SIGNATURE') {
+      void this.router.navigate(['/rentals', this.item().id, 'agreement']);
+      return;
+    }
 
     void this.router.navigate(['/rentals', this.item().id]);
   }
