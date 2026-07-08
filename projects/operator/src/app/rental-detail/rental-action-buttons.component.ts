@@ -26,7 +26,6 @@ import { AddEquipmentDialogComponent } from './add-equipment-dialog/add-equipmen
 import { BrokenEquipmentSheetComponent } from './broken-equipment-sheet.component';
 import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
 import { ReturnEquipmentDialogComponent } from './return-equipment-dialog/return-equipment-dialog.component';
-import { SigningFlowService } from '../rental-signing/signing-flow.service';
 
 @Component({
   selector: 'app-rental-action-buttons',
@@ -86,25 +85,6 @@ import { SigningFlowService } from '../rental-signing/signing-flow.service';
           🔧 {{ Labels.BrokenEquipment }}
         </button>
       }
-
-      @if (store.isAwaitingSignature()) {
-        <div class="flex gap-2">
-          <button mat-stroked-button class="flex-1" (click)="onCancelSigning()">
-            {{ Labels.CancelSigning }}
-          </button>
-          <button mat-flat-button color="primary" class="flex-1" (click)="onContinueSigning()">
-            {{ Labels.ContinueSigning }}
-          </button>
-        </div>
-        <button
-          mat-flat-button
-          class="w-full !bg-amber-400 !text-white"
-          [disabled]="store.isSaving()"
-          (click)="onCancel()"
-        >
-          {{ Labels.CancelRental }}
-        </button>
-      }
     </div>
   `,
 })
@@ -116,7 +96,6 @@ export class RentalActionButtonsComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
-  private readonly signingFlow = inject(SigningFlowService);
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
 
@@ -199,27 +178,5 @@ export class RentalActionButtonsComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
-  }
-
-  protected onContinueSigning(): void {
-    const id = this.store.id();
-    const version = this.store.version();
-    if (id === null || version === null) return;
-
-    this.signingFlow
-      .openDialog(id, version, this.viewContainerRef)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((outcome) => {
-        if (outcome === 'signed') {
-          this.store.loadDetail(id);
-          this.notifications.success(Labels.AgreementSignedSuccess);
-        } else if (outcome === 'failed') {
-          this.store.loadDetail(id);
-        }
-      });
-  }
-
-  protected onCancelSigning(): void {
-    this.store.cancelSigning().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 }

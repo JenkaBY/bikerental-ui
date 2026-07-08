@@ -51,7 +51,6 @@ export class RentalStore {
     specialPrice: undefined,
     specialPriceEnabled: false,
     isSaving: false,
-    isActivating: false,
     isLoading: false,
     status: '',
     version: null,
@@ -88,7 +87,6 @@ export class RentalStore {
   readonly operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
 
   readonly isSaving = computed(() => this._state().isSaving);
-  readonly isActivating = computed(() => this._state().isActivating);
   readonly isLoading = computed(() => this._state().isLoading);
 
   // Convenience computed signals derived from _state
@@ -279,18 +277,6 @@ export class RentalStore {
     };
   }
 
-  activateRental(): Observable<void> {
-    const id = this._state().id;
-    if (id === null) throw new Error('No rental id in store');
-    this.patchState({ isActivating: true });
-    return this.rentalsService
-      .updateLifecycle(id, { status: 'ACTIVE', operatorId: this.operatorId() })
-      .pipe(
-        map(() => undefined as void),
-        finalize(() => this.patchState({ isActivating: false })),
-      );
-  }
-
   returnEquipment(): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
@@ -435,7 +421,6 @@ export class RentalStore {
       equipmentItems: [],
       specialPriceEnabled: false,
       isSaving: false,
-      isActivating: false,
       isLoading: false,
     });
   }

@@ -12,7 +12,6 @@ export interface RentalState {
   specialPrice: number | undefined;
   specialPriceEnabled: boolean;
   isSaving: boolean;
-  isActivating: boolean;
   isLoading: boolean;
 }
 
