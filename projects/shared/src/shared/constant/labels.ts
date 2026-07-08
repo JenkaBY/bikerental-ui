@@ -236,9 +236,6 @@ export class Labels {
   static readonly NoEquipmentSelected = $localize`Add at least one item to proceed`;
   static readonly NoAvailableEquipment = $localize`No available equipment`;
 
-  static readonly StartRental = $localize`Start Rental`;
-  static readonly RentalStarted = $localize`Rental started`;
-  static readonly RentalStartError = $localize`Failed to start rental. Please try again.`;
   static readonly Confirmation = $localize`Confirmation`;
   static readonly Back = $localize`Back`;
   static readonly TopUpBalance = $localize`Top Up Balance`;
