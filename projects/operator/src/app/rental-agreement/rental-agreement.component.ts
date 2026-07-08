@@ -18,8 +18,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { EMPTY, type Observable, of } from 'rxjs';
-import { catchError, exhaustMap, filter, map, tap } from 'rxjs/operators';
+import { EMPTY, of } from 'rxjs';
+import { catchError, exhaustMap, filter, tap } from 'rxjs/operators';
 import {
   AgreementSigningStore,
   ApiErrorParser,
@@ -234,16 +234,6 @@ export class RentalAgreementComponent {
     });
   }
 
-  confirmLeave(): Observable<boolean> {
-    if (this.signed() || this.store.id() === null || !this.store.isAwaitingSignature()) {
-      return of(true);
-    }
-    return this.store.cancelSigning().pipe(
-      map(() => true),
-      catchError(() => of(true)),
-    );
-  }
-
   protected onPadEmptyChanged(empty: boolean): void {
     this.padEmpty.set(empty);
   }
@@ -258,7 +248,18 @@ export class RentalAgreementComponent {
   }
 
   protected onBack(): void {
-    this.location.back();
+    if (this.signed() || this.store.id() === null || !this.store.isAwaitingSignature()) {
+      this.location.back();
+      return;
+    }
+    this.store
+      .cancelSigning()
+      .pipe(
+        catchError(() => of(undefined)),
+        tap(() => this.location.back()),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   protected onCancel(): void {

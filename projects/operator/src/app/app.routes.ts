@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { OperatorShellWrapperComponent } from './layout/operator-shell-wrapper.component';
-import { agreementCanDeactivate } from './rental-agreement/agreement-can-deactivate.guard';
 
 export const routes: Routes = [
   {
@@ -29,7 +28,6 @@ export const routes: Routes = [
           import('./rental-agreement/rental-agreement.component').then(
             (m) => m.RentalAgreementComponent,
           ),
-        canDeactivate: [agreementCanDeactivate],
       },
       {
         path: 'rentals/:id',
