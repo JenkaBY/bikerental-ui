@@ -1,18 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Labels, RentalListStore, toIsoDate } from '@bikerental/shared';
+import { Labels, RentalListStore } from '@bikerental/shared';
 import { RentalActiveTabComponent } from './rental-active-tab.component';
 import { RentalHistoryTabComponent } from './rental-history-tab.component';
 
@@ -81,7 +73,6 @@ import { RentalHistoryTabComponent } from './rental-history-tab.component';
 export class RentalDashboardComponent {
   protected readonly store = inject(RentalListStore);
   private readonly router = inject(Router);
-  private readonly lastHistoryRequestDate = signal<string | null>(null);
 
   readonly tab = input<string>();
 
@@ -92,22 +83,6 @@ export class RentalDashboardComponent {
   );
 
   protected readonly Labels = Labels;
-
-  constructor() {
-    effect(() => {
-      if (this.activeTab() !== 'history') return;
-
-      if (
-        this.store.historyRentals().length === 0 &&
-        !this.store.isLoadingHistory() &&
-        this.lastHistoryRequestDate() !== this.getTodayDateKey()
-      ) {
-        const today = this.getTodayDate();
-        this.store.loadHistory(today, today);
-        this.lastHistoryRequestDate.set(this.getTodayDateKey());
-      }
-    });
-  }
 
   protected onTabChange(tab: 'active' | 'history'): void {
     void this.router.navigate([], {
@@ -128,9 +103,5 @@ export class RentalDashboardComponent {
 
   private getTodayDate(): Date {
     return new Date();
-  }
-
-  private getTodayDateKey(): string {
-    return toIsoDate(new Date());
   }
 }
