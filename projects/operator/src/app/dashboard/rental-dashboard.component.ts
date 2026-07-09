@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  viewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +14,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { Labels, RentalListStore } from '@bikerental/shared';
 import { RentalActiveTabComponent } from './rental-active-tab.component';
 import { RentalHistoryTabComponent } from './rental-history-tab.component';
+import { REFRESHABLE_TAB } from './refreshable-tab';
 
 @Component({
   selector: 'app-rental-dashboard',
@@ -71,16 +79,15 @@ import { RentalHistoryTabComponent } from './rental-history-tab.component';
   `,
 })
 export class RentalDashboardComponent {
-  protected readonly store = inject(RentalListStore);
   private readonly router = inject(Router);
 
   readonly tab = input<string>();
 
+  private readonly activeTabRef = viewChild(REFRESHABLE_TAB);
+
   readonly activeTab = computed(() => (this.tab() === 'history' ? 'history' : 'active'));
 
-  readonly isLoading = computed(() =>
-    this.activeTab() === 'active' ? this.store.isLoadingActive() : this.store.isLoadingHistory(),
-  );
+  readonly isLoading = computed(() => this.activeTabRef()?.isLoading() ?? false);
 
   protected readonly Labels = Labels;
 
@@ -93,15 +100,6 @@ export class RentalDashboardComponent {
   }
 
   protected onRefresh(): void {
-    if (this.activeTab() === 'active') {
-      this.store.loadActive();
-    } else {
-      const today = this.getTodayDate();
-      this.store.loadHistory(today, today);
-    }
-  }
-
-  private getTodayDate(): Date {
-    return new Date();
+    this.activeTabRef()?.refresh();
   }
 }

@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Labels, RentalFilter, RentalListStore } from '@bikerental/shared';
 import { RentalHistoryCardListComponent } from './rental-history-card-list.component';
+import { REFRESHABLE_TAB, RefreshableTab } from './refreshable-tab';
 
 const VALID_FILTERS = new Set(['ALL', 'COMPLETED', 'DEBT', 'CANCELLED', 'DRAFT']);
 
@@ -22,6 +23,7 @@ const FILTER_OPTIONS: { value: string; label: string }[] = [
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe, MatButtonToggleModule, RentalHistoryCardListComponent],
+  providers: [{ provide: REFRESHABLE_TAB, useExisting: RentalHistoryTabComponent }],
   template: `
     <div class="overflow-x-auto -mx-4">
       <div class="px-4 py-2 w-max">
@@ -45,10 +47,12 @@ const FILTER_OPTIONS: { value: string; label: string }[] = [
     <app-rental-history-card-list />
   `,
 })
-export class RentalHistoryTabComponent {
+export class RentalHistoryTabComponent implements RefreshableTab {
   protected readonly store = inject(RentalListStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+
+  readonly isLoading = this.store.isLoadingHistory;
 
   readonly filter = toSignal(
     this.route.queryParams.pipe(map((params) => params['filter'] as RentalFilter['filter'])),
@@ -74,6 +78,10 @@ export class RentalHistoryTabComponent {
         this.store.loadHistory(this.today, this.today, currentFilter as RentalFilter['filter']);
       }
     });
+  }
+
+  refresh(): void {
+    this.store.reloadHistory();
   }
 
   protected onFilterChange(filterValue: string): void {

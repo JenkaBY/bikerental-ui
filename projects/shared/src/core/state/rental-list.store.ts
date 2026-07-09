@@ -68,6 +68,10 @@ export class RentalListStore {
     this.activeResource.reload();
   }
 
+  reloadHistory(): void {
+    this.historyResource.reload();
+  }
+
   loadByFilter(filter: RentalFilter['filter'] = 'ALL'): void {
     this.loadHistory(undefined, undefined, filter);
   }

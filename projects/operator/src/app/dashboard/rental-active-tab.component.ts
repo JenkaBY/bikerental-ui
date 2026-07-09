@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Labels, RentalListStore } from '@bikerental/shared';
 import { RentalActiveCardListComponent } from './rental-active-card-list.component';
+import { REFRESHABLE_TAB, RefreshableTab } from './refreshable-tab';
 
 @Component({
   selector: 'app-rental-active-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RentalActiveCardListComponent],
+  providers: [{ provide: REFRESHABLE_TAB, useExisting: RentalActiveTabComponent }],
   template: `
     <div class="px-4 py-2 text-sm text-slate-500">
       {{ totalActive() }}&nbsp;{{ Labels.ActiveRentals }}&nbsp;&middot;&nbsp;{{
@@ -20,12 +22,18 @@ import { RentalActiveCardListComponent } from './rental-active-card-list.compone
     />
   `,
 })
-export class RentalActiveTabComponent {
+export class RentalActiveTabComponent implements RefreshableTab {
   protected readonly store = inject(RentalListStore);
 
   protected readonly Labels = Labels;
 
+  readonly isLoading = this.store.isLoadingActive;
+
   readonly totalActive = computed(() => this.sortedActiveRentals().length);
+
+  refresh(): void {
+    this.store.loadActive();
+  }
 
   readonly sortedActiveRentals = computed(() =>
     [...this.store.activeRentals()].sort((a, b) => {
