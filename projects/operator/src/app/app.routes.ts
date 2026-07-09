@@ -38,6 +38,10 @@ export const routes: Routes = [
         path: 'return',
         loadComponent: () => import('./return/return.component').then((m) => m.ReturnComponent),
       },
+      {
+        path: 'profile',
+        loadChildren: () => import('@bikerental/shared').then((m) => m.PROFILE_SETTINGS_ROUTES),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

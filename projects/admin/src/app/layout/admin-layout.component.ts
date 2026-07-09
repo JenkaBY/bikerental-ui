@@ -5,8 +5,8 @@ import {
   AuthService,
   HealthIndicatorComponent,
   Labels,
-  LogoutButtonComponent,
   NavItem,
+  ProfileMenuComponent,
   ShellComponent,
 } from '@bikerental/shared';
 
@@ -26,7 +26,7 @@ const NAV_ITEMS: NavItem[] = [
 @Component({
   selector: 'app-admin-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ShellComponent, RouterOutlet, HealthIndicatorComponent, LogoutButtonComponent],
+  imports: [ShellComponent, RouterOutlet, HealthIndicatorComponent, ProfileMenuComponent],
   host: { class: 'block h-screen' },
   templateUrl: './admin-layout.component.html',
 })
