@@ -41,8 +41,8 @@ describe('OperatorLayoutComponent', () => {
     expect(fixture.nativeElement.querySelector('app-health-indicator')).toBeTruthy();
   });
 
-  it('should render the logout button in the toolbar', () => {
-    expect(fixture.nativeElement.querySelector('app-logout-button')).toBeTruthy();
+  it('should render the profile menu in the toolbar', () => {
+    expect(fixture.nativeElement.querySelector('app-profile-menu')).toBeTruthy();
   });
 
   it('toolbar should not have a sidebar toggle button', () => {

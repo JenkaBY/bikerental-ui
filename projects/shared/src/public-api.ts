@@ -57,6 +57,7 @@ export * from './core/state/return-equipment-cost.store';
 export * from './core/state/rental-validation.store';
 export * from './core/state/user.store';
 export * from './core/state/managed-user.store';
+export * from './core/state/profile.store';
 export * from './core/state/time-travel.store';
 export * from './core/state/time-travel-store.token';
 export * from './core/state/time.store';
@@ -83,6 +84,10 @@ export * from './shared/components/health-indicator/health-tooltip-lines.builder
 export * from './shared/components/health-indicator/health-tooltip.component';
 export * from './shared/components/layout-mode-toggle/layout-mode-toggle.component';
 export * from './shared/components/logout-button/logout-button.component';
+export * from './shared/components/user-avatar/user-avatar.component';
+export * from './shared/components/profile-menu/profile-menu.component';
+export * from './shared/components/profile-settings/profile-settings.component';
+export * from './shared/components/profile-settings/profile-settings.routes';
 export * from './shared/components/save-button/save-button.component';
 export * from './shared/components/top-up-dialog/top-up-dialog.component';
 export * from './shared/components/withdraw-dialog/withdraw-dialog.component';
@@ -121,6 +126,7 @@ export * from './shared/directives/max-decimals.directive';
 
 // Shared UI — utilities
 export * from './shared/utils/date.util';
+export * from './shared/utils/user-initials.util';
 
 // Shared UI — validators
 export * from './shared/validators/form-error-messages';

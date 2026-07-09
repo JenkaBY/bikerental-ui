@@ -4,8 +4,8 @@ import {
   APP_BRAND,
   HealthIndicatorComponent,
   LayoutModeService,
-  LogoutButtonComponent,
   NavItem,
+  ProfileMenuComponent,
   ShellComponent,
 } from '@bikerental/shared';
 import { OperatorLayoutComponent } from './operator-layout.component';
@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
     OperatorLayoutComponent,
     ShellComponent,
     HealthIndicatorComponent,
-    LogoutButtonComponent,
+    ProfileMenuComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -39,7 +39,7 @@ const NAV_ITEMS: NavItem[] = [
         </div>
 
         <div toolbar-actions>
-          <app-logout-button (logout)="onLogout()" />
+          <app-profile-menu (logout)="onLogout()" />
         </div>
 
         <router-outlet></router-outlet>

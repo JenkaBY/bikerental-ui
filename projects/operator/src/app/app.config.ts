@@ -20,6 +20,7 @@ import {
   errorInterceptor,
   HealthPollerService,
   LookupInitializerFacade,
+  PROFILE_STUB_MODE,
   provideDefaultClient,
   SseService,
   SSE_PROVIDER,
@@ -58,6 +59,8 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: LOCALE_ID, useValue: environment.defaultLocale },
     { provide: APP_BRAND, useValue: envBrand },
+    // TODO: operator has no auth yet — run profile actions offline. Remove once operator auth lands.
+    { provide: PROFILE_STUB_MODE, useValue: true },
     provideDefaultClient({ basePath: environment.apiUrl }),
     {
       provide: TIME_TRAVEL_STORE_TOKEN,

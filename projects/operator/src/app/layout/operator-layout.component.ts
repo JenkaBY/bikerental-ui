@@ -4,8 +4,8 @@ import {
   AppToolbarComponent,
   BottomNavComponent,
   HealthIndicatorComponent,
-  LogoutButtonComponent,
   NavItem,
+  ProfileMenuComponent,
 } from '@bikerental/shared';
 
 const NAV_ITEMS: NavItem[] = [
@@ -22,13 +22,13 @@ const NAV_ITEMS: NavItem[] = [
     AppToolbarComponent,
     BottomNavComponent,
     HealthIndicatorComponent,
-    LogoutButtonComponent,
+    ProfileMenuComponent,
   ],
   host: { class: 'flex flex-col h-screen max-w-[480px] mx-auto' },
   template: `
     <app-toolbar [title]="title" [showToggle]="false" [showDesktopModeToggle]="true">
       <app-health-indicator />
-      <app-logout-button (logout)="onLogout()" />
+      <app-profile-menu (logout)="onLogout()" />
     </app-toolbar>
 
     <main class="flex-1 overflow-y-auto p-4 [-webkit-overflow-scrolling:touch]">
