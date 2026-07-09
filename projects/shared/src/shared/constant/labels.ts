@@ -308,6 +308,23 @@ export class Labels {
   static readonly AccessDeniedDetail = $localize`You do not have permission to view this page.`;
   static readonly BackToHome = $localize`Back to home`;
 
+  // ── Profile & Settings ────────────────────────────────────────────────────
+
+  static readonly AccountMenuAria = $localize`Account menu`;
+  static readonly ProfileSettingsNav = $localize`Profile settings`;
+  static readonly ProfileSaved = $localize`Profile saved`;
+  static readonly ProfileAccountTab = $localize`Profile`;
+  static readonly ProfileSecurityTab = $localize`Security`;
+  static readonly ProfilePreferencesTab = $localize`Preferences`;
+  static readonly ProfileConnectedTab = $localize`Connected accounts`;
+  static readonly ProfileUploadPhoto = $localize`Upload photo`;
+  static readonly ProfileLanguageLabel = $localize`Language`;
+  static readonly ProfileLanguageEnglish = $localize`English`;
+  static readonly ProfileLanguageRussian = $localize`Russian`;
+  static readonly ProfileGoogleTitle = $localize`Google`;
+  static readonly ProfileNotConnected = $localize`Not connected`;
+  static readonly ProfileGoogleConnect = $localize`Connect`;
+
   // ── User Management ───────────────────────────────────────────────────────
 
   static readonly UsersListTitle = $localize`Users`;
