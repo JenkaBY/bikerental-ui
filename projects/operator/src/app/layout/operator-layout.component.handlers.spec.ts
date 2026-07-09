@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { OperatorLayoutComponent } from './operator-layout.component';
 import { APP_BRAND, BRAND } from '@bikerental/shared';
 
@@ -6,7 +7,7 @@ describe('OperatorLayoutComponent handlers', () => {
   it('onLogout logs a message', async () => {
     await TestBed.configureTestingModule({
       imports: [OperatorLayoutComponent],
-      providers: [{ provide: APP_BRAND, useValue: BRAND }],
+      providers: [provideRouter([]), { provide: APP_BRAND, useValue: BRAND }],
     }).compileComponents();
     const fixture = TestBed.createComponent(OperatorLayoutComponent);
     const comp = fixture.componentInstance;
