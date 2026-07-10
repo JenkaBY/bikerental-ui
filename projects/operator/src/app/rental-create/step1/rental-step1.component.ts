@@ -21,7 +21,9 @@ export class RentalStep1Component {
   protected readonly initialPhone = computed(() => this.store.customer()?.phone ?? '');
 
   protected onCustomerSelected(customer: Customer): void {
-    this.store.setCustomer(customer);
+    // Search results omit notes/comments; hydrate the full profile so the
+    // panel shows the same data as when a draft rental is loaded for edit.
+    this.store.setCustomer(customer, { hydrateNotes: true });
     this.customerSelected.emit();
   }
 }

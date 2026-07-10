@@ -12,7 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import type { AddRentalEquipmentRequest } from '../api/generated';
-import { RentalsService } from '../api/generated';
+import { CustomersService, RentalsService } from '../api/generated';
 import {
   type BrokenEquipmentEntry,
   type Customer,
@@ -21,7 +21,7 @@ import {
   type RentalEquipmentItem,
 } from '@ui-models';
 import type { RentalDetailState } from './rental.state';
-import { makeMoney, RentalDashboardMapper, RentalMapper } from '../mappers';
+import { CustomerMapper, makeMoney, RentalDashboardMapper, RentalMapper } from '../mappers';
 import { suppressErrorNotification } from '../errors';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
@@ -35,6 +35,7 @@ export const RENTAL_VALIDATION_STORE_FOR_DELEGATION = new InjectionToken<{
 @Injectable()
 export class RentalStore {
   private readonly rentalsService = inject(RentalsService);
+  private readonly customersService = inject(CustomersService);
   private readonly batchRentalPropertyStore = inject(BatchRentalPropertyStore);
   private readonly userStore = inject(UserStore);
   private readonly customerFinanceStore = inject(CustomerFinanceStore);
@@ -156,10 +157,24 @@ export class RentalStore {
   readonly isReturning = computed(() => this._state().isReturning);
   readonly isAddingEquipment = computed(() => this._state().isAddingEquipment);
 
-  setCustomer(customer: Customer | null): void {
+  setCustomer(customer: Customer | null, options?: { hydrateNotes?: boolean }): void {
     this.patchState({ customer });
     if (customer?.id) {
       this.customerFinanceStore.loadById(customer.id);
+    }
+    if (options?.hydrateNotes && customer?.id) {
+      this.customersService
+        .getById(customer.id)
+        .pipe(
+          map((r) => CustomerMapper.fromResponse(r)),
+          catchError(() => EMPTY),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe((fullCustomer) => {
+          if (this._state().customer?.id === fullCustomer.id) {
+            this.patchState({ customer: fullCustomer });
+          }
+        });
     }
   }
 
