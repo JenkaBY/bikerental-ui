@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -38,7 +31,7 @@ import {
         [rating]="rating()"
         [balanceSufficient]="store.isBalanceSufficient()"
         [expanded]="expanded()"
-        (toggled)="toggleExpanded()"
+        (toggled)="toggled.emit()"
       />
 
       @if (expanded()) {
@@ -72,11 +65,12 @@ export class RentalCustomerPanelComponent {
   private readonly ratingService = inject(CustomerRatingService);
   protected readonly Labels = Labels;
 
+  readonly expanded = input<boolean>(false);
+
   readonly topUpRequested = output<void>();
   readonly withdrawRequested = output<void>();
   readonly openProfileRequested = output<void>();
-
-  protected readonly expanded = signal(false);
+  readonly toggled = output<void>();
 
   protected readonly rating = computed(() => {
     const id = this.store.customer()?.id;
@@ -89,8 +83,4 @@ export class RentalCustomerPanelComponent {
       .map((line) => line.trim())
       .filter(Boolean),
   );
-
-  protected toggleExpanded(): void {
-    this.expanded.update((v) => !v);
-  }
 }

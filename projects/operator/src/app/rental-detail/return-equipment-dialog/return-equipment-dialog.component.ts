@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   inject,
+  signal,
   ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -43,6 +44,8 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
 
     <mat-dialog-content class="flex flex-col gap-3 pt-1">
       <app-rental-customer-panel
+        [expanded]="customerExpanded()"
+        (toggled)="customerExpanded.set(!customerExpanded())"
         (topUpRequested)="onTopUpRequested()"
         (withdrawRequested)="onWithdrawRequested()"
       />
@@ -102,6 +105,7 @@ export class ReturnEquipmentDialogComponent {
   private readonly viewContainerRef = inject(ViewContainerRef);
 
   protected readonly Labels = Labels;
+  protected readonly customerExpanded = signal(false);
 
   protected onCancel(): void {
     this.dialogRef.close(false);

@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   input,
+  signal,
   ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -27,10 +28,12 @@ import {
   RENTAL_STORE_TOKEN,
   RentalSignatureStore,
   RentalStore,
+  RentalTransactionsStore,
   TopUpDialogComponent,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
+import { RentalReservedPanelComponent } from '../rental-create/step2/rental-reserved-panel.component';
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
@@ -44,6 +47,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalStore,
     CustomerFinanceStore,
     BatchRentalPropertyStore,
+    RentalTransactionsStore,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
     RentalSignatureStore,
   ],
@@ -54,6 +58,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     MatIconModule,
     MatProgressSpinnerModule,
     RentalCustomerPanelComponent,
+    RentalReservedPanelComponent,
     RentalActionButtonsComponent,
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
@@ -131,8 +136,14 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
       } @else if (store.id() !== null) {
         <div class="flex-1 overflow-y-auto">
           <app-rental-customer-panel
+            [expanded]="openPanel() === 'customer'"
+            (toggled)="togglePanel('customer')"
             (topUpRequested)="onTopUpRequested()"
             (withdrawRequested)="onWithdrawRequested()"
+          />
+          <app-rental-reserved-panel
+            [expanded]="openPanel() === 'reserved'"
+            (toggled)="togglePanel('reserved')"
           />
           <mat-divider />
           <app-rental-period-section />
@@ -168,6 +179,12 @@ export class RentalDetailComponent {
   private preselectApplied = false;
 
   protected readonly Labels = Labels;
+
+  protected readonly openPanel = signal<'customer' | 'reserved' | null>(null);
+
+  protected togglePanel(panel: 'customer' | 'reserved'): void {
+    this.openPanel.update((current) => (current === panel ? null : panel));
+  }
 
   readonly statusBadgeClasses = computed(
     () =>
