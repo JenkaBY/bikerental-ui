@@ -14,6 +14,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { firstValueFrom, tap } from 'rxjs';
 import { routes } from './app.routes';
 import {
+  acceptLanguageInterceptor,
   apiAuthInterceptor,
   APP_BRAND,
   AuthService,
@@ -40,7 +41,9 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([apiAuthInterceptor, errorInterceptor])),
+    provideHttpClient(
+      withInterceptors([acceptLanguageInterceptor, apiAuthInterceptor, errorInterceptor]),
+    ),
     provideOidcAuth('bike-rental-admin'),
     importProvidersFrom(MatNativeDateModule),
     provideAppInitializer(() => {

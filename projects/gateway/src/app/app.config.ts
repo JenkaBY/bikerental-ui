@@ -11,6 +11,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import {
+  acceptLanguageInterceptor,
   APP_BRAND,
   BRAND,
   environment,
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([errorInterceptor])),
+    provideHttpClient(withInterceptors([acceptLanguageInterceptor, errorInterceptor])),
     provideAppInitializer(() => {
       inject(HealthPollerService);
       registerLocaleData(localeRu, 'ru');
