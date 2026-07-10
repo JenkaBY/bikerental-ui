@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {
-  CustomerEditComponent,
-  CustomerStore,
-  CustomerViewComponent,
-  CustomerWrite,
-  Labels,
-} from '@bikerental/shared';
-import { CustomerLayoutStore } from '../../customer-layout.store';
+import type { CustomerWrite } from '@ui-models';
+import { CustomerEditComponent } from '../../../customer-edit/customer-edit.component';
+import { CustomerViewComponent } from '../../../customer-view/customer-view.component';
+import { CustomerStore } from '../../../../../../core/state/customer.store';
+import { CustomerLayoutStore } from '../../../../../../core/state/customer-layout.store';
+import { Labels } from '../../../../../constant/labels';
 
 @Component({
   selector: 'app-customer-profile',

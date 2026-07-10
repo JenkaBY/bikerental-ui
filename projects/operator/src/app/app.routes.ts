@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { customerProfileGuard } from '@bikerental/shared';
 import { OperatorShellWrapperComponent } from './layout/operator-shell-wrapper.component';
 
 export const routes: Routes = [
@@ -37,6 +38,11 @@ export const routes: Routes = [
       {
         path: 'return',
         loadComponent: () => import('./return/return.component').then((m) => m.ReturnComponent),
+      },
+      {
+        path: 'customers/:id',
+        canActivate: [customerProfileGuard],
+        loadChildren: () => import('@bikerental/shared').then((m) => m.CUSTOMER_PROFILE_ROUTES),
       },
       {
         path: 'profile',

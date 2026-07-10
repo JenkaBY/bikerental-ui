@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { CustomerFinanceStore, CustomerStore } from '@bikerental/shared';
+import { CustomerFinanceStore } from './customer-finance.store';
+import { CustomerStore } from './customer.store';
 
 @Injectable()
 export class CustomerLayoutStore {

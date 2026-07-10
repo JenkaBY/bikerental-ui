@@ -4,6 +4,7 @@ export * from './auth.service';
 export * from './auth.interceptor';
 export * from './auth.guard';
 export * from './admin.guard';
+export * from './customer-profile.guard';
 export * from './must-change-password.guard';
 export * from './password-policy.validator';
 export * from './change-password.component';

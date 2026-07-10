@@ -1,6 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { api, CustomerRentalSummary, RentalMapper } from '@bikerental/shared';
+import type { CustomerRentalSummary } from '@ui-models';
+import * as api from '../api/generated';
+import { RentalMapper } from '../mappers/rental.mapper';
 import { CustomerLayoutStore } from './customer-layout.store';
 
 @Injectable()

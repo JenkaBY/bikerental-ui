@@ -9,18 +9,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {
-  CustomerFinanceStore,
-  Labels,
-  MOBILE_FORM_DIALOG_CONFIG,
-  MoneyPipe,
-  TopUpButtonComponent,
-  TopUpDialogComponent,
-  WithdrawButtonComponent,
-  WithdrawDialogComponent,
-} from '@bikerental/shared';
-import { CustomerLayoutStore } from '../../customer-layout.store';
-import { CustomerTransactionsStore } from '../../customer-transactions.store';
+import { CustomerFinanceStore } from '../../../../../../core/state/customer-finance.store';
+import { CustomerLayoutStore } from '../../../../../../core/state/customer-layout.store';
+import { CustomerTransactionsStore } from '../../../../../../core/state/customer-transactions.store';
+import { Labels } from '../../../../../constant/labels';
+import { MOBILE_FORM_DIALOG_CONFIG } from '../../../../../constant/mobile-form-dialog.config';
+import { MoneyPipe } from '../../../../../pipes/money.pipe';
+import { TopUpButtonComponent } from '../../../../top-up-button/top-up-button.component';
+import { TopUpDialogComponent } from '../../../../top-up-dialog/top-up-dialog.component';
+import { WithdrawButtonComponent } from '../../../../withdraw-button/withdraw-button.component';
+import { WithdrawDialogComponent } from '../../../../withdraw-dialog/withdraw-dialog.component';
 
 @Component({
   selector: 'app-customer-account',

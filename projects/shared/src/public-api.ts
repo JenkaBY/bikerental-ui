@@ -110,6 +110,7 @@ export * from './shared/components/customer/customer-rating-badge/customer-ratin
 export * from './shared/components/customer/customer-balance-pill/customer-balance-pill.component';
 export * from './shared/components/customer/customer-comments-list/customer-comments-list.component';
 export * from './shared/components/customer/customer-panel-header/customer-panel-header.component';
+export * from './shared/components/customer/profile-page/customer-profile.routes';
 export * from './shared/components/qr-scanner/barcode-scanner.service';
 export * from './shared/components/qr-scanner/qr-payload-parser';
 export * from './shared/components/qr-scanner/qr-scanner.component';

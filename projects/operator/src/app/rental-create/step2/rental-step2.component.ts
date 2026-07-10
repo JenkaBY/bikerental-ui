@@ -95,7 +95,9 @@ export class RentalStep2Component {
   }
 
   protected onOpenProfile(): void {
-    this.notifications.info(Labels.ComingSoon);
+    const customerId = this.store.customer()?.id;
+    if (!customerId) return;
+    void this.router.navigate(['/customers', customerId]);
   }
 
   protected onWithdrawRequested(): void {
