@@ -291,7 +291,7 @@ export class Labels {
   static readonly BrokenEquipmentPenaltyUnderDevelopment = $localize`Penalty submission is under development. Broken item tracking will be available in a future update.`;
   static readonly ItemsAlreadyReturned = $localize`items already returned`;
   static readonly Apply = $localize`Apply`;
-  static readonly CurrencySymbol = $localize`BYN`;
+  static readonly CurrencySymbol = $localize`р.`;
 
   static readonly TimeTravelDialogTitle = $localize`Server Time`;
   static readonly TimeTravelReset = $localize`Reset`;
