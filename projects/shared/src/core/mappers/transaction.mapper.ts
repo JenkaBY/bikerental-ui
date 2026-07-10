@@ -32,4 +32,15 @@ export class TransactionMapper {
       recordedAt: r.recordedAt ? new Date(r.recordedAt) : new Date(0),
     };
   }
+
+  static latestHoldAmount(items: CustomerTransactionResponse[]): number {
+    let latest: CustomerTransactionResponse | null = null;
+    for (const item of items) {
+      if (item.type !== 'HOLD') continue;
+      if (!latest || new Date(item.recordedAt).getTime() > new Date(latest.recordedAt).getTime()) {
+        latest = item;
+      }
+    }
+    return latest?.amount ?? 0;
+  }
 }
