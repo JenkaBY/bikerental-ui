@@ -45,6 +45,7 @@ export * from './core/state/tariff.store';
 export * from './core/state/lookup-initializer.facade';
 export * from './core/state/customer.store';
 export * from './core/state/customer-finance.store';
+export * from './core/state/customer-rating.service';
 export * from './core/state/customer-list.store';
 export * from './core/state/equipment-search.store';
 export * from './core/state/equipment-scan-resolver.service';
@@ -105,6 +106,10 @@ export * from './shared/components/customer/customer-view/customer-view.componen
 export * from './shared/components/customer/customer-edit/customer-edit.component';
 export * from './shared/components/customer/customer-create-dialog/customer-create-dialog.component';
 export * from './shared/components/customer/customer-form.provider';
+export * from './shared/components/customer/customer-rating-badge/customer-rating-badge.component';
+export * from './shared/components/customer/customer-balance-pill/customer-balance-pill.component';
+export * from './shared/components/customer/customer-comments-list/customer-comments-list.component';
+export * from './shared/components/customer/customer-panel-header/customer-panel-header.component';
 export * from './shared/components/qr-scanner/barcode-scanner.service';
 export * from './shared/components/qr-scanner/qr-payload-parser';
 export * from './shared/components/qr-scanner/qr-scanner.component';
