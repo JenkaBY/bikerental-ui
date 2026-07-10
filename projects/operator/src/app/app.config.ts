@@ -14,6 +14,7 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
 import { PwaUpdateService } from './core/pwa-update.service';
 import {
+  acceptLanguageInterceptor,
   APP_BRAND,
   BRAND,
   environment,
@@ -39,7 +40,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([errorInterceptor])),
+    provideHttpClient(withInterceptors([acceptLanguageInterceptor, errorInterceptor])),
     provideAppInitializer(() => {
       inject(HealthPollerService);
       inject(PwaUpdateService).init();

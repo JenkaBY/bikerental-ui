@@ -21,6 +21,7 @@ export * from './core/errors';
 export * from './core/auth';
 
 // Core — HTTP interceptors
+export * from './core/interceptors/accept-language.interceptor';
 export * from './core/interceptors/error.interceptor';
 export * from './core/interceptors/error.service';
 
