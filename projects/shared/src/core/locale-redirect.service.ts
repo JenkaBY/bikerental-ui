@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { inject, Injectable, LOCALE_ID } from '@angular/core';
 
 // Angular's i18n build nests every locale (including the source one) under its own
 // subdirectory named by this segment — e.g. GitHub Pages serves .../operator/en/ and
@@ -9,34 +10,29 @@ const LOCALE_URL_SEGMENT: Readonly<Record<string, string>> = {
   ru: 'ru',
 };
 
-const KNOWN_URL_SEGMENTS = new Set(Object.values(LOCALE_URL_SEGMENT));
-
 @Injectable({ providedIn: 'root' })
 export class LocaleRedirectService {
+  private readonly document = inject(DOCUMENT);
+  private readonly localeId = inject(LOCALE_ID);
+
   redirect(targetLocale: string): void {
     const targetSegment = LOCALE_URL_SEGMENT[targetLocale];
-    if (targetSegment === undefined) {
+    const currentSegment = LOCALE_URL_SEGMENT[this.localeId];
+    if (targetSegment === undefined || targetSegment === currentSegment) {
       return;
     }
 
-    // <base href> reflects the actual deployed app root for the CURRENT locale build
-    // (e.g. "/bikerental-ui/operator/en/" in prod, "/operator/" in dev where the
-    // dev server only ever serves a single, non-nested locale).
-    const basePathname = new URL(document.baseURI).pathname;
-    const baseSegments = basePathname.split('/').filter(Boolean);
-    const lastSegment = baseSegments[baseSegments.length - 1];
-    const appRootSegments = KNOWN_URL_SEGMENTS.has(lastSegment)
-      ? baseSegments.slice(0, -1)
-      : baseSegments;
+    // The prod <base href> ends with the current locale segment (".../operator/en/");
+    // the dev server serves a single, non-nested locale ("/operator/") with no segment
+    // to swap — so bail out instead of building a URL the dev server can't serve.
+    const basePathname = new URL(this.document.baseURI).pathname;
+    if (!basePathname.endsWith(`/${currentSegment}/`)) {
+      return;
+    }
 
-    const currentPathname = window.location.pathname;
-    const relativePath = currentPathname.startsWith(basePathname)
-      ? currentPathname.slice(basePathname.length)
-      : '';
-
-    const targetPathname = `/${[...appRootSegments, targetSegment].join('/')}/${relativePath}`;
-    const targetUrl =
-      window.location.origin + targetPathname + window.location.search + window.location.hash;
-    window.location.assign(targetUrl);
+    const { origin, pathname, search, hash } = this.document.location;
+    const targetBase = basePathname.slice(0, -(currentSegment.length + 1)) + `${targetSegment}/`;
+    const route = pathname.startsWith(basePathname) ? pathname.slice(basePathname.length) : '';
+    this.document.location.assign(origin + targetBase + route + search + hash);
   }
 }
