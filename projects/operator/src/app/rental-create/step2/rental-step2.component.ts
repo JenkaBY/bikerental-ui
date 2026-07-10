@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   inject,
+  signal,
   ViewContainerRef,
 } from '@angular/core';
 import { Location } from '@angular/common';
@@ -25,6 +26,7 @@ import {
 } from '@bikerental/shared';
 import { CancelRentalDialogComponent } from '../../rental-detail/cancel-rental-dialog.component';
 import { RentalCustomerPanelComponent } from './rental-customer-panel.component';
+import { RentalReservedPanelComponent } from './rental-reserved-panel.component';
 import { RentalDurationControlComponent } from './duration/rental-duration-control.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
 import { RentalPricingSectionComponent } from './rental-pricing-section.component';
@@ -36,6 +38,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RentalCustomerPanelComponent,
+    RentalReservedPanelComponent,
     RentalDurationControlComponent,
     RentalEquipmentSectionComponent,
     RentalPricingSectionComponent,
@@ -44,9 +47,15 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
   template: `
     <div class="flex flex-col">
       <app-rental-customer-panel
+        [expanded]="openPanel() === 'customer'"
+        (toggled)="togglePanel('customer')"
         (topUpRequested)="onTopUpRequested()"
         (withdrawRequested)="onWithdrawRequested()"
         (openProfileRequested)="onOpenProfile()"
+      />
+      <app-rental-reserved-panel
+        [expanded]="openPanel() === 'reserved'"
+        (toggled)="togglePanel('reserved')"
       />
       <app-rental-duration-control />
       <app-rental-equipment-section
@@ -75,6 +84,12 @@ export class RentalStep2Component {
   private readonly location = inject(Location);
   private readonly notifications = inject(NotificationService);
   protected readonly validationStore = inject(RentalValidationStore);
+
+  protected readonly openPanel = signal<'customer' | 'reserved' | null>(null);
+
+  protected togglePanel(panel: 'customer' | 'reserved'): void {
+    this.openPanel.update((current) => (current === panel ? null : panel));
+  }
 
   protected onTopUpRequested(): void {
     const customerId = this.store.customer()?.id;

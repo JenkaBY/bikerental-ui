@@ -131,6 +131,8 @@ export class Labels {
 
   static readonly CustomerCommentsTitle = $localize`Operator comments`;
   static readonly CustomerNoComments = $localize`No comments yet`;
+
+  static readonly ReservedTransactionsEmpty = $localize`No transactions for this rental yet`;
   static readonly CustomerOpenProfile = $localize`Open full profile`;
 
   static readonly CustomerProfileTabLabel = $localize`Profile`;

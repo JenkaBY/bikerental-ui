@@ -12,6 +12,7 @@ import type {
 } from '@ui-models';
 import { FinanceService } from '../api/generated';
 import { CostCalculationMapper } from '../mappers/cost-calculation.mapper';
+import { TransactionMapper } from '../mappers/transaction.mapper';
 import { makeMoney } from '../mappers/money.mapper';
 import { toIsoDate } from '../../shared/utils/date.util';
 import { TariffStore } from './tariff.store';
@@ -90,12 +91,7 @@ export class ReturnEquipmentCostStore {
           { page: 0, size: 100 },
         )
         .pipe(
-          map((page) => {
-            const holdTotal = (page.items ?? [])
-              .filter((t) => t.type === 'HOLD')
-              .reduce((sum, t) => sum + t.amount, 0);
-            return makeMoney(holdTotal);
-          }),
+          map((page) => makeMoney(TransactionMapper.latestHoldAmount(page.items ?? []))),
           catchError(() => of(null)),
         );
     },

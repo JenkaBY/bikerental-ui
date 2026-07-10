@@ -17,6 +17,7 @@ import {
   RENTAL_VALIDATION_STORE_FOR_DELEGATION,
   RentalCostCalculationStore,
   RentalStore,
+  RentalTransactionsStore,
   RentalValidationStore,
 } from '@bikerental/shared';
 import { RentalStep1Component } from './step1/rental-step1.component';
@@ -30,6 +31,7 @@ import { RentalStep2Component } from './step2/rental-step2.component';
     CustomerFinanceStore,
     RentalCostCalculationStore,
     RentalStore,
+    RentalTransactionsStore,
     RentalValidationStore,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
     { provide: RENTAL_VALIDATION_STORE_FOR_DELEGATION, useExisting: RentalValidationStore },
