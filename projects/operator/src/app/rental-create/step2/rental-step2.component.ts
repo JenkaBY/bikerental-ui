@@ -46,6 +46,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
       <app-rental-customer-panel
         (topUpRequested)="onTopUpRequested()"
         (withdrawRequested)="onWithdrawRequested()"
+        (openProfileRequested)="onOpenProfile()"
       />
       <app-rental-duration-control />
       <app-rental-equipment-section
@@ -91,6 +92,10 @@ export class RentalStep2Component {
       .subscribe((result) => {
         if (result === true) this.store.refreshCustomerBalance();
       });
+  }
+
+  protected onOpenProfile(): void {
+    this.notifications.info(Labels.ComingSoon);
   }
 
   protected onWithdrawRequested(): void {
