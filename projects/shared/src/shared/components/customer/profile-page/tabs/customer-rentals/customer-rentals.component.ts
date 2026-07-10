@@ -5,8 +5,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Labels, mapEquipmentItemStatus, mapRentalStatus } from '@bikerental/shared';
-import { CustomerRentalsStore } from '../../customer-rentals.store';
+import { mapEquipmentItemStatus, mapRentalStatus } from '../../../../../rental-status.meta';
+import { CustomerRentalsStore } from '../../../../../../core/state/customer-rentals.store';
+import { Labels } from '../../../../../constant/labels';
 
 @Component({
   selector: 'app-customer-rentals',

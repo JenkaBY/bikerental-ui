@@ -1,7 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, EMPTY, finalize, map } from 'rxjs';
 import type { CustomerTransactionResponse, PageCustomerTransactionResponse } from '@api-models';
-import { api, CustomerTransaction, TransactionMapper } from '@bikerental/shared';
+import type { CustomerTransaction } from '@ui-models';
+import * as api from '../api/generated';
+import { TransactionMapper } from '../mappers/transaction.mapper';
 import { CustomerLayoutStore } from './customer-layout.store';
 
 const PAGE_SIZE = 10;

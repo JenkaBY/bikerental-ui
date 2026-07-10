@@ -1,13 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Location } from '@angular/common';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { CustomerFinanceStore, CustomerStore, Labels, MoneyPipe } from '@bikerental/shared';
-import { CustomerLayoutStore } from './customer-layout.store';
-import { CustomerRentalsStore } from './customer-rentals.store';
-import { CustomerTransactionsStore } from './customer-transactions.store';
+import { CustomerFinanceStore } from '../../../../core/state/customer-finance.store';
+import { CustomerStore } from '../../../../core/state/customer.store';
+import { CustomerLayoutStore } from '../../../../core/state/customer-layout.store';
+import { CustomerRentalsStore } from '../../../../core/state/customer-rentals.store';
+import { CustomerTransactionsStore } from '../../../../core/state/customer-transactions.store';
+import { Labels } from '../../../constant/labels';
+import { MoneyPipe } from '../../../pipes/money.pipe';
 import { filter, map } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -34,12 +38,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   template: `
     <div class="flex flex-col h-full">
       <!-- Toolbar -->
-      <div class="flex items-center gap-3 px-4 py-3 border-b border-slate-200 bg-white">
-        <button
-          mat-icon-button
-          [routerLink]="['/customers']"
-          [attr.aria-label]="Labels.CustomerBackButton"
-        >
+      <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-slate-200 bg-white">
+        <button mat-icon-button (click)="goBack()" [attr.aria-label]="Labels.CustomerBackButton">
           <mat-icon>arrow_back</mat-icon>
         </button>
 
@@ -57,7 +57,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
         <!-- Balance badges -->
         @if (this.layoutStore.balance()) {
-          <div class="flex gap-2 text-xs shrink-0">
+          <div class="flex flex-wrap gap-2 text-xs shrink-0">
             <span class="px-2 py-1 rounded-full bg-green-100 text-green-800">
               {{ Labels.Available }}:
               {{ this.layoutStore.balance()!.available | money }}
@@ -121,6 +121,11 @@ export class CustomerDetailComponent {
 
   protected readonly layoutStore = inject(CustomerLayoutStore);
   private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
+
+  protected goBack(): void {
+    this.location.back();
+  }
 
   constructor() {
     this.route.params

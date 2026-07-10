@@ -129,6 +129,10 @@ export class Labels {
   static readonly BalanceAvailable = $localize`Balance Available`;
   static readonly CustomerBalanceReserved = $localize`Reserved`;
 
+  static readonly CustomerCommentsTitle = $localize`Operator comments`;
+  static readonly CustomerNoComments = $localize`No comments yet`;
+  static readonly CustomerOpenProfile = $localize`Open full profile`;
+
   static readonly CustomerProfileTabLabel = $localize`Profile`;
   static readonly CustomerPhoneLabel = $localize`Phone`;
   static readonly PhoneFormatHint = $localize`Example: digits only, e.g. +375291234567`;
@@ -287,7 +291,7 @@ export class Labels {
   static readonly BrokenEquipmentPenaltyUnderDevelopment = $localize`Penalty submission is under development. Broken item tracking will be available in a future update.`;
   static readonly ItemsAlreadyReturned = $localize`items already returned`;
   static readonly Apply = $localize`Apply`;
-  static readonly CurrencySymbol = $localize`BYN`;
+  static readonly CurrencySymbol = $localize`р.`;
 
   static readonly TimeTravelDialogTitle = $localize`Server Time`;
   static readonly TimeTravelReset = $localize`Reset`;

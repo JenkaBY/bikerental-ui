@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, OnInit, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,7 +15,7 @@ import { FormErrorMessages } from '../../../validators/form-error-messages';
 @Component({
   selector: 'app-customer-edit',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CustomerFormProvider],
+  providers: [CustomerFormProvider, provideNativeDateAdapter()],
   imports: [
     ReactiveFormsModule,
     MatButtonModule,

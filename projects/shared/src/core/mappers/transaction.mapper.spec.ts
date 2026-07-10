@@ -19,7 +19,7 @@ describe('TransactionMapper', () => {
 
     expect(out.customerId).toBe('c1');
     expect(out.amount).toHaveProperty('amount', 100);
-    expect(out.amount).toHaveProperty('currency', 'BYN');
+    expect(out.amount).toHaveProperty('currency', 'p.');
     expect(out.recordedAt).toBeInstanceOf(Date);
     expect(out.recordedAt.toISOString()).toBe(new Date('2021-06-01T12:00:00Z').toISOString());
     expect(out.paymentMethod).toBe('CASH');
@@ -44,7 +44,7 @@ describe('TransactionMapper', () => {
 
     expect(out.customerId).toBe('c2');
     expect(out.amount.amount).toBe(-50);
-    expect(out.amount.currency).toBe('BYN');
+    expect(out.amount.currency).toBe('p.');
     expect(out.recordedAt).toBeInstanceOf(Date);
     // missing recordedAt should default to epoch
     expect(out.recordedAt.getTime()).toBe(new Date(0).getTime());

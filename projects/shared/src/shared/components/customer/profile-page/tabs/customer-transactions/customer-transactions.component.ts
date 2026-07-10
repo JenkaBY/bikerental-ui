@@ -3,8 +3,9 @@ import { DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Labels, MoneyPipe } from '@bikerental/shared';
-import { CustomerTransactionsStore } from '../../customer-transactions.store';
+import { CustomerTransactionsStore } from '../../../../../../core/state/customer-transactions.store';
+import { Labels } from '../../../../../constant/labels';
+import { MoneyPipe } from '../../../../../pipes/money.pipe';
 
 @Component({
   selector: 'app-customer-transactions',
@@ -42,37 +43,39 @@ import { CustomerTransactionsStore } from '../../customer-transactions.store';
         <p class="text-slate-400 text-center mt-8">{{ Labels.CustomerTransactionsEmptyState }}</p>
       }
 
-      <table mat-table [dataSource]="store.transactions()" class="w-full">
-        <!-- Date column -->
-        <ng-container matColumnDef="recordedAt">
-          <th mat-header-cell *matHeaderCellDef>{{ Labels.TransactionDateLabel }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.recordedAt | date: 'dd MMM yyyy HH:mm' }}</td>
-        </ng-container>
+      <div class="overflow-x-auto">
+        <table mat-table [dataSource]="store.transactions()" class="w-full min-w-[20rem]">
+          <!-- Date column -->
+          <ng-container matColumnDef="recordedAt">
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.TransactionDateLabel }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.recordedAt | date: 'dd MMM yyyy HH:mm' }}</td>
+          </ng-container>
 
-        <!-- Description column -->
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef>{{ Labels.TransactionDescriptionLabel }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.description ?? row.sourceType ?? '—' }}</td>
-        </ng-container>
+          <!-- Description column -->
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.TransactionDescriptionLabel }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.description ?? row.sourceType ?? '—' }}</td>
+          </ng-container>
 
-        <!-- Amount column -->
-        <ng-container matColumnDef="amount">
-          <th mat-header-cell *matHeaderCellDef class="text-right">
-            {{ Labels.TransactionAmountLabel }}
-          </th>
-          <td mat-cell *matCellDef="let row" class="text-right">
-            <span>{{ row.amount | money }}</span>
-          </td>
-        </ng-container>
+          <!-- Amount column -->
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef class="text-right">
+              {{ Labels.TransactionAmountLabel }}
+            </th>
+            <td mat-cell *matCellDef="let row" class="text-right">
+              <span>{{ row.amount | money }}</span>
+            </td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-          mat-row
-          *matRowDef="let row; columns: displayedColumns"
-          [class.amount-positive]="row.amountColor === 'positive'"
-          [class.amount-negative]="row.amountColor === 'negative'"
-        ></tr>
-      </table>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            [class.amount-positive]="row.amountColor === 'positive'"
+            [class.amount-negative]="row.amountColor === 'negative'"
+          ></tr>
+        </table>
+      </div>
 
       <mat-paginator
         [length]="store.totalItems()"

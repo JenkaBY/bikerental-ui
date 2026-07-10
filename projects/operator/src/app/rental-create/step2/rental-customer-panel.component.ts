@@ -1,8 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  output,
+  signal,
+} from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import {
+  CustomerCommentsListComponent,
+  CustomerPanelHeaderComponent,
+  CustomerRatingService,
   Labels,
-  MoneyPipe,
   RENTAL_STORE_TOKEN,
   TopUpButtonComponent,
   WithdrawButtonComponent,
@@ -12,53 +22,75 @@ import {
   selector: 'app-rental-customer-panel',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MoneyPipe, TopUpButtonComponent, WithdrawButtonComponent],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    TopUpButtonComponent,
+    WithdrawButtonComponent,
+    CustomerPanelHeaderComponent,
+    CustomerCommentsListComponent,
+  ],
   template: `
-    <div
-      class="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-200 shadow-sm"
-    >
-      <div class="flex flex-col gap-0.5 min-w-0">
-        <span class="font-semibold text-slate-900 truncate">
-          {{ store.customer()?.phone }}
-        </span>
-        @if (customerFullName()) {
-          <span class="text-sm text-slate-500 truncate">{{ customerFullName() }}</span>
-        }
-        @if (store.customerBalance(); as balance) {
-          <span
-            class="text-sm font-medium"
-            [class.text-red-600]="!store.isBalanceSufficient()"
-            [class.text-green-700]="store.isBalanceSufficient()"
+    <div class="rounded-xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+      <app-customer-panel-header
+        [customer]="store.customer()"
+        [balance]="store.customerBalance()"
+        [rating]="rating()"
+        [balanceSufficient]="store.isBalanceSufficient()"
+        [expanded]="expanded()"
+        (toggled)="toggleExpanded()"
+      />
+
+      @if (expanded()) {
+        <div class="px-4 pb-4 flex flex-col gap-4">
+          <div class="grid grid-cols-2 gap-2 [&_button]:w-full">
+            <app-withdraw-button
+              (confirm)="withdrawRequested.emit()"
+              [disabled]="!store.customerBalance()?.isWithdrawalAvailable"
+            />
+            <app-top-up-button (confirm)="topUpRequested.emit()" />
+          </div>
+
+          <app-customer-comments-list [comments]="comments()" />
+
+          <button
+            type="button"
+            matButton
+            class="self-stretch text-emerald-700"
+            (click)="openProfileRequested.emit()"
           >
-            {{ Labels.BalanceAvailable }}: {{ balance?.available | money }}
-          </span>
-          <span class="text-sm font-medium">
-            {{ Labels.CustomerBalanceReserved }}: {{ balance?.reserved | money }}
-          </span>
-        }
-      </div>
-      <app-withdraw-button
-        (confirm)="onWithdrawClicked()"
-        [disabled]="!this.store.customerBalance()?.isWithdrawalAvailable"
-      ></app-withdraw-button>
-      <app-top-up-button (confirm)="topUpRequested.emit()"></app-top-up-button>
+            {{ Labels.CustomerOpenProfile }}
+            <mat-icon iconPositionEnd aria-hidden="true">north_east</mat-icon>
+          </button>
+        </div>
+      }
     </div>
   `,
 })
 export class RentalCustomerPanelComponent {
   protected readonly store = inject(RENTAL_STORE_TOKEN);
+  private readonly ratingService = inject(CustomerRatingService);
   protected readonly Labels = Labels;
 
   readonly topUpRequested = output<void>();
   readonly withdrawRequested = output<void>();
+  readonly openProfileRequested = output<void>();
 
-  protected customerFullName = () => {
-    const c = this.store.customer();
-    if (!c) return '';
-    return `${c.firstName} ${c.lastName}`.trim();
-  };
+  protected readonly expanded = signal(false);
 
-  protected onWithdrawClicked() {
-    this.withdrawRequested.emit();
+  protected readonly rating = computed(() => {
+    const id = this.store.customer()?.id;
+    return id ? this.ratingService.getRating(id) : null;
+  });
+
+  protected readonly comments = computed(() =>
+    (this.store.customer()?.notes ?? '')
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean),
+  );
+
+  protected toggleExpanded(): void {
+    this.expanded.update((v) => !v);
   }
 }
