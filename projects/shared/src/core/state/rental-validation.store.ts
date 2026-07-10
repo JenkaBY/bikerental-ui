@@ -24,7 +24,13 @@ export class RentalValidationStore {
     const hasEstimate = !!this.costStore.estimate();
     const specialValid = !s.specialPriceEnabled || s.specialPrice !== undefined;
 
-    return hasItems && hasEstimate && specialValid && !this.costStore.isCalculating();
+    return (
+      hasItems &&
+      hasEstimate &&
+      specialValid &&
+      !this.costStore.isCalculating() &&
+      this.isBalanceSufficient()
+    );
   });
 
   readonly estimate = computed(() => this.costStore.estimate());
