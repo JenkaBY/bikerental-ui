@@ -27,7 +27,7 @@ import { Labels, MoneyPipe } from '@bikerental/shared';
       </mat-icon>
 
       <span class="flex-1 min-w-0 text-sm text-slate-900">
-        <span class="font-semibold">{{ Labels.CustomerBalanceReserved }}</span>
+        <span class="font-semibold">{{ Labels.ReservedInitially }}</span>
         <span class="ml-1">{{ reserved() | money }}</span>
       </span>
 
