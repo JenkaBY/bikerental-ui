@@ -21,7 +21,11 @@ import { TransactionListItemComponent } from '../../../../transaction/transactio
 
       <div class="flex flex-col gap-2">
         @for (t of store.transactions(); track $index) {
-          <app-transaction-list-item [transaction]="t" [showBalances]="true" />
+          <app-transaction-list-item
+            [transaction]="t"
+            [showBalances]="true"
+            [showRentalLink]="true"
+          />
         }
       </div>
 
