@@ -83,7 +83,7 @@ import { FormErrorMessages } from '../../../validators/form-error-messages';
       </mat-form-field>
 
       <div class="flex gap-2 justify-end items-center">
-        <app-form-cancel-button />
+        <app-form-cancel-button (cancelled)="cancelEdit.emit()" />
         <app-form-save-button [saving]="saving()" [disabled]="!this.canSave()" (save)="submit()" />
       </div>
     </form>
