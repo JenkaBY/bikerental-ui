@@ -412,7 +412,7 @@ export class RentalsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalResponse>>;
-  /** Transitions a rental to AWAITING_SIGNATURE, DRAFT, ACTIVE or CANCELLED status. The response carries the rental version used as the signing fencing token. */
+  /** Transitions a rental to AWAITING_SIGNATURE, DRAFT or CANCELLED status. The response carries the rental version used as the signing fencing token. */
   updateLifecycle(
     rentalId: number,
     rentalLifecycleRequest: RentalLifecycleRequest,
