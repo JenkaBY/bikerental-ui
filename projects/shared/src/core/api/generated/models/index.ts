@@ -537,7 +537,7 @@ export interface AgreementPdfPreviewRequest {
 }
 
 export interface RentalLifecycleRequest {
-  status: 'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'CANCELLED';
+  status: 'DRAFT' | 'AWAITING_SIGNATURE' | 'CANCELLED';
   operatorId: string;
 }
 
@@ -629,6 +629,7 @@ export interface RentalAgreementResponse {
   versionNumber?: number;
   title?: string;
   content?: string;
+  templateActivatedAt?: string;
 }
 
 /** Equipment available for a new rental */
@@ -658,14 +659,24 @@ export interface TransactionHistoryFilterParams {
   sourceType?: 'RENTAL';
 }
 
-/** A single journal entry line in the transaction history */
+/** Customer bucket balances after this transaction */
+export interface Balances {
+  /** Available (wallet) balance after this transaction */
+  wallet: number;
+  /** Reserved (hold) balance after this transaction */
+  hold: number;
+}
+
+/** A single business transaction in the customer's history, with per-bucket money movement */
 export interface CustomerTransactionResponse {
   /** Customer id */
   customerId: string;
-  /** TxN amount */
+  /** Absolute transaction amount (always positive); use direction/deltas for the sign */
   amount: number;
   /** Business transaction type */
-  type: string;
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT';
+  /** Overall direction from the customer's perspective */
+  direction: 'CREDIT' | 'DEBIT';
   /** When the entry was recorded (UTC ISO-8601) */
   recordedAt: string;
   /** Payment method, present for deposits and withdrawals */
@@ -676,6 +687,20 @@ export interface CustomerTransactionResponse {
   sourceType?: string;
   /** Source identifier */
   sourceId?: string;
+  /** Signed change per bucket caused by this transaction */
+  deltas: Deltas;
+  /** Customer bucket balances after this transaction was applied */
+  balances: Balances;
+}
+
+/** Signed per-bucket deltas; external = wallet + hold (money crossing the customer boundary) */
+export interface Deltas {
+  /** Change to the available (wallet) balance */
+  wallet: number;
+  /** Change to the reserved (hold) balance */
+  hold: number;
+  /** Net change of the customer's total money (to/from the external world) */
+  external: number;
 }
 
 export interface PageCustomerTransactionResponse {

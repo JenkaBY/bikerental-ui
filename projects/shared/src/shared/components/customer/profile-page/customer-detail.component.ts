@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -6,12 +6,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CustomerFinanceStore } from '../../../../core/state/customer-finance.store';
+import { CustomerRatingService } from '../../../../core/state/customer-rating.service';
 import { CustomerStore } from '../../../../core/state/customer.store';
 import { CustomerLayoutStore } from '../../../../core/state/customer-layout.store';
 import { CustomerRentalsStore } from '../../../../core/state/customer-rentals.store';
 import { CustomerTransactionsStore } from '../../../../core/state/customer-transactions.store';
 import { Labels } from '../../../constant/labels';
 import { MoneyPipe } from '../../../pipes/money.pipe';
+import { UserAvatarComponent } from '../../user-avatar/user-avatar.component';
+import { CustomerRatingBadgeComponent } from '../customer-rating-badge/customer-rating-badge.component';
 import { filter, map } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -34,6 +37,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatIconModule,
     MatProgressBarModule,
     MoneyPipe,
+    UserAvatarComponent,
+    CustomerRatingBadgeComponent,
   ],
   template: `
     <div class="flex flex-col h-full">
@@ -46,10 +51,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         @if (!this.layoutStore.customer()) {
           <mat-progress-bar mode="indeterminate" class="flex-1" />
         } @else {
+          <app-user-avatar
+            class="shrink-0"
+            [displayName]="customerFullName()"
+            sizeClass="h-10 w-10 text-sm"
+          />
+
           <div class="flex flex-col flex-1 min-w-0">
-            <span class="font-semibold text-slate-800 truncate">
-              {{ this.layoutStore.customer()?.firstName }}
-              {{ this.layoutStore.customer()?.lastName }}
+            <span class="flex items-center gap-2 min-w-0">
+              <span class="font-semibold text-slate-800 truncate">
+                {{ this.layoutStore.customer()?.firstName }}
+                {{ this.layoutStore.customer()?.lastName }}
+              </span>
+              <app-customer-rating-badge [rating]="rating()" />
             </span>
             <span class="text-sm text-slate-500">{{ this.layoutStore.customer()?.phone }}</span>
           </div>
@@ -122,6 +136,17 @@ export class CustomerDetailComponent {
   protected readonly layoutStore = inject(CustomerLayoutStore);
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
+  private readonly ratingService = inject(CustomerRatingService);
+
+  protected readonly customerFullName = computed(() => {
+    const c = this.layoutStore.customer();
+    return c ? `${c.firstName} ${c.lastName}`.trim() : '';
+  });
+
+  protected readonly rating = computed(() => {
+    const id = this.layoutStore.customer()?.id;
+    return id ? this.ratingService.getRating(id) : null;
+  });
 
   protected goBack(): void {
     this.location.back();

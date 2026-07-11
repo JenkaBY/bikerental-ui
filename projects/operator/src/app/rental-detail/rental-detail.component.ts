@@ -140,6 +140,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
             (toggled)="togglePanel('customer')"
             (topUpRequested)="onTopUpRequested()"
             (withdrawRequested)="onWithdrawRequested()"
+            (openProfileRequested)="onOpenProfile()"
           />
           <app-rental-reserved-panel
             [expanded]="openPanel() === 'reserved'"
@@ -235,6 +236,12 @@ export class RentalDetailComponent {
 
   protected onBack(): void {
     void this.router.navigate(['/rentals']);
+  }
+
+  protected onOpenProfile(): void {
+    const customerId = this.store.customerId();
+    if (!customerId) return;
+    void this.router.navigate(['/customers', customerId]);
   }
 
   protected onTopUpRequested(): void {

@@ -12,6 +12,7 @@ import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dial
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import {
   CustomerFinanceStore,
   Labels,
@@ -48,6 +49,7 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
         (toggled)="customerExpanded.set(!customerExpanded())"
         (topUpRequested)="onTopUpRequested()"
         (withdrawRequested)="onWithdrawRequested()"
+        (openProfileRequested)="onOpenProfile()"
       />
 
       <span class="text-sm font-semibold text-slate-600">{{ Labels.ItemsToReturn }}</span>
@@ -103,12 +105,20 @@ export class ReturnEquipmentDialogComponent {
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly router = inject(Router);
 
   protected readonly Labels = Labels;
   protected readonly customerExpanded = signal(false);
 
   protected onCancel(): void {
     this.dialogRef.close(false);
+  }
+
+  protected onOpenProfile(): void {
+    const customerId = this.rentalStore.customerId();
+    if (!customerId) return;
+    this.dialogRef.close(false);
+    void this.router.navigate(['/customers', customerId]);
   }
 
   protected onConfirm(): void {

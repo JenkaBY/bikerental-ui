@@ -9,6 +9,7 @@ import { Labels } from '../../constant/labels';
   imports: [MatButtonModule],
   template: `
     <button
+      type="button"
       mat-raised-button
       color="primary"
       (click)="onClick()"

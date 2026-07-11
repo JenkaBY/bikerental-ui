@@ -128,6 +128,9 @@ export class Labels {
   static readonly Available = $localize`Available`;
   static readonly BalanceAvailable = $localize`Balance Available`;
   static readonly CustomerBalanceReserved = $localize`Reserved`;
+  static readonly ReservedInitially = $localize`Reserved initially`;
+  static readonly FinanceShop = $localize`Shop`;
+  static readonly FinanceExternal = $localize`External`;
 
   static readonly CustomerCommentsTitle = $localize`Operator comments`;
   static readonly CustomerNoComments = $localize`No comments yet`;
@@ -203,6 +206,7 @@ export class Labels {
   static readonly PaymentMethodCash = $localize`Cash`;
   static readonly PaymentMethodBankTransfer = $localize`Bank transfer`;
   static readonly PaymentMethodCardTerminal = $localize`Card terminal`;
+  static readonly PaymentMethodInternalTransfer = $localize`Internal`;
 
   static readonly CustomerTransactionsTabLabel = $localize`Transactions`;
   static readonly CustomerTransactionsEmptyState = $localize`No transactions found`;
@@ -211,6 +215,15 @@ export class Labels {
   static readonly TransactionDateLabel = $localize`Date`;
   static readonly TransactionDescriptionLabel = $localize`Description`;
   static readonly TransactionTypeLabel = $localize`Type`;
+
+  static readonly TransactionKindDeposit = $localize`Deposit`;
+  static readonly TransactionKindWithdrawal = $localize`Withdrawal`;
+  static readonly TransactionKindHold = $localize`Hold placed`;
+  static readonly TransactionKindRelease = $localize`Hold released`;
+  static readonly TransactionKindCapture = $localize`Charge`;
+  static readonly TransactionKindRefund = $localize`Refund`;
+  static readonly TransactionKindAdjustment = $localize`Adjustment`;
+  static readonly TransactionKindOther = $localize`Transaction`;
 
   static readonly Duration = $localize`Duration`;
   static readonly DurationMinutes = $localize`Duration (min)`;
