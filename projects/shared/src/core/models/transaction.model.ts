@@ -13,6 +13,19 @@ export type TransactionKind =
   | 'ADJUSTMENT'
   | 'OTHER';
 
+export type TransactionDirection = 'CREDIT' | 'DEBIT';
+
+export interface TransactionDeltas {
+  readonly wallet: number;
+  readonly hold: number;
+  readonly external: number;
+}
+
+export interface TransactionBalances {
+  readonly wallet: number;
+  readonly hold: number;
+}
+
 export interface CustomerTransaction {
   readonly customerId: string;
   readonly amount: Money;
@@ -21,6 +34,10 @@ export interface CustomerTransaction {
   readonly reason?: string;
   readonly sourceType?: string;
   readonly sourceId?: string;
+
+  readonly direction?: TransactionDirection;
+  readonly deltas?: TransactionDeltas;
+  readonly balances?: TransactionBalances;
 
   // UI convenience fields / aliases
   readonly kind: TransactionKind;

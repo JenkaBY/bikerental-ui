@@ -28,7 +28,8 @@ export class TransactionMapper {
     const recordedAt = item.recordedAt ? new Date(item.recordedAt) : new Date(0);
     const kind = TransactionMapper.normalizeKind(item.type);
 
-    const signedAmount = raw === 0 ? 0 : CREDIT_KINDS.has(kind) ? raw : -raw;
+    const isCredit = item.direction ? item.direction === 'CREDIT' : CREDIT_KINDS.has(kind);
+    const signedAmount = raw === 0 ? 0 : isCredit ? raw : -raw;
     const amountColor = signedAmount > 0 ? 'positive' : signedAmount < 0 ? 'negative' : 'neutral';
     const description = item.reason ? item.reason : item.sourceType ? item.sourceType : item.type;
 
@@ -40,6 +41,15 @@ export class TransactionMapper {
       reason: item.reason,
       sourceType: item.sourceType,
       sourceId: item.sourceId,
+
+      direction: item.direction,
+      deltas: item.deltas
+        ? { wallet: item.deltas.wallet, hold: item.deltas.hold, external: item.deltas.external }
+        : undefined,
+      balances: item.balances
+        ? { wallet: item.balances.wallet, hold: item.balances.hold }
+        : undefined,
+
       description: description,
 
       // UI aliases

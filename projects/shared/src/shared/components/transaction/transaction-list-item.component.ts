@@ -2,8 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import type { CustomerTransaction } from '../../../core/models/transaction.model';
+import { makeMoney } from '../../../core/mappers/money.mapper';
+import { Labels } from '../../constant/labels';
 import { MoneyPipe } from '../../pipes/money.pipe';
-import { mapPaymentMethodLabel, mapTransactionKind } from '../../transaction.meta';
+import {
+  mapPaymentMethodLabel,
+  mapTransactionFlow,
+  mapTransactionKind,
+} from '../../transaction.meta';
 
 @Component({
   selector: 'app-transaction-list-item',
@@ -17,11 +23,20 @@ import { mapPaymentMethodLabel, mapTransactionKind } from '../../transaction.met
         <span class="flex flex-col min-w-0 flex-1">
           <span class="text-sm text-slate-700 truncate">{{ meta().label }}</span>
           <span class="text-xs text-slate-400">
+            @if (flow(); as f) {
+              <span>{{ f.from }} → {{ f.to }} · </span>
+            }
             {{ t.recordedAt | date: 'dd.MM.yyyy HH:mm' }}
             @if (paymentMethodLabel(); as pm) {
               <span>· {{ pm }}</span>
             }
           </span>
+          @if (showBalances() && t.balances) {
+            <span class="text-xs text-slate-400">
+              {{ Labels.Available }} {{ availableBalance() | money }} ·
+              {{ Labels.CustomerBalanceReserved }} {{ reservedBalance() | money }}
+            </span>
+          }
         </span>
         <span
           class="text-sm font-semibold whitespace-nowrap"
@@ -37,8 +52,21 @@ import { mapPaymentMethodLabel, mapTransactionKind } from '../../transaction.met
 })
 export class TransactionListItemComponent {
   readonly transaction = input.required<CustomerTransaction>();
+  readonly showBalances = input<boolean>(false);
+
+  protected readonly Labels = Labels;
 
   protected readonly meta = computed(() => mapTransactionKind(this.transaction().kind));
+
+  protected readonly flow = computed(() => mapTransactionFlow(this.transaction()));
+
+  protected readonly availableBalance = computed(() =>
+    makeMoney(this.transaction().balances?.wallet ?? 0),
+  );
+
+  protected readonly reservedBalance = computed(() =>
+    makeMoney(this.transaction().balances?.hold ?? 0),
+  );
 
   protected readonly paymentMethodLabel = computed(() => {
     const method = this.transaction().paymentMethod;

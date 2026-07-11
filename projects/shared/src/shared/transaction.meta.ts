@@ -1,4 +1,4 @@
-import type { TransactionKind } from '../core/models/transaction.model';
+import type { CustomerTransaction, TransactionKind } from '../core/models/transaction.model';
 import { Labels } from './constant/labels';
 
 export interface TransactionKindMeta {
@@ -35,4 +35,39 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
 
 export function mapPaymentMethodLabel(paymentMethod: string): string {
   return PAYMENT_METHOD_LABELS[paymentMethod] ?? paymentMethod;
+}
+
+export interface TransactionFlow {
+  from: string;
+  to: string;
+}
+
+type FlowBucket = 'wallet' | 'hold' | 'external';
+
+export function mapTransactionFlow(
+  transaction: Pick<CustomerTransaction, 'kind' | 'deltas'>,
+): TransactionFlow | null {
+  const deltas = transaction.deltas;
+  if (!deltas) return null;
+
+  const externalLabel =
+    transaction.kind === 'CAPTURE' ? Labels.FinanceShop : Labels.FinanceExternal;
+  const bucketLabel = (bucket: FlowBucket): string =>
+    bucket === 'wallet'
+      ? Labels.Available
+      : bucket === 'hold'
+        ? Labels.CustomerBalanceReserved
+        : externalLabel;
+
+  let from: FlowBucket | null = null;
+  let to: FlowBucket | null = null;
+
+  if (deltas.external > 0) from = 'external';
+  else if (deltas.external < 0) to = 'external';
+  if (deltas.wallet < 0) from = 'wallet';
+  else if (deltas.wallet > 0) to = 'wallet';
+  if (deltas.hold < 0) from = 'hold';
+  else if (deltas.hold > 0) to = 'hold';
+
+  return from && to ? { from: bucketLabel(from), to: bucketLabel(to) } : null;
 }

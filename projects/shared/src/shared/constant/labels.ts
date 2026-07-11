@@ -129,6 +129,8 @@ export class Labels {
   static readonly BalanceAvailable = $localize`Balance Available`;
   static readonly CustomerBalanceReserved = $localize`Reserved`;
   static readonly ReservedInitially = $localize`Reserved initially`;
+  static readonly FinanceShop = $localize`Shop`;
+  static readonly FinanceExternal = $localize`External`;
 
   static readonly CustomerCommentsTitle = $localize`Operator comments`;
   static readonly CustomerNoComments = $localize`No comments yet`;
