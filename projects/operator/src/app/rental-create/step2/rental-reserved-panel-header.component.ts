@@ -18,7 +18,7 @@ import { Labels, MoneyPipe } from '@bikerental/shared';
     >
       <mat-icon
         class="shrink-0 text-slate-500 reserved-badge-icon"
-        aria-hidden="true"
+        aria-hidden="false"
         [matBadge]="count()"
         matBadgeSize="small"
         matBadgeOverlap="true"
