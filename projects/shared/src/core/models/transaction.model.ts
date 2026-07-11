@@ -3,6 +3,16 @@ export interface Money {
   readonly currency: string;
 }
 
+export type TransactionKind =
+  | 'DEPOSIT'
+  | 'WITHDRAWAL'
+  | 'HOLD'
+  | 'RELEASE'
+  | 'CAPTURE'
+  | 'REFUND'
+  | 'ADJUSTMENT'
+  | 'OTHER';
+
 export interface CustomerTransaction {
   readonly customerId: string;
   readonly amount: Money;
@@ -13,6 +23,7 @@ export interface CustomerTransaction {
   readonly sourceId?: string;
 
   // UI convenience fields / aliases
+  readonly kind: TransactionKind;
   readonly transactionId?: string; // alias for sourceId for backward compatibility
   readonly description?: string; // alias for reason
   readonly amountColor: 'positive' | 'negative' | 'neutral';
