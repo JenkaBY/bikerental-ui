@@ -41,12 +41,13 @@ import { REFRESHABLE_TAB } from './refreshable-tab';
         <button
           actions
           mat-icon-button
+          class="icon-btn-sm"
           [disabled]="isLoading()"
           (click)="onRefresh()"
           [attr.aria-label]="Labels.Refresh"
         >
           @if (isLoading()) {
-            <mat-progress-spinner diameter="20" mode="indeterminate" />
+            <mat-progress-spinner diameter="16" mode="indeterminate" />
           } @else {
             <mat-icon>refresh</mat-icon>
           }

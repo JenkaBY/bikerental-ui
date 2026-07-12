@@ -76,3 +76,17 @@ mat-sidenav {
 mat-dialog-actions {
   gap: 8px;
 }
+
+/* Compact icon button for dense headers (PageHeaderComponent and its consumers' actions) —
+   Material's default mat-icon-button touch target (48px) is taller than the header needs. */
+.icon-btn-sm.mat-mdc-icon-button {
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+}
+
+.icon-btn-sm .mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}

@@ -10,12 +10,12 @@ import { Labels } from '../../constant/labels';
   imports: [MatButtonModule, MatIconModule],
   template: `
     <div
-      class="flex items-center gap-2 px-3 py-2.5 border-b border-slate-200 bg-white shrink-0 min-w-0"
+      class="flex items-center gap-2 px-3 py-[2px] border-b border-slate-200 bg-white shrink-0 min-w-0"
     >
       @if (showBack()) {
         <button
           mat-icon-button
-          class="shrink-0"
+          class="icon-btn-sm shrink-0"
           (click)="back.emit()"
           [attr.aria-label]="backLabel()"
         >
