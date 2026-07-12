@@ -87,6 +87,8 @@ export * from './shared/components/health-indicator/health-tooltip-lines.builder
 export * from './shared/components/health-indicator/health-tooltip.component';
 export * from './shared/components/layout-mode-toggle/layout-mode-toggle.component';
 export * from './shared/components/logout-button/logout-button.component';
+export * from './shared/components/page-header/page-header.component';
+export * from './shared/components/segmented-tabs/segmented-tabs.component';
 export * from './shared/components/user-avatar/user-avatar.component';
 export * from './shared/components/profile-menu/profile-menu.component';
 export * from './shared/components/profile-settings/profile-settings.component';

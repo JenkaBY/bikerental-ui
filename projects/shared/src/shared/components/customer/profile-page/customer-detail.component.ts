@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CustomerFinanceStore } from '../../../../core/state/customer-finance.store';
 import { CustomerRatingService } from '../../../../core/state/customer-rating.service';
@@ -15,6 +12,8 @@ import { Labels } from '../../../constant/labels';
 import { MoneyPipe } from '../../../pipes/money.pipe';
 import { UserAvatarComponent } from '../../user-avatar/user-avatar.component';
 import { CustomerRatingBadgeComponent } from '../customer-rating-badge/customer-rating-badge.component';
+import { PageHeaderComponent } from '../../page-header/page-header.component';
+import { SegmentedTabsComponent, SegmentTab } from '../../segmented-tabs/segmented-tabs.component';
 import { filter, map } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -29,109 +28,76 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     CustomerTransactionsStore,
   ],
   imports: [
-    RouterLink,
-    RouterLinkActive,
     RouterOutlet,
-    MatTabsModule,
-    MatButtonModule,
-    MatIconModule,
     MatProgressBarModule,
     MoneyPipe,
     UserAvatarComponent,
     CustomerRatingBadgeComponent,
+    PageHeaderComponent,
+    SegmentedTabsComponent,
   ],
   template: `
-    <div class="flex flex-col h-full">
-      <!-- Toolbar -->
-      <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-slate-200 bg-white">
-        <button mat-icon-button (click)="goBack()" [attr.aria-label]="Labels.CustomerBackButton">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-
-        @if (!this.layoutStore.customer()) {
+    <div class="flex flex-col h-full -mx-4 -mt-4">
+      <app-page-header [backLabel]="Labels.CustomerBackButton" (back)="goBack()">
+        @if (!layoutStore.customer()) {
           <mat-progress-bar mode="indeterminate" class="flex-1" />
         } @else {
-          <app-user-avatar
-            class="shrink-0"
-            [displayName]="customerFullName()"
-            sizeClass="h-10 w-10 text-sm"
-          />
-
-          <div class="flex flex-col flex-1 min-w-0">
-            <span class="flex items-center gap-2 min-w-0">
-              <span class="font-semibold text-slate-800 truncate">
-                {{ this.layoutStore.customer()?.firstName }}
-                {{ this.layoutStore.customer()?.lastName }}
+          <div class="flex items-center gap-2 flex-1 min-w-0">
+            <app-user-avatar
+              class="shrink-0"
+              [displayName]="customerFullName()"
+              sizeClass="h-10 w-10 text-sm"
+            />
+            <div class="flex flex-col flex-1 min-w-0">
+              <span class="flex items-center gap-2 min-w-0">
+                <span class="font-semibold text-slate-800 truncate">
+                  {{ layoutStore.customer()?.firstName }}
+                  {{ layoutStore.customer()?.lastName }}
+                </span>
+                <app-customer-rating-badge [rating]="rating()" />
               </span>
-              <app-customer-rating-badge [rating]="rating()" />
-            </span>
-            <span class="text-sm text-slate-500">{{ this.layoutStore.customer()?.phone }}</span>
+              <span class="text-sm text-slate-500 truncate">
+                {{ layoutStore.customer()?.phone }}
+              </span>
+            </div>
           </div>
         }
 
-        <!-- Balance badges -->
-        @if (this.layoutStore.balance()) {
-          <div class="flex flex-wrap gap-2 text-xs shrink-0">
-            <span class="px-2 py-1 rounded-full bg-green-100 text-green-800">
-              {{ Labels.Available }}:
-              {{ this.layoutStore.balance()!.available | money }}
+        @if (layoutStore.balance(); as balance) {
+          <div actions class="flex flex-col items-end gap-1 text-xs shrink-0">
+            <span
+              class="px-2 py-0.5 rounded-full bg-green-100 text-green-800 whitespace-nowrap"
+              [title]="Labels.Available"
+            >
+              {{ balance.available | money }}
             </span>
-            <span class="px-2 py-1 rounded-full bg-amber-100 text-amber-800">
-              {{ Labels.CustomerBalanceReserved }}:
-              {{ this.layoutStore.balance()!.reserved | money }}
+            <span
+              class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 whitespace-nowrap"
+              [title]="Labels.CustomerBalanceReserved"
+            >
+              {{ balance.reserved | money }}
             </span>
           </div>
         }
-      </div>
+      </app-page-header>
 
-      <!-- Tab nav bar -->
-      <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="bg-white border-b border-slate-200">
-        <a
-          mat-tab-link
-          routerLink="profile"
-          routerLinkActive
-          #rla0="routerLinkActive"
-          [active]="rla0.isActive"
-        >
-          {{ Labels.CustomerProfileTabLabel }}
-        </a>
-        <a
-          mat-tab-link
-          routerLink="rentals"
-          routerLinkActive
-          #rla1="routerLinkActive"
-          [active]="rla1.isActive"
-        >
-          {{ Labels.CustomerRentalsTabLabel }}
-        </a>
-        <a
-          mat-tab-link
-          routerLink="account"
-          routerLinkActive
-          #rla2="routerLinkActive"
-          [active]="rla2.isActive"
-        >
-          {{ Labels.CustomerAccountTabLabel }}
-        </a>
-        <a
-          mat-tab-link
-          routerLink="transactions"
-          routerLinkActive
-          #rla3="routerLinkActive"
-          [active]="rla3.isActive"
-        >
-          {{ Labels.CustomerTransactionsTabLabel }}
-        </a>
-      </nav>
+      <app-segmented-tabs [tabs]="tabs" linkMode />
 
-      <mat-tab-nav-panel #tabPanel class="flex-1 overflow-auto">
+      <div class="flex-1 overflow-auto">
         <router-outlet />
-      </mat-tab-nav-panel>
+      </div>
     </div>
   `,
 })
 export class CustomerDetailComponent {
   protected readonly Labels = Labels;
+
+  protected readonly tabs: SegmentTab[] = [
+    { id: 'profile', label: Labels.CustomerProfileTabLabel },
+    { id: 'rentals', label: Labels.CustomerRentalsTabLabel },
+    { id: 'account', label: Labels.CustomerAccountTabLabel },
+    { id: 'transactions', label: Labels.CustomerTransactionsTabLabel },
+  ];
 
   protected readonly layoutStore = inject(CustomerLayoutStore);
   private readonly route = inject(ActivatedRoute);

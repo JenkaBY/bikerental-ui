@@ -170,7 +170,7 @@ export class Labels {
   static readonly EquipmentItemStatusAssigned = $localize`Assigned`;
   static readonly EquipmentItemStatusActive = $localize`In use`;
   static readonly Rentals = $localize`Rentals`;
-  static readonly TodaysHistory = $localize`Today's History`;
+  static readonly TodaysHistory = $localize`History`;
   static readonly ActiveRentals = $localize`active rentals`;
   static readonly SortedByReturnTime = $localize`sorted by return time`;
   static readonly Refresh = $localize`Refresh`;
