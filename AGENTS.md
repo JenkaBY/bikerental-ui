@@ -44,6 +44,17 @@ Backend JSON  →  core/api/generated/  →  core/mappers/  →  core/models/  �
   in CI, so `npm run lint` fails on any violation. Generated client code under
   `core/api/generated/**` is exempt (already in the config `ignores`).
 
+## Navigational URL Convention (enforced by review)
+
+**Never hand-build a navigational URL** (cross-app link, locale switch, redirect, OIDC
+`redirect_uri`, deep link) by splitting the path or hardcoding a prefix — the prefix/locale segments
+are absent locally but present on GitHub Pages (`/operator/…` vs `/bikerental-ui/operator/ru/…`), so
+guessing them ships a prod-only 404. Use `DeployedPath` (`shared/utils/deployed-path.ts`, from
+`@bikerental/shared`): `fromBase(document.baseURI)` / `fromLocation(baseURI, href)`, then
+`.withApp()` / `.withLocale()` / `.withRoute()` / `.toString()`. Locale-code→segment mapping is
+`localeSegment()` in that same file; adding an app/locale means editing `APP_SEGMENTS` /
+`LOCALE_SEGMENTS` there only.
+
 ## API Error Handling (enforced)
 
 Backend errors are RFC 7807 `ProblemDetail` bodies tagged with a stable code in `properties.code`

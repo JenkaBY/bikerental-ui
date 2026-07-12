@@ -136,6 +136,7 @@ export * from './shared/directives/max-decimals.directive';
 
 // Shared UI — utilities
 export * from './shared/utils/date.util';
+export * from './shared/utils/deployed-path';
 export * from './shared/utils/user-initials.util';
 
 // Shared UI — validators
