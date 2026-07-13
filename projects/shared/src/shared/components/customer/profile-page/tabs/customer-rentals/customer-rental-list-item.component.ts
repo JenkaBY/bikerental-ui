@@ -7,12 +7,13 @@ import { mapRentalStatus } from '../../../../../rental-status.meta';
 import { Labels } from '../../../../../constant/labels';
 import { MoneyPipe } from '../../../../../pipes/money.pipe';
 import { DeployedPath } from '../../../../../utils/deployed-path';
+import { EquipmentBadgeComponent } from '../../../../equipment-badge/equipment-badge.component';
 
 @Component({
   selector: 'app-customer-rental-list-item',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MoneyPipe, MatButtonModule, MatIconModule],
+  imports: [DatePipe, MoneyPipe, MatButtonModule, MatIconModule, EquipmentBadgeComponent],
   template: `
     @if (rental(); as r) {
       <div class="relative border border-slate-200 rounded-lg pl-4 pr-11 py-3 hover:bg-slate-50">
@@ -31,9 +32,7 @@ import { DeployedPath } from '../../../../../utils/deployed-path';
         <div class="mt-2 flex items-end justify-between gap-3">
           <div class="flex flex-wrap gap-1 min-w-0">
             @for (e of r.equipment; track e.id) {
-              <span class="px-2 py-0.5 bg-slate-100 rounded text-xs text-slate-700">
-                {{ e.name || Labels.CustomerRentalsEquipmentFallback }} #{{ e.uid ?? e.id }}
-              </span>
+              <app-equipment-badge [uid]="e.uid" [name]="e.name" />
             }
           </div>
 

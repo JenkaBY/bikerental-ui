@@ -1,14 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
-import { DurationPipe, Labels, mapRentalStatus } from '@bikerental/shared';
+import { DurationPipe, EquipmentBadgeComponent, Labels, mapRentalStatus } from '@bikerental/shared';
 import type { RentalListItem } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DurationPipe],
+  imports: [DatePipe, DurationPipe, EquipmentBadgeComponent],
   host: {
     '(click)': 'navigateToDetail()',
     class:
@@ -71,12 +71,10 @@ import type { RentalListItem } from '@bikerental/shared';
       </div>
     }
 
-    @if (item().equipmentNames.length > 0) {
+    @if (item().equipment.length > 0) {
       <div class="mt-2 flex flex-wrap gap-1">
-        @for (name of item().equipmentNames; track $index) {
-          <span class="px-2 py-0.5 bg-slate-100 rounded text-xs text-slate-700">
-            {{ name }}
-          </span>
+        @for (e of item().equipment; track $index) {
+          <app-equipment-badge [uid]="e.uid" [name]="e.name" />
         }
       </div>
     }

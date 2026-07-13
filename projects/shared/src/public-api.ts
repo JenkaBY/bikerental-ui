@@ -120,6 +120,7 @@ export * from './shared/components/qr-scanner/qr-scanner.component';
 export * from './shared/components/qr-scanner/qr-scan-dialog.component';
 export * from './shared/components/signature-pad/signature-pad.component';
 export * from './shared/components/transaction/transaction-list-item.component';
+export * from './shared/components/equipment-badge/equipment-badge.component';
 // Shared UI — constants
 export * from './shared/constant/labels';
 export * from './shared/constant/mobile-form-dialog.config';
