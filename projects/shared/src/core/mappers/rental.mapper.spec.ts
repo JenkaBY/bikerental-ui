@@ -9,12 +9,15 @@ describe('RentalMapper', () => {
     const resp = {
       id: 42,
       status: 'ACTIVE',
+      createdAt: '2024-01-01T09:00:00Z',
       startedAt: '2024-01-02T10:00:00Z',
       expectedReturnAt: '2024-01-03T12:00:00Z',
+      estimatedCost: 15,
+      finalCost: 20,
       equipments: [
-        { equipmentId: 1, status: 'ACTIVE' },
-        { equipmentId: 2, status: 'ACTIVE' },
-        { equipmentId: 3, status: 'ACTIVE' },
+        { equipmentId: 1, equipmentUid: 'A1', status: 'ACTIVE' },
+        { equipmentId: 2, equipmentUid: 'A2', status: 'ACTIVE' },
+        { equipmentId: 3, equipmentUid: 'A3', status: 'ACTIVE' },
       ],
     } as unknown as RentalSummaryResponse;
 
@@ -22,10 +25,16 @@ describe('RentalMapper', () => {
 
     expect(out.id).toBe(42);
     expect(out.status).toBe('ACTIVE');
+    expect(out.createdAt).toBeInstanceOf(Date);
     expect(out.startedAt).toBeInstanceOf(Date);
     expect(out.expectedReturnAt).toBeInstanceOf(Date);
-    expect(out.equipmentIds).toEqual([1, 2, 3]);
-    expect(out.estimatedCost).toEqual(makeMoney(0));
+    expect(out.equipment).toEqual([
+      { id: 1, uid: 'A1', name: '' },
+      { id: 2, uid: 'A2', name: '' },
+      { id: 3, uid: 'A3', name: '' },
+    ]);
+    expect(out.estimatedCost).toEqual(makeMoney(15));
+    expect(out.finalCost).toEqual(makeMoney(20));
   });
 
   it('defaults missing fields to safe values', () => {
@@ -34,11 +43,14 @@ describe('RentalMapper', () => {
 
     expect(out.id).toBe(0);
     expect(out.status).toBe('');
+    expect(out.createdAt).toBeInstanceOf(Date);
+    expect((out.createdAt as Date).getTime()).toBe(new Date(0).getTime());
     expect(out.startedAt).toBeInstanceOf(Date);
     expect((out.startedAt as Date).getTime()).toBe(new Date(0).getTime());
     expect(out.expectedReturnAt).toBeUndefined();
-    expect(out.equipmentIds).toEqual([]);
-    expect(out.estimatedCost).toEqual(makeMoney(0));
+    expect(out.equipment).toEqual([]);
+    expect(out.estimatedCost).toBeUndefined();
+    expect(out.finalCost).toBeUndefined();
   });
 });
 
