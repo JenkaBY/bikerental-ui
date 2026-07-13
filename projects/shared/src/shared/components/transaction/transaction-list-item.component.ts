@@ -10,7 +10,7 @@ import {
   mapTransactionFlow,
   mapTransactionKind,
 } from '../../transaction.meta';
-import { buildOperatorUrl } from '../../utils/cross-app-url.util';
+import { DeployedPath } from '../../utils/deployed-path';
 
 @Component({
   selector: 'app-transaction-list-item',
@@ -92,6 +92,9 @@ export class TransactionListItemComponent {
   protected readonly rentalUrl = computed(() => {
     const t = this.transaction();
     if (!this.showRentalLink() || t.sourceType !== 'RENTAL' || !t.sourceId) return null;
-    return buildOperatorUrl(this.document.baseURI, `rentals/${t.sourceId}`);
+    return DeployedPath.fromBase(this.document.baseURI)
+      .withApp('operator')
+      .withRoute(`rentals/${t.sourceId}`)
+      .toString();
   });
 }

@@ -44,6 +44,17 @@ Backend JSON  →  core/api/generated/  →  core/mappers/  →  core/models/  �
   in CI, so `npm run lint` fails on any violation. Generated client code under
   `core/api/generated/**` is exempt (already in the config `ignores`).
 
+## Navigational URL Convention (enforced by review)
+
+**Never hand-build a navigational URL** (cross-app link, locale switch, redirect, OIDC
+`redirect_uri`, deep link) by splitting the path or hardcoding a prefix — the prefix/locale segments
+are absent locally but present on GitHub Pages (`/operator/…` vs `/bikerental-ui/operator/ru/…`), so
+guessing them ships a prod-only 404. Use `DeployedPath` (`shared/utils/deployed-path.ts`, from
+`@bikerental/shared`): `fromBase(document.baseURI)` / `fromLocation(baseURI, href)`, then
+`.withApp()` / `.withLocale()` / `.withRoute()` / `.toString()`. Locale-code→segment mapping is
+`localeSegment()` in that same file; adding an app/locale means editing `APP_SEGMENTS` /
+`LOCALE_SEGMENTS` there only.
+
 ## API Error Handling (enforced)
 
 Backend errors are RFC 7807 `ProblemDetail` bodies tagged with a stable code in `properties.code`
@@ -105,6 +116,7 @@ Dialog closes with `true` on success (triggers list refresh), or `undefined`/`fa
 The `shared/components/` folder contains patterns and reusable UI components:
 
 - **Layout shells**: `shell/` (generic layout with sidenav, toolbar), `sidebar/`, `app-toolbar/`, `app-brand/`, `bottom-nav/` (mobile navigation)
+- **Page primitives**: `page-header/` (back button + `title` + `[actions]` slot + default slot for a rich identity block — the one screen header, no `flex-wrap` so nothing wraps/truncates), `segmented-tabs/` (equal-width `flex:1` tab bar; `linkMode` for router child routes, state mode via `activeId`/`(tabSelect)`, `iconOnly` for icon tabs — replaces all ad-hoc `mat-tab-nav-bar` usages)
 - **Buttons**: `button/` (text or icon), `toggle-button/` (menu toggle), `logout-button/`, `cancel-button/`, `save-button/`
 - **Dropdowns & selections**: `equipment-type-dropdown/` (ControlValueAccessor for reactive forms)
 - **Dashboard**: `dashboard-card/` (reusable card component)

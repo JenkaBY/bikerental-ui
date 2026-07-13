@@ -1,112 +1,129 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { mapEquipmentItemStatus, mapRentalStatus } from '../../../../../rental-status.meta';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CustomerRentalsStore } from '../../../../../../core/state/customer-rentals.store';
+import { CustomerLayoutStore } from '../../../../../../core/state/customer-layout.store';
 import { Labels } from '../../../../../constant/labels';
+import { parseDate, toIsoDate } from '../../../../../utils/date.util';
+import { CustomerRentalListItemComponent } from './customer-rental-list-item.component';
+import {
+  RentalDateRange,
+  RentalDateRangeFilterComponent,
+} from './rental-date-range-filter.component';
 
 @Component({
   selector: 'app-customer-rentals',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MatButtonModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [
+    MatButtonModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    CustomerRentalListItemComponent,
+    RentalDateRangeFilterComponent,
+  ],
   template: `
-    <div class="p-4 md:p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold">{{ Labels.CustomerRentalsTabLabel }}</h2>
-        <button mat-stroked-button (click)="newRental()">
-          <mat-icon>add</mat-icon>
-          {{ Labels.CustomerNewRentalButton }}
-        </button>
-      </div>
+    <div class="p-4 md:p-6 flex flex-col gap-3">
+      <app-rental-date-range-filter
+        [from]="from()"
+        [to]="to()"
+        (rangeChange)="onRangeChange($event)"
+        (clear)="onClear()"
+      />
 
-      @if (store.listLoading()) {
-        <div class="flex justify-center py-8">
-          <mat-spinner diameter="40" />
+      @if (store.loading()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+
+      @if (store.error()) {
+        <div class="text-center mt-6 flex flex-col items-center gap-2">
+          <p class="text-slate-500">{{ Labels.CustomerRentalLoadError }}</p>
+          <button mat-stroked-button (click)="store.reload()">{{ Labels.Retry }}</button>
         </div>
-      } @else if (store.rentals().length === 0) {
-        <p class="text-slate-400 text-center mt-8">{{ Labels.CustomerRentalsEmptyState }}</p>
+      } @else if (!store.loading() && store.rentals().length === 0) {
+        <div class="text-center mt-6 flex flex-col items-center gap-2">
+          <p class="text-slate-400">{{ emptyMessage() }}</p>
+          @if (hasFilter()) {
+            <button mat-button (click)="onClear()">{{ Labels.CustomerRentalsResetFilter }}</button>
+          }
+        </div>
       } @else {
         <div class="flex flex-col gap-2">
           @for (rental of store.rentals(); track rental.id) {
-            <div
-              class="border border-slate-200 rounded-lg overflow-hidden"
-              [class.border-primary-300]="store.isExpanded(rental.id)"
-            >
-              <!-- Collapsed row -->
-              <button
-                class="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-slate-50"
-                (click)="store.toggleExpand(rental.id)"
-              >
-                <mat-icon class="text-slate-400 shrink-0">
-                  {{ store.isExpanded(rental.id) ? 'expand_less' : 'expand_more' }}
-                </mat-icon>
-                <span class="flex-1 text-sm">{{
-                  rental.startedAt | date: 'dd MMM yyyy HH:mm'
-                }}</span>
-                <mat-chip [color]="rentalColor(rental.status)" highlighted>
-                  {{ rentalLabel(rental.status) }}
-                </mat-chip>
-              </button>
-
-              <!-- Expanded detail -->
-              @if (store.isExpanded(rental.id)) {
-                @if (store.loadingDetailIds().has(rental.id)) {
-                  <div class="flex justify-center py-4">
-                    <mat-spinner diameter="24" />
-                  </div>
-                } @else if (store.detailCache().get(rental.id); as detail) {
-                  <div class="px-4 pb-4 flex flex-col gap-2">
-                    @for (item of detail.equipmentItems; track item.equipmentId) {
-                      <div class="flex items-center gap-2 text-sm">
-                        <span class="text-slate-600">{{
-                          item.equipmentUid ?? item.equipmentId
-                        }}</span>
-                        <mat-chip [color]="itemColor(item.status)" highlighted>
-                          {{ itemLabel(item.status) }}
-                        </mat-chip>
-                      </div>
-                    }
-                  </div>
-                }
-              }
-            </div>
+            <app-customer-rental-list-item [rental]="rental" />
           }
         </div>
+      }
+
+      @if (store.totalItems() > 0) {
+        <mat-paginator
+          [length]="store.totalItems()"
+          [pageIndex]="store.pageIndex()"
+          [pageSize]="store.pageSize()"
+          [hidePageSize]="true"
+          (page)="onPage($event)"
+        />
       }
     </div>
   `,
 })
-export class CustomerRentalsComponent implements OnInit {
+export class CustomerRentalsComponent {
   protected readonly Labels = Labels;
 
   protected readonly store = inject(CustomerRentalsStore);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly layoutStore = inject(CustomerLayoutStore);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  ngOnInit(): void {
-    this.store.load();
+  private readonly params = toSignal(this.route.queryParams, { initialValue: {} as Params });
+
+  protected readonly from = computed(() => parseDate(this.params()['from']) ?? undefined);
+  protected readonly to = computed(() => parseDate(this.params()['to']) ?? undefined);
+  protected readonly page = computed(() => {
+    const value = Number(this.params()['page']);
+    return Number.isInteger(value) && value >= 0 ? value : 0;
+  });
+
+  protected readonly hasFilter = computed(() => !!(this.from() || this.to()));
+  protected readonly emptyMessage = computed(() =>
+    this.hasFilter() ? Labels.CustomerRentalsEmptyFiltered : Labels.CustomerRentalsEmptyState,
+  );
+
+  constructor() {
+    effect(() => {
+      const customerId = this.layoutStore.customerId();
+      if (!customerId) return;
+      this.store.load(this.from(), this.to(), this.page());
+    });
   }
 
-  protected rentalColor(status: string): string {
-    return mapRentalStatus(status).color;
+  protected onRangeChange(range: RentalDateRange): void {
+    this.updateUrl(
+      {
+        from: range.from ? toIsoDate(range.from) : null,
+        to: range.to ? toIsoDate(range.to) : null,
+        page: null,
+      },
+      true,
+    );
   }
 
-  protected rentalLabel(status: string): string {
-    return mapRentalStatus(status).labelKey;
+  protected onClear(): void {
+    this.updateUrl({ from: null, to: null, page: null }, true);
   }
 
-  protected itemColor(status: string): string {
-    return mapEquipmentItemStatus(status).color;
+  protected onPage(event: PageEvent): void {
+    this.updateUrl({ page: event.pageIndex === 0 ? null : event.pageIndex }, false);
   }
 
-  protected itemLabel(status: string): string {
-    return mapEquipmentItemStatus(status).labelKey;
-  }
-
-  protected newRental(): void {
-    this.snackBar.open(Labels.CustomerNewRentalComingSoon, undefined, { duration: 3000 });
+  private updateUrl(queryParams: Params, replaceUrl: boolean): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge',
+      replaceUrl,
+    });
   }
 }

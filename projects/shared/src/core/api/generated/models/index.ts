@@ -199,6 +199,8 @@ export interface RentalResponse {
   discountPercent?: number;
   /** Final rental cost (null until returned) */
   finalCost?: number;
+  /** Rental creation time */
+  createdAt: string;
 }
 
 /** Request body for creating or updating equipment */
@@ -345,6 +347,14 @@ export interface UserResponse {
   lastLoginAt?: string;
 }
 
+/** A persisted rental cost quote: the frozen calculation plus its identifier and validity window */
+export interface CostQuoteResponse {
+  quoteId: string;
+  quotedAt: string;
+  expiresAt: string;
+  calculation: CostCalculationResponse;
+}
+
 /** Request for rental cost calculation */
 export interface CostCalculationRequest {
   equipments: Array<EquipmentItemRequest>;
@@ -368,23 +378,9 @@ export interface SignatureCreatedResponse {
   signedAt?: string;
 }
 
-/** Request body for adding equipment to an active rental */
-export interface AddRentalEquipmentRequest {
-  /** List of Equipment IDs to add to the rental */
-  equipmentIds: Array<number>;
-  /** Operator identifier */
-  operatorId: string;
-}
-
-/** Request body for returning rented equipment */
-export interface ReturnEquipmentRequest {
-  /** Rental ID */
-  rentalId?: number;
-  /** List of equipment IDs to return */
-  equipmentIds?: Array<number>;
-  /** List of equipment UIDs to return */
-  equipmentUids?: Array<string>;
-  /** Operator identifier */
+/** Confirms the final full return of a rental against a previously created cost quote */
+export interface ConfirmReturnRequest {
+  quoteId: string;
   operatorId: string;
 }
 
@@ -404,6 +400,26 @@ export interface SettlementResponse {
   releaseTransactionRef?: string | null;
   /** Timestamp when the settlement was recorded */
   recordedAt: string;
+}
+
+/** Request body for adding equipment to an active rental */
+export interface AddRentalEquipmentRequest {
+  /** List of Equipment IDs to add to the rental */
+  equipmentIds: Array<number>;
+  /** Operator identifier */
+  operatorId: string;
+}
+
+/** Request body for returning rented equipment */
+export interface ReturnEquipmentRequest {
+  /** Rental ID */
+  rentalId?: number;
+  /** List of equipment IDs to return */
+  equipmentIds?: Array<number>;
+  /** List of equipment UIDs to return */
+  equipmentUids?: Array<string>;
+  /** Operator identifier */
+  operatorId: string;
 }
 
 /** Request body for creating a rental directly in AWAITING_SIGNATURE */
@@ -615,6 +631,12 @@ export interface RentalSummaryResponse {
   plannedDurationMinutes: number;
   /** Actual duration in minutes (null until returned) */
   actualDurationMinutes?: number;
+  /** Estimated rental cost */
+  estimatedCost: number;
+  /** Final rental cost (null until returned) */
+  finalCost?: number;
+  /** Rental creation time */
+  createdAt: string;
 }
 
 export interface SignatureSummaryResponse {

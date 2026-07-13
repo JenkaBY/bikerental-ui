@@ -155,8 +155,17 @@ export class Labels {
 
   static readonly CustomerRentalsTabLabel = $localize`Rentals`;
   static readonly CustomerRentalsEmptyState = $localize`No rentals found`;
-  static readonly CustomerNewRentalButton = $localize`New rental`;
-  static readonly CustomerNewRentalComingSoon = $localize`New rental feature coming soon`;
+  static readonly CustomerRentalsEmptyFiltered = $localize`No rentals match the selected dates`;
+  static readonly CustomerRentalsResetFilter = $localize`Reset filter`;
+  static readonly CustomerRentalsFilterFrom = $localize`From`;
+  static readonly CustomerRentalsFilterTo = $localize`To`;
+  static readonly CustomerRentalsFilterClear = $localize`Clear date filter`;
+  static readonly CustomerRentalsFilterToggle = $localize`Filters`;
+  static readonly CustomerRentalsFilterActive = $localize`active`;
+  static readonly CustomerRentalsViewDetails = $localize`View rental details`;
+  static readonly CustomerRentalsEquipmentFallback = $localize`Equipment`;
+  static readonly CustomerRentalsCostEstimated = $localize`Estimated`;
+  static readonly CustomerRentalsCostNotBilled = $localize`Not billed`;
   static readonly CustomerRentalLoadError = $localize`Failed to load rentals`;
   static readonly CustomerRentalDetailLoadError = $localize`Failed to load rental details`;
   static readonly RentalDraftLoadError = $localize`Failed to load rental draft. Starting fresh.`;
@@ -170,7 +179,7 @@ export class Labels {
   static readonly EquipmentItemStatusAssigned = $localize`Assigned`;
   static readonly EquipmentItemStatusActive = $localize`In use`;
   static readonly Rentals = $localize`Rentals`;
-  static readonly TodaysHistory = $localize`Today's History`;
+  static readonly TodaysHistory = $localize`History`;
   static readonly ActiveRentals = $localize`active rentals`;
   static readonly SortedByReturnTime = $localize`sorted by return time`;
   static readonly Refresh = $localize`Refresh`;

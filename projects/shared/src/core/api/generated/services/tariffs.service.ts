@@ -28,6 +28,7 @@ import {
   CostCalculationResponse,
   Pageable,
   PageTariffV2Response,
+  CostQuoteResponse,
   CostCalculationRequest,
   TariffSelectionV2Response,
   PricingTypeResponse,
@@ -265,6 +266,51 @@ export class TariffsService {
     };
 
     return this.httpClient.post(url, tariffV2Request, requestOptions);
+  }
+
+  createQuote(
+    costCalculationV2Request: CostCalculationV2Request,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<CostQuoteResponse>;
+  createQuote(
+    costCalculationV2Request: CostCalculationV2Request,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<CostQuoteResponse>>;
+  createQuote(
+    costCalculationV2Request: CostCalculationV2Request,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<CostQuoteResponse>>;
+  /** Calculates the V2 rental cost and persists it as an immutable, single-use snapshot with a validity window, so the exact figure can be reused at return confirmation instead of being recalculated */
+  createQuote(
+    costCalculationV2Request: CostCalculationV2Request,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/tariffs/quotes`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, costCalculationV2Request, requestOptions);
   }
 
   calculateCost(

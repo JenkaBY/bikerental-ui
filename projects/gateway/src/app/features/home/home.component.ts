@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, LOCALE_ID } from '@angular/core';
-import { DashboardCardComponent } from '@bikerental/shared';
+import { DashboardCardComponent, DeployedPath, localeSegment } from '@bikerental/shared';
 
 interface DashboardCardDef {
   id: string;
@@ -66,12 +66,11 @@ export class HomeComponent {
   ];
 
   onCardSelect(card: DashboardCardDef): void {
-    const locale = this.localeId.split('-')[0];
-    const baseURL = new URL(this.document.baseURI);
-    const rootSegments = baseURL.pathname.split('/').filter(Boolean).slice(0, -1);
-    const appBase = rootSegments.length
-      ? `${baseURL.origin}/${rootSegments.join('/')}/`
-      : `${baseURL.origin}/`;
-    this.document.location.href = `${appBase}${card.href}${locale}/`;
+    const app = card.href.replace(/\/+$/, '');
+    const locale = localeSegment(this.localeId) ?? this.localeId.split('-')[0];
+    this.document.location.href = DeployedPath.fromBase(this.document.baseURI)
+      .withApp(app)
+      .withLocale(locale)
+      .toString();
   }
 }

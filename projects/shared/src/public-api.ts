@@ -87,6 +87,8 @@ export * from './shared/components/health-indicator/health-tooltip-lines.builder
 export * from './shared/components/health-indicator/health-tooltip.component';
 export * from './shared/components/layout-mode-toggle/layout-mode-toggle.component';
 export * from './shared/components/logout-button/logout-button.component';
+export * from './shared/components/page-header/page-header.component';
+export * from './shared/components/segmented-tabs/segmented-tabs.component';
 export * from './shared/components/user-avatar/user-avatar.component';
 export * from './shared/components/profile-menu/profile-menu.component';
 export * from './shared/components/profile-settings/profile-settings.component';
@@ -118,6 +120,7 @@ export * from './shared/components/qr-scanner/qr-scanner.component';
 export * from './shared/components/qr-scanner/qr-scan-dialog.component';
 export * from './shared/components/signature-pad/signature-pad.component';
 export * from './shared/components/transaction/transaction-list-item.component';
+export * from './shared/components/equipment-badge/equipment-badge.component';
 // Shared UI — constants
 export * from './shared/constant/labels';
 export * from './shared/constant/mobile-form-dialog.config';
@@ -136,6 +139,7 @@ export * from './shared/directives/max-decimals.directive';
 
 // Shared UI — utilities
 export * from './shared/utils/date.util';
+export * from './shared/utils/deployed-path';
 export * from './shared/utils/user-initials.util';
 
 // Shared UI — validators

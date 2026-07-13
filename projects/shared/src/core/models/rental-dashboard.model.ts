@@ -2,13 +2,18 @@ import type { EquipmentSearchItem } from './equipment.model';
 import type { RentalCostBreakdown } from './rental-create.model';
 import type { Money } from './transaction.model';
 
+export interface RentalListEquipment {
+  readonly uid?: string;
+  readonly name: string;
+}
+
 export interface RentalListItem {
   readonly id: number;
   readonly status: string;
   readonly customerPhone: string;
   readonly customerName?: string;
   readonly startedAt: Date;
-  readonly equipmentNames: readonly string[];
+  readonly equipment: readonly RentalListEquipment[];
   readonly expectedReturnAt?: Date;
   readonly isActive: boolean;
   readonly isDebt: boolean;

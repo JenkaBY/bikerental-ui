@@ -15,7 +15,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { EMPTY, of } from 'rxjs';
@@ -30,6 +29,7 @@ import {
   Labels,
   MoneyPipe,
   NotificationService,
+  PageHeaderComponent,
   RentalStore,
   resolveErrorMessage,
   SignaturePadComponent,
@@ -44,10 +44,10 @@ import { CancelRentalDialogComponent } from '../rental-detail/cancel-rental-dial
     MatButtonModule,
     MatCheckboxModule,
     MatDividerModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     DurationPipe,
     MoneyPipe,
+    PageHeaderComponent,
     SignaturePadComponent,
   ],
   styles: `
@@ -61,12 +61,12 @@ import { CancelRentalDialogComponent } from '../rental-detail/cancel-rental-dial
   `,
   template: `
     <div class="flex flex-col gap-4">
-      <div class="flex items-center gap-2">
-        <button mat-icon-button type="button" (click)="onBack()" [attr.aria-label]="Labels.Back">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <h1 class="text-lg font-semibold text-slate-800 m-0">{{ Labels.SigningDialogTitle }}</h1>
-      </div>
+      <app-page-header
+        class="block -mx-4 -mt-4"
+        [title]="Labels.SigningDialogTitle"
+        [backLabel]="Labels.Back"
+        (back)="onBack()"
+      />
 
       @if (isReady()) {
         <div class="rounded border border-slate-200 p-3 text-sm flex flex-col gap-1">

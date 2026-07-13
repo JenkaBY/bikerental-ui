@@ -1,43 +1,40 @@
 import { DatePipe } from '@angular/common';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Labels, RentalFilter, RentalListStore } from '@bikerental/shared';
+import {
+  Labels,
+  RentalFilter,
+  RentalListStore,
+  SegmentedTabsComponent,
+  SegmentTab,
+} from '@bikerental/shared';
 import { RentalHistoryCardListComponent } from './rental-history-card-list.component';
 import { REFRESHABLE_TAB, RefreshableTab } from './refreshable-tab';
 
 const VALID_FILTERS = new Set(['ALL', 'COMPLETED', 'DEBT', 'CANCELLED', 'DRAFT']);
 
-const FILTER_OPTIONS: { value: string; label: string }[] = [
-  { value: 'ALL', label: Labels.All },
-  { value: 'COMPLETED', label: Labels.RentalStatusCompleted },
-  { value: 'DEBT', label: Labels.RentalStatusDebt },
-  { value: 'CANCELLED', label: Labels.RentalStatusCancelled },
-  { value: 'DRAFT', label: Labels.FilterDrafts },
+const FILTER_OPTIONS: SegmentTab[] = [
+  { id: 'ALL', label: Labels.All },
+  { id: 'COMPLETED', label: Labels.RentalStatusCompleted },
+  { id: 'DEBT', label: Labels.RentalStatusDebt },
+  { id: 'CANCELLED', label: Labels.RentalStatusCancelled },
+  { id: 'DRAFT', label: Labels.FilterDrafts },
 ];
 
 @Component({
   selector: 'app-rental-history-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MatButtonToggleModule, RentalHistoryCardListComponent],
+  imports: [DatePipe, RentalHistoryCardListComponent, SegmentedTabsComponent],
   providers: [{ provide: REFRESHABLE_TAB, useExisting: RentalHistoryTabComponent }],
   template: `
-    <div class="overflow-x-auto -mx-4">
-      <div class="px-4 py-2 w-max">
-        <mat-button-toggle-group
-          [value]="activeFilter()"
-          (change)="onFilterChange($event.value)"
-          hideSingleSelectionIndicator
-        >
-          @for (f of filterOptions; track f.value) {
-            <mat-button-toggle [value]="f.value">{{ f.label }}</mat-button-toggle>
-          }
-        </mat-button-toggle-group>
-      </div>
-    </div>
+    <app-segmented-tabs
+      [tabs]="filterOptions"
+      [activeId]="activeFilter()"
+      (tabSelect)="onFilterChange($event)"
+    />
     <div class="px-4 py-2 text-sm text-slate-500">
       @if (activeFilter() !== 'DRAFT') {
         {{ today | date: 'd MMMM yyyy' }}&nbsp;&middot;&nbsp;
