@@ -7,10 +7,16 @@ export class RentalMapper {
     return {
       id: r.id ?? 0,
       status: r.status ?? '',
+      createdAt: r.createdAt ? new Date(r.createdAt) : new Date(0),
       startedAt: r.startedAt ? new Date(r.startedAt) : new Date(0),
       expectedReturnAt: r.expectedReturnAt ? new Date(r.expectedReturnAt) : undefined,
-      estimatedCost: makeMoney(0),
-      equipmentIds: (r.equipments ?? []).map((e) => e.equipmentId),
+      estimatedCost: r.estimatedCost != null ? makeMoney(r.estimatedCost) : undefined,
+      finalCost: r.finalCost != null ? makeMoney(r.finalCost) : undefined,
+      equipment: (r.equipments ?? []).map((e) => ({
+        id: e.equipmentId,
+        uid: e.equipmentUid,
+        name: '',
+      })),
     };
   }
 

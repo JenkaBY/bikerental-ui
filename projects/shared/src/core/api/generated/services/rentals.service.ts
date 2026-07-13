@@ -21,17 +21,18 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  AddRentalEquipmentRequest,
+  RentalRequest,
+  RequestOptions,
+  RentalResponse,
   Pageable,
-  PageAvailableEquipmentResponse,
   PageRentalSummaryResponse,
+  ConfirmReturnRequest,
+  RentalReturnResponse,
+  AddRentalEquipmentRequest,
+  ReturnEquipmentRequest,
   RentalForSigningRequest,
   RentalLifecycleRequest,
-  RentalRequest,
-  RentalResponse,
-  RentalReturnResponse,
-  RequestOptions,
-  ReturnEquipmentRequest,
+  PageAvailableEquipmentResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -219,6 +220,55 @@ export class RentalsService {
     };
 
     return this.httpClient.post(url, rentalRequest, requestOptions);
+  }
+
+  confirmReturn(
+    rentalId: number,
+    confirmReturnRequest: ConfirmReturnRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<RentalReturnResponse>;
+  confirmReturn(
+    rentalId: number,
+    confirmReturnRequest: ConfirmReturnRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<RentalReturnResponse>>;
+  confirmReturn(
+    rentalId: number,
+    confirmReturnRequest: ConfirmReturnRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<RentalReturnResponse>>;
+  /** Settles the whole rental using the frozen total from a previously created cost quote, so the operator is charged exactly the figure shown at preview. The quote must cover every piece of equipment in the rental and is single-use. */
+  confirmReturn(
+    rentalId: number,
+    confirmReturnRequest: ConfirmReturnRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/${rentalId}/returns`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, confirmReturnRequest, requestOptions);
   }
 
   addEquipment(

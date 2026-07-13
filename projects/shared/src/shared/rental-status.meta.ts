@@ -5,42 +5,36 @@ export const RentalStatus: Record<string, RentalStatusMeta> = {
   DRAFT: {
     slug: 'DRAFT',
     color: 'default',
-    labelKey: 'rentalStatus.draft',
     label: Labels.RentalStatusDraft,
     badgeClasses: 'bg-gray-100 text-gray-600',
   },
   AWAITING_SIGNATURE: {
     slug: 'AWAITING_SIGNATURE',
     color: 'accent',
-    labelKey: 'rentalStatus.awaitingSignature',
     label: Labels.RentalStatusAwaitingSignature,
     badgeClasses: 'bg-purple-100 text-purple-700',
   },
   ACTIVE: {
     slug: 'ACTIVE',
     color: 'primary',
-    labelKey: 'rentalStatus.active',
     label: Labels.RentalStatusActive,
     badgeClasses: 'bg-blue-100 text-blue-700',
   },
   COMPLETED: {
     slug: 'COMPLETED',
     color: 'default',
-    labelKey: 'rentalStatus.completed',
     label: Labels.RentalStatusCompleted,
     badgeClasses: 'bg-gray-100 text-gray-600',
   },
   CANCELLED: {
     slug: 'CANCELLED',
-    color: 'default',
-    labelKey: 'rentalStatus.cancelled',
+    color: 'warn',
     label: Labels.RentalStatusCancelled,
-    badgeClasses: 'bg-gray-100 text-gray-600',
+    badgeClasses: 'bg-red-100 text-red-700',
   },
   DEBT: {
     slug: 'DEBT',
     color: 'warn',
-    labelKey: 'rentalStatus.debt',
     label: Labels.RentalStatusDebt,
     badgeClasses: 'bg-amber-100 text-amber-700',
   },
@@ -50,19 +44,16 @@ export const EquipmentItemStatus: Record<string, EquipmentItemStatusMeta> = {
   ASSIGNED: {
     slug: 'ASSIGNED',
     color: 'primary',
-    labelKey: 'equipmentItemStatus.assigned',
     label: Labels.EquipmentItemStatusAssigned,
   },
   ACTIVE: {
     slug: 'ACTIVE',
     color: 'warn',
-    labelKey: 'equipmentItemStatus.active',
     label: Labels.EquipmentItemStatusActive,
   },
   RETURNED: {
     slug: 'RETURNED',
     color: 'default',
-    labelKey: 'equipmentItemStatus.returned',
     label: Labels.Returned,
   },
 };
@@ -70,14 +61,12 @@ export const EquipmentItemStatus: Record<string, EquipmentItemStatusMeta> = {
 const DEFAULT_RENTAL_STATUS: RentalStatusMeta = {
   slug: '',
   color: 'default',
-  labelKey: '',
   label: '',
   badgeClasses: 'bg-gray-100 text-gray-600',
 };
 const DEFAULT_EQUIPMENT_ITEM_STATUS: EquipmentItemStatusMeta = {
   slug: '',
   color: 'default',
-  labelKey: '',
   label: '',
 };
 
