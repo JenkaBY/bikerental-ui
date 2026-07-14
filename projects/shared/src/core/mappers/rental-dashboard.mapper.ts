@@ -1,4 +1,5 @@
 import type {
+  ConfirmReturnRequest,
   CustomerResponse,
   EquipmentItemResponse,
   RentalResponse,
@@ -148,5 +149,9 @@ export class RentalDashboardMapper {
       equipmentIds: w.equipmentItemIds,
       operatorId,
     };
+  }
+
+  static toConfirmReturnRequest(quoteId: string, operatorId: string): ConfirmReturnRequest {
+    return { quoteId, operatorId };
   }
 }

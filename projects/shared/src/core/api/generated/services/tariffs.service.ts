@@ -579,4 +579,41 @@ export class TariffsService {
 
     return this.httpClient.get(url, requestOptions);
   }
+
+  deleteQuote(id: string, observe?: 'body', options?: RequestOptions<'json'>): Observable<any>;
+  deleteQuote(
+    id: string,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<any>>;
+  deleteQuote(
+    id: string,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<any>>;
+  /** Removes a cost quote before it is consumed or expires */
+  deleteQuote(
+    id: string,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/tariffs/quotes/${id}`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.delete(url, requestOptions);
+  }
 }

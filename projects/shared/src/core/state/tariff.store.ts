@@ -4,10 +4,12 @@ import { catchError, defaultIfEmpty, finalize, map, switchMap, tap } from 'rxjs/
 import {
   CostCalculationV2Request,
   CostCalculationResponse,
+  CostQuoteResponse,
   TariffsService,
 } from '../api/generated';
 import { Tariff, TariffWrite } from '../models';
 import { TariffMapper } from '../mappers';
+import { suppressErrorNotification } from '../errors';
 import { EquipmentTypeStore } from './equipment-type.store';
 import { PricingTypeStore } from './pricing-type.store';
 
@@ -145,5 +147,15 @@ export class TariffStore {
 
   calculateCost(request: CostCalculationV2Request): Observable<CostCalculationResponse> {
     return this.service.costCalculations(request);
+  }
+
+  createQuote(request: CostCalculationV2Request): Observable<CostQuoteResponse> {
+    return this.service.createQuote(request, 'body', { context: suppressErrorNotification() });
+  }
+
+  deleteQuote(quoteId: string): Observable<void> {
+    return this.service
+      .deleteQuote(quoteId, 'body', { context: suppressErrorNotification() })
+      .pipe(map(() => undefined as void));
   }
 }

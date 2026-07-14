@@ -1,5 +1,5 @@
 import type { EquipmentSearchItem } from './equipment.model';
-import type { RentalCostBreakdown } from './rental-create.model';
+import type { RentalCostBreakdown, RentalCostEstimate } from './rental-create.model';
 import type { Money } from './transaction.model';
 
 export interface RentalListEquipment {
@@ -47,4 +47,11 @@ export type ReturnSettlementKind = 'refund' | 'collect' | 'none';
 export interface ReturnSettlement {
   readonly kind: ReturnSettlementKind;
   readonly amount: Money;
+}
+
+export interface RentalCostQuote {
+  readonly quoteId: string;
+  readonly quotedAt: Date;
+  readonly expiresAt: Date;
+  readonly estimate: RentalCostEstimate;
 }
