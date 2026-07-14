@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   inject,
   signal,
   ViewContainerRef,
@@ -146,18 +145,6 @@ export class ReturnEquipmentDialogComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.now.set(Date.now()));
 
-    effect(() => {
-      const remaining = this.remainingSeconds();
-      if (
-        remaining === 0 &&
-        this.costStore.quoteId() &&
-        !this.costStore.isCalculating() &&
-        !this.rentalStore.isReturning()
-      ) {
-        this.refreshQuote();
-      }
-    });
-
     if (this.rentalStore.isFullReturnSelected()) {
       this.costStore.enterQuoteMode();
       this.refreshQuote();
@@ -165,6 +152,9 @@ export class ReturnEquipmentDialogComponent {
   }
 
   protected onCancel(): void {
+    if (this.isFullReturn()) {
+      this.costStore.deleteQuote();
+    }
     this.dialogRef.close(false);
   }
 

@@ -152,4 +152,10 @@ export class TariffStore {
   createQuote(request: CostCalculationV2Request): Observable<CostQuoteResponse> {
     return this.service.createQuote(request, 'body', { context: suppressErrorNotification() });
   }
+
+  deleteQuote(quoteId: string): Observable<void> {
+    return this.service
+      .deleteQuote(quoteId, 'body', { context: suppressErrorNotification() })
+      .pipe(map(() => undefined as void));
+  }
 }

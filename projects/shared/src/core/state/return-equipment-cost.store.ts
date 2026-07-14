@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Observable, of, timer } from 'rxjs';
+import { EMPTY, Observable, of, timer } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import type { CostCalculationV2Request } from '@api-models';
 import type {
@@ -102,6 +102,17 @@ export class ReturnEquipmentCostStore {
       map(() => undefined as void),
       finalize(() => this._quoteLoading.set(false)),
     );
+  }
+
+  // Fire-and-forget: the operator is abandoning the quote, so we don't block the UI
+  // on the backend's response — a failed/late delete just leaves the quote to expire.
+  deleteQuote(): void {
+    const quoteId = this._quoteId();
+    if (!quoteId) return;
+    this.tariffStore
+      .deleteQuote(quoteId)
+      .pipe(catchError(() => EMPTY))
+      .subscribe();
   }
 
   readonly breakdownByEquipmentId = computed<Map<number, RentalCostBreakdown>>(() => {

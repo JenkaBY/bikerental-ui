@@ -563,16 +563,26 @@ export interface Pageable {
   sort?: Array<string>;
 }
 
+export interface Order {
+  property?: string;
+  direction?: 'ASC' | 'DESC';
+}
+
 export interface PageRequest {
   size?: number;
   page?: number;
-  sortBy?: string;
+  sort?: Sort;
 }
 
 export interface PageTariffV2Response {
   items?: Array<TariffV2Response>;
   totalItems?: number;
   pageRequest?: PageRequest;
+}
+
+export interface Sort {
+  orders?: Array<Order>;
+  sorted?: boolean;
 }
 
 /** Selected V2 tariff with cost for the given duration */
