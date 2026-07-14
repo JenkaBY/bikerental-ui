@@ -1,6 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import type { CostCalculationV2Request, CostCalculationResponse } from '@api-models';
-import type { RentalCostEstimate } from '@ui-models';
+import type {
+  CostCalculationV2Request,
+  CostCalculationResponse,
+  CostQuoteResponse,
+} from '@api-models';
+import type { RentalCostEstimate, RentalCostQuote, RentalEquipmentItem } from '@ui-models';
 import type { RentalDetailState, RentalState } from '../state/rental.state';
 import { makeMoney } from './money.mapper';
 import { TIME_TRAVEL_STORE_TOKEN } from '../state/time-travel-store.token';
@@ -15,13 +19,19 @@ export class CostCalculationMapper {
   ): CostCalculationV2Request {
     const startedAt = 'startedAt' in draft ? draft.startedAt : null;
     const now = this.timeTravelStore?.getCurrentTime() ?? new Date();
-    const returnAt = startedAt ? now.toISOString() : undefined;
+    const defaultReturnAt = startedAt ? now.toISOString() : undefined;
     return {
-      equipments: draft.equipmentItems.map((e) => ({
-        equipmentId: e.id,
-        equipmentType: e.type.slug,
-        returnAt,
-      })),
+      // Equipment already returned earlier (e.g. a prior partial return) must keep its own
+      // recorded return time — the backend rejects a quote that re-quotes it at a new time
+      // (rental.quote.mismatch). Only equipment being returned now gets the uniform returnAt.
+      equipments: draft.equipmentItems.map((e) => {
+        const alreadyReturnedAt = (e as Partial<RentalEquipmentItem>).returnedAt;
+        return {
+          equipmentId: e.id,
+          equipmentType: e.type.slug,
+          returnAt: alreadyReturnedAt ? alreadyReturnedAt.toISOString() : defaultReturnAt,
+        };
+      }),
       startAt: (startedAt ?? now).toISOString(),
       plannedDurationMinutes: draft.durationMinutes,
       discountPercent: draft.specialPriceEnabled ? undefined : draft.discountPercent,
@@ -45,6 +55,15 @@ export class CostCalculationMapper {
         itemCost: makeMoney(b.itemCost),
         calculationMessage: b.calculationBreakdown?.message ?? '',
       })),
+    };
+  }
+
+  fromQuoteResponse(response: CostQuoteResponse): RentalCostQuote {
+    return {
+      quoteId: response.quoteId,
+      quotedAt: new Date(response.quotedAt),
+      expiresAt: new Date(response.expiresAt),
+      estimate: this.fromResponse(response.calculation),
     };
   }
 }

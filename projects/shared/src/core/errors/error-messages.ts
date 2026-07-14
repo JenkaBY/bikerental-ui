@@ -75,6 +75,12 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.WINDOW_ELAPSED]: $localize`This rental is overdue — return it before adding more equipment.`,
   [ErrorCode.ACTIVATION_NOT_READY]: $localize`The rental could not be prepared for signing — please review the details and try again.`,
 
+  // Return quote lifecycle (full-return quote → confirm flow)
+  [ErrorCode.TARIFF_QUOTE_NOT_FOUND]: $localize`The price quote could not be found. Recalculating the current price…`,
+  [ErrorCode.TARIFF_QUOTE_EXPIRED]: $localize`The price has expired and was recalculated. Review the new total and confirm again.`,
+  [ErrorCode.TARIFF_QUOTE_ALREADY_CONSUMED]: $localize`This rental has already been completed.`,
+  [ErrorCode.RENTAL_QUOTE_MISMATCH]: $localize`The rental changed since the price was calculated. Recalculating the current price…`,
+
   // Identity (authentication & accounts)
   [ErrorCode.AUTH_REQUIRED]: $localize`Your session has expired. Please sign in again.`,
   [ErrorCode.ACCESS_DENIED]: $localize`You do not have permission to perform this action.`,

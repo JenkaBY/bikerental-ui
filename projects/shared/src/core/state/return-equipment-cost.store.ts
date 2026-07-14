@@ -1,7 +1,7 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { of, timer } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { Observable, of, timer } from 'rxjs';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import type { CostCalculationV2Request } from '@api-models';
 import type {
   Money,
@@ -31,20 +31,39 @@ export class ReturnEquipmentCostStore {
   private readonly costCalculationMapper = inject(CostCalculationMapper);
   private readonly financeService = inject(FinanceService);
 
+  private readonly _quoteMode = signal(false);
+  private readonly _quoteId = signal<string | null>(null);
+  private readonly _quoteExpiresAt = signal<Date | null>(null);
+  private readonly _frozenEstimate = signal<RentalCostEstimate | null>(null);
+  private readonly _quoteLoading = signal(false);
+
+  readonly quoteId = this._quoteId.asReadonly();
+  readonly expiresAt = this._quoteExpiresAt.asReadonly();
+
   readonly selectedItems = computed<RentalEquipmentItem[]>(() => {
     const selectedIds = this.rentalStore.selectedEquipmentItemIds();
     return this.rentalStore.rentalEquipmentItems().filter((item) => selectedIds.has(item.id));
   });
 
-  private readonly calculationRequest = computed<CostCalculationV2Request | null>(() => {
+  private buildRequest(): CostCalculationV2Request | null {
     const s = this.rentalStore.state();
-    const selected = this.selectedItems();
-    if (selected.length === 0) return null;
+    // Full-return quotes must cover every equipment item ever attached to the rental —
+    // including ones already returned in an earlier partial return — or the backend
+    // rejects the quote as not matching the rental's equipment set (rental.quote.mismatch).
+    // The live/partial-return preview only ever needs the currently-selected items.
+    const items = this._quoteMode()
+      ? this.rentalStore.rentalEquipmentItems()
+      : this.selectedItems();
+    if (items.length === 0) return null;
     return this.costCalculationMapper.fromState(
-      { ...s, equipmentItems: selected, specialPriceEnabled: false, specialPrice: undefined },
+      { ...s, equipmentItems: items, specialPriceEnabled: false, specialPrice: undefined },
       null,
     );
-  });
+  }
+
+  private readonly calculationRequest = computed<CostCalculationV2Request | null>(() =>
+    this._quoteMode() ? null : this.buildRequest(),
+  );
 
   readonly resource = rxResource<RentalCostEstimate | null, CostCalculationV2Request | null>({
     params: () => this.calculationRequest(),
@@ -58,8 +77,32 @@ export class ReturnEquipmentCostStore {
     },
   });
 
-  readonly estimate = computed(() => this.resource.value() ?? null);
-  readonly isCalculating = this.resource.isLoading;
+  readonly estimate = computed(() =>
+    this._quoteMode() ? this._frozenEstimate() : (this.resource.value() ?? null),
+  );
+  readonly isCalculating = computed(() =>
+    this._quoteMode() ? this._quoteLoading() : this.resource.isLoading(),
+  );
+
+  enterQuoteMode(): void {
+    this._quoteMode.set(true);
+  }
+
+  createQuote(): Observable<void> {
+    const request = this.buildRequest();
+    if (!request) return of(undefined);
+    this._quoteLoading.set(true);
+    return this.tariffStore.createQuote(request).pipe(
+      tap((response) => {
+        const quote = this.costCalculationMapper.fromQuoteResponse(response);
+        this._quoteId.set(quote.quoteId);
+        this._quoteExpiresAt.set(quote.expiresAt);
+        this._frozenEstimate.set(quote.estimate);
+      }),
+      map(() => undefined as void),
+      finalize(() => this._quoteLoading.set(false)),
+    );
+  }
 
   readonly breakdownByEquipmentId = computed<Map<number, RentalCostBreakdown>>(() => {
     const map = new Map<number, RentalCostBreakdown>();

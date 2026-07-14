@@ -34,6 +34,12 @@ export const ErrorCode = {
   STATUS_INVALID: 'rental.status.invalid',
   WINDOW_ELAPSED: 'rental.window.elapsed',
   ACTIVATION_NOT_READY: 'rental.activation.not_ready',
+  RENTAL_QUOTE_MISMATCH: 'rental.quote.mismatch',
+
+  // tariff.* — return quote lifecycle
+  TARIFF_QUOTE_NOT_FOUND: 'tariff.quote.not_found',
+  TARIFF_QUOTE_EXPIRED: 'tariff.quote.expired',
+  TARIFF_QUOTE_ALREADY_CONSUMED: 'tariff.quote.already_consumed',
 
   // identity.* — authentication & accounts
   AUTH_REQUIRED: 'identity.authentication.required',
@@ -87,6 +93,10 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.STATUS_INVALID,
   ErrorCode.WINDOW_ELAPSED,
   ErrorCode.ACTIVATION_NOT_READY,
+  ErrorCode.RENTAL_QUOTE_MISMATCH,
+  ErrorCode.TARIFF_QUOTE_NOT_FOUND,
+  ErrorCode.TARIFF_QUOTE_EXPIRED,
+  ErrorCode.TARIFF_QUOTE_ALREADY_CONSUMED,
   ErrorCode.USERNAME_DUPLICATE,
   ErrorCode.EMAIL_DUPLICATE,
   ErrorCode.PASSWORD_POLICY_VIOLATION,

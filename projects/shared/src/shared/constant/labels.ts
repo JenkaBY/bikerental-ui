@@ -286,6 +286,10 @@ export class Labels {
   static readonly SpecialPriceApplied = $localize`Special price applied`;
   static readonly ReturnPricing = $localize`Return pricing`;
   static readonly ReturnEquipmentButton = $localize`Return equipment`;
+  static readonly CalculateButton = $localize`Calculate`;
+  static readonly CompleteRentalButton = $localize`Complete rental`;
+  static readonly QuoteValidFor = $localize`Price valid for`;
+  static readonly SecondsUnit = $localize`s`;
   static readonly BrokenEquipment = $localize`Broken`;
   static readonly CancelRental = $localize`Cancel rental`;
   static readonly KeepRental = $localize`Keep rental`;

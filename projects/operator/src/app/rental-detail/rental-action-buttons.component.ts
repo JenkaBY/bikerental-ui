@@ -45,7 +45,10 @@ import { ReturnEquipmentDialogComponent } from './return-equipment-dialog/return
             @if (store.isReturning()) {
               <mat-spinner diameter="20" />
             } @else {
-              {{ Labels.ReturnEquipmentButton }} ({{ store.selectedEquipmentCount() }})
+              {{
+                store.isFullReturnSelected() ? Labels.CalculateButton : Labels.ReturnEquipmentButton
+              }}
+              ({{ store.selectedEquipmentCount() }})
             }
           </button>
           <button

@@ -104,6 +104,19 @@ export class RentalStore {
     () => this._state().equipmentItems as RentalEquipmentItem[],
   );
 
+  readonly activeEquipmentItemIds = computed(() =>
+    this.rentalEquipmentItems()
+      .filter((item) => !item.isReturned)
+      .map((item) => item.id),
+  );
+
+  readonly isFullReturnSelected = computed(() => {
+    const active = this.activeEquipmentItemIds();
+    if (active.length === 0) return false;
+    const selected = this.selectedEquipmentItemIds();
+    return active.every((id) => selected.has(id));
+  });
+
   readonly status = computed(() => this._state().status);
   readonly isDraft = computed(() => this._state().status === 'DRAFT');
   readonly isAwaitingSignature = computed(() => this._state().status === 'AWAITING_SIGNATURE');
@@ -304,6 +317,19 @@ export class RentalStore {
       map(() => undefined as void),
       finalize(() => this.patchState({ isReturning: false })),
     );
+  }
+
+  confirmReturn(quoteId: string): Observable<void> {
+    const id = this._state().id;
+    if (id === null) throw new Error('No rental id in store');
+    const request = RentalDashboardMapper.toConfirmReturnRequest(quoteId, this.operatorId());
+    this.patchState({ isReturning: true });
+    return this.rentalsService
+      .confirmReturn(id, request, 'body', { context: suppressErrorNotification() })
+      .pipe(
+        map(() => undefined as void),
+        finalize(() => this.patchState({ isReturning: false })),
+      );
   }
 
   addEquipmentToRental(equipmentIds: number[]): Observable<void> {
