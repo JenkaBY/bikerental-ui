@@ -238,6 +238,7 @@ export class Labels {
   static readonly DurationMinutes = $localize`Duration (min)`;
   static readonly MinuteShort = $localize`min`;
   static readonly HourShort = $localize`h`;
+  static readonly DayShort = $localize`d`;
   static readonly SearchEquipmentPlaceholder = $localize`Search by UID or model...`;
   static readonly ScanQr = $localize`Scan QR`;
   static readonly ComingSoon = $localize`Coming soon`;
@@ -277,6 +278,12 @@ export class Labels {
   static readonly Retry = $localize`Retry`;
   static readonly CurrentCost = $localize`Current cost`;
   static readonly FinalCost = $localize`Final cost`;
+  static readonly PlannedCost = $localize`Planned cost`;
+  static readonly NotAvailable = $localize`NA`;
+  static readonly InRentalSuffix = $localize`in rental`;
+  static readonly PlannedDurationLabel = $localize`planned`;
+  static readonly ApproxPricePrefix = $localize`≈`;
+  static readonly FinalPricePrefix = $localize`=`;
   static readonly ReturnedAt = $localize`returned at`;
   static readonly ShowDetails = $localize`Show details`;
   static readonly CollapseDetails = $localize`Collapse`;
