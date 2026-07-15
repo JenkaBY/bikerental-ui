@@ -176,6 +176,7 @@ export class RentalDetailComponent {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly financeStore = inject(CustomerFinanceStore);
+  private readonly transactionsStore = inject(RentalTransactionsStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
   protected readonly signatureStore = inject(RentalSignatureStore);
@@ -268,7 +269,7 @@ export class RentalDetailComponent {
     this.dialog
       .open(TopUpDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId },
+        data: { customerId, initialAmount: this.debtTopUpAmount() },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
@@ -279,6 +280,15 @@ export class RentalDetailComponent {
           this.financeStore.loadById(customerId);
         }
       });
+  }
+
+  private debtTopUpAmount(): number | undefined {
+    if (!this.store.isDebt()) return undefined;
+    const finalCost = this.store.finalCost()?.amount ?? 0;
+    const reservedAmount = this.transactionsStore.reserved().amount;
+    const actualBalance = this.financeStore.balance()?.available.amount ?? 0;
+    const amount = finalCost - reservedAmount - actualBalance;
+    return amount > 0 ? amount : undefined;
   }
 
   protected onWithdrawRequested(): void {
