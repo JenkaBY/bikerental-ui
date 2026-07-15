@@ -12,9 +12,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import type { EquipmentUnitViewModel, RentalEquipmentItem } from '@bikerental/shared';
+import type { RentalEquipmentItem } from '@bikerental/shared';
 import {
   EquipmentUnitCardComponent,
+  EquipmentUnitViewModelMapper,
   Labels,
   RentalCostCalculationStore,
   RentalStore,
@@ -127,31 +128,14 @@ export class RentalEquipmentSectionComponent {
       });
   }
 
-  protected unitFor(item: RentalEquipmentItem): EquipmentUnitViewModel {
+  protected unitFor(item: RentalEquipmentItem) {
     const breakdown = this.costStore.breakdowns().find((b) => b.equipmentId === item.id) ?? null;
-    const startedAt = item.startedAt ?? this.store.startedAt();
-    return {
-      uid: item.uid,
-      name: item.model || item.type.name,
-      statusSlug: item.isReturned ? 'RETURNED' : item.statusSlug,
-      price: item.isReturned ? (item.finalCost ?? null) : (breakdown?.itemCost ?? null),
-      priceKind: item.isReturned ? 'final' : 'current',
-      plannedCost: item.estimatedCost,
+    return EquipmentUnitViewModelMapper.forRentalItem(
+      item,
       breakdown,
-      plannedDurationMinutes: this.store.durationMinutes(),
-      startedAt,
-      actualReturnedAt: item.returnedAt ?? null,
-      actualDurationMinutes: item.isReturned
-        ? this.minutesSince(startedAt, item.returnedAt ?? null)
-        : null,
-      currentDurationMinutes: item.isReturned
-        ? null
-        : this.minutesSince(startedAt, this.timeStore.getCurrentDate()),
-    };
-  }
-
-  private minutesSince(start: Date | null, end: Date | null): number | null {
-    if (!start || !end) return null;
-    return Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000));
+      this.store.startedAt(),
+      this.store.durationMinutes(),
+      this.timeStore.getCurrentDate(),
+    );
   }
 }

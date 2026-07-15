@@ -21,17 +21,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, switchMap } from 'rxjs';
+import type { EquipmentUnitViewModel, RentalCostBreakdown } from '@bikerental/shared';
 import {
   EquipmentScanResolverService,
   EquipmentSearchItem,
   EquipmentSearchStore,
   EquipmentUnitCardComponent,
+  EquipmentUnitViewModelMapper,
   Labels,
   QrScanDialogComponent,
   RentalCostCalculationStore,
   RentalStore,
 } from '@bikerental/shared';
-import type { EquipmentUnitViewModel, Money, RentalCostBreakdown } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-equipment-section',
@@ -125,21 +126,12 @@ export class RentalEquipmentSectionComponent {
     return this.costStore.breakdowns().find((b) => b.equipmentId === equipmentId) ?? null;
   }
 
-  private priceFor(equipmentId: number): Money | null {
-    return this.breakdownFor(equipmentId)?.itemCost ?? null;
-  }
-
   protected unitFor(item: EquipmentSearchItem): EquipmentUnitViewModel {
-    const price = this.priceFor(item.id);
-    return {
-      uid: item.uid,
-      name: item.model || item.type.name,
-      price,
-      priceKind: 'estimated',
-      plannedCost: price,
-      plannedDurationMinutes: this.store.durationMinutes(),
-      breakdown: this.breakdownFor(item.id),
-    };
+    return EquipmentUnitViewModelMapper.forSearchItem(
+      item,
+      this.breakdownFor(item.id),
+      this.store.durationMinutes(),
+    );
   }
 
   constructor() {

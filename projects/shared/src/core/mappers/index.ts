@@ -18,3 +18,4 @@ export * from './rental-dashboard.mapper';
 export * from './managed-user.mapper';
 export * from './agreement-template.mapper';
 export * from './agreement-signature.mapper';
+export * from './equipment-unit-view-model.mapper';
