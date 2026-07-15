@@ -129,7 +129,7 @@ export class RentalEquipmentSectionComponent {
 
   protected unitFor(item: RentalEquipmentItem): EquipmentUnitViewModel {
     const breakdown = this.costStore.breakdowns().find((b) => b.equipmentId === item.id) ?? null;
-    const startedAt = this.store.startedAt();
+    const startedAt = item.startedAt ?? this.store.startedAt();
     return {
       uid: item.uid,
       name: item.model || item.type.name,

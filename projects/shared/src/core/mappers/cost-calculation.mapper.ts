@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import type {
-  CostCalculationV2Request,
   CostCalculationResponse,
+  CostCalculationV2Request,
   CostQuoteResponse,
 } from '@api-models';
 import type { RentalCostEstimate, RentalCostQuote, RentalEquipmentItem } from '@ui-models';
@@ -25,11 +25,12 @@ export class CostCalculationMapper {
       // recorded return time — the backend rejects a quote that re-quotes it at a new time
       // (rental.quote.mismatch). Only equipment being returned now gets the uniform returnAt.
       equipments: draft.equipmentItems.map((e) => {
-        const alreadyReturnedAt = (e as Partial<RentalEquipmentItem>).returnedAt;
+        const item = e as Partial<RentalEquipmentItem>;
         return {
           equipmentId: e.id,
           equipmentType: e.type.slug,
-          returnAt: alreadyReturnedAt ? alreadyReturnedAt.toISOString() : defaultReturnAt,
+          startAt: item.startedAt ? item.startedAt.toISOString() : undefined,
+          returnAt: item.returnedAt ? item.returnedAt.toISOString() : defaultReturnAt,
         };
       }),
       startAt: (startedAt ?? now).toISOString(),
