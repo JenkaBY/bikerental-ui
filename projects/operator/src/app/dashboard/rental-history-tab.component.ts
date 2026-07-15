@@ -18,8 +18,8 @@ const VALID_FILTERS = new Set(['ALL', 'COMPLETED', 'DEBT', 'CANCELLED', 'DRAFT']
 const FILTER_OPTIONS: SegmentTab[] = [
   { id: 'ALL', label: Labels.All },
   { id: 'COMPLETED', label: Labels.RentalStatusCompleted },
-  { id: 'DEBT', label: Labels.RentalStatusDebt },
   { id: 'CANCELLED', label: Labels.RentalStatusCancelled },
+  { id: 'DEBT', label: Labels.RentalStatusDebt },
   { id: 'DRAFT', label: Labels.FilterDrafts },
 ];
 
@@ -36,7 +36,7 @@ const FILTER_OPTIONS: SegmentTab[] = [
       (tabSelect)="onFilterChange($event)"
     />
     <div class="px-4 py-2 text-sm text-slate-500">
-      @if (activeFilter() !== 'DRAFT') {
+      @if (activeFilter() !== 'DRAFT' && activeFilter() !== 'DEBT') {
         {{ today | date: 'd MMMM yyyy' }}&nbsp;&middot;&nbsp;
       }
       {{ totalRecords() }}&nbsp;{{ Labels.Records }}
@@ -69,7 +69,7 @@ export class RentalHistoryTabComponent implements RefreshableTab {
   constructor() {
     effect(() => {
       const currentFilter = this.activeFilter();
-      if (currentFilter === 'DRAFT') {
+      if (currentFilter === 'DRAFT' || currentFilter === 'DEBT') {
         this.store.loadByFilter(currentFilter as RentalFilter['filter']);
       } else {
         this.store.loadHistory(this.today, this.today, currentFilter as RentalFilter['filter']);
