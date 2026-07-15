@@ -1,10 +1,14 @@
 import { Money } from './transaction.model';
 
+export type BreakdownParams = Record<string, string | number> | null;
+
 export interface RentalCostBreakdown {
   equipmentId?: number;
   equipmentType: string;
   tariffId: number;
   itemCost: Money;
+  breakdownPatternCode?: string;
+  params?: BreakdownParams;
   calculationMessage: string;
 }
 

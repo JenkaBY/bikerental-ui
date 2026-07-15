@@ -53,6 +53,8 @@ export class CostCalculationMapper {
         equipmentType: b.equipmentType,
         tariffId: b.tariffId,
         itemCost: makeMoney(b.itemCost),
+        breakdownPatternCode: b.calculationBreakdown?.breakdownPatternCode,
+        params: b.calculationBreakdown?.params ?? null,
         calculationMessage: b.calculationBreakdown?.message ?? '',
       })),
     };
