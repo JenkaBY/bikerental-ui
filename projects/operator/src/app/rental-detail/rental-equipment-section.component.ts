@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import type { EquipmentUnitViewModel, RentalEquipmentItem } from '@bikerental/shared';
 import {
   EquipmentUnitCardComponent,
   Labels,
@@ -19,7 +20,6 @@ import {
   RentalStore,
   TimeStore,
 } from '@bikerental/shared';
-import type { EquipmentUnitViewModel, RentalEquipmentItem } from '@bikerental/shared';
 import { AddEquipmentDialogComponent } from './add-equipment-dialog/add-equipment-dialog.component';
 
 @Component({
@@ -40,7 +40,8 @@ import { AddEquipmentDialogComponent } from './add-equipment-dialog/add-equipmen
         @if (store.isActive()) {
           <button
             mat-flat-button
-            class="!min-w-0 !bg-green-600 !px-4 !text-white"
+            class="!min-w-0 !px-4 !text-white"
+            [disabled]="store.isOverdue()"
             (click)="onAddEquipment()"
           >
             {{ Labels.Add }}

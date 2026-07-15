@@ -33,38 +33,30 @@ import { ReturnEquipmentDialogComponent } from './return-equipment-dialog/return
   template: `
     <div class="flex flex-col gap-2 px-4 py-3 border-t border-slate-200 bg-white shrink-0">
       @if (store.isActive()) {
-        <button
-          mat-flat-button
-          color="primary"
-          class="w-full"
-          [disabled]="isReturnDisabled()"
-          (click)="onReturn()"
-        >
-          @if (store.isReturning()) {
-            <mat-spinner diameter="20" />
-          } @else {
-            {{
-              store.isFullReturnSelected() ? Labels.CalculateButton : Labels.ReturnEquipmentButton
-            }}
-            ({{ store.selectedEquipmentCount() }})
-          }
-        </button>
-
         <div class="flex gap-2">
           <button
             mat-stroked-button
             class="flex-1 !text-red-600 !border-red-400"
-            (click)="onBroken()"
-          >
-            🔧 {{ Labels.BrokenEquipment }}
-          </button>
-          <button
-            mat-flat-button
-            class="flex-1 !bg-amber-400 !text-white"
             [disabled]="store.isSaving()"
             (click)="onCancel()"
           >
             {{ Labels.CancelRental }}
+          </button>
+          <button mat-stroked-button class="flex-1" (click)="onBroken()">
+            🔧 {{ Labels.BrokenEquipment }}
+          </button>
+          <button
+            mat-flat-button
+            color="primary"
+            class="flex-1"
+            [disabled]="isReturnDisabled()"
+            (click)="onReturn()"
+          >
+            @if (store.isReturning()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              {{ store.isFullReturnSelected() ? Labels.CalculateButton : Labels.ReturnButton }}
+            }
           </button>
         </div>
       }

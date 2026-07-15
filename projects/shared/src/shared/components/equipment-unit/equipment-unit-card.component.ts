@@ -18,6 +18,7 @@ import {
   EquipmentUnitSummaryComponent,
 } from './equipment-unit-summary.component';
 import { EquipmentUnitDetailsComponent } from './equipment-unit-details.component';
+import { EquipmentStatusBadgeComponent } from '../equipment-status-badge/equipment-status-badge.component';
 
 export type EquipmentUnitPriceKind = 'estimated' | 'current' | 'final';
 
@@ -40,6 +41,7 @@ export interface EquipmentUnitViewModel extends EquipmentUnitIdentity {
     PricePrefixPipe,
     EquipmentUnitSummaryComponent,
     EquipmentUnitDetailsComponent,
+    EquipmentStatusBadgeComponent,
   ],
   template: `
     <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1 leading-tight">
@@ -56,6 +58,7 @@ export interface EquipmentUnitViewModel extends EquipmentUnitIdentity {
         <app-equipment-unit-summary [unit]="unit()" class="ml-1" />
 
         <div class="flex items-center gap-0.5 shrink-0">
+          <app-equipment-status-badge class="ml-auto" [statusSlug]="unit().statusSlug" />
           <span class="text-sm font-semibold text-slate-900 whitespace-nowrap">
             {{ unit().price ? (unit().priceKind | pricePrefix) + (unit().price | money) : '—' }}
           </span>

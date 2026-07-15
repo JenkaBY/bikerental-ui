@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { Labels } from '../../constant/labels';
 import { normalizeToHuman } from '../../pipes/duration-formatter';
 import { formatSmartTimestamp } from '../../pipes/timestamp-formatter';
-import { EquipmentStatusBadgeComponent } from '../equipment-status-badge/equipment-status-badge.component';
 
 export interface EquipmentUnitIdentity {
   uid: string;
@@ -20,13 +19,11 @@ export interface EquipmentUnitIdentity {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex-1 min-w-0 block' },
-  imports: [EquipmentStatusBadgeComponent],
   template: `
     <div class="min-w-0 leading-tight">
       <div class="flex items-center gap-1.5 min-w-0">
         <span class="text-xs font-medium text-slate-500 truncate">{{ unit().uid }}</span>
         <span class="text-sm font-medium text-slate-800 truncate">{{ unit().name }}</span>
-        <app-equipment-status-badge class="ml-auto" [statusSlug]="unit().statusSlug" />
       </div>
       <span class="text-xs text-slate-500 leading-tight">{{ durationText() }}</span>
     </div>
