@@ -9,7 +9,6 @@ import { Labels, MoneyPipe, RentalCostCalculationStore, RentalStore } from '@bik
 @Component({
   selector: 'app-rental-cost-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RentalCostCalculationStore],
   imports: [MatButtonModule, MatDividerModule, MatProgressSpinnerModule, MoneyPipe, DatePipe],
   template: `
     <div class="px-4 py-3">

@@ -335,7 +335,7 @@ export class RentalsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalReturnResponse>>;
-  /** Completes a rental by returning the rented equipment, calculates final cost and records additional payment if needed */
+  /** Records a partial return of rented equipment. Returning the last outstanding piece of equipment is rejected — completing a rental must go through the quote-based return flow (POST /api/rentals/{rentalId}/returns) */
   returnEquipment(
     returnEquipmentRequest: ReturnEquipmentRequest,
     observe?: 'body' | 'events' | 'response',

@@ -317,6 +317,7 @@ export class Labels {
   static readonly ConfirmReturnButton = $localize`Confirm return`;
 
   static readonly AddEquipmentButton = $localize`Add equipment`;
+  static readonly Add = $localize`Add`;
   static readonly AddEquipmentDialogTitle = $localize`Add equipment to rental`;
   static readonly AddEquipmentBillingNote = $localize`New items are billed only for the remaining time — the rental's return time does not change.`;
   static readonly RentalAddEquipmentSuccess = $localize`Equipment added to rental`;

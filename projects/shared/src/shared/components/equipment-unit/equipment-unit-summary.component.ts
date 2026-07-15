@@ -26,7 +26,7 @@ export interface EquipmentUnitIdentity {
       <div class="flex items-center gap-1.5 min-w-0">
         <span class="text-xs font-medium text-slate-500 truncate">{{ unit().uid }}</span>
         <span class="text-sm font-medium text-slate-800 truncate">{{ unit().name }}</span>
-        <app-equipment-status-badge [statusSlug]="unit().statusSlug" />
+        <app-equipment-status-badge class="ml-auto" [statusSlug]="unit().statusSlug" />
       </div>
       <span class="text-xs text-slate-500 leading-tight">{{ durationText() }}</span>
     </div>
@@ -47,8 +47,8 @@ export class EquipmentUnitSummaryComponent {
       u.actualDurationMinutes ?? u.currentDurationMinutes ?? undefined,
     );
     const startPart = formatSmartTimestamp(u.startedAt);
-    const endPart = u.actualReturnedAt ? formatSmartTimestamp(u.actualReturnedAt) : '';
+    const endPart = u.actualReturnedAt ? formatSmartTimestamp(u.actualReturnedAt) : '...';
 
-    return `${startPart} - ${endPart} = ${elapsed} (${planned} ${Labels.PlannedDurationLabel})`;
+    return `${startPart} → ${endPart} · ${elapsed} (${planned})`;
   });
 }

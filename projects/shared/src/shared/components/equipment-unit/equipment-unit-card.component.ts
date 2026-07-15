@@ -46,13 +46,14 @@ export interface EquipmentUnitViewModel extends EquipmentUnitIdentity {
       <div class="flex items-center gap-2">
         @if (showCheckbox()) {
           <mat-checkbox
+            class="shrink-0 self-center -mr-1 [--mat-checkbox-state-layer-size:18px]"
             [checked]="checked()"
             [disabled]="checkboxDisabled()"
             (change)="checkedChange.emit($event.checked)"
           />
         }
 
-        <app-equipment-unit-summary [unit]="unit()" />
+        <app-equipment-unit-summary [unit]="unit()" class="ml-1" />
 
         <div class="flex items-center gap-0.5 shrink-0">
           <span class="text-sm font-semibold text-slate-900 whitespace-nowrap">
@@ -62,12 +63,14 @@ export interface EquipmentUnitViewModel extends EquipmentUnitIdentity {
           <button
             mat-icon-button
             type="button"
-            class="shrink-0"
+            class="shrink-0 !h-6 !w-6 !p-0"
             (click)="toggle()"
             [attr.aria-expanded]="expanded()"
             [attr.aria-label]="expanded() ? Labels.CollapseDetails : Labels.ShowDetails"
           >
-            <mat-icon>{{ expanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+            <mat-icon class="!h-5 !w-5 !text-xl !leading-5">{{
+              expanded() ? 'expand_less' : 'expand_more'
+            }}</mat-icon>
           </button>
 
           @if (showRemove()) {

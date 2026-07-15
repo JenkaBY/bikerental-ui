@@ -1,46 +1,66 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  ViewContainerRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Labels, mapEquipmentItemStatus, RentalStore } from '@bikerental/shared';
-import type { RentalEquipmentItem } from '@bikerental/shared';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  EquipmentUnitCardComponent,
+  Labels,
+  RentalCostCalculationStore,
+  RentalStore,
+  TimeStore,
+} from '@bikerental/shared';
+import type { EquipmentUnitViewModel, RentalEquipmentItem } from '@bikerental/shared';
+import { AddEquipmentDialogComponent } from './add-equipment-dialog/add-equipment-dialog.component';
 
 @Component({
   selector: 'app-rental-equipment-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCheckboxModule, MatButtonModule],
+  imports: [MatButtonModule, MatCheckboxModule, EquipmentUnitCardComponent],
   template: `
     <div class="flex flex-col">
-      <div class="flex items-center justify-between px-4 py-3">
-        <span class="text-sm font-semibold text-slate-600">{{ Labels.Equipment }}</span>
-        @if (!isDebt() && !disabled()) {
-          <div class="flex gap-1">
-            <button mat-button type="button" (click)="onSelectAll()">
-              {{ Labels.SelectAll }}
-            </button>
-            <button mat-button type="button" (click)="store.clearSelection()">
-              {{ Labels.Deselect }}
-            </button>
-          </div>
+      <div class="flex items-center gap-2 py-3">
+        <mat-checkbox
+          class="shrink-0 self-center ml-3 [--mat-checkbox-state-layer-size:18px]"
+          [checked]="allSelected()"
+          [indeterminate]="indeterminate()"
+          [disabled]="isDebt() || disabled() || !hasActiveItems()"
+          (change)="onToggleSelectAll($event)"
+        />
+        <span class="flex-1 text-sm font-semibold text-slate-600">{{ Labels.Equipment }}</span>
+        @if (store.isActive()) {
+          <button
+            mat-flat-button
+            class="!min-w-0 !bg-green-600 !px-4 !text-white"
+            (click)="onAddEquipment()"
+          >
+            {{ Labels.Add }}
+          </button>
         }
       </div>
 
-      @for (item of sortedItems(); track item.id) {
-        <div
-          class="flex items-center gap-3 px-4 py-3 border-t border-slate-100"
-          [class.opacity-40]="item.isReturned"
-        >
-          <mat-checkbox
-            [checked]="isChecked(item)"
-            [disabled]="item.isReturned || isDebt() || disabled()"
-            (change)="onCheckboxChange(item, $event.checked)"
-          />
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-slate-800 truncate">{{ item.model }}</p>
-            <p class="text-xs text-slate-500 truncate">{{ item.type.name }} · {{ item.uid }}</p>
+      <div class="flex flex-col gap-2 pb-3">
+        @for (item of sortedItems(); track item.id) {
+          <div [class.opacity-40]="item.isReturned">
+            <app-equipment-unit-card
+              [unit]="unitFor(item)"
+              [showCheckbox]="true"
+              [checked]="isChecked(item)"
+              [checkboxDisabled]="item.isReturned || isDebt() || disabled()"
+              (checkedChange)="onCheckboxChange(item, $event)"
+            />
           </div>
-          <span [class]="badgeClasses(item)">{{ badgeLabel(item) }}</span>
-        </div>
-      }
+        }
+      </div>
     </div>
   `,
 })
@@ -50,10 +70,25 @@ export class RentalEquipmentSectionComponent {
   readonly disabled = input(false);
 
   protected readonly store = inject(RentalStore);
+  private readonly costStore = inject(RentalCostCalculationStore);
+  private readonly timeStore = inject(TimeStore);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly viewContainerRef = inject(ViewContainerRef);
+
   protected readonly Labels = Labels;
 
   protected readonly sortedItems = computed(() =>
     [...this.equipmentItems()].sort((a, b) => Number(a.isReturned) - Number(b.isReturned)),
+  );
+
+  protected readonly hasActiveItems = computed(
+    () => this.store.activeEquipmentItemIds().length > 0,
+  );
+  protected readonly allSelected = this.store.isFullReturnSelected;
+  protected readonly indeterminate = computed(
+    () => this.store.selectedEquipmentCount() > 0 && !this.allSelected(),
   );
 
   protected isChecked(item: RentalEquipmentItem): boolean {
@@ -68,26 +103,54 @@ export class RentalEquipmentSectionComponent {
     }
   }
 
-  protected onSelectAll(): void {
-    const activeIds = this.equipmentItems()
-      .filter((item) => !item.isReturned)
-      .map((item) => item.id);
-    this.store.selectAllActiveItems(activeIds);
+  protected onToggleSelectAll(event: MatCheckboxChange): void {
+    if (event.checked) {
+      this.store.selectAllActiveItems(this.store.activeEquipmentItemIds());
+    } else {
+      this.store.clearSelection();
+    }
   }
 
-  protected badgeLabel(item: RentalEquipmentItem): string {
-    if (item.isReturned) return Labels.Returned;
-    return mapEquipmentItemStatus(item.statusSlug).label;
+  protected onAddEquipment(): void {
+    this.dialog
+      .open(AddEquipmentDialogComponent, {
+        viewContainerRef: this.viewContainerRef,
+        disableClose: true,
+        width: '480px',
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean | undefined) => {
+        if (!confirmed) return;
+        this.snackBar.open(Labels.RentalAddEquipmentSuccess, undefined, { duration: 3000 });
+      });
   }
 
-  protected badgeClasses(item: RentalEquipmentItem): string {
-    const colorMap: Record<string, string> = {
-      primary: 'bg-blue-100 text-blue-700',
-      warn: 'bg-amber-100 text-amber-700',
-      accent: 'bg-purple-100 text-purple-700',
-      default: 'bg-gray-100 text-gray-600',
+  protected unitFor(item: RentalEquipmentItem): EquipmentUnitViewModel {
+    const breakdown = this.costStore.breakdowns().find((b) => b.equipmentId === item.id) ?? null;
+    const startedAt = this.store.startedAt();
+    return {
+      uid: item.uid,
+      name: item.model || item.type.name,
+      statusSlug: item.isReturned ? 'RETURNED' : item.statusSlug,
+      price: item.isReturned ? (item.finalCost ?? null) : (breakdown?.itemCost ?? null),
+      priceKind: item.isReturned ? 'final' : 'current',
+      plannedCost: item.estimatedCost,
+      breakdown,
+      plannedDurationMinutes: this.store.durationMinutes(),
+      startedAt,
+      actualReturnedAt: item.returnedAt ?? null,
+      actualDurationMinutes: item.isReturned
+        ? this.minutesSince(startedAt, item.returnedAt ?? null)
+        : null,
+      currentDurationMinutes: item.isReturned
+        ? null
+        : this.minutesSince(startedAt, this.timeStore.getCurrentDate()),
     };
-    const color = item.isReturned ? 'default' : mapEquipmentItemStatus(item.statusSlug).color;
-    return `text-xs font-medium px-2 py-1 rounded-full ${colorMap[color] ?? colorMap['default']}`;
+  }
+
+  private minutesSince(start: Date | null, end: Date | null): number | null {
+    if (!start || !end) return null;
+    return Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000));
   }
 }
