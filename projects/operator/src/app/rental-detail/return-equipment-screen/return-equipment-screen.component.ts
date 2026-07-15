@@ -4,52 +4,58 @@ import {
   computed,
   DestroyRef,
   inject,
+  output,
   signal,
   ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { interval } from 'rxjs';
+import type { RentalEquipmentItem } from '@bikerental/shared';
 import {
   ApiErrorParser,
   CustomerFinanceStore,
+  EquipmentUnitCardComponent,
+  EquipmentUnitViewModelMapper,
   ErrorCode,
   ErrorMessageResolver,
   Labels,
   MOBILE_FORM_DIALOG_CONFIG,
   NotificationService,
+  PageHeaderComponent,
   RentalStore,
   ReturnEquipmentCostStore,
+  TimeStore,
   TopUpDialogComponent,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
 import { RentalCustomerPanelComponent } from '../../rental-create/step2/rental-customer-panel.component';
-import { ReturnEquipmentItemRowComponent } from './return-equipment-item-row.component';
 import { ReturnSettlementSummaryComponent } from './return-settlement-summary.component';
 
 @Component({
-  selector: 'app-return-equipment-dialog',
+  selector: 'app-return-equipment-screen',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReturnEquipmentCostStore],
+  host: { class: 'flex flex-col flex-1 min-h-0' },
   imports: [
-    MatDialogModule,
     MatButtonModule,
     MatDividerModule,
     MatProgressSpinnerModule,
+    EquipmentUnitCardComponent,
+    PageHeaderComponent,
     RentalCustomerPanelComponent,
-    ReturnEquipmentItemRowComponent,
     ReturnSettlementSummaryComponent,
   ],
   template: `
-    <h2 mat-dialog-title>{{ Labels.ReturnDialogTitle }}</h2>
+    <app-page-header [title]="Labels.ReturnDialogTitle" (back)="onCancel()" />
 
-    <mat-dialog-content class="flex flex-col gap-3 pt-1">
+    <div class="flex-1 min-h-0 overflow-y-auto px-4 py-3 flex flex-col gap-3">
       <app-rental-customer-panel
         [expanded]="customerExpanded()"
         (toggled)="customerExpanded.set(!customerExpanded())"
@@ -60,13 +66,9 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
 
       <span class="text-sm font-semibold text-slate-600">{{ Labels.ItemsToReturn }}</span>
 
-      <div class="flex flex-col rounded-lg border border-slate-200">
+      <div class="flex flex-col gap-2">
         @for (item of costStore.selectedItems(); track item.id) {
-          <app-return-equipment-item-row
-            [item]="item"
-            [breakdown]="costStore.breakdownByEquipmentId().get(item.id) ?? null"
-            [isCalculating]="costStore.isCalculating()"
-          />
+          <app-equipment-unit-card [unit]="unitFor(item)" />
         }
       </div>
 
@@ -84,9 +86,9 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
           {{ Labels.QuoteValidFor }} {{ remainingSeconds() }}{{ Labels.SecondsUnit }}
         </p>
       }
-    </mat-dialog-content>
+    </div>
 
-    <mat-dialog-actions align="end">
+    <div class="flex justify-end gap-2 px-4 py-3 border-t border-slate-200 bg-white shrink-0">
       <button mat-button (click)="onCancel()" [disabled]="rentalStore.isReturning()">
         {{ Labels.Cancel }}
       </button>
@@ -102,17 +104,13 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
           {{ isFullReturn() ? Labels.CompleteRentalButton : Labels.ConfirmReturnButton }}
         }
       </button>
-    </mat-dialog-actions>
+    </div>
   `,
 })
-export class ReturnEquipmentDialogComponent {
+export class ReturnEquipmentScreenComponent {
   protected readonly rentalStore = inject(RentalStore);
   protected readonly costStore = inject(ReturnEquipmentCostStore);
   private readonly financeStore = inject(CustomerFinanceStore);
-  private readonly dialogRef = inject(MatDialogRef) as MatDialogRef<
-    ReturnEquipmentDialogComponent,
-    boolean
-  >;
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -120,6 +118,10 @@ export class ReturnEquipmentDialogComponent {
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
+  private readonly timeStore = inject(TimeStore);
+
+  readonly completed = output<void>();
+  readonly cancelled = output<void>();
 
   protected readonly Labels = Labels;
   protected readonly customerExpanded = signal(false);
@@ -140,6 +142,17 @@ export class ReturnEquipmentDialogComponent {
     () => this.isBusy() || (this.isFullReturn() && !this.costStore.quoteId()),
   );
 
+  protected unitFor(item: RentalEquipmentItem) {
+    const breakdown = this.costStore.breakdownByEquipmentId().get(item.id) ?? null;
+    return EquipmentUnitViewModelMapper.forRentalItem(
+      item,
+      breakdown,
+      this.rentalStore.startedAt(),
+      this.rentalStore.durationMinutes(),
+      this.timeStore.getCurrentDate(),
+    );
+  }
+
   constructor() {
     interval(1000)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -155,13 +168,13 @@ export class ReturnEquipmentDialogComponent {
     if (this.isFullReturn()) {
       this.costStore.deleteQuote();
     }
-    this.dialogRef.close(false);
+    this.cancelled.emit();
   }
 
   protected onOpenProfile(): void {
     const customerId = this.rentalStore.customerId();
     if (!customerId) return;
-    this.dialogRef.close(false);
+    this.cancelled.emit();
     void this.router.navigate(['/customers', customerId]);
   }
 
@@ -178,7 +191,7 @@ export class ReturnEquipmentDialogComponent {
       .returnEquipment()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => this.dialogRef.close(true),
+        next: () => this.completed.emit(),
         error: () => {
           this.snackBar.open(Labels.RentalReturnError, Labels.Close, { duration: 5000 });
         },
@@ -192,7 +205,7 @@ export class ReturnEquipmentDialogComponent {
       .confirmReturn(quoteId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => this.dialogRef.close(true),
+        next: () => this.completed.emit(),
         error: (err: unknown) => this.handleConfirmError(err),
       });
   }
@@ -215,7 +228,7 @@ export class ReturnEquipmentDialogComponent {
         break;
       case ErrorCode.TARIFF_QUOTE_ALREADY_CONSUMED:
         this.notifications.info(this.resolver.resolve(apiError));
-        this.dialogRef.close(true);
+        this.completed.emit();
         break;
       default:
         this.notifications.error(this.resolver.resolve(apiError));
@@ -228,7 +241,7 @@ export class ReturnEquipmentDialogComponent {
     if (apiError.code === ErrorCode.STATUS_INVALID) {
       const id = this.rentalStore.id();
       if (id !== null) this.rentalStore.loadDetail(id);
-      this.dialogRef.close(false);
+      this.cancelled.emit();
     }
   }
 

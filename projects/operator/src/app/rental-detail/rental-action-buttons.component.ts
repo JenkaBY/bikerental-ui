@@ -4,14 +4,13 @@ import {
   computed,
   DestroyRef,
   inject,
-  ViewContainerRef,
+  output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { catchError, EMPTY, exhaustMap, filter, tap } from 'rxjs';
 import type { BrokenEquipmentEntry } from '@ui-models';
@@ -24,7 +23,6 @@ import {
 } from '@bikerental/shared';
 import { BrokenEquipmentSheetComponent } from './broken-equipment-sheet.component';
 import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
-import { ReturnEquipmentDialogComponent } from './return-equipment-dialog/return-equipment-dialog.component';
 
 @Component({
   selector: 'app-rental-action-buttons',
@@ -77,12 +75,12 @@ export class RentalActionButtonsComponent {
   protected readonly store = inject(RentalStore);
   private readonly dialog = inject(MatDialog);
   private readonly bottomSheet = inject(MatBottomSheet);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
+
+  readonly returnRequested = output<void>();
 
   protected readonly Labels = Labels;
 
@@ -92,22 +90,7 @@ export class RentalActionButtonsComponent {
 
   protected onReturn(): void {
     if (this.store.selectedEquipmentCount() === 0) return;
-
-    this.dialog
-      .open(ReturnEquipmentDialogComponent, {
-        viewContainerRef: this.viewContainerRef,
-        disableClose: true,
-        width: '480px',
-      })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((confirmed: boolean | undefined) => {
-        if (!confirmed) return;
-        this.snackBar.open(Labels.RentalReturnSuccess, undefined, { duration: 3000 });
-        this.store.clearSelection();
-        const id = this.store.id();
-        if (id !== null) this.store.loadDetail(id);
-      });
+    this.returnRequested.emit();
   }
 
   protected onBroken(): void {
