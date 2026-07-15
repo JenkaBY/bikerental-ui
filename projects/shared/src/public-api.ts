@@ -121,8 +121,14 @@ export * from './shared/components/qr-scanner/qr-scan-dialog.component';
 export * from './shared/components/signature-pad/signature-pad.component';
 export * from './shared/components/transaction/transaction-list-item.component';
 export * from './shared/components/equipment-badge/equipment-badge.component';
+export * from './shared/components/equipment-status-badge/equipment-status-badge.component';
+export * from './shared/components/cost-breakdown/cost-breakdown.component';
+export * from './shared/components/equipment-unit/equipment-unit-summary.component';
+export * from './shared/components/equipment-unit/equipment-unit-details.component';
+export * from './shared/components/equipment-unit/equipment-unit-card.component';
 // Shared UI — constants
 export * from './shared/constant/labels';
+export * from './shared/constant/breakdown-messages';
 export * from './shared/constant/mobile-form-dialog.config';
 
 // Shared UI — presentation/meta maps (rental + equipment-item status)
@@ -134,6 +140,7 @@ export * from './shared/pipes/truncate.pipe';
 export * from './shared/pipes/money.pipe';
 export * from './shared/pipes/duration.pipe';
 export * from './shared/pipes/duration-formatter';
+export * from './shared/pipes/price-prefix.pipe';
 export * from './shared/directives/phone-characters-only.directive';
 export * from './shared/directives/max-decimals.directive';
 
