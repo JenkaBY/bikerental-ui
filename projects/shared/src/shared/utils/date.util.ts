@@ -25,6 +25,11 @@ export function toDateTimeLocalString(date: Date): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+export function minutesBetween(start: Date | null, end: Date | null): number | null {
+  if (!start || !end) return null;
+  return Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000));
+}
+
 export function parseDateTimeLocal(value: string): Date {
   const [datePart = '', timePart = ''] = value.split('T');
   const [yearStr, monthStr, dayStr] = datePart.split('-');

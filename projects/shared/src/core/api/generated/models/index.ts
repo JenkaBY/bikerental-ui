@@ -70,6 +70,7 @@ export interface CostCalculationV2Request {
 export interface EquipmentItemRequest {
   equipmentId: number;
   equipmentType: string;
+  startAt?: string;
   returnAt?: string;
 }
 
@@ -163,6 +164,8 @@ export interface EquipmentItemResponse {
   tariffId?: number;
   /** Status rental equipment */
   status: string;
+  /** Start time for this equipment; populated only when it was added to the rental after the rental itself started */
+  startedAt?: string;
   /** Actual return time (null if not returned or rental not cancelled) */
   actualReturnAt?: string;
   /** Final cost breakdown; populated only when equipment is returned */

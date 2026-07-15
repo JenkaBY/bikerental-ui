@@ -16,6 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import {
   BatchRentalPropertyStore,
@@ -27,6 +28,7 @@ import {
   MoneyPipe,
   PageHeaderComponent,
   RENTAL_STORE_TOKEN,
+  RentalCostCalculationStore,
   RentalSignatureStore,
   RentalStore,
   RentalTransactionsStore,
@@ -36,6 +38,7 @@ import {
 import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-customer-panel.component';
 import { RentalReservedPanelComponent } from '../rental-create/step2/rental-reserved-panel.component';
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
+import { ReturnEquipmentScreenComponent } from './return-equipment-screen/return-equipment-screen.component';
 import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
@@ -48,6 +51,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalStore,
     CustomerFinanceStore,
     BatchRentalPropertyStore,
+    RentalCostCalculationStore,
     RentalTransactionsStore,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
     RentalSignatureStore,
@@ -62,6 +66,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalCustomerPanelComponent,
     RentalReservedPanelComponent,
     RentalActionButtonsComponent,
+    ReturnEquipmentScreenComponent,
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
     RentalEquipmentSectionComponent,
@@ -70,90 +75,97 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
   ],
   template: `
     <div class="flex flex-col h-[calc(100%+2rem)] -m-4">
-      <app-page-header [title]="Labels.RentalPrefix + rentalId()" (back)="onBack()">
-        <div actions class="flex items-center gap-2">
-          @if (signatureStore.summary()) {
-            <button
-              mat-icon-button
-              [disabled]="signatureStore.isDownloading()"
-              (click)="signatureStore.downloadPdf(rentalId())"
-              [attr.aria-label]="Labels.AgreementPdf"
-              [title]="Labels.AgreementPdf"
-            >
-              @if (signatureStore.isDownloading()) {
-                <mat-spinner diameter="18" />
-              } @else {
-                <mat-icon>picture_as_pdf</mat-icon>
-              }
-            </button>
-          }
-          <span [class]="statusBadgeClasses()">{{ statusLabel() }}</span>
-        </div>
-      </app-page-header>
-
-      @if (store.isActive() && store.isOverdue()) {
-        <div
-          class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-amber-700 text-sm shrink-0"
-        >
-          <mat-icon class="!text-base">warning_amber</mat-icon>
-          <span>
-            {{ Labels.OverdueBy }} {{ store.overdueMinutes() | duration }}
-            @if (store.expectedReturnAt(); as returnAt) {
-              &nbsp;&middot;&nbsp;{{ Labels.Expected }} {{ returnAt | date: 'HH:mm' }}
+      @if (returnMode()) {
+        <app-return-equipment-screen
+          (completed)="onReturnCompleted()"
+          (cancelled)="returnMode.set(false)"
+        />
+      } @else {
+        <app-page-header [title]="Labels.RentalPrefix + rentalId()" (back)="onBack()">
+          <div actions class="flex items-center gap-2">
+            @if (signatureStore.summary()) {
+              <button
+                mat-icon-button
+                [disabled]="signatureStore.isDownloading()"
+                (click)="signatureStore.downloadPdf(rentalId())"
+                [attr.aria-label]="Labels.AgreementPdf"
+                [title]="Labels.AgreementPdf"
+              >
+                @if (signatureStore.isDownloading()) {
+                  <mat-spinner diameter="18" />
+                } @else {
+                  <mat-icon>picture_as_pdf</mat-icon>
+                }
+              </button>
             }
-          </span>
-        </div>
-      }
-
-      @if (store.isDebt()) {
-        <div
-          class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-amber-700 text-sm shrink-0"
-        >
-          <mat-icon class="!text-base">warning_amber</mat-icon>
-          <span>
-            @if (store.debtAmount(); as debt) {
-              {{ debt | money }}&nbsp;&middot;&nbsp;
-            }
-            {{ Labels.DebtAutoCharge }}
-          </span>
-        </div>
-      }
-
-      @if (store.isLoading()) {
-        <div class="flex justify-center py-8">
-          <mat-spinner diameter="40" />
-        </div>
-      } @else if (store.loadError()) {
-        <div class="flex flex-col items-center gap-4 py-8 px-4">
-          <p class="text-slate-500 text-sm">{{ Labels.CustomerRentalDetailLoadError }}</p>
-          <button mat-button (click)="store.loadDetail(rentalId())">{{ Labels.Retry }}</button>
-        </div>
-      } @else if (store.id() !== null) {
-        <div class="flex-1 min-h-0 overflow-y-auto px-4 py-3 flex flex-col">
-          <app-rental-customer-panel
-            [expanded]="openPanel() === 'customer'"
-            (toggled)="togglePanel('customer')"
-            (topUpRequested)="onTopUpRequested()"
-            (withdrawRequested)="onWithdrawRequested()"
-            (openProfileRequested)="onOpenProfile()"
-          />
-          <app-rental-reserved-panel
-            [expanded]="openPanel() === 'reserved'"
-            (toggled)="togglePanel('reserved')"
-          />
-          <div>
-            <app-rental-period-section />
-            <mat-divider />
-            <app-rental-cost-section />
-            <mat-divider />
-            <app-rental-equipment-section
-              [equipmentItems]="store.rentalEquipmentItems()"
-              [isDebt]="store.isDebt()"
-            />
+            <span [class]="statusBadgeClasses()">{{ statusLabel() }}</span>
           </div>
-        </div>
+        </app-page-header>
 
-        <app-rental-action-buttons />
+        @if (store.isActive() && store.isOverdue()) {
+          <div
+            class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-amber-700 text-sm shrink-0"
+          >
+            <mat-icon class="!text-base">warning_amber</mat-icon>
+            <span>
+              {{ Labels.OverdueBy }} {{ store.overdueMinutes() | duration }}
+              @if (store.expectedReturnAt(); as returnAt) {
+                &nbsp;&middot;&nbsp;{{ Labels.Expected }} {{ returnAt | date: 'HH:mm' }}
+              }
+            </span>
+          </div>
+        }
+
+        @if (store.isDebt()) {
+          <div
+            class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-amber-700 text-sm shrink-0"
+          >
+            <mat-icon class="!text-base">warning_amber</mat-icon>
+            <span>
+              @if (store.debtAmount(); as debt) {
+                {{ debt | money }}&nbsp;&middot;&nbsp;
+              }
+              {{ Labels.DebtAutoCharge }}
+            </span>
+          </div>
+        }
+
+        @if (store.isLoading()) {
+          <div class="flex justify-center py-8">
+            <mat-spinner diameter="40" />
+          </div>
+        } @else if (store.loadError()) {
+          <div class="flex flex-col items-center gap-4 py-8 px-4">
+            <p class="text-slate-500 text-sm">{{ Labels.CustomerRentalDetailLoadError }}</p>
+            <button mat-button (click)="store.loadDetail(rentalId())">{{ Labels.Retry }}</button>
+          </div>
+        } @else if (store.id() !== null) {
+          <div class="flex-1 min-h-0 overflow-y-auto px-4 py-3 flex flex-col">
+            <app-rental-customer-panel
+              [expanded]="openPanel() === 'customer'"
+              (toggled)="togglePanel('customer')"
+              (topUpRequested)="onTopUpRequested()"
+              (withdrawRequested)="onWithdrawRequested()"
+              (openProfileRequested)="onOpenProfile()"
+            />
+            <app-rental-reserved-panel
+              [expanded]="openPanel() === 'reserved'"
+              (toggled)="togglePanel('reserved')"
+            />
+            <div>
+              <app-rental-period-section />
+              <mat-divider />
+              <app-rental-cost-section />
+              <mat-divider />
+              <app-rental-equipment-section
+                [equipmentItems]="store.rentalEquipmentItems()"
+                [isDebt]="store.isDebt()"
+              />
+            </div>
+          </div>
+
+          <app-rental-action-buttons (returnRequested)="returnMode.set(true)" />
+        }
       }
     </div>
   `,
@@ -162,7 +174,9 @@ export class RentalDetailComponent {
   protected readonly store = inject(RentalStore);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly financeStore = inject(CustomerFinanceStore);
+  private readonly transactionsStore = inject(RentalTransactionsStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
   protected readonly signatureStore = inject(RentalSignatureStore);
@@ -177,6 +191,15 @@ export class RentalDetailComponent {
   protected readonly Labels = Labels;
 
   protected readonly openPanel = signal<'customer' | 'reserved' | null>(null);
+  protected readonly returnMode = signal(false);
+
+  protected onReturnCompleted(): void {
+    this.returnMode.set(false);
+    this.snackBar.open(Labels.RentalReturnSuccess, undefined, { duration: 3000 });
+    this.store.clearSelection();
+    const id = this.store.id();
+    if (id !== null) this.store.loadDetail(id);
+  }
 
   protected togglePanel(panel: 'customer' | 'reserved'): void {
     this.openPanel.update((current) => (current === panel ? null : panel));
@@ -246,7 +269,7 @@ export class RentalDetailComponent {
     this.dialog
       .open(TopUpDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId },
+        data: { customerId, initialAmount: this.debtTopUpAmount() },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
@@ -257,6 +280,15 @@ export class RentalDetailComponent {
           this.financeStore.loadById(customerId);
         }
       });
+  }
+
+  private debtTopUpAmount(): number | undefined {
+    if (!this.store.isDebt()) return undefined;
+    const finalCost = this.store.finalCost()?.amount ?? 0;
+    const reservedAmount = this.transactionsStore.reserved().amount;
+    const actualBalance = this.financeStore.balance()?.available.amount ?? 0;
+    const amount = finalCost - reservedAmount - actualBalance;
+    return amount > 0 ? amount : undefined;
   }
 
   protected onWithdrawRequested(): void {

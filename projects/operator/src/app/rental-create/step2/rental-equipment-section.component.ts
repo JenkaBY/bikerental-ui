@@ -21,14 +21,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, switchMap } from 'rxjs';
+import type { EquipmentUnitViewModel, RentalCostBreakdown } from '@bikerental/shared';
 import {
   EquipmentScanResolverService,
   EquipmentSearchItem,
   EquipmentSearchStore,
+  EquipmentUnitCardComponent,
+  EquipmentUnitViewModelMapper,
   Labels,
   QrScanDialogComponent,
+  RentalCostCalculationStore,
+  RentalStore,
 } from '@bikerental/shared';
-import { EquipmentItemRowComponent } from './equipment-item-row.component';
 
 @Component({
   selector: 'app-rental-equipment-section',
@@ -42,7 +46,7 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    EquipmentItemRowComponent,
+    EquipmentUnitCardComponent,
   ],
   template: `
     <div class="flex flex-col gap-1">
@@ -83,7 +87,11 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
 
       <div class="flex flex-col gap-2">
         @for (item of items(); track item.id) {
-          <app-equipment-item-row [item]="item" (removeRequested)="itemRemoved.emit($event)" />
+          <app-equipment-unit-card
+            [unit]="unitFor(item)"
+            [showRemove]="true"
+            (removed)="itemRemoved.emit(item.id)"
+          />
         }
       </div>
     </div>
@@ -92,6 +100,8 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
 })
 export class RentalEquipmentSectionComponent {
   protected readonly equipmentSearchStore = inject(EquipmentSearchStore);
+  protected readonly store = inject(RentalStore);
+  private readonly costStore = inject(RentalCostCalculationStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -111,6 +121,18 @@ export class RentalEquipmentSectionComponent {
   );
 
   protected readonly loading = this.equipmentSearchStore.loading;
+
+  private breakdownFor(equipmentId: number): RentalCostBreakdown | null {
+    return this.costStore.breakdowns().find((b) => b.equipmentId === equipmentId) ?? null;
+  }
+
+  protected unitFor(item: EquipmentSearchItem): EquipmentUnitViewModel {
+    return EquipmentUnitViewModelMapper.forSearchItem(
+      item,
+      this.breakdownFor(item.id),
+      this.store.durationMinutes(),
+    );
+  }
 
   constructor() {
     this.searchControl.valueChanges

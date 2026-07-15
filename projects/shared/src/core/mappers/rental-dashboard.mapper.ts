@@ -109,10 +109,13 @@ export class RentalDashboardMapper {
                 equipmentType: eq?.type?.slug ?? '',
                 tariffId: item.tariffId ?? 0,
                 itemCost: makeMoney(item.finalCost ?? item.breakdown.itemCost),
+                breakdownPatternCode: item.breakdown.calculationBreakdown?.breakdownPatternCode,
+                params: item.breakdown.calculationBreakdown?.params ?? null,
                 calculationMessage: item.breakdown.calculationBreakdown?.message ?? '',
               }
             : undefined,
           returnedAt: item.actualReturnAt ? new Date(item.actualReturnAt) : undefined,
+          startedAt: item.startedAt ? new Date(item.startedAt) : undefined,
         };
       },
     );

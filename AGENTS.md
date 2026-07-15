@@ -86,6 +86,12 @@ The detailed recipe lives in the `error-handling` skill.
 - **`input()` / `output()`** signal functions (not `@Input` / `@Output` decorators)
 - **`signal()` / `computed()`** for all local state; `takeUntilDestroyed()` for Observable subscriptions
 - **Size limit**: max ~200 lines TS + ~100 lines HTML per component; split if larger
+- **Anti-primitive obsession**: if a component defines more than 4-5 `@Input`/`input()` properties
+  that logically belong to the same domain entity (e.g. `id`, `name`, `status`, `price`), refactor
+  them into a single object input (DTO/view model) typed with a TypeScript interface. Keep
+  UI-specific state flags (`disabled`, `selected`, `showIcon`, etc.) as separate primitive inputs —
+  don't fold those into the object. Never introduce a state store (NgRx/SignalStore) for
+  dumb/presentational components to work around this; the object input is the fix, not a store.
 
 ## i18n Rules
 

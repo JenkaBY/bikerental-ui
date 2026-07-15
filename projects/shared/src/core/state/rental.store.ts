@@ -135,6 +135,7 @@ export class RentalStore {
   readonly customerId = computed(() => this._state().customerId);
   readonly paidDurationMinutes = computed(() => this._state().paidDurationMinutes);
   readonly estimatedCost = computed(() => this._state().estimatedCost);
+  readonly finalCost = computed(() => this._state().finalCost);
   readonly brokenEquipmentEntries = computed(() => this._state().brokenEquipmentEntries);
 
   readonly subtotal = computed<Money | null>(() => {

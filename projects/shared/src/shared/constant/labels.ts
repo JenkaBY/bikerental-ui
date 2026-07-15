@@ -238,6 +238,7 @@ export class Labels {
   static readonly DurationMinutes = $localize`Duration (min)`;
   static readonly MinuteShort = $localize`min`;
   static readonly HourShort = $localize`h`;
+  static readonly DayShort = $localize`d`;
   static readonly SearchEquipmentPlaceholder = $localize`Search by UID or model...`;
   static readonly ScanQr = $localize`Scan QR`;
   static readonly ComingSoon = $localize`Coming soon`;
@@ -277,6 +278,12 @@ export class Labels {
   static readonly Retry = $localize`Retry`;
   static readonly CurrentCost = $localize`Current cost`;
   static readonly FinalCost = $localize`Final cost`;
+  static readonly PlannedCost = $localize`Planned cost`;
+  static readonly NotAvailable = $localize`NA`;
+  static readonly InRentalSuffix = $localize`in rental`;
+  static readonly PlannedDurationLabel = $localize`planned`;
+  static readonly ApproxPricePrefix = $localize`≈`;
+  static readonly FinalPricePrefix = $localize`=`;
   static readonly ReturnedAt = $localize`returned at`;
   static readonly ShowDetails = $localize`Show details`;
   static readonly CollapseDetails = $localize`Collapse`;
@@ -285,7 +292,7 @@ export class Labels {
   static readonly Total = $localize`Total`;
   static readonly SpecialPriceApplied = $localize`Special price applied`;
   static readonly ReturnPricing = $localize`Return pricing`;
-  static readonly ReturnEquipmentButton = $localize`Return equipment`;
+  static readonly ReturnButton = $localize`Return`;
   static readonly CalculateButton = $localize`Calculate`;
   static readonly CompleteRentalButton = $localize`Complete rental`;
   static readonly QuoteValidFor = $localize`Price valid for`;
@@ -310,6 +317,7 @@ export class Labels {
   static readonly ConfirmReturnButton = $localize`Confirm return`;
 
   static readonly AddEquipmentButton = $localize`Add equipment`;
+  static readonly Add = $localize`Add`;
   static readonly AddEquipmentDialogTitle = $localize`Add equipment to rental`;
   static readonly AddEquipmentBillingNote = $localize`New items are billed only for the remaining time — the rental's return time does not change.`;
   static readonly RentalAddEquipmentSuccess = $localize`Equipment added to rental`;
