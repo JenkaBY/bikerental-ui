@@ -25,10 +25,13 @@ import {
   EquipmentScanResolverService,
   EquipmentSearchItem,
   EquipmentSearchStore,
+  EquipmentUnitCardComponent,
   Labels,
   QrScanDialogComponent,
+  RentalCostCalculationStore,
+  RentalStore,
 } from '@bikerental/shared';
-import { EquipmentItemRowComponent } from './equipment-item-row.component';
+import type { EquipmentUnitViewModel, Money, RentalCostBreakdown } from '@bikerental/shared';
 
 @Component({
   selector: 'app-rental-equipment-section',
@@ -42,7 +45,7 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    EquipmentItemRowComponent,
+    EquipmentUnitCardComponent,
   ],
   template: `
     <div class="flex flex-col gap-1">
@@ -83,7 +86,11 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
 
       <div class="flex flex-col gap-2">
         @for (item of items(); track item.id) {
-          <app-equipment-item-row [item]="item" (removeRequested)="itemRemoved.emit($event)" />
+          <app-equipment-unit-card
+            [unit]="unitFor(item)"
+            [showRemove]="true"
+            (removed)="itemRemoved.emit(item.id)"
+          />
         }
       </div>
     </div>
@@ -92,6 +99,8 @@ import { EquipmentItemRowComponent } from './equipment-item-row.component';
 })
 export class RentalEquipmentSectionComponent {
   protected readonly equipmentSearchStore = inject(EquipmentSearchStore);
+  protected readonly store = inject(RentalStore);
+  private readonly costStore = inject(RentalCostCalculationStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -111,6 +120,27 @@ export class RentalEquipmentSectionComponent {
   );
 
   protected readonly loading = this.equipmentSearchStore.loading;
+
+  private breakdownFor(equipmentId: number): RentalCostBreakdown | null {
+    return this.costStore.breakdowns().find((b) => b.equipmentId === equipmentId) ?? null;
+  }
+
+  private priceFor(equipmentId: number): Money | null {
+    return this.breakdownFor(equipmentId)?.itemCost ?? null;
+  }
+
+  protected unitFor(item: EquipmentSearchItem): EquipmentUnitViewModel {
+    const price = this.priceFor(item.id);
+    return {
+      uid: item.uid,
+      name: item.model || item.type.name,
+      price,
+      priceKind: 'estimated',
+      plannedCost: price,
+      plannedDurationMinutes: this.store.durationMinutes(),
+      breakdown: this.breakdownFor(item.id),
+    };
+  }
 
   constructor() {
     this.searchControl.valueChanges
