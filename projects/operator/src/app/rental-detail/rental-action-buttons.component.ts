@@ -38,7 +38,7 @@ import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
             [disabled]="store.isSaving()"
             (click)="onCancel()"
           >
-            {{ Labels.CancelRental }}
+            {{ Labels.Cancel }}
           </button>
           <button mat-stroked-button class="flex-1" (click)="onBroken()">
             {{ Labels.BrokenEquipment }}
