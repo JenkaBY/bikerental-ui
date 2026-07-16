@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -173,6 +173,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
 export class RentalDetailComponent {
   protected readonly store = inject(RentalStore);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly financeStore = inject(CustomerFinanceStore);
@@ -253,7 +254,12 @@ export class RentalDetailComponent {
   }
 
   protected onBack(): void {
-    void this.router.navigate(['/rentals']);
+    const navigationId = (window.history.state as { navigationId?: number } | null)?.navigationId;
+    if (navigationId && navigationId > 1) {
+      this.location.back();
+    } else {
+      void this.router.navigate(['/rentals']);
+    }
   }
 
   protected onOpenProfile(): void {
@@ -265,11 +271,15 @@ export class RentalDetailComponent {
   protected onTopUpRequested(): void {
     const customerId = this.store.customerId();
     if (!customerId) return;
-
+    const rentalId = this.id();
     this.dialog
       .open(TopUpDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId, initialAmount: this.debtTopUpAmount() },
+        data: {
+          customerId,
+          initialAmount: this.debtTopUpAmount(),
+          ...(rentalId !== null ? { source: 'RENTAL', sourceId: rentalId } : {}),
+        },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
@@ -278,6 +288,7 @@ export class RentalDetailComponent {
       .subscribe((result: boolean | undefined) => {
         if (result) {
           this.financeStore.loadById(customerId);
+          this.transactionsStore.reload();
         }
       });
   }
@@ -287,7 +298,7 @@ export class RentalDetailComponent {
     const finalCost = this.store.finalCost()?.amount ?? 0;
     const reservedAmount = this.transactionsStore.reserved().amount;
     const actualBalance = this.financeStore.balance()?.available.amount ?? 0;
-    const amount = finalCost - reservedAmount - actualBalance;
+    const amount = parseFloat((finalCost - reservedAmount - actualBalance).toFixed(2));
     return amount > 0 ? amount : undefined;
   }
 
@@ -298,7 +309,7 @@ export class RentalDetailComponent {
     this.dialog
       .open(WithdrawDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId, availableBalance },
+        data: { customerId, availableBalance, source: 'RENTAL', sourceId: this.id() },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
@@ -307,6 +318,7 @@ export class RentalDetailComponent {
       .subscribe((result: boolean | undefined) => {
         if (result) {
           this.financeStore.loadById(customerId);
+          this.transactionsStore.reload();
         }
       });
   }

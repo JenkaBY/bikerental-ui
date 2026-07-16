@@ -59,6 +59,10 @@ export class RentalTransactionsStore {
   readonly reserved = computed<Money>(() => makeMoney(this.resource.value()?.reservedAmount ?? 0));
   readonly loading = this.resource.isLoading;
 
+  reload(): void {
+    this.resource.reload();
+  }
+
   private toView(page: PageCustomerTransactionResponse): RentalTransactionsView {
     const rawItems = page.items ?? [];
     const transactions = rawItems

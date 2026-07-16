@@ -38,10 +38,10 @@ import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
             [disabled]="store.isSaving()"
             (click)="onCancel()"
           >
-            {{ Labels.CancelRental }}
+            {{ Labels.Cancel }}
           </button>
           <button mat-stroked-button class="flex-1" (click)="onBroken()">
-            🔧 {{ Labels.BrokenEquipment }}
+            {{ Labels.BrokenEquipment }}
           </button>
           <button
             mat-flat-button
@@ -65,7 +65,7 @@ import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
           class="w-full !text-red-600 !border-red-400"
           (click)="onBroken()"
         >
-          🔧 {{ Labels.BrokenEquipment }}
+          {{ Labels.BrokenEquipment }}
         </button>
       }
     </div>

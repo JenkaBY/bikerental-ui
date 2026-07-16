@@ -164,7 +164,7 @@ export interface EquipmentItemResponse {
   tariffId?: number;
   /** Status rental equipment */
   status: string;
-  /** Start time for this equipment; populated only when it was added to the rental after the rental itself started */
+  /** Start time for this equipment; may differ from the rental's own start when the equipment was added mid-rental */
   startedAt?: string;
   /** Actual return time (null if not returned or rental not cancelled) */
   actualReturnAt?: string;
@@ -455,6 +455,10 @@ export interface RecordWithdrawalRequest {
   paymentMethod: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER';
   /** Operator identifier */
   operatorId: string;
+  /** Origin of the transaction */
+  source?: 'RENTAL';
+  /** Identifier within the source (e.g. rental id when source is RENTAL) */
+  sourceId?: string;
 }
 
 /** Unified transaction response for deposits and adjustments */
@@ -477,6 +481,10 @@ export interface RecordDepositRequest {
   paymentMethod: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER';
   /** Operator identifier */
   operatorId: string;
+  /** Origin of the transaction */
+  source?: 'RENTAL';
+  /** Identifier within the source (e.g. rental id when source is RENTAL) */
+  sourceId?: string;
 }
 
 export interface AdjustmentRequest {
