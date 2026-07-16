@@ -41,7 +41,7 @@ import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
             {{ Labels.CancelRental }}
           </button>
           <button mat-stroked-button class="flex-1" (click)="onBroken()">
-            🔧 {{ Labels.BrokenEquipment }}
+            {{ Labels.BrokenEquipment }}
           </button>
           <button
             mat-flat-button
@@ -65,7 +65,7 @@ import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
           class="w-full !text-red-600 !border-red-400"
           (click)="onBroken()"
         >
-          🔧 {{ Labels.BrokenEquipment }}
+          {{ Labels.BrokenEquipment }}
         </button>
       }
     </div>
