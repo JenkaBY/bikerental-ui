@@ -19,6 +19,7 @@ import {
   MOBILE_FORM_DIALOG_CONFIG,
   NotificationService,
   RentalStore,
+  RentalTransactionsStore,
   RentalValidationStore,
   resolveErrorMessage,
   TopUpDialogComponent,
@@ -76,6 +77,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
 export class RentalStep2Component {
   protected readonly store = inject(RentalStore);
   private readonly financeStore = inject(CustomerFinanceStore);
+  private readonly transactionsStore = inject(RentalTransactionsStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -95,17 +97,25 @@ export class RentalStep2Component {
     const customerId = this.store.customer()?.id;
     if (!customerId) return;
 
+    const rentalId = this.store.id();
     this.dialog
       .open(TopUpDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId, initialAmount: this.validationStore.balanceShortfall()?.amount },
+        data: {
+          customerId,
+          initialAmount: this.validationStore.balanceShortfall()?.amount,
+          ...(rentalId !== null ? { source: 'RENTAL', sourceId: String(rentalId) } : {}),
+        },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
-        if (result === true) this.store.refreshCustomerBalance();
+        if (result === true) {
+          this.store.refreshCustomerBalance();
+          this.transactionsStore.reload();
+        }
       });
   }
 
@@ -119,17 +129,25 @@ export class RentalStep2Component {
     const customerId = this.store.customer()?.id;
     if (!customerId) return;
     const availableBalance = this.financeStore.balance()?.available;
+    const rentalId = this.store.id();
     this.dialog
       .open(WithdrawDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId, availableBalance },
+        data: {
+          customerId,
+          availableBalance,
+          ...(rentalId !== null ? { source: 'RENTAL', sourceId: String(rentalId) } : {}),
+        },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
-        if (result === true) this.store.refreshCustomerBalance();
+        if (result === true) {
+          this.store.refreshCustomerBalance();
+          this.transactionsStore.reload();
+        }
       });
   }
 

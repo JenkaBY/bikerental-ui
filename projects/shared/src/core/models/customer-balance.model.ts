@@ -1,4 +1,4 @@
-import type { Money, PaymentMethod } from '@ui-models';
+import type { Money, PaymentMethod, TransactionSource } from '@ui-models';
 
 export interface CustomerBalance {
   readonly available: Money;
@@ -14,6 +14,8 @@ export interface CustomerWithdrawalWrite {
   paymentMethod: PaymentMethod;
   // operatorId is usually provided by the application runtime; keep it optional in the UI model
   operatorId?: string;
+  source?: TransactionSource;
+  sourceId?: string;
 }
 
 export interface CustomerDepositWrite {
@@ -23,4 +25,6 @@ export interface CustomerDepositWrite {
   paymentMethod: PaymentMethod;
   // operatorId is usually provided by the application runtime; keep it optional in the UI model
   operatorId?: string;
+  source?: TransactionSource;
+  sourceId?: string;
 }

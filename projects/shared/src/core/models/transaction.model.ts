@@ -52,3 +52,5 @@ export interface TransactionSummary {
 }
 
 export type PaymentMethod = 'CASH' | 'BANK_TRANSFER' | 'CARD_TERMINAL';
+
+export type TransactionSource = 'RENTAL';

@@ -11,7 +11,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { v4 as uuid } from 'uuid';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
 import { UserStore } from '../../../core/state/user.store';
-import type { PaymentMethod } from '../../../core/models/transaction.model';
+import type { PaymentMethod, TransactionSource } from '../../../core/models/transaction.model';
 import { Labels } from '../../constant/labels';
 import { CancelButtonComponent } from '../cancel-button/cancel-button.component';
 import { PaymentMethodSelectComponent } from '../payment-method/payment-method.component';
@@ -21,6 +21,8 @@ import { MaxDecimalsDirective } from '../../directives/max-decimals.directive';
 interface TopUpDialogData {
   customerId: string;
   initialAmount?: number;
+  source?: TransactionSource;
+  sourceId?: string;
 }
 
 @Component({
@@ -103,6 +105,8 @@ export class TopUpDialogComponent {
         amount: amount!,
         paymentMethod: paymentMethod as PaymentMethod,
         operatorId: this.userStore.currentUser()?.id,
+        source: this.data.source,
+        sourceId: this.data.sourceId,
       })
       .pipe(
         takeUntilDestroyed(this.destroyRef),

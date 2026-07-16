@@ -271,11 +271,15 @@ export class RentalDetailComponent {
   protected onTopUpRequested(): void {
     const customerId = this.store.customerId();
     if (!customerId) return;
-
+    const rentalId = this.id();
     this.dialog
       .open(TopUpDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId, initialAmount: this.debtTopUpAmount() },
+        data: {
+          customerId,
+          initialAmount: this.debtTopUpAmount(),
+          ...(rentalId !== null ? { source: 'RENTAL', sourceId: rentalId } : {}),
+        },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
@@ -284,6 +288,7 @@ export class RentalDetailComponent {
       .subscribe((result: boolean | undefined) => {
         if (result) {
           this.financeStore.loadById(customerId);
+          this.transactionsStore.reload();
         }
       });
   }
@@ -304,7 +309,7 @@ export class RentalDetailComponent {
     this.dialog
       .open(WithdrawDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId, availableBalance },
+        data: { customerId, availableBalance, source: 'RENTAL', sourceId: this.id() },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
@@ -313,6 +318,7 @@ export class RentalDetailComponent {
       .subscribe((result: boolean | undefined) => {
         if (result) {
           this.financeStore.loadById(customerId);
+          this.transactionsStore.reload();
         }
       });
   }

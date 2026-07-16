@@ -29,6 +29,7 @@ import {
   NotificationService,
   PageHeaderComponent,
   RentalStore,
+  RentalTransactionsStore,
   ReturnEquipmentCostStore,
   TimeStore,
   TopUpDialogComponent,
@@ -111,6 +112,7 @@ export class ReturnEquipmentScreenComponent {
   protected readonly rentalStore = inject(RentalStore);
   protected readonly costStore = inject(ReturnEquipmentCostStore);
   private readonly financeStore = inject(CustomerFinanceStore);
+  private readonly transactionsStore = inject(RentalTransactionsStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -248,17 +250,24 @@ export class ReturnEquipmentScreenComponent {
   protected onTopUpRequested(): void {
     const customerId = this.rentalStore.customerId();
     if (!customerId) return;
+    const rentalId = this.rentalStore.id();
     this.dialog
       .open(TopUpDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId },
+        data: {
+          customerId,
+          ...(rentalId !== null ? { source: 'RENTAL', sourceId: String(rentalId) } : {}),
+        },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: boolean | undefined) => {
-        if (result) this.financeStore.loadById(customerId);
+        if (result) {
+          this.financeStore.loadById(customerId);
+          this.transactionsStore.reload();
+        }
       });
   }
 
@@ -266,17 +275,26 @@ export class ReturnEquipmentScreenComponent {
     const customerId = this.rentalStore.customerId();
     if (!customerId) return;
     const availableBalance = this.financeStore.balance()?.available;
+    const rentalId = this.rentalStore.id();
     this.dialog
       .open(WithdrawDialogComponent, {
         ...MOBILE_FORM_DIALOG_CONFIG,
-        data: { customerId, availableBalance },
+        data: {
+          customerId,
+          availableBalance,
+          source: 'RENTAL',
+          sourceId: rentalId !== null ? String(rentalId) : undefined,
+        },
         disableClose: true,
         viewContainerRef: this.viewContainerRef,
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: boolean | undefined) => {
-        if (result) this.financeStore.loadById(customerId);
+        if (result) {
+          this.financeStore.loadById(customerId);
+          this.transactionsStore.reload();
+        }
       });
   }
 }

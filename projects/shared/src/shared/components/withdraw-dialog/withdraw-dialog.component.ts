@@ -17,12 +17,18 @@ import { MoneyPipe } from '../../pipes/money.pipe';
 import { PaymentMethodSelectComponent } from '../payment-method/payment-method.component';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
 import { UserStore } from '../../../core/state/user.store';
-import type { PaymentMethod, Money } from '../../../core/models/transaction.model';
+import type {
+  PaymentMethod,
+  Money,
+  TransactionSource,
+} from '../../../core/models/transaction.model';
 import { maxWithdrawAmountValidator } from './max-amount.validator';
 
 interface WithdrawDialogData {
   customerId: string;
   availableBalance: Money;
+  source?: TransactionSource;
+  sourceId?: string;
 }
 
 @Component({
@@ -115,6 +121,8 @@ export class WithdrawDialogComponent {
         paymentMethod: paymentMethod as PaymentMethod,
         // TODO remove hardcoded value after authorization is done
         operatorId: this.userStore.currentUser()?.id || 'CALL_DEVELOPER_IF_SEE_IT',
+        source: this.data.source,
+        sourceId: this.data.sourceId,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
