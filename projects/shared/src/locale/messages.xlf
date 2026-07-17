@@ -3000,6 +3000,13 @@
           <context context-type="linenumber">348</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="3676810969871565173" datatype="html">
+        <source>App version</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">369</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="3590805807378700861" datatype="html">
         <source>Google</source>
         <context-group purpose="location">

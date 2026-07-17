@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+    inputs:
+      disable_service_worker:
+        description: 'EMERGENCY: unregister the operator PWA service worker and wipe its caches on every client'
+        type: boolean
+        default: false
 
 env:
   PROJECT_NAME: bikerental-ui
@@ -158,6 +163,23 @@ jobs:
           sed -i "s|BIKE_API_PLACEHOLDER|${BIKE_RENTAL_API}|g" projects/shared/src/environments/environment.prod.ts
           sed -i "s|BIKE_TIME_TRAVEL_PLACEHOLDER|${BIKE_TIME_TRAVEL_ENABLED}|g" projects/shared/src/environments/environment.prod.ts
 
+      # Stamps the deployed commit into two places, so "which version is this
+      # client actually running?" is answerable without guesswork:
+      #  - environment.appVersion is baked into the bundle, so it reports the
+      #    version of the code that is really executing — even when the service
+      #    worker is serving a stale build, which is exactly when it matters.
+      #  - ngsw.json appData describes the manifest, so the deployed version can
+      #    be read straight off the live site:
+      #      curl -s https://<pages-host>/<repo>/operator/en/ngsw.json | jq .appData
+      - name: Stamp build version
+        run: |
+          VERSION="${GITHUB_SHA:0:7}"
+          BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          sed -i "s|BIKE_VERSION_PLACEHOLDER|${VERSION}|g" projects/shared/src/environments/environment.prod.ts
+          sed -i "s|BIKE_VERSION_PLACEHOLDER|${VERSION}|g" projects/operator/ngsw-config.json
+          sed -i "s|BIKE_BUILD_TIME_PLACEHOLDER|${BUILD_TIME}|g" projects/operator/ngsw-config.json
+          echo "Stamped version ${VERSION} (${BUILD_TIME})"
+
       - name: Build gateway
         run: npx ng build gateway --configuration production --base-href /${{ github.event.repository.name }}/
 
@@ -265,6 +287,33 @@ jobs:
           </html>
           HTMLEOF
           sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/404.html
+
+      # Emergency kill switch — the fleet-wide recovery path of last resort.
+      # Replaces the operator's ngsw-worker.js with Angular's safety-worker,
+      # which unregisters the service worker and deletes every `ngsw:` cache on
+      # each client that loads the app. Use it when a bad deploy pins clients to
+      # a broken or stale build and no ordinary fix can reach them: run this
+      # workflow manually on master with `disable_service_worker: true`, confirm
+      # clients recovered, then re-run it normally to restore the PWA.
+      #
+      # Browsers bypass the HTTP cache for the service worker script itself, so
+      # clients pick this up on their next navigation. ngsw-worker.js is not
+      # listed in its own ngsw.json hashTable, so swapping it does not trip the
+      # integrity check below.
+      - name: Deploy service worker kill switch
+        if: inputs.disable_service_worker
+        run: |
+          shopt -s nullglob
+          manifests=(staging/operator/*/ngsw.json)
+          if [ ${#manifests[@]} -eq 0 ]; then
+            echo "No operator ngsw.json under staging/ — nothing to disable."
+            exit 1
+          fi
+          for manifest in "${manifests[@]}"; do
+            dir="$(dirname "${manifest}")"
+            cp node_modules/@angular/service-worker/safety-worker.js "${dir}/ngsw-worker.js"
+            echo "Kill switch armed for ${dir}"
+          done
 
       # Guards the service worker's integrity, and must stay the LAST step that
       # touches staging/ before the upload. Every file listed in an ngsw.json

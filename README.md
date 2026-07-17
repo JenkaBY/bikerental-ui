@@ -162,6 +162,23 @@ first-party service worker (`@angular/service-worker`).
     becomes visible (throttled to once per 15 min), then offers a **dismissible** "Update available —
     Reload / Later" dialog via `SwUpdate`. It also prompts for a reload on `SwUpdate.unrecoverable`,
     which is how a client whose cached build lost a hashed asset (a GitHub Pages 404) self-heals.
+- **Which version is a client running?** CI stamps the short commit SHA into two places:
+  - `environment.appVersion` — baked into the bundle, so it reports the version of the code that is
+    really executing (even when the worker is serving a stale build, which is when it matters). Shown to
+    the user under **Profile → Preferences → App version**; ask an operator to read it out.
+  - `ngsw.json` `appData` — describes the manifest, so the deployed version can be read off the live site
+    without a browser:
+
+    ```bash
+    curl -s https://<pages-host>/<repo>/operator/en/ngsw.json | jq .appData
+    ```
+
+  A mismatch between the two is the signature of a client pinned to a stale build.
+- **Kill switch (fleet-wide recovery).** If a deploy ever pins clients to a broken or stale build and no
+  ordinary fix can reach them, run the **Build and Deploy** workflow manually on `master` with
+  **`disable_service_worker: true`**. This ships Angular's `safety-worker.js` in place of
+  `ngsw-worker.js`, which unregisters the service worker and deletes every `ngsw:` cache on each client
+  that loads the app. Confirm clients recovered, then re-run the workflow normally to restore the PWA.
 - **i18n:** the build is per-locale, so each locale folder (`dist/operator/browser/{en,ru}/`) gets its own
   `ngsw.json` + `ngsw-worker.js`, scoped to `/operator/<locale>/`.
 - **Test the service worker locally** (it is off under `ng serve`):

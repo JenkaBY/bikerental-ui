@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  appVersion: 'lan',
   apiUrl: 'http://192.168.1.123:8080',
   healthPollIntervalMs: 300_000,
   defaultLocale: 'ru',

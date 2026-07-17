@@ -366,6 +366,7 @@ export class Labels {
   static readonly ProfileLanguageLabel = $localize`Language`;
   static readonly ProfileLanguageEnglish = $localize`English`;
   static readonly ProfileLanguageRussian = $localize`Russian`;
+  static readonly ProfileAppVersion = $localize`App version`;
   static readonly ProfileGoogleTitle = $localize`Google`;
   static readonly ProfileNotConnected = $localize`Not connected`;
   static readonly ProfileGoogleConnect = $localize`Connect`;

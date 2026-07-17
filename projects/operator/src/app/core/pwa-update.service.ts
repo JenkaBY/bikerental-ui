@@ -14,6 +14,17 @@ import {
 const CHECK_THROTTLE_MS = 15 * 60 * 1000;
 const CHECK_TIMEOUT_MS = 30 * 1000;
 
+interface AppVersionData {
+  version?: string;
+  buildTime?: string;
+}
+
+function describeVersion(version: { hash: string; appData?: object }): string {
+  const shortHash = version.hash.slice(0, 8);
+  const stamped = (version.appData as AppVersionData | undefined)?.version;
+  return stamped ? `${stamped} (${shortHash})` : shortHash;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PwaUpdateService {
   private readonly swUpdate = inject(SwUpdate);
@@ -47,9 +58,15 @@ export class PwaUpdateService {
 
   private onVersionEvent(event: VersionEvent): void {
     if (event.type === 'VERSION_READY') {
+      console.info(
+        `PWA update ready: ${describeVersion(event.currentVersion)} -> ${describeVersion(event.latestVersion)}`,
+      );
       this.promptReload();
     } else if (event.type === 'VERSION_INSTALLATION_FAILED') {
-      console.error('PWA version installation failed:', event.error);
+      console.error(
+        `PWA version installation failed for ${describeVersion(event.version)}:`,
+        event.error,
+      );
     }
   }
 
