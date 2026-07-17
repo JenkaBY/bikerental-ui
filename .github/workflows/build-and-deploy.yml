@@ -221,10 +221,15 @@ jobs:
       # works out which app/locale directory actually has a real index.html,
       # and bounces there with the original path+query preserved in a
       # `redirect` param (classic GH Pages SPA trick). The matching
-      # restore-script (injected below) puts the real URL back via
-      # history.replaceState before Angular bootstraps, so deep links like
-      # the OIDC `/admin/en/login/callback?code=...` survive the 404 hop
-      # instead of losing their query string.
+      # restore-script lives in each app's checked-in entry point —
+      # projects/{gateway,admin,operator}/src/index.html — and puts the real
+      # URL back via history.replaceState before Angular bootstraps, so deep
+      # links survive the 404 hop instead of losing their query string.
+      #
+      # That script MUST stay in the source index.html and must never be
+      # injected here: index.html is SHA1-pinned in the operator's ngsw.json
+      # hashTable at build time, so rewriting it post-build breaks the service
+      # worker (see the integrity check below).
       - name: Add smart 404.html for SPA routing
         run: |
           BASE="/${{ github.event.repository.name }}"
@@ -261,54 +266,17 @@ jobs:
           HTMLEOF
           sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/404.html
 
-      # Guards the service worker's integrity. Every file listed in an ngsw.json
+      # Guards the service worker's integrity, and must stay the LAST step that
+      # touches staging/ before the upload. Every file listed in an ngsw.json
       # hashTable is pinned by SHA1 at build time; if any of those files is
       # mutated after the build (e.g. a post-build HTML rewrite), the worker
       # fails to install the new version, degrades to EXISTING_CLIENTS_ONLY, and
       # pins clients to the stale cached version forever. This fails the build
-      # instead, so such a regression can never reach production again.
+      # instead, so such a regression can never reach production again. It also
+      # asserts one manifest per app/locale declared in angular.json, so a
+      # locale silently losing its service worker fails the build too.
       - name: Verify ngsw.json hash integrity
-        run: |
-          node -e "
-            const fs = require('fs');
-            const path = require('path');
-            const crypto = require('crypto');
-            const sha1 = (buf) => crypto.createHash('sha1').update(buf).digest('hex');
-            const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
-              const p = path.join(dir, e.name);
-              return e.isDirectory() ? walk(p) : [p];
-            });
-            const manifests = walk('staging').filter((f) => path.basename(f) === 'ngsw.json');
-            if (manifests.length === 0) {
-              console.error('No ngsw.json found under staging/ — service worker missing?');
-              process.exit(1);
-            }
-            let failures = 0;
-            for (const manifestPath of manifests) {
-              const appRoot = path.dirname(manifestPath);
-              const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-              const basePrefix = manifest.index.slice(0, manifest.index.lastIndexOf('/') + 1);
-              for (const [urlPath, expected] of Object.entries(manifest.hashTable)) {
-                const relative = urlPath.startsWith(basePrefix) ? urlPath.slice(basePrefix.length) : urlPath.replace(/^\//, '');
-                const filePath = path.join(appRoot, relative);
-                if (!fs.existsSync(filePath)) {
-                  console.error('MISSING ' + filePath + ' referenced by ' + manifestPath);
-                  failures++;
-                  continue;
-                }
-                const actual = sha1(fs.readFileSync(filePath));
-                if (actual !== expected) {
-                  console.error('HASH MISMATCH ' + manifestPath + ' :: ' + urlPath + ' expected ' + expected + ' got ' + actual);
-                  failures++;
-                }
-              }
-            }
-            if (failures > 0) {
-              console.error(failures + ' ngsw.json integrity failure(s)');
-              process.exit(1);
-            }
-            console.log('ngsw.json integrity OK (' + manifests.length + ' manifest(s))');
-          "
+        run: npm run verify:ngsw
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

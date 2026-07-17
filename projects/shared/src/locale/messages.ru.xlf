@@ -149,17 +149,17 @@
         </context-group>
       </trans-unit>
 
-      <trans-unit id="8289847376326923058" datatype="html">
-        <source>A new version is available.</source>
-        <target>Доступна новая версия.</target>
+      <trans-unit id="7967484035994732534" datatype="html">
+        <source>Reload</source>
+        <target>Обновить</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
         </context-group>
       </trans-unit>
 
-      <trans-unit id="7967484035994732534" datatype="html">
-        <source>Reload</source>
-        <target>Обновить</target>
+      <trans-unit id="9026083618139453880" datatype="html">
+        <source>Later</source>
+        <target>Позже</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
         </context-group>
@@ -176,6 +176,30 @@
       <trans-unit id="6741407111879237382" datatype="html">
         <source>A new version of the app is ready. Reload to continue with the latest version.</source>
         <target>Готова новая версия приложения. Обновите страницу, чтобы продолжить работу с последней версией.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="7478498464482809270" datatype="html">
+        <source>Could not apply the update. Please reload the page.</source>
+        <target>Не удалось применить обновление. Пожалуйста, перезагрузите страницу.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="6648793368616625239" datatype="html">
+        <source>App needs to be reloaded</source>
+        <target>Требуется перезагрузка приложения</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="1790692122367795238" datatype="html">
+        <source>The app could not load part of itself and needs to be reloaded to keep working.</source>
+        <target>Приложению не удалось загрузить часть своих файлов. Для продолжения работы требуется перезагрузка.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
         </context-group>

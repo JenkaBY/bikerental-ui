@@ -4,15 +4,24 @@ import { MatDialog } from '@angular/material/dialog';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { fromEvent } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ConfirmDialogComponent, ConfirmDialogData, Labels } from '@bikerental/shared';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogData,
+  Labels,
+  NotificationService,
+} from '@bikerental/shared';
+
+const CHECK_THROTTLE_MS = 15 * 60 * 1000;
+const CHECK_TIMEOUT_MS = 30 * 1000;
 
 @Injectable({ providedIn: 'root' })
 export class PwaUpdateService {
   private readonly swUpdate = inject(SwUpdate);
   private readonly dialog = inject(MatDialog);
+  private readonly notifications = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
 
-  private checking = false;
+  private lastCheckAt = 0;
   private promptOpen = false;
 
   init(): void {
@@ -24,7 +33,7 @@ export class PwaUpdateService {
 
     this.swUpdate.unrecoverable
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => console.error('PWA service worker unrecoverable:', event.reason));
+      .subscribe((event) => this.onUnrecoverable(event.reason));
 
     void this.checkForUpdate();
 
@@ -44,45 +53,71 @@ export class PwaUpdateService {
     }
   }
 
+  private onUnrecoverable(reason: string): void {
+    console.error('PWA service worker unrecoverable:', reason);
+    this.prompt(
+      {
+        title: Labels.PwaUnrecoverableTitle,
+        message: Labels.PwaUnrecoverableMessage,
+        confirmLabel: Labels.PwaUpdateReload,
+      },
+      () => document.location.reload(),
+    );
+  }
+
   private async checkForUpdate(): Promise<void> {
-    if (this.checking) return;
-    this.checking = true;
+    const now = Date.now();
+    if (now - this.lastCheckAt < CHECK_THROTTLE_MS) return;
+    this.lastCheckAt = now;
+
     try {
-      await this.swUpdate.checkForUpdate();
+      await this.withTimeout(this.swUpdate.checkForUpdate());
     } catch (err) {
       console.error('PWA update check failed:', err);
-    } finally {
-      this.checking = false;
     }
   }
 
+  private withTimeout<T>(work: Promise<T>): Promise<T> {
+    let timer: ReturnType<typeof setTimeout>;
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error('checkForUpdate timed out')), CHECK_TIMEOUT_MS);
+    });
+    return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
+  }
+
   private promptReload(): void {
+    this.prompt(
+      {
+        title: Labels.PwaUpdateTitle,
+        message: Labels.PwaUpdateMessage,
+        confirmLabel: Labels.PwaUpdateReload,
+        cancelLabel: Labels.PwaUpdateLater,
+      },
+      () => void this.activateAndReload(),
+    );
+  }
+
+  private prompt(data: ConfirmDialogData, onConfirm: () => void): void {
     if (this.promptOpen) return;
     this.promptOpen = true;
 
-    const data: ConfirmDialogData = {
-      title: Labels.PwaUpdateTitle,
-      message: Labels.PwaUpdateMessage,
-      confirmLabel: Labels.PwaUpdateReload,
-    };
-
     this.dialog
-      .open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
-        data,
-        disableClose: true,
-      })
+      .open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, { data })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => void this.activateAndReload());
+      .subscribe((confirmed) => {
+        this.promptOpen = false;
+        if (confirmed) onConfirm();
+      });
   }
 
   private async activateAndReload(): Promise<void> {
     try {
       await this.swUpdate.activateUpdate();
+      document.location.reload();
     } catch (err) {
       console.error('PWA activate update failed:', err);
-    } finally {
-      document.location.reload();
+      this.notifications.error(Labels.PwaUpdateFailed);
     }
   }
 }

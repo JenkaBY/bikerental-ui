@@ -332,10 +332,13 @@ export class Labels {
   static readonly TimeTravelDialogTitle = $localize`Server Time`;
   static readonly TimeTravelReset = $localize`Reset`;
 
-  static readonly PwaUpdateAvailable = $localize`A new version is available.`;
   static readonly PwaUpdateReload = $localize`Reload`;
+  static readonly PwaUpdateLater = $localize`Later`;
   static readonly PwaUpdateTitle = $localize`Update available`;
   static readonly PwaUpdateMessage = $localize`A new version of the app is ready. Reload to continue with the latest version.`;
+  static readonly PwaUpdateFailed = $localize`Could not apply the update. Please reload the page.`;
+  static readonly PwaUnrecoverableTitle = $localize`App needs to be reloaded`;
+  static readonly PwaUnrecoverableMessage = $localize`The app could not load part of itself and needs to be reloaded to keep working.`;
 
   // Authentication
   static readonly Logout = $localize`Logout`;
