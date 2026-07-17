@@ -1,6 +1,10 @@
 {
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
+  "appData": {
+    "version": "BIKE_VERSION_PLACEHOLDER",
+    "buildTime": "BIKE_BUILD_TIME_PLACEHOLDER"
+  },
   "assetGroups": [
     {
       "name": "app",
@@ -23,5 +27,7 @@
       }
     }
   ],
-  "navigationUrls": ["/**", "!/**/*.*", "!/**/*__*", "!/**/*__*/**"]
+  "navigationUrls": ["/**", "!/**/*.*", "!/**/*__*", "!/**/*__*/**"],
+  "navigationRequestStrategy": "freshness",
+  "applicationMaxAge": "1d"
 }

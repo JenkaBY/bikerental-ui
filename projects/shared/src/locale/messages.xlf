@@ -2811,18 +2811,53 @@
           <context context-type="linenumber">318</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8289847376326923058" datatype="html">
-        <source>A new version is available.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">320</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7967484035994732534" datatype="html">
         <source>Reload</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">321</context>
+          <context context-type="linenumber">335</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9026083618139453880" datatype="html">
+        <source>Later</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">336</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="509090351011426949" datatype="html">
+        <source>Update available</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">337</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6741407111879237382" datatype="html">
+        <source>A new version of the app is ready. Reload to continue with the latest version.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">338</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7478498464482809270" datatype="html">
+        <source>Could not apply the update. Please reload the page.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">339</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6648793368616625239" datatype="html">
+        <source>App needs to be reloaded</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">340</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1790692122367795238" datatype="html">
+        <source>The app could not load part of itself and needs to be reloaded to keep working.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">341</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1375188762769896369" datatype="html">
@@ -2963,6 +2998,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">348</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3676810969871565173" datatype="html">
+        <source>App version</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">369</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3590805807378700861" datatype="html">

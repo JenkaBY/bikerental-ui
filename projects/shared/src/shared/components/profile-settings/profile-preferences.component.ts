@@ -3,6 +3,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { Labels } from '../../constant/labels';
 import { UserStore } from '../../../core/state/user.store';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-profile-preferences',
@@ -18,6 +19,11 @@ import { UserStore } from '../../../core/state/user.store';
           <mat-option value="ru">{{ labels.ProfileLanguageRussian }}</mat-option>
         </mat-select>
       </mat-form-field>
+
+      <div class="flex items-center justify-between text-sm opacity-70">
+        <span>{{ labels.ProfileAppVersion }}</span>
+        <span class="font-mono">{{ appVersion }}</span>
+      </div>
     </div>
   `,
 })
@@ -25,6 +31,7 @@ export class ProfilePreferencesComponent {
   private readonly userStore = inject(UserStore);
 
   protected readonly labels = Labels;
+  protected readonly appVersion = environment.appVersion;
   protected readonly language = computed(() => this.userStore.preferences().language);
 
   protected onLanguageChange(language: string): void {
