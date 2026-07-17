@@ -261,37 +261,54 @@ jobs:
           HTMLEOF
           sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/404.html
 
-      # Companion to the 404.html above: restores the original deep-link URL
-      # (path + query, e.g. ?code=...&state=... from the OIDC callback)
-      # before Angular bootstraps, so the Router sees the real route instead
-      # of the bounce URL with a `redirect` query param.
-      - name: Inject SPA path-restore script into app entry points
+      # Guards the service worker's integrity. Every file listed in an ngsw.json
+      # hashTable is pinned by SHA1 at build time; if any of those files is
+      # mutated after the build (e.g. a post-build HTML rewrite), the worker
+      # fails to install the new version, degrades to EXISTING_CLIENTS_ONLY, and
+      # pins clients to the stale cached version forever. This fails the build
+      # instead, so such a regression can never reach production again.
+      - name: Verify ngsw.json hash integrity
         run: |
-          cat > restore-script.html << 'HTMLEOF'
-            <script>
-              (function () {
-                var params = new URLSearchParams(window.location.search);
-                var redirect = params.get('redirect');
-                if (redirect) {
-                  history.replaceState(null, '', redirect);
-                }
-              })();
-            </script>
-          HTMLEOF
           node -e "
             const fs = require('fs');
-            const snippet = fs.readFileSync('restore-script.html', 'utf8');
-            const files = [
-              'staging/en/index.html', 'staging/ru/index.html',
-              'staging/admin/en/index.html', 'staging/admin/ru/index.html',
-              'staging/operator/en/index.html', 'staging/operator/ru/index.html',
-            ];
-            for (const f of files) {
-              const text = fs.readFileSync(f, 'utf8');
-              fs.writeFileSync(f, text.replace('<head>', '<head>' + snippet));
+            const path = require('path');
+            const crypto = require('crypto');
+            const sha1 = (buf) => crypto.createHash('sha1').update(buf).digest('hex');
+            const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+              const p = path.join(dir, e.name);
+              return e.isDirectory() ? walk(p) : [p];
+            });
+            const manifests = walk('staging').filter((f) => path.basename(f) === 'ngsw.json');
+            if (manifests.length === 0) {
+              console.error('No ngsw.json found under staging/ — service worker missing?');
+              process.exit(1);
             }
+            let failures = 0;
+            for (const manifestPath of manifests) {
+              const appRoot = path.dirname(manifestPath);
+              const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+              const basePrefix = manifest.index.slice(0, manifest.index.lastIndexOf('/') + 1);
+              for (const [urlPath, expected] of Object.entries(manifest.hashTable)) {
+                const relative = urlPath.startsWith(basePrefix) ? urlPath.slice(basePrefix.length) : urlPath.replace(/^\//, '');
+                const filePath = path.join(appRoot, relative);
+                if (!fs.existsSync(filePath)) {
+                  console.error('MISSING ' + filePath + ' referenced by ' + manifestPath);
+                  failures++;
+                  continue;
+                }
+                const actual = sha1(fs.readFileSync(filePath));
+                if (actual !== expected) {
+                  console.error('HASH MISMATCH ' + manifestPath + ' :: ' + urlPath + ' expected ' + expected + ' got ' + actual);
+                  failures++;
+                }
+              }
+            }
+            if (failures > 0) {
+              console.error(failures + ' ngsw.json integrity failure(s)');
+              process.exit(1);
+            }
+            console.log('ngsw.json integrity OK (' + manifests.length + ' manifest(s))');
           "
-          rm restore-script.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

@@ -334,6 +334,8 @@ export class Labels {
 
   static readonly PwaUpdateAvailable = $localize`A new version is available.`;
   static readonly PwaUpdateReload = $localize`Reload`;
+  static readonly PwaUpdateTitle = $localize`Update available`;
+  static readonly PwaUpdateMessage = $localize`A new version of the app is ready. Reload to continue with the latest version.`;
 
   // Authentication
   static readonly Logout = $localize`Logout`;
