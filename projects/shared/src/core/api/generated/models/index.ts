@@ -214,8 +214,6 @@ export interface EquipmentRequest {
   uid: string;
   /** Equipment type slug */
   typeSlug?: string;
-  /** Equipment status slug */
-  statusSlug?: string;
   /** Model name */
   model?: string;
   /** Date when equipment was put into service */
@@ -236,8 +234,6 @@ export interface EquipmentResponse {
   uid: string;
   /** Equipment type slug */
   type: string;
-  /** Equipment status slug */
-  status: string;
   /** Model name */
   model: string;
   /** Commissioned date */
@@ -264,28 +260,6 @@ export interface EquipmentTypeResponse {
   name: string;
   /** Description */
   description?: string;
-}
-
-/** Request body for creating or updating an equipment status */
-export interface EquipmentStatusUpdateRequest {
-  /** Display name */
-  name: string;
-  /** Description */
-  description?: string;
-  /** Set of status slugs this status can transition to */
-  allowedTransitions?: Array<string>;
-}
-
-/** Equipment status with allowed transitions */
-export interface EquipmentStatusResponse {
-  /** Slug identifier */
-  slug: string;
-  /** Display name */
-  name: string;
-  /** Description */
-  description?: string;
-  /** Status slugs this status can transition to */
-  allowedTransitions: Array<string>;
 }
 
 export interface SetTimeRequest {
@@ -356,17 +330,6 @@ export interface CostQuoteResponse {
   quotedAt: string;
   expiresAt: string;
   calculation: CostCalculationResponse;
-}
-
-/** Request for rental cost calculation */
-export interface CostCalculationRequest {
-  equipments: Array<EquipmentItemRequest>;
-  plannedDurationMinutes: number;
-  actualDurationMinutes?: number;
-  discountPercent?: number;
-  specialTariffId?: number;
-  specialPrice?: number;
-  rentalDate?: string;
 }
 
 export interface SignAgreementRequest {
@@ -503,18 +466,6 @@ export interface EquipmentTypeRequest {
   name: string;
   /** Description */
   description?: string;
-}
-
-/** Request body for creating or updating an equipment status */
-export interface EquipmentStatusRequest {
-  /** URL-friendly identifier */
-  slug?: string;
-  /** Display name */
-  name: string;
-  /** Description */
-  description?: string;
-  /** Set of status slugs this status can transition to */
-  allowedTransitions?: Array<string>;
 }
 
 export interface CreateUserRequest {

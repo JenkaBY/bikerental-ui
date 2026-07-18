@@ -21,17 +21,16 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  RequestOptions,
-  TariffV2Response,
-  TariffV2Request,
-  CostCalculationV2Request,
   CostCalculationResponse,
+  CostCalculationV2Request,
+  CostQuoteResponse,
   Pageable,
   PageTariffV2Response,
-  CostQuoteResponse,
-  CostCalculationRequest,
-  TariffSelectionV2Response,
   PricingTypeResponse,
+  RequestOptions,
+  TariffSelectionV2Response,
+  TariffV2Request,
+  TariffV2Response,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -311,51 +310,6 @@ export class TariffsService {
     };
 
     return this.httpClient.post(url, costCalculationV2Request, requestOptions);
-  }
-
-  calculateCost(
-    costCalculationRequest: CostCalculationRequest,
-    observe?: 'body',
-    options?: RequestOptions<'json'>,
-  ): Observable<CostCalculationResponse>;
-  calculateCost(
-    costCalculationRequest: CostCalculationRequest,
-    observe?: 'response',
-    options?: RequestOptions<'json'>,
-  ): Observable<HttpResponse<CostCalculationResponse>>;
-  calculateCost(
-    costCalculationRequest: CostCalculationRequest,
-    observe?: 'events',
-    options?: RequestOptions<'json'>,
-  ): Observable<HttpEvent<CostCalculationResponse>>;
-  /** Supports normal mode (auto-select tariffs, apply discount) and SPECIAL mode (fixed group price) */
-  calculateCost(
-    costCalculationRequest: CostCalculationRequest,
-    observe?: 'body' | 'events' | 'response',
-    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
-  ): Observable<any> {
-    const url = `${this.basePath}/api/tariffs/calculate`;
-
-    let headers: HttpHeaders;
-    if (options?.headers instanceof HttpHeaders) {
-      headers = options.headers;
-    } else {
-      headers = new HttpHeaders(options?.headers);
-    }
-    // Set Content-Type for JSON requests if not already set
-    if (!headers.has('Content-Type')) {
-      headers = headers.set('Content-Type', 'application/json');
-    }
-
-    const requestOptions: any = {
-      observe: observe as any,
-      headers,
-      reportProgress: options?.reportProgress,
-      withCredentials: options?.withCredentials,
-      context: this.createContextWithClientId(options?.context),
-    };
-
-    return this.httpClient.post(url, costCalculationRequest, requestOptions);
   }
 
   deactivateTariff(

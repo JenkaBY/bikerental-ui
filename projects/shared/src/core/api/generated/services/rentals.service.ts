@@ -21,18 +21,18 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  RentalRequest,
-  RequestOptions,
-  RentalResponse,
-  Pageable,
-  PageRentalSummaryResponse,
-  ConfirmReturnRequest,
-  RentalReturnResponse,
   AddRentalEquipmentRequest,
-  ReturnEquipmentRequest,
+  ConfirmReturnRequest,
+  Pageable,
+  PageAvailableEquipmentResponse,
+  PageRentalSummaryResponse,
   RentalForSigningRequest,
   RentalLifecycleRequest,
-  PageAvailableEquipmentResponse,
+  RentalRequest,
+  RentalResponse,
+  RentalReturnResponse,
+  RequestOptions,
+  ReturnEquipmentRequest,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -363,40 +363,6 @@ export class RentalsService {
     };
 
     return this.httpClient.post(url, returnEquipmentRequest, requestOptions);
-  }
-
-  createDraft(observe?: 'body', options?: RequestOptions<'json'>): Observable<RentalResponse>;
-  createDraft(
-    observe?: 'response',
-    options?: RequestOptions<'json'>,
-  ): Observable<HttpResponse<RentalResponse>>;
-  createDraft(
-    observe?: 'events',
-    options?: RequestOptions<'json'>,
-  ): Observable<HttpEvent<RentalResponse>>;
-  /** Creates an empty rental draft to be filled step by step */
-  createDraft(
-    observe?: 'body' | 'events' | 'response',
-    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
-  ): Observable<any> {
-    const url = `${this.basePath}/api/rentals/draft`;
-
-    let headers: HttpHeaders;
-    if (options?.headers instanceof HttpHeaders) {
-      headers = options.headers;
-    } else {
-      headers = new HttpHeaders(options?.headers);
-    }
-
-    const requestOptions: any = {
-      observe: observe as any,
-      headers,
-      reportProgress: options?.reportProgress,
-      withCredentials: options?.withCredentials,
-      context: this.createContextWithClientId(options?.context),
-    };
-
-    return this.httpClient.post(url, null, requestOptions);
   }
 
   initForSigning(
