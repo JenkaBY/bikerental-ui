@@ -21,18 +21,11 @@ import {
   SaveButtonComponent,
 } from '@bikerental/shared';
 import { formatDate } from '@angular/common';
-import {
-  Equipment,
-  EquipmentConditionSlug,
-  EquipmentStatus,
-  EquipmentType,
-  EquipmentWrite,
-} from '@ui-models';
+import { Equipment, EquipmentConditionSlug, EquipmentType, EquipmentWrite } from '@ui-models';
 
 export interface EquipmentDialogData {
   equipment?: Equipment;
   types: EquipmentType[];
-  statuses: EquipmentStatus[];
 }
 
 @Component({
@@ -168,7 +161,6 @@ export class EquipmentDialogComponent {
       serialNumber: raw.serialNumber ?? '',
       uid: raw.uid || undefined,
       typeSlug: raw.typeSlug || undefined,
-      statusSlug: 'AVAILABLE',
       model: raw.model || undefined,
       commissionedAt: raw.commissionedAt ?? undefined,
       conditionSlug: raw.conditionSlug ?? undefined,

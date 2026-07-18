@@ -7,7 +7,7 @@ import { vi } from 'vitest';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Equipment, EquipmentStatus } from '@ui-models';
+import { Equipment } from '@ui-models';
 import { EquipmentStore } from '@bikerental/shared';
 
 describe('EquipmentDialogComponent', () => {
@@ -51,7 +51,7 @@ describe('EquipmentDialogComponent', () => {
   }
 
   it('should initialize form in create mode with defaults', async () => {
-    const data: EquipmentDialogData = { types: [], statuses: [] };
+    const data: EquipmentDialogData = { types: [] };
     await createComponentWithData(data);
 
     fixture.detectChanges();
@@ -61,7 +61,7 @@ describe('EquipmentDialogComponent', () => {
   });
 
   it('should call store.create on save and close dialog on success', async () => {
-    const data: EquipmentDialogData = { types: [], statuses: [] };
+    const data: EquipmentDialogData = { types: [] };
     const { store, snack, dialogRef } = await createComponentWithData(data);
 
     store.create.mockReturnValue(of({ id: 100 }));
@@ -80,18 +80,12 @@ describe('EquipmentDialogComponent', () => {
       serialNumber: 'OLD-SN',
       uid: 'UID',
       type: { slug: 'bike', name: 'Bike', isForSpecialTariff: false },
-      status: { slug: 'available', name: 'Available', allowedTransitions: ['maintenance'] },
       model: 'M',
       condition: { slug: 'GOOD', name: 'Good' },
       conditionNotes: 'ok',
     };
 
-    const statuses: EquipmentStatus[] = [
-      { slug: 'available', name: 'Available', allowedTransitions: ['maintenance'] },
-      { slug: 'maintenance', name: 'Maintenance', allowedTransitions: [] },
-    ];
-
-    const data: EquipmentDialogData = { equipment: existing, types: [], statuses };
+    const data: EquipmentDialogData = { equipment: existing, types: [] };
 
     const { store, snack, dialogRef } = await createComponentWithData(data);
 
@@ -107,7 +101,7 @@ describe('EquipmentDialogComponent', () => {
   });
 
   it('should include commissionedAt date in create request', async () => {
-    const data: EquipmentDialogData = { types: [], statuses: [] };
+    const data: EquipmentDialogData = { types: [] };
     const { store } = await createComponentWithData(data);
 
     store.create.mockReturnValue(of({ id: 100 }));
@@ -126,7 +120,7 @@ describe('EquipmentDialogComponent', () => {
   });
 
   it('should show error and keep dialog open on create failure', async () => {
-    const data: EquipmentDialogData = { types: [], statuses: [] };
+    const data: EquipmentDialogData = { types: [] };
     const { store, snack, dialogRef } = await createComponentWithData(data);
 
     store.create.mockReturnValue(throwError(() => new Error('fail')));

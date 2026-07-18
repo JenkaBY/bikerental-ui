@@ -3807,41 +3807,6 @@
           <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8466877052784297059" datatype="html">
-        <source>Equipment status created</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/admin/src/app/equipment-statuses/equipment-status-dialog.component.ts</context>
-          <context context-type="linenumber">140</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6164165427886277937" datatype="html">
-        <source>Equipment status updated</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/admin/src/app/equipment-statuses/equipment-status-dialog.component.ts</context>
-          <context context-type="linenumber">141</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1310338618073506827" datatype="html">
-        <source>Failed to save equipment status</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/admin/src/app/equipment-statuses/equipment-status-dialog.component.ts</context>
-          <context context-type="linenumber">146</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8830992352017121452" datatype="html">
-        <source>Equipment statuses</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/admin/src/app/equipment-statuses/equipment-status-list.component.ts</context>
-          <context context-type="linenumber">32</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3555007666612647221" datatype="html">
-        <source>Allowed transitions</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/admin/src/app/equipment-statuses/equipment-status-list.component.ts</context>
-          <context context-type="linenumber">63,64</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="187187500641108332" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ labels.Edit }}"/></source>
         <context-group purpose="location">

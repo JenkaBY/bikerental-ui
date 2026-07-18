@@ -55,9 +55,7 @@ export const appConfig: ApplicationConfig = {
         auth.checkAuth().pipe(
           tap((result) => {
             if (result.isAuthenticated) {
-              lookupFacade
-                .init({ loadEquipmentStatus: true, loadEquipmentType: true, loadPricingType: true })
-                .subscribe();
+              lookupFacade.init({ loadEquipmentType: true, loadPricingType: true }).subscribe();
             }
           }),
         ),

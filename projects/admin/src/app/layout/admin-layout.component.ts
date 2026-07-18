@@ -13,8 +13,6 @@ import {
 const NAV_ITEMS: NavItem[] = [
   { label: $localize`Equipment`, route: 'equipment', icon: 'pedal_bike' },
   { label: $localize`Equipment Types`, route: 'equipment-types', icon: 'category' },
-  // TODO remove completely.
-  // { label: $localize`Equipment Statuses`, route: 'equipment-statuses', icon: 'toggle_on' },
   { label: $localize`Tariffs`, route: 'tariffs', icon: 'payments' },
   { label: Labels.AgreementsNavLabel, route: 'agreements', icon: 'history_edu' },
   { label: $localize`Customers`, route: 'customers', icon: 'people' },

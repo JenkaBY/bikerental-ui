@@ -12,13 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
-import {
-  EquipmentStatusStore,
-  EquipmentStore,
-  EquipmentTypeStore,
-  Labels,
-  TruncatePipe,
-} from '@bikerental/shared';
+import { EquipmentStore, EquipmentTypeStore, Labels, TruncatePipe } from '@bikerental/shared';
 import { Equipment } from '@ui-models';
 
 @Component({
@@ -155,7 +149,6 @@ export class EquipmentListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   readonly store = inject(EquipmentStore);
   readonly equipmentTypeStore = inject(EquipmentTypeStore);
-  readonly equipmentStatusStore = inject(EquipmentStatusStore);
 
   readonly Labels = Labels;
 
@@ -191,7 +184,6 @@ export class EquipmentListComponent implements OnInit {
       {
         data: {
           types: this.equipmentTypeStore.types(),
-          statuses: this.equipmentStatusStore.statuses(),
         },
         disableClose: true,
         autoFocus: true,
@@ -206,7 +198,6 @@ export class EquipmentListComponent implements OnInit {
         data: {
           equipment: e,
           types: this.equipmentTypeStore.types(),
-          statuses: this.equipmentStatusStore.statuses(),
         },
         autoFocus: 'first-tabbable',
       },

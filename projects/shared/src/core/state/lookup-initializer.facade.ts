@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { catchError, finalize, forkJoin, Observable, of, switchMap, tap } from 'rxjs';
-import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
 import { PricingTypeStore } from './pricing-type.store';
 import { TariffStore } from './tariff.store';
@@ -8,7 +7,6 @@ import { LookupConfig } from '../models/lookup-config.model';
 
 @Injectable({ providedIn: 'root' })
 export class LookupInitializerFacade {
-  private readonly equipmentStatusStore = inject(EquipmentStatusStore);
   private readonly equipmentTypeStore = inject(EquipmentTypeStore);
   private readonly pricingTypeStore = inject(PricingTypeStore);
   private readonly tariffStore = inject(TariffStore);
@@ -16,17 +14,6 @@ export class LookupInitializerFacade {
   init(config: LookupConfig): Observable<unknown> {
     console.log('Background initialization started...');
     const tasks: Observable<unknown>[] = [];
-
-    if (config.loadEquipmentStatus) {
-      tasks.push(
-        this.equipmentStatusStore.load().pipe(
-          catchError((err) => {
-            console.error('Failed to load equipment status', err);
-            return of(null);
-          }),
-        ),
-      );
-    }
 
     if (config.loadEquipmentType) {
       tasks.push(
