@@ -17,6 +17,12 @@ export interface CustomerRentalSummary {
   readonly equipment: CustomerRentalEquipment[];
 }
 
+export interface RentalCustomerRef {
+  readonly id: string;
+  readonly phone: string;
+  readonly name?: string;
+}
+
 export interface RentalStatusMeta {
   readonly slug: string;
   readonly color: 'primary' | 'accent' | 'warn' | 'default';

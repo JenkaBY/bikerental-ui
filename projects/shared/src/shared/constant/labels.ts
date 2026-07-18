@@ -191,6 +191,7 @@ export class Labels {
   static readonly Returned = $localize`Returned`;
   static readonly NoHistoryRentals = $localize`No rentals`;
   static readonly Ended = $localize`Ended`;
+  static readonly ClearAllFilters = $localize`Clear all`;
 
   static readonly CustomerAccountTabLabel = $localize`Account`;
   static readonly CustomerTopUpButton = $localize`Top Up`;

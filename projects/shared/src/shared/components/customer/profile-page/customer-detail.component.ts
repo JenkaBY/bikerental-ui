@@ -6,7 +6,7 @@ import { CustomerFinanceStore } from '../../../../core/state/customer-finance.st
 import { CustomerRatingService } from '../../../../core/state/customer-rating.service';
 import { CustomerStore } from '../../../../core/state/customer.store';
 import { CustomerLayoutStore } from '../../../../core/state/customer-layout.store';
-import { CustomerRentalsStore } from '../../../../core/state/customer-rentals.store';
+import { RentalSearchStore } from '../../../../core/state/rental-search.store';
 import { CustomerTransactionsStore } from '../../../../core/state/customer-transactions.store';
 import { Labels } from '../../../constant/labels';
 import { MoneyPipe } from '../../../pipes/money.pipe';
@@ -24,7 +24,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     CustomerStore,
     CustomerLayoutStore,
     CustomerFinanceStore,
-    CustomerRentalsStore,
+    RentalSearchStore,
     CustomerTransactionsStore,
   ],
   imports: [

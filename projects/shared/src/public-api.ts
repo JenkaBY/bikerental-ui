@@ -53,6 +53,7 @@ export * from './core/state/rental.store';
 export * from './core/state/rental-store.token';
 export * from './core/state/batch-rental-property.store';
 export * from './core/state/rental-list.store';
+export * from './core/state/rental-search.store';
 export * from './core/state/rental-lookup.store';
 export * from './core/state/rental-cost-calculation.store';
 export * from './core/state/return-equipment-cost.store';
@@ -114,6 +115,7 @@ export * from './shared/components/customer/customer-balance-pill/customer-balan
 export * from './shared/components/customer/customer-comments-list/customer-comments-list.component';
 export * from './shared/components/customer/customer-panel-header/customer-panel-header.component';
 export * from './shared/components/customer/profile-page/customer-profile.routes';
+export * from './shared/components/customer/profile-page/tabs/customer-rentals/customer-rental-list-item.component';
 export * from './shared/components/qr-scanner/barcode-scanner.service';
 export * from './shared/components/qr-scanner/qr-payload-parser';
 export * from './shared/components/qr-scanner/qr-scanner.component';

@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { DatePipe, DOCUMENT } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import type { CustomerRentalSummary } from '../../../../../../core/models/rental.model';
+import type {
+  CustomerRentalSummary,
+  RentalCustomerRef,
+} from '../../../../../../core/models/rental.model';
 import { mapRentalStatus } from '../../../../../rental-status.meta';
 import { Labels } from '../../../../../constant/labels';
 import { MoneyPipe } from '../../../../../pipes/money.pipe';
@@ -17,6 +20,14 @@ import { EquipmentBadgeComponent } from '../../../../equipment-badge/equipment-b
   template: `
     @if (rental(); as r) {
       <div class="relative border border-slate-200 rounded-lg pl-4 pr-11 py-3 hover:bg-slate-50">
+        @if (customer(); as c) {
+          <a [href]="customerUrl()" class="text-sm font-semibold text-emerald-700 hover:underline">
+            {{ c.phone }}
+            @if (c.name) {
+              <span class="font-normal text-slate-500">({{ c.name }})</span>
+            }
+          </a>
+        }
         <div class="flex items-center justify-between gap-2">
           <span class="text-sm font-semibold text-slate-900">
             #{{ r.id }}&nbsp;&middot;&nbsp;{{ r.createdAt | date: 'dd MMM, HH:mm' }}
@@ -66,6 +77,7 @@ export class CustomerRentalListItemComponent {
   private readonly document = inject(DOCUMENT);
 
   readonly rental = input.required<CustomerRentalSummary>();
+  readonly customer = input<RentalCustomerRef | undefined>();
 
   protected readonly Labels = Labels;
 
@@ -80,6 +92,13 @@ export class CustomerRentalListItemComponent {
       .withRoute(`rentals/${this.rental().id}`)
       .toString(),
   );
+
+  protected readonly customerUrl = computed(() => {
+    const c = this.customer();
+    return c
+      ? DeployedPath.fromBase(this.document.baseURI).withRoute(`customers/${c.id}`).toString()
+      : '';
+  });
 
   protected readonly detailAriaLabel = computed(
     () => `${Labels.CustomerRentalsViewDetails}: ${this.statusLabel()}`,
