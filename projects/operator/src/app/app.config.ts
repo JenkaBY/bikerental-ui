@@ -50,7 +50,6 @@ export const appConfig: ApplicationConfig = {
       const lookupFacade = inject(LookupInitializerFacade);
       lookupFacade
         .init({
-          loadEquipmentStatus: true,
           loadEquipmentType: true,
           loadPricingType: true,
           loadSpecialTariffId: true,

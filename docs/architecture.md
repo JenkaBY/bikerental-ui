@@ -76,7 +76,7 @@ Status indicators (e.g., "Available", "Rented") are determined by functional fla
 
 ### 4.5. Non-blocking Lookup Initialization
 
-At application startup, a `LookupInitializerFacade` is used with `APP_INITIALIZER` to trigger the loading of dictionary data (e.g., Equipment Statuses, Types) in the background.
+At application startup, a `LookupInitializerFacade` is used with `APP_INITIALIZER` to trigger the loading of dictionary data (e.g., Equipment Types) in the background.
 
 - **Why:** This approach ensures that the initial rendering of the application is not blocked by HTTP requests for lookup data. The factory function in the `provideAppInitializer` returns a `Promise.resolve()` immediately after subscribing to the facade's `init()` method, allowing the application to bootstrap while data is being fetched in the background. This improves the user's perceived performance.
 

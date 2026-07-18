@@ -277,7 +277,7 @@ export class RentalStore {
 
     const request$ = id
       ? this.rentalsService.updateRental(id, this.mapToRequest())
-      : this.rentalsService.createDraft().pipe(
+      : this.rentalsService.initDraft(this.mapToRequest()).pipe(
           tap((res) => this.patchState({ id: res.id })),
           switchMap((res) => this.rentalsService.updateRental(res.id, this.mapToRequest())),
         );

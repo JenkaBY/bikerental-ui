@@ -35,15 +35,15 @@
 
 - PATH: `projects/shared/src/core/mappers/`
   PURPOSE: Pure static converter classes (`XyzMapper.fromResponse` / `XyzMapper.toRequest`)
-  ENTRY_FILES: `equipment-type.mapper.ts`, `equipment-status.mapper.ts`, `equipment.mapper.ts`, `tariff.mapper.ts`, `pricing-type.mapper.ts`, `page.mapper.ts`, `customer.mapper.ts`
+  ENTRY_FILES: `equipment-type.mapper.ts`, `equipment.mapper.ts`, `tariff.mapper.ts`, `pricing-type.mapper.ts`, `page.mapper.ts`, `customer.mapper.ts`
 
 - PATH: `projects/shared/src/core/models/`
   PURPOSE: UI domain model interfaces — the only types components import
-  ENTRY_FILES: `equipment-type.model.ts`, `equipment-status.model.ts`, `equipment.model.ts`, `tariff.model.ts`, `common.model.ts`
+  ENTRY_FILES: `equipment-type.model.ts`, `equipment.model.ts`, `tariff.model.ts`, `common.model.ts`
 
 - PATH: `projects/shared/src/core/state/`
   PURPOSE: Signal-based in-memory stores and lookup initializer facade
-  ENTRY_FILES: `equipment-type.store.ts`, `equipment-status.store.ts`, `equipment.store.ts`, `tariff.store.ts`, `pricing-type.store.ts`, `lookup-initializer.facade.ts`
+  ENTRY_FILES: `equipment-type.store.ts`, `equipment.store.ts`, `tariff.store.ts`, `pricing-type.store.ts`, `lookup-initializer.facade.ts`
 
 - PATH: `projects/shared/src/core/health/`
   PURPOSE: Backend health polling and signal-based result exposure
@@ -121,8 +121,8 @@ TYPE: Gateway
 PURPOSE: Desktop shell for all Admin sub-routes with sidenav and toolbar.
 RESPONSIBILITIES:
 
-- Renders `ShellComponent` with an 8-item sidebar navigation
-- Defines the admin nav items (Equipment, Equipment Types, Equipment Statuses, Tariffs, Customers, Rentals, Payments, Users)
+- Renders `ShellComponent` with a sidebar navigation
+- Defines the admin nav items (Equipment, Equipment Types, Tariffs, Customers, Rentals, Payments, Users)
 - Embeds `HealthIndicatorComponent` in the sidebar footer
 - Provides `LogoutButtonComponent` in the toolbar
 - Manages sidenav open/closed state via `signal()`
@@ -196,14 +196,13 @@ PURPOSE: Admin table view for equipment management with filtering, pagination, a
 RESPONSIBILITIES:
 
 - Reads paginated equipment list from `EquipmentStore`
-- Provides status and type filter dropdowns driven by store signals
-- Opens `EquipmentDialogComponent` for create and edit operations, passing current types and statuses
+- Provides a type filter dropdown driven by store signals
+- Opens `EquipmentDialogComponent` for create and edit operations, passing current types
 - Triggers store reload after dialog success
   SOURCE: `projects/admin/src/app/equipment/equipment-list.component.ts`
   CALLS:
 - EquipmentStore — to load, filter, and page equipment data
 - EquipmentTypeStore — to provide type filter options
-- EquipmentStatusStore — to provide status filter options
 - MatDialog → EquipmentDialogComponent — to open create/edit form
   CALLED_BY:
 - Angular Router (admin route `'equipment'`)
@@ -215,9 +214,8 @@ TYPE: API
 PURPOSE: Modal form for creating or editing a single equipment item.
 RESPONSIBILITIES:
 
-- Receives `{equipment?: Equipment, types: EquipmentType[], statuses: EquipmentStatus[]}` via `MAT_DIALOG_DATA`
-- Renders a reactive form with serial number, UID, type dropdown, status dropdown, model, commissionedAt, and condition fields
-- Disables status dropdown when no allowed transitions are available
+- Receives `{equipment?: Equipment, types: EquipmentType[]}` via `MAT_DIALOG_DATA`
+- Renders a reactive form with serial number, UID, type dropdown, model, commissionedAt, and condition fields
 - Calls `EquipmentStore.create()` or `EquipmentStore.update(id, write)` on save
 - Closes `MatDialogRef` with `true` on success; shows `MatSnackBar` error on failure
   SOURCE: `projects/admin/src/app/equipment/equipment-dialog.component.ts`
@@ -265,43 +263,6 @@ RESPONSIBILITIES:
 - MatSnackBar — to surface error notifications
   CALLED_BY:
 - EquipmentTypeListComponent
-
----
-
-COMPONENT_NAME: EquipmentStatusListComponent
-TYPE: API
-PURPOSE: Admin table view for equipment status management.
-RESPONSIBILITIES:
-
-- Reads equipment statuses from `EquipmentStatusStore`
-- Renders a MatTable with columns: slug, name, description, allowedTransitions (mat-chips), actions
-- Opens `EquipmentStatusDialogComponent` for create and edit operations
-  SOURCE: `projects/admin/src/app/equipment-statuses/equipment-status-list.component.ts`
-  CALLS:
-- EquipmentStatusStore — to read status list and loading state
-- MatDialog → EquipmentStatusDialogComponent — to open create/edit form
-  CALLED_BY:
-- Angular Router (admin route `'equipment-statuses'`)
-
----
-
-COMPONENT_NAME: EquipmentStatusDialogComponent
-TYPE: API
-PURPOSE: Modal form for creating or editing an equipment status.
-RESPONSIBILITIES:
-
-- Receives `{status?: EquipmentStatus, statuses: EquipmentStatus[]}` via `MAT_DIALOG_DATA`
-- Renders a reactive form with slug, name, description, and allowedTransitions (multi-select) fields
-- Filters the current status from the allowed-transitions options on edit
-- Calls `EquipmentStatusStore.create()` or `EquipmentStatusStore.update(slug, write)` on save
-- Closes dialog with `true` on success; shows snack bar on error
-  SOURCE: `projects/admin/src/app/equipment-statuses/equipment-status-dialog.component.ts`
-  CALLS:
-- EquipmentStatusStore — to persist create/update operations
-- MatDialogRef — to close the dialog
-- MatSnackBar — to surface error notifications
-  CALLED_BY:
-- EquipmentStatusListComponent
 
 ---
 
@@ -740,7 +701,6 @@ RESPONSIBILITIES:
 - NONE
   CALLED_BY:
 - EquipmentTypeDialogComponent
-- EquipmentStatusDialogComponent
 - EquipmentDialogComponent
 - TariffDialogComponent
 
@@ -757,7 +717,6 @@ RESPONSIBILITIES:
 - NONE
   CALLED_BY:
 - EquipmentTypeDialogComponent
-- EquipmentStatusDialogComponent
 - EquipmentDialogComponent
 - TariffDialogComponent
 
@@ -816,41 +775,19 @@ RESPONSIBILITIES:
 
 ---
 
-COMPONENT_NAME: EquipmentStatusStore
-TYPE: Store
-PURPOSE: Signal-based in-memory store for the equipment-status lookup list.
-RESPONSIBILITIES:
-
-- Loads all equipment statuses from the backend via `EquipmentStatusesService`
-- Applies `EquipmentStatusMapper.fromResponse()` to convert raw API responses
-- Exposes `statuses()`, `loading()`, `saving()` computed signals
-- Handles create and slug-keyed update operations
-  SOURCE: `projects/shared/src/core/state/equipment-status.store.ts`
-  CALLS:
-- EquipmentStatusesService (generated) — to call `GET /equipment-statuses`, `POST`, `PUT`
-- EquipmentStatusMapper — to convert API responses and write objects
-  CALLED_BY:
-- LookupInitializerFacade
-- EquipmentStatusListComponent
-- EquipmentStatusDialogComponent
-- EquipmentStore
-
----
-
 COMPONENT_NAME: EquipmentStore
 TYPE: Store
-PURPOSE: Signal-based paginated store for the equipment list with status and type filters.
+PURPOSE: Signal-based paginated store for the equipment list with type filter.
 RESPONSIBILITIES:
 
 - Loads paginated equipment from the backend via `EquipmentService`
-- Applies `EquipmentMapper.fromResponse()` using lookup data from `EquipmentTypeStore` and `EquipmentStatusStore`
+- Applies `EquipmentMapper.fromResponse()` using lookup data from `EquipmentTypeStore`
 - Exposes `items()`, `totalItems()`, `loading()`, `saving()`, filter, and page signals
 - Handles create and ID-keyed update operations with automatic reload
   SOURCE: `projects/shared/src/core/state/equipment.store.ts`
   CALLS:
 - EquipmentService (generated) — to call `GET /equipments` (with pagination/filters), `POST`, `PUT`
 - EquipmentTypeStore — to read types for response mapping
-- EquipmentStatusStore — to read statuses for response mapping
 - EquipmentMapper — to convert API responses and write objects
   CALLED_BY:
 - EquipmentListComponent
@@ -906,11 +843,10 @@ RESPONSIBILITIES:
 - Accepts a `LookupConfig` specifying which stores to pre-load
 - Calls `load()` on each configured store and merges via `forkJoin`
 - Swallows individual errors to prevent blocking startup
-- Admin app loads: equipment statuses, equipment types, pricing types
-- Operator app loads: equipment statuses and equipment types only
+- Admin app loads: equipment types, pricing types
+- Operator app loads: equipment types only
   SOURCE: `projects/shared/src/core/state/lookup-initializer.facade.ts`
   CALLS:
-- EquipmentStatusStore — `load()` when `config.loadEquipmentStatus`
 - EquipmentTypeStore — `load()` when `config.loadEquipmentType`
 - PricingTypeStore — `load()` when `config.loadPricingType`
   CALLED_BY:
@@ -1032,21 +968,6 @@ RESPONSIBILITIES:
 
 ---
 
-COMPONENT_NAME: EquipmentStatusMapper
-TYPE: Utility
-PURPOSE: Pure static class that converts between generated API types and domain `EquipmentStatus` / `EquipmentStatusWrite`.
-RESPONSIBILITIES:
-
-- `fromResponse(r)` — maps API response to `EquipmentStatus` domain model
-- `toCreateRequest(w)` / `toUpdateRequest(w)` — map write models to API request types
-  SOURCE: `projects/shared/src/core/mappers/equipment-status.mapper.ts`
-  CALLS:
-- NONE
-  CALLED_BY:
-- EquipmentStatusStore
-
----
-
 COMPONENT_NAME: EquipmentMapper
 TYPE: Utility
 PURPOSE: Pure static class that converts between generated API types and domain `Equipment` / `EquipmentWrite`.
@@ -1133,20 +1054,6 @@ RESPONSIBILITIES:
 - HttpClient — to execute HTTP requests
   CALLED_BY:
 - EquipmentTypeStore
-
----
-
-COMPONENT_NAME: EquipmentStatusesService (generated)
-TYPE: Service
-PURPOSE: Auto-generated Angular HTTP service for the Equipment Statuses API controller.
-RESPONSIBILITIES:
-
-- Provides typed methods: `getAllEquipmentStatuses`, `create`, `update`
-  SOURCE: `projects/shared/src/core/api/generated/services/equipmentStatuses.service.ts`
-  CALLS:
-- HttpClient — to execute HTTP requests
-  CALLED_BY:
-- EquipmentStatusStore
 
 ---
 
@@ -1301,21 +1208,16 @@ PURPOSE: Fetches current backend health status and component details
 SOURCE: `projects/shared/src/core/health/health.service.ts`
 
 STEP 5: appConfig → LookupInitializerFacade
-OPERATION: `inject(LookupInitializerFacade)` then `init({ loadEquipmentStatus: true, loadEquipmentType: true, loadPricingType: true }).subscribe()`
+OPERATION: `inject(LookupInitializerFacade)` then `init({ loadEquipmentType: true, loadPricingType: true }).subscribe()`
 PURPOSE: Triggers background loading of all lookup entities needed by form dropdowns
 SOURCE: `projects/admin/src/app/app.config.ts`
 
-STEP 6: LookupInitializerFacade → EquipmentStatusStore
-OPERATION: `load()`
-PURPOSE: Fetches all equipment statuses from the backend and populates the store's signal
-SOURCE: `projects/shared/src/core/state/lookup-initializer.facade.ts`
-
-STEP 7: LookupInitializerFacade → EquipmentTypeStore
+STEP 6: LookupInitializerFacade → EquipmentTypeStore
 OPERATION: `load()`
 PURPOSE: Fetches all equipment types from the backend and populates the store's signal
 SOURCE: `projects/shared/src/core/state/lookup-initializer.facade.ts`
 
-STEP 8: LookupInitializerFacade → PricingTypeStore
+STEP 7: LookupInitializerFacade → PricingTypeStore
 OPERATION: `load()`
 PURPOSE: Fetches all pricing types from the backend and populates the store's signal
 SOURCE: `projects/shared/src/core/state/lookup-initializer.facade.ts`
@@ -1337,11 +1239,6 @@ SOURCE: `projects/shared/src/core/state/lookup-initializer.facade.ts`
 - CHANNEL_TYPE: HTTP
   ENDPOINT: `{environment.apiUrl}/equipment-types` (and sub-paths)
   SOURCE: `projects/shared/src/core/api/generated/services/equipmentTypes.service.ts`
-  NOTES: GET (list), POST (create), PUT /{slug} (update)
-
-- CHANNEL_TYPE: HTTP
-  ENDPOINT: `{environment.apiUrl}/equipment-statuses` (and sub-paths)
-  SOURCE: `projects/shared/src/core/api/generated/services/equipmentStatuses.service.ts`
   NOTES: GET (list), POST (create), PUT /{slug} (update)
 
 - CHANNEL_TYPE: HTTP
@@ -1395,7 +1292,7 @@ REGISTRATION_FILE: Each SPA has its own `app.config.ts` — `projects/admin/src/
   ```typescript
   provideAppInitializer(() => {
     const facade = inject(LookupInitializerFacade);
-    facade.init({ loadEquipmentStatus: true, loadEquipmentType: true, loadPricingType: true }).subscribe();
+    facade.init({ loadEquipmentType: true, loadPricingType: true }).subscribe();
     return Promise.resolve();
   })
   ```
@@ -1429,7 +1326,7 @@ REGISTRATION_FILE: Each SPA has its own `app.config.ts` — `projects/admin/src/
   CONCRETE: `environment.brand` string (`'Bike Rental'`)
   LOCATION: all three `app.config.ts` files
 
-All stores and services (`EquipmentTypeStore`, `EquipmentStatusStore`, `EquipmentStore`, `TariffStore`, `PricingTypeStore`, `HealthService`, `HealthPollerService`, `LayoutModeService`, `ErrorService`, `LookupInitializerFacade`) use `@Injectable({ providedIn: 'root' })` and are therefore singletons. All generated API services also use `providedIn: 'root'`.
+All stores and services (`EquipmentTypeStore`, `EquipmentStore`, `TariffStore`, `PricingTypeStore`, `HealthService`, `HealthPollerService`, `LayoutModeService`, `ErrorService`, `LookupInitializerFacade`) use `@Injectable({ providedIn: 'root' })` and are therefore singletons. All generated API services also use `providedIn: 'root'`.
 
 ---
 

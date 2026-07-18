@@ -30,13 +30,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'equipment-statuses',
-        loadComponent: () =>
-          import('./equipment-statuses/equipment-status-list.component').then(
-            (m) => m.EquipmentStatusListComponent,
-          ),
-      },
-      {
         path: 'tariffs',
         loadComponent: () =>
           import('./tariffs/tariff-list.component').then((m) => m.TariffListComponent),

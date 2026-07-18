@@ -4,8 +4,8 @@ import { vi } from 'vitest';
 
 import { EquipmentListComponent } from './equipment-list.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Equipment, EquipmentStatus, EquipmentType } from '@ui-models';
-import { EquipmentStatusStore, EquipmentStore, EquipmentTypeStore } from '@bikerental/shared';
+import { Equipment, EquipmentType } from '@ui-models';
+import { EquipmentStore, EquipmentTypeStore } from '@bikerental/shared';
 
 describe('EquipmentListComponent', () => {
   let fixture: ComponentFixture<EquipmentListComponent>;
@@ -16,12 +16,10 @@ describe('EquipmentListComponent', () => {
       items: vi.fn(() => [] as Equipment[]),
       totalItems: vi.fn(() => 0),
       loading: vi.fn(() => false),
-      filterStatus: vi.fn(() => undefined as string | undefined),
       filterType: vi.fn(() => undefined as string | undefined),
       pageIndex: vi.fn(() => 0),
       pageSize: vi.fn(() => 20),
       load: vi.fn(() => of(undefined)),
-      setFilterStatus: vi.fn(),
       setFilterType: vi.fn(),
       setPage: vi.fn(),
     }) as unknown as EquipmentStore;
@@ -33,25 +31,17 @@ describe('EquipmentListComponent', () => {
       load: vi.fn(() => of(undefined)),
     }) as unknown as EquipmentTypeStore;
 
-  const makeStatusStore = () =>
-    ({
-      statuses: vi.fn(() => [] as EquipmentStatus[]),
-      load: vi.fn(() => of(undefined)),
-    }) as unknown as EquipmentStatusStore;
-
   const makeDialog = () => ({ open: vi.fn() }) as unknown as MatDialog;
 
   async function createComponentWithMocks(
     overrides?: Partial<{
       store: EquipmentStore;
       typeStore: EquipmentTypeStore;
-      statusStore: EquipmentStatusStore;
       dialog: MatDialog;
     }>,
   ) {
     const store = overrides?.store ?? makeStore();
     const typeStore = overrides?.typeStore ?? makeTypeStore();
-    const statusStore = overrides?.statusStore ?? makeStatusStore();
     const dialog = overrides?.dialog ?? makeDialog();
 
     await TestBed.configureTestingModule({
@@ -59,7 +49,6 @@ describe('EquipmentListComponent', () => {
       providers: [
         { provide: EquipmentStore, useValue: store },
         { provide: EquipmentTypeStore, useValue: typeStore },
-        { provide: EquipmentStatusStore, useValue: statusStore },
         { provide: MatDialog, useValue: dialog },
       ],
     }).compileComponents();
@@ -67,7 +56,7 @@ describe('EquipmentListComponent', () => {
     fixture = TestBed.createComponent(EquipmentListComponent);
     component = fixture.componentInstance;
 
-    return { store, typeStore, statusStore, dialog };
+    return { store, typeStore, dialog };
   }
 
   it('should set filter and reload equipment on type filter change', async () => {

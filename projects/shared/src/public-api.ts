@@ -37,7 +37,6 @@ export * from './core/mappers';
 export * from './core/models';
 
 // Core — signal state stores
-export * from './core/state/equipment-status.store';
 export * from './core/state/equipment-type.store';
 export * from './core/state/equipment.store';
 export * from './core/state/pricing-type.store';

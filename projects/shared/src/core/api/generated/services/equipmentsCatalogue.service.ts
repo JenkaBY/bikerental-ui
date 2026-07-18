@@ -21,11 +21,11 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  RequestOptions,
-  EquipmentResponse,
   EquipmentRequest,
+  EquipmentResponse,
   Pageable,
   PageEquipmentResponse,
+  RequestOptions,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -129,33 +129,29 @@ export class EquipmentsCatalogueService {
   }
 
   searchEquipments(
-    arg3: Pageable,
-    status?: string,
+    arg2: Pageable,
     type?: string,
     q?: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageEquipmentResponse>;
   searchEquipments(
-    arg3: Pageable,
-    status?: string,
+    arg2: Pageable,
     type?: string,
     q?: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageEquipmentResponse>>;
   searchEquipments(
-    arg3: Pageable,
-    status?: string,
+    arg2: Pageable,
     type?: string,
     q?: string,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageEquipmentResponse>>;
-  /** Returns paginated equipment list filtered by status, type, and/or free-text search: exact match on uid, case-insensitive substring match on serial number and model */
+  /** Returns paginated equipment list filtered by type and/or free-text search: exact match on uid, case-insensitive substring match on serial number and model */
   searchEquipments(
-    arg3: Pageable,
-    status?: string,
+    arg2: Pageable,
     type?: string,
     q?: string,
     observe?: 'body' | 'events' | 'response',
@@ -164,17 +160,14 @@ export class EquipmentsCatalogueService {
     const url = `${this.basePath}/api/equipments`;
 
     let params = new HttpParams();
-    if (status != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, status, 'status');
-    }
     if (type != null) {
       params = HttpParamsBuilder.addToHttpParams(params, type, 'type');
     }
     if (q != null) {
       params = HttpParamsBuilder.addToHttpParams(params, q, 'q');
     }
-    if (arg3 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg3, 'arg3');
+    if (arg2 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg2, 'arg2');
     }
 
     let headers: HttpHeaders;

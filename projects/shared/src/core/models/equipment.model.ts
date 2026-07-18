@@ -1,5 +1,4 @@
 import { EquipmentType } from './equipment-type.model';
-import { EquipmentStatus } from './equipment-status.model';
 
 export type EquipmentConditionSlug = 'GOOD' | 'MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
 
@@ -13,7 +12,6 @@ export interface Equipment {
   serialNumber: string;
   uid: string;
   type: EquipmentType;
-  status: EquipmentStatus;
   model: string;
   commissionedAt?: Date;
   conditionNotes?: string;
@@ -24,7 +22,6 @@ export interface EquipmentWrite {
   serialNumber: string;
   uid?: string;
   typeSlug?: string;
-  statusSlug?: string;
   model?: string;
   commissionedAt?: Date;
   conditionNotes?: string;

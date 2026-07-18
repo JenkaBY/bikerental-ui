@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
-import { Equipment, EquipmentStatus, EquipmentType, EquipmentWrite } from '../models';
+import { Equipment, EquipmentType, EquipmentWrite } from '../models';
 import { EquipmentsCatalogueService } from '../api/generated';
 import { EquipmentStore } from './equipment.store';
-import { EquipmentStatusStore } from './equipment-status.store';
 import { EquipmentTypeStore } from './equipment-type.store';
 
 const bikeType: EquipmentType = {
@@ -13,26 +12,11 @@ const bikeType: EquipmentType = {
   isForSpecialTariff: false,
 };
 
-const availableStatus: EquipmentStatus = {
-  slug: 'available',
-  name: 'Available',
-  description: 'Available for rent',
-  allowedTransitions: ['maintenance', 'retired'],
-};
-
-const maintenanceStatus: EquipmentStatus = {
-  slug: 'maintenance',
-  name: 'Maintenance',
-  description: 'Under maintenance',
-  allowedTransitions: ['available'],
-};
-
 const createdEquipmentResponse = {
   id: 10,
   serialNumber: 'SN-010',
   uid: 'UID-010',
   type: 'bike',
-  status: 'available',
   model: 'Roadster',
 };
 
@@ -41,7 +25,6 @@ const reloadedEquipmentResponse = {
   serialNumber: 'SN-011',
   uid: 'UID-011',
   type: 'bike',
-  status: 'maintenance',
   model: 'City',
 };
 
@@ -50,7 +33,6 @@ const createdEquipment: Equipment = {
   serialNumber: 'SN-010',
   uid: 'UID-010',
   type: bikeType,
-  status: availableStatus,
   model: 'Roadster',
 };
 
@@ -59,7 +41,6 @@ const reloadedEquipment: Equipment = {
   serialNumber: 'SN-011',
   uid: 'UID-011',
   type: bikeType,
-  status: maintenanceStatus,
   model: 'City',
 };
 
@@ -75,7 +56,6 @@ describe('EquipmentStore', () => {
     createEquipment: ReturnType<typeof vi.fn>;
   };
   let equipmentTypeStore: { types: ReturnType<typeof vi.fn> };
-  let equipmentStatusStore: { statuses: ReturnType<typeof vi.fn> };
   let createMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -86,16 +66,12 @@ describe('EquipmentStore', () => {
     };
     // Mock stores with computed-like behavior (return values directly, not observables)
     equipmentTypeStore = { types: vi.fn().mockReturnValue([bikeType]) };
-    equipmentStatusStore = {
-      statuses: vi.fn().mockReturnValue([availableStatus, maintenanceStatus]),
-    };
 
     TestBed.configureTestingModule({
       providers: [
         EquipmentStore,
         { provide: EquipmentsCatalogueService, useValue: service },
         { provide: EquipmentTypeStore, useValue: equipmentTypeStore },
-        { provide: EquipmentStatusStore, useValue: equipmentStatusStore },
       ],
     });
 
@@ -120,11 +96,7 @@ describe('EquipmentStore', () => {
       }),
     );
 
-    expect(service.searchEquipments).toHaveBeenCalledWith(
-      { page: 0, size: 20 },
-      undefined,
-      undefined,
-    );
+    expect(service.searchEquipments).toHaveBeenCalledWith({ page: 0, size: 20 }, undefined);
     expect(result).toEqual(createdEquipment);
     expect(store.items()).toEqual([reloadedEquipment]);
     expect(store.totalItems()).toBe(1);
@@ -147,30 +119,13 @@ describe('EquipmentStore', () => {
     expect(store.saving()).toBe(false);
   });
 
-  it('reloads from first page when status filter changes', () => {
-    service.searchEquipments.mockReturnValue(of({ items: [], totalItems: 0 }));
-
-    store.setPage(3, 50);
-    store.setFilterStatus('available');
-
-    expect(service.searchEquipments).toHaveBeenLastCalledWith(
-      { page: 0, size: 50 },
-      'available',
-      undefined,
-    );
-  });
-
   it('reloads from first page when type filter changes', () => {
     service.searchEquipments.mockReturnValue(of({ items: [], totalItems: 0 }));
 
     store.setPage(2, 25);
     store.setFilterType('bike');
 
-    expect(service.searchEquipments).toHaveBeenLastCalledWith(
-      { page: 0, size: 25 },
-      undefined,
-      'bike',
-    );
+    expect(service.searchEquipments).toHaveBeenLastCalledWith({ page: 0, size: 25 }, 'bike');
   });
 
   it('reloads with requested page and size when page changes', () => {
@@ -178,10 +133,6 @@ describe('EquipmentStore', () => {
 
     store.setPage(4, 10);
 
-    expect(service.searchEquipments).toHaveBeenLastCalledWith(
-      { page: 4, size: 10 },
-      undefined,
-      undefined,
-    );
+    expect(service.searchEquipments).toHaveBeenLastCalledWith({ page: 4, size: 10 }, undefined);
   });
 });

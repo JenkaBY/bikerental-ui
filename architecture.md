@@ -98,7 +98,7 @@ EXPOSES:
   DESCRIPTION: Compiled static bundle for the Admin POS area
   CONSUMES:
 - PROTOCOL: HTTP
-  ENDPOINT_OR_TOPIC: /api/equipment-types, /api/equipment-statuses, /api/equipment, /api/tariffs, /api/customers, /api/rentals, /api/finance
+  ENDPOINT_OR_TOPIC: /api/equipment-types, /api/equipment, /api/tariffs, /api/customers, /api/rentals, /api/finance
   FROM_SERVICE: bikerental-backend
   DESCRIPTION: All domain CRUD operations via shared generated API client
 
@@ -116,7 +116,7 @@ EXPOSES:
   DESCRIPTION: Compiled static bundle for the Operator POS area
   CONSUMES:
 - PROTOCOL: HTTP
-  ENDPOINT_OR_TOPIC: /api/equipment-types, /api/equipment-statuses, /api/equipment, /api/tariffs, /api/customers, /api/rentals
+  ENDPOINT_OR_TOPIC: /api/equipment-types, /api/equipment, /api/tariffs, /api/customers, /api/rentals
   FROM_SERVICE: bikerental-backend
   DESCRIPTION: Rental lifecycle operations via shared generated API client
 
@@ -148,7 +148,7 @@ EXPOSES:
   ENDPOINT_OR_TOPIC: /v3/api-docs/all
   DESCRIPTION: OpenAPI spec used to regenerate `projects/shared/src/core/api/generated/`
 - PROTOCOL: HTTP
-  ENDPOINT_OR_TOPIC: /api/equipment-types, /api/equipment-statuses, /api/equipment, /api/tariffs, /api/customers, /api/rentals, /api/finance
+  ENDPOINT_OR_TOPIC: /api/equipment-types, /api/equipment, /api/tariffs, /api/customers, /api/rentals, /api/finance
   DESCRIPTION: Domain REST endpoints consumed by generated Angular services in admin and operator
 - PROTOCOL: HTTP
   ENDPOINT_OR_TOPIC: /actuator/health
@@ -162,7 +162,7 @@ INTERACTION_ID: 1
 FROM_SERVICE: admin
 TO_SERVICE: bikerental-backend
 PROTOCOL: HTTP
-CHANNEL: /api/equipment-types, /api/equipment-statuses, /api/equipment, /api/tariffs, /api/customers, /api/rentals, /api/finance
+CHANNEL: /api/equipment-types, /api/equipment, /api/tariffs, /api/customers, /api/rentals, /api/finance
 DIRECTION: Request-Response
 PURPOSE: CRUD operations for all domain entities managed by the admin area
 CONTRACT_REF: `projects/shared/src/core/api/generated/` (auto-generated from OpenAPI spec)
@@ -171,7 +171,7 @@ INTERACTION_ID: 2
 FROM_SERVICE: operator
 TO_SERVICE: bikerental-backend
 PROTOCOL: HTTP
-CHANNEL: /api/equipment-types, /api/equipment-statuses, /api/equipment, /api/tariffs, /api/customers, /api/rentals
+CHANNEL: /api/equipment-types, /api/equipment, /api/tariffs, /api/customers, /api/rentals
 DIRECTION: Request-Response
 PURPOSE: Rental lifecycle operations: rental creation, equipment return, active-rentals dashboard
 CONTRACT_REF: `projects/shared/src/core/api/generated/` (auto-generated from OpenAPI spec)
@@ -282,7 +282,7 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
 
 - PATH: `projects/shared/src/core/models/`
   ROLE: Library
-  PURPOSE: UI domain model interfaces (`Tariff`, `Equipment`, `EquipmentType`, `EquipmentStatus`, …) — the only types components import
+  PURPOSE: UI domain model interfaces (`Tariff`, `Equipment`, `EquipmentType`, …) — the only types components import
 
 - PATH: `projects/shared/src/core/state/`
   ROLE: Library

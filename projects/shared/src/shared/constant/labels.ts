@@ -17,9 +17,6 @@ export class Labels {
   static readonly Close = $localize`Close`;
   static readonly Edit = $localize`Edit`;
   static readonly Create = $localize`Create`;
-  static readonly EditStatus = $localize`Edit Status`;
-  static readonly CreateStatus = $localize`Create Status`;
-  static readonly AllowedTransitions = $localize`Allowed Transitions`;
 
   static readonly SerialNumber = $localize`Serial Number`;
   static readonly Uid = $localize`UID`;
@@ -32,9 +29,6 @@ export class Labels {
   static readonly CreateEquipment = $localize`Create Equipment`;
   static readonly EditEquipment = $localize`Edit Equipment`;
   static readonly FormatDate = $localize`Format Date:`;
-  static readonly TransitionFrom = $localize`Transition from`;
-  static readonly TransitionTo = $localize`to`;
-  static readonly NoTransitionsAvailable = $localize`No transitions for this status`;
   // Added for equipment list
   static readonly Equipment = $localize`Equipment`;
   static readonly SelectAll = $localize`Select all`;
@@ -101,7 +95,6 @@ export class Labels {
   static readonly ExpectedReturn = $localize`Expected Return`;
   static readonly OverdueMinutes = $localize`Overdue (min)`;
   static readonly EditRental = $localize`Edit Rental`;
-  static readonly AllStatuses = $localize`All Statuses`;
 
   static readonly PaymentHistory = $localize`Payment History`;
   static readonly SearchByRentalId = $localize`Search by Rental ID`;
