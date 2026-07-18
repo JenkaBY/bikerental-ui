@@ -58,7 +58,7 @@ export const routes: Routes = [
       {
         path: 'rentals',
         loadComponent: () =>
-          import('./rentals/rental-history.component').then((m) => m.RentalHistoryComponent),
+          import('./rentals/rental-history.component').then((m) => m.RentalListComponent),
       },
       {
         path: 'payments',

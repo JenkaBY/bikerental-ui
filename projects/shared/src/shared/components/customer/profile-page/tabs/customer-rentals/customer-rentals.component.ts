@@ -4,7 +4,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { CustomerRentalsStore } from '../../../../../../core/state/customer-rentals.store';
+import { RentalSearchStore } from '../../../../../../core/state/rental-search.store';
 import { CustomerLayoutStore } from '../../../../../../core/state/customer-layout.store';
 import { Labels } from '../../../../../constant/labels';
 import { parseDate, toIsoDate } from '../../../../../utils/date.util';
@@ -42,7 +42,7 @@ import {
           <p class="text-slate-500">{{ Labels.CustomerRentalLoadError }}</p>
           <button mat-stroked-button (click)="store.reload()">{{ Labels.Retry }}</button>
         </div>
-      } @else if (!store.loading() && store.rentals().length === 0) {
+      } @else if (!store.loading() && store.items().length === 0) {
         <div class="text-center mt-6 flex flex-col items-center gap-2">
           <p class="text-slate-400">{{ emptyMessage() }}</p>
           @if (hasFilter()) {
@@ -50,9 +50,9 @@ import {
           }
         </div>
       } @else {
-        <div class="flex flex-col gap-2">
-          @for (rental of store.rentals(); track rental.id) {
-            <app-customer-rental-list-item [rental]="rental" />
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(22rem,1fr))] gap-2">
+          @for (row of store.items(); track row.rental.id) {
+            <app-customer-rental-list-item [rental]="row.rental" />
           }
         </div>
       }
@@ -72,8 +72,10 @@ import {
 export class CustomerRentalsComponent {
   protected readonly Labels = Labels;
 
-  protected readonly store = inject(CustomerRentalsStore);
+  protected readonly store = inject(RentalSearchStore);
   private readonly layoutStore = inject(CustomerLayoutStore);
+
+  private static readonly PAGE_SIZE = 10;
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -95,7 +97,13 @@ export class CustomerRentalsComponent {
     effect(() => {
       const customerId = this.layoutStore.customerId();
       if (!customerId) return;
-      this.store.load(this.from(), this.to(), this.page());
+      this.store.search({
+        customerId,
+        from: this.from(),
+        to: this.to(),
+        pageIndex: this.page(),
+        pageSize: CustomerRentalsComponent.PAGE_SIZE,
+      });
     });
   }
 
