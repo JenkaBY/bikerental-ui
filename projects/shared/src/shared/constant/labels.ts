@@ -228,6 +228,38 @@ export class Labels {
   static readonly TransactionKindAdjustment = $localize`Adjustment`;
   static readonly TransactionKindOther = $localize`Transaction`;
 
+  // ── Admin Transactions ────────────────────────────────────────────────────
+
+  static readonly TransactionsNavLabel = $localize`Transactions`;
+  static readonly TransactionFilterLedgerTypes = $localize`Ledger`;
+  static readonly TransactionFilterSourceId = $localize`Rental #`;
+
+  static readonly LedgerTypeCash = $localize`Cash`;
+  static readonly LedgerTypeCardTerminal = $localize`Card terminal`;
+  static readonly LedgerTypeBankTransfer = $localize`Bank transfer`;
+  static readonly LedgerTypeRevenue = $localize`Revenue`;
+  static readonly LedgerTypeAdjustment = $localize`Adjustment`;
+  static readonly LedgerTypeCustomerWallet = $localize`Customer wallet`;
+  static readonly LedgerTypeCustomerHold = $localize`Customer hold`;
+
+  static readonly TransactionDirectionCredit = $localize`Credit`;
+  static readonly TransactionDirectionDebit = $localize`Debit`;
+
+  static readonly TransactionDetailsTitle = $localize`Transaction details`;
+  static readonly TransactionDetailsLoadError = $localize`Failed to load transaction details`;
+  static readonly TransactionViewDetails = $localize`View transaction details`;
+  static readonly TransactionIdLabel = $localize`Transaction ID`;
+  static readonly TransactionReasonLabel = $localize`Reason`;
+  static readonly TransactionDeltasTitle = $localize`Money movement`;
+  static readonly TransactionBalancesTitle = $localize`Balances after`;
+  static readonly TransactionEntriesTitle = $localize`Ledger entries`;
+  static readonly TransactionCustomerLedgersTitle = $localize`Customer ledgers`;
+  static readonly TransactionSystemLedgersTitle = $localize`System ledgers`;
+  static readonly TransactionEntryLedgerColumn = $localize`Ledger`;
+  static readonly TransactionEntryDirectionColumn = $localize`Direction`;
+  static readonly TransactionEntrySignedDeltaColumn = $localize`Change`;
+  static readonly TransactionEntryBalanceAfterColumn = $localize`Balance after`;
+
   static readonly Duration = $localize`Duration`;
   static readonly DurationMinutes = $localize`Duration (min)`;
   static readonly MinuteShort = $localize`min`;

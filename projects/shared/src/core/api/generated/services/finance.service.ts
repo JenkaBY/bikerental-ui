@@ -26,8 +26,11 @@ import {
   TransactionResponse,
   RecordDepositRequest,
   AdjustmentRequest,
-  TransactionHistoryFilterParams,
+  TransactionFilterParams,
   Pageable,
+  PageTransactionSummaryResponse,
+  TransactionDetailsResponse,
+  TransactionHistoryFilterParams,
   PageCustomerTransactionResponse,
   CustomerAccountBalancesResponse,
 } from '../models';
@@ -173,6 +176,101 @@ export class FinanceService {
     };
 
     return this.httpClient.post(url, adjustmentRequest, requestOptions);
+  }
+
+  findTransactions(
+    arg0: TransactionFilterParams,
+    arg1: Pageable,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PageTransactionSummaryResponse>;
+  findTransactions(
+    arg0: TransactionFilterParams,
+    arg1: Pageable,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PageTransactionSummaryResponse>>;
+  findTransactions(
+    arg0: TransactionFilterParams,
+    arg1: Pageable,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PageTransactionSummaryResponse>>;
+  /** Returns a paged list of business transactions filtered by any combination of customer ids, recorded-at date range, source, and affected ledger types. Sortable by recordedAt, amount or type; defaults to recordedAt descending. */
+  findTransactions(
+    arg0: TransactionFilterParams,
+    arg1: Pageable,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/transactions`;
+
+    let params = new HttpParams();
+    if (arg0 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    }
+    if (arg1 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getTransactionDetails(
+    transactionId: string,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<TransactionDetailsResponse>;
+  getTransactionDetails(
+    transactionId: string,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<TransactionDetailsResponse>>;
+  getTransactionDetails(
+    transactionId: string,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<TransactionDetailsResponse>>;
+  /** Returns the transaction identified by the path id, including every ledger leg with its signed movement and running balance, plus the customer-side deltas and resulting bucket balances. */
+  getTransactionDetails(
+    transactionId: string,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/transactions/${transactionId}`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
   }
 
   getTransactionHistory(

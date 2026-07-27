@@ -1,4 +1,9 @@
-import type { CustomerTransaction, TransactionKind } from '../core/models/transaction.model';
+import type {
+  CustomerTransaction,
+  LedgerType,
+  TransactionDirection,
+  TransactionKind,
+} from '../core/models/transaction.model';
 import { Labels } from './constant/labels';
 
 export interface TransactionKindMeta {
@@ -62,12 +67,56 @@ export function mapTransactionFlow(
   let from: FlowBucket | null = null;
   let to: FlowBucket | null = null;
 
-  if (deltas.external > 0) from = 'external';
-  else if (deltas.external < 0) to = 'external';
-  if (deltas.wallet < 0) from = 'wallet';
-  else if (deltas.wallet > 0) to = 'wallet';
-  if (deltas.hold < 0) from = 'hold';
-  else if (deltas.hold > 0) to = 'hold';
+  if (deltas.external.amount > 0) from = 'external';
+  else if (deltas.external.amount < 0) to = 'external';
+  if (deltas.wallet.amount < 0) from = 'wallet';
+  else if (deltas.wallet.amount > 0) to = 'wallet';
+  if (deltas.hold.amount < 0) from = 'hold';
+  else if (deltas.hold.amount > 0) to = 'hold';
 
   return from && to ? { from: bucketLabel(from), to: bucketLabel(to) } : null;
+}
+
+export interface LedgerTypeMeta {
+  readonly type: LedgerType;
+  readonly icon: string;
+  readonly label: string;
+}
+
+const LEDGER_TYPE_META: Record<LedgerType, LedgerTypeMeta> = {
+  CASH: { type: 'CASH', icon: 'payments', label: Labels.LedgerTypeCash },
+  CARD_TERMINAL: {
+    type: 'CARD_TERMINAL',
+    icon: 'credit_card',
+    label: Labels.LedgerTypeCardTerminal,
+  },
+  BANK_TRANSFER: {
+    type: 'BANK_TRANSFER',
+    icon: 'account_balance',
+    label: Labels.LedgerTypeBankTransfer,
+  },
+  REVENUE: { type: 'REVENUE', icon: 'storefront', label: Labels.LedgerTypeRevenue },
+  ADJUSTMENT: { type: 'ADJUSTMENT', icon: 'tune', label: Labels.LedgerTypeAdjustment },
+  CUSTOMER_WALLET: {
+    type: 'CUSTOMER_WALLET',
+    icon: 'account_balance_wallet',
+    label: Labels.LedgerTypeCustomerWallet,
+  },
+  CUSTOMER_HOLD: { type: 'CUSTOMER_HOLD', icon: 'lock', label: Labels.LedgerTypeCustomerHold },
+};
+
+export function mapLedgerType(type: string): LedgerTypeMeta {
+  return (
+    LEDGER_TYPE_META[type as LedgerType] ?? {
+      type: type as LedgerType,
+      icon: 'receipt_long',
+      label: type,
+    }
+  );
+}
+
+export function mapTransactionDirectionLabel(direction: TransactionDirection): string {
+  return direction === 'CREDIT'
+    ? Labels.TransactionDirectionCredit
+    : Labels.TransactionDirectionDebit;
 }

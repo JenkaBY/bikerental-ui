@@ -17,7 +17,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: Labels.AgreementsNavLabel, route: 'agreements', icon: 'history_edu' },
   { label: $localize`Customers`, route: 'customers', icon: 'people' },
   { label: $localize`Rentals`, route: 'rentals', icon: 'receipt_long' },
-  { label: $localize`Payments`, route: 'payments', icon: 'account_balance_wallet' },
+  { label: Labels.TransactionsNavLabel, route: 'transactions', icon: 'account_balance_wallet' },
   { label: $localize`Users`, route: 'users', icon: 'manage_accounts' },
 ];
 

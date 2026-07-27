@@ -16,3 +16,9 @@ export interface CustomerWrite {
   birthDate?: Date;
   notes?: string;
 }
+
+export interface CustomerRef {
+  readonly id: string;
+  readonly phone: string;
+  readonly name?: string;
+}
