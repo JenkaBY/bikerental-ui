@@ -1,9 +1,23 @@
 import {
   type CustomerTransaction,
+  type LedgerType,
+  type TransactionBalances,
+  type TransactionDeltas,
+  type TransactionDetails,
+  type TransactionDirection,
   type TransactionKind,
+  type TransactionLedgerEntry,
+  type TransactionListItem,
   type TransactionSummary,
 } from '@ui-models';
-import type { CustomerTransactionResponse, TransactionResponse } from '@api-models';
+import type {
+  CustomerTransactionResponse,
+  TransactionDetailEntryResponse,
+  TransactionDetailsResponse,
+  TransactionEntryResponse,
+  TransactionResponse,
+  TransactionSummaryResponse,
+} from '@api-models';
 import { makeMoney } from './money.mapper';
 
 const KNOWN_KINDS: ReadonlySet<TransactionKind> = new Set<TransactionKind>([
@@ -22,45 +36,62 @@ const CREDIT_KINDS: ReadonlySet<TransactionKind> = new Set<TransactionKind>([
   'REFUND',
 ]);
 
+const CUSTOMER_LEDGERS: ReadonlySet<LedgerType> = new Set<LedgerType>([
+  'CUSTOMER_WALLET',
+  'CUSTOMER_HOLD',
+]);
+
+interface TransactionCore {
+  customerId: string;
+  amount: number;
+  type: string;
+  recordedAt: string;
+  paymentMethod: string;
+  reason?: string;
+  sourceType?: string;
+  sourceId?: string;
+  direction?: TransactionDirection;
+  deltas?: TransactionDeltas;
+  balances?: TransactionBalances;
+}
+
 export class TransactionMapper {
   static fromTransactionItem(item: CustomerTransactionResponse): CustomerTransaction {
-    const raw = item.amount;
-    const recordedAt = item.recordedAt ? new Date(item.recordedAt) : new Date(0);
-    const kind = TransactionMapper.normalizeKind(item.type);
+    return TransactionMapper.fromCore({
+      ...item,
+      deltas: item.deltas ? TransactionMapper.toDeltas(item.deltas) : undefined,
+      balances: item.balances ? TransactionMapper.toBalances(item.balances) : undefined,
+    });
+  }
 
-    const isCredit = item.direction ? item.direction === 'CREDIT' : CREDIT_KINDS.has(kind);
-    const signedAmount = raw === 0 ? 0 : isCredit ? raw : -raw;
-    const amountColor = signedAmount > 0 ? 'positive' : signedAmount < 0 ? 'negative' : 'neutral';
-    const description = item.reason ? item.reason : item.sourceType ? item.sourceType : item.type;
-
+  static fromTransactionSummary(item: TransactionSummaryResponse): TransactionListItem {
+    const deltas = TransactionMapper.deriveDeltas(item.entries ?? []);
     return {
-      customerId: item.customerId,
-      amount: makeMoney(signedAmount),
-      recordedAt,
-      paymentMethod: item.paymentMethod,
-      reason: item.reason,
-      sourceType: item.sourceType,
-      sourceId: item.sourceId,
-
-      direction: item.direction,
-      deltas: item.deltas
-        ? { wallet: item.deltas.wallet, hold: item.deltas.hold, external: item.deltas.external }
-        : undefined,
-      balances: item.balances
-        ? { wallet: item.balances.wallet, hold: item.balances.hold }
-        : undefined,
-
-      description: description,
-
-      // UI aliases
-      kind,
-      amountColor,
+      ...TransactionMapper.fromCore({
+        ...item,
+        direction: TransactionMapper.directionFromDeltas(deltas),
+        deltas,
+      }),
+      id: item.id,
     };
   }
 
-  private static normalizeKind(type: string | undefined): TransactionKind {
-    const normalized = (type ?? '').toUpperCase() as TransactionKind;
-    return KNOWN_KINDS.has(normalized) ? normalized : 'OTHER';
+  static fromTransactionDetails(r: TransactionDetailsResponse): TransactionDetails {
+    const deltas = TransactionMapper.toDeltas(r.deltas);
+    const balances = TransactionMapper.toBalances(r.balances);
+    return {
+      ...TransactionMapper.fromCore({
+        ...r,
+        direction: TransactionMapper.directionFromDeltas(deltas),
+        deltas,
+        balances,
+      }),
+      id: r.id,
+      operatorId: r.operatorId,
+      deltas,
+      balances,
+      entries: (r.entries ?? []).map(TransactionMapper.toLedgerEntry),
+    };
   }
 
   static fromResponse(r: TransactionResponse): TransactionSummary {
@@ -79,5 +110,84 @@ export class TransactionMapper {
       }
     }
     return latest?.amount ?? 0;
+  }
+
+  private static fromCore(core: TransactionCore): CustomerTransaction {
+    const raw = core.amount;
+    const recordedAt = core.recordedAt ? new Date(core.recordedAt) : new Date(0);
+    const kind = TransactionMapper.normalizeKind(core.type);
+
+    const isCredit = core.direction ? core.direction === 'CREDIT' : CREDIT_KINDS.has(kind);
+    const signedAmount = raw === 0 ? 0 : isCredit ? raw : -raw;
+    const amountColor = signedAmount > 0 ? 'positive' : signedAmount < 0 ? 'negative' : 'neutral';
+    const description = core.reason ? core.reason : core.sourceType ? core.sourceType : core.type;
+
+    return {
+      customerId: core.customerId,
+      amount: makeMoney(signedAmount),
+      recordedAt,
+      paymentMethod: core.paymentMethod,
+      reason: core.reason,
+      sourceType: core.sourceType,
+      sourceId: core.sourceId,
+
+      direction: core.direction,
+      deltas: core.deltas,
+      balances: core.balances,
+
+      description: description,
+
+      // UI aliases
+      kind,
+      amountColor,
+    };
+  }
+
+  private static normalizeKind(type: string | undefined): TransactionKind {
+    const normalized = (type ?? '').toUpperCase() as TransactionKind;
+    return KNOWN_KINDS.has(normalized) ? normalized : 'OTHER';
+  }
+
+  private static toDeltas(d: {
+    wallet: number;
+    hold: number;
+    external: number;
+  }): TransactionDeltas {
+    return {
+      wallet: makeMoney(d.wallet),
+      hold: makeMoney(d.hold),
+      external: makeMoney(d.external),
+    };
+  }
+
+  private static toBalances(b: { wallet: number; hold: number }): TransactionBalances {
+    return { wallet: makeMoney(b.wallet), hold: makeMoney(b.hold) };
+  }
+
+  private static deriveDeltas(entries: readonly TransactionEntryResponse[]): TransactionDeltas {
+    let wallet = 0;
+    let hold = 0;
+    for (const entry of entries) {
+      const signed = entry.direction === 'CREDIT' ? entry.amount : -entry.amount;
+      if (entry.ledgerType === 'CUSTOMER_WALLET') wallet += signed;
+      else if (entry.ledgerType === 'CUSTOMER_HOLD') hold += signed;
+    }
+    return TransactionMapper.toDeltas({ wallet, hold, external: wallet + hold });
+  }
+
+  private static directionFromDeltas(deltas: TransactionDeltas): TransactionDirection | undefined {
+    const effective = deltas.wallet.amount !== 0 ? deltas.wallet.amount : deltas.hold.amount;
+    return effective > 0 ? 'CREDIT' : effective < 0 ? 'DEBIT' : undefined;
+  }
+
+  private static toLedgerEntry(e: TransactionDetailEntryResponse): TransactionLedgerEntry {
+    return {
+      ledgerType: e.ledgerType,
+      direction: e.direction,
+      amount: makeMoney(e.amount),
+      signedDelta: makeMoney(e.signedDelta),
+      balanceAfter: e.balanceAfter == null ? undefined : makeMoney(e.balanceAfter),
+      systemLedger: e.systemLedger ?? !CUSTOMER_LEDGERS.has(e.ledgerType),
+    };
   }
 }

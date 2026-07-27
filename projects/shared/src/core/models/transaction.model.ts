@@ -15,15 +15,24 @@ export type TransactionKind =
 
 export type TransactionDirection = 'CREDIT' | 'DEBIT';
 
+export type LedgerType =
+  | 'CASH'
+  | 'CARD_TERMINAL'
+  | 'BANK_TRANSFER'
+  | 'REVENUE'
+  | 'ADJUSTMENT'
+  | 'CUSTOMER_WALLET'
+  | 'CUSTOMER_HOLD';
+
 export interface TransactionDeltas {
-  readonly wallet: number;
-  readonly hold: number;
-  readonly external: number;
+  readonly wallet: Money;
+  readonly hold: Money;
+  readonly external: Money;
 }
 
 export interface TransactionBalances {
-  readonly wallet: number;
-  readonly hold: number;
+  readonly wallet: Money;
+  readonly hold: Money;
 }
 
 export interface CustomerTransaction {
@@ -54,3 +63,24 @@ export interface TransactionSummary {
 export type PaymentMethod = 'CASH' | 'BANK_TRANSFER' | 'CARD_TERMINAL';
 
 export type TransactionSource = 'RENTAL';
+
+export interface TransactionListItem extends CustomerTransaction {
+  readonly id: string;
+}
+
+export interface TransactionLedgerEntry {
+  readonly ledgerType: LedgerType;
+  readonly direction: TransactionDirection;
+  readonly amount: Money;
+  readonly signedDelta: Money;
+  readonly balanceAfter?: Money;
+  readonly systemLedger: boolean;
+}
+
+export interface TransactionDetails extends CustomerTransaction {
+  readonly id: string;
+  readonly operatorId: string;
+  readonly deltas: TransactionDeltas;
+  readonly balances: TransactionBalances;
+  readonly entries: readonly TransactionLedgerEntry[];
+}

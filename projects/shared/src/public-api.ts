@@ -67,6 +67,8 @@ export * from './core/state/time.store';
 export * from './core/state/agreement-template.store';
 export * from './core/state/agreement-signing.store';
 export * from './core/state/rental-signature.store';
+export * from './core/state/transaction-search.store';
+export * from './core/state/transaction-details.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';
@@ -121,6 +123,8 @@ export * from './shared/components/qr-scanner/qr-scanner.component';
 export * from './shared/components/qr-scanner/qr-scan-dialog.component';
 export * from './shared/components/signature-pad/signature-pad.component';
 export * from './shared/components/transaction/transaction-list-item.component';
+export * from './shared/components/transaction/transaction-details-view.component';
+export * from './shared/components/transaction/transaction-entries-table.component';
 export * from './shared/components/equipment-badge/equipment-badge.component';
 export * from './shared/components/equipment-status-badge/equipment-status-badge.component';
 export * from './shared/components/cost-breakdown/cost-breakdown.component';

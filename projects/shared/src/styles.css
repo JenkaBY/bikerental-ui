@@ -80,6 +80,9 @@ mat-dialog-actions {
 /* Compact icon button for dense headers (PageHeaderComponent and its consumers' actions) —
    Material's default mat-icon-button touch target (48px) is taller than the header needs. */
 .icon-btn-sm.mat-mdc-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 32px;
   height: 32px;
   padding: 4px;
@@ -87,6 +90,7 @@ mat-dialog-actions {
 
 .icon-btn-sm .mat-icon {
   font-size: 20px;
+  line-height: 20px;
   width: 20px;
   height: 20px;
 }

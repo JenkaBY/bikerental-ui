@@ -646,19 +646,148 @@ export interface PageAvailableEquipmentResponse {
   pageRequest?: PageRequest;
 }
 
+export interface TransactionFilterParams {
+  customerIds?: Array<string>;
+  fromDate?: string;
+  toDate?: string;
+  sourceId?: string;
+  sourceType?: 'RENTAL';
+  ledgerTypes?: Array<
+    | 'CASH'
+    | 'CARD_TERMINAL'
+    | 'BANK_TRANSFER'
+    | 'REVENUE'
+    | 'ADJUSTMENT'
+    | 'CUSTOMER_WALLET'
+    | 'CUSTOMER_HOLD'
+  >;
+}
+
+export interface PageTransactionSummaryResponse {
+  items?: Array<TransactionSummaryResponse>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
+}
+
+/** A single ledger leg of the double-entry transaction */
+export interface TransactionEntryResponse {
+  /** Affected ledger */
+  ledgerType:
+    | 'CASH'
+    | 'CARD_TERMINAL'
+    | 'BANK_TRANSFER'
+    | 'REVENUE'
+    | 'ADJUSTMENT'
+    | 'CUSTOMER_WALLET'
+    | 'CUSTOMER_HOLD';
+  /** Entry direction on that ledger */
+  direction: 'CREDIT' | 'DEBIT';
+  /** Absolute amount of this leg (always positive) */
+  amount: number;
+}
+
+/** A summary of a business transaction with its double-entry legs; full details are served by the transaction details endpoint */
+export interface TransactionSummaryResponse {
+  /** Transaction id */
+  id: string;
+  /** Owning customer id */
+  customerId: string;
+  /** Absolute transaction amount (always positive) */
+  amount: number;
+  /** Business transaction type */
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT';
+  /** When the transaction was recorded (UTC ISO-8601) */
+  recordedAt: string;
+  /** Payment method */
+  paymentMethod: string;
+  /** Free-text reason, present for adjustments */
+  reason?: string;
+  /** Source type, e.g. RENTAL */
+  sourceType?: string;
+  /** Source identifier */
+  sourceId?: string;
+  /** Operator that recorded the transaction */
+  operatorId: string;
+  /** All double-entry legs of this transaction */
+  entries: Array<TransactionEntryResponse>;
+}
+
+/** Customer bucket balances after the transaction */
+export interface TransactionBalancesResponse {
+  /** Available (wallet) balance after the transaction */
+  wallet: number;
+  /** Reserved (hold) balance after the transaction */
+  hold: number;
+}
+
+/** Signed per-bucket deltas; external = wallet + hold (money crossing the customer boundary) */
+export interface TransactionDeltasResponse {
+  /** Change to the available (wallet) balance */
+  wallet: number;
+  /** Change to the reserved (hold) balance */
+  hold: number;
+  /** Net change of the customer's total money (to/from the external world) */
+  external: number;
+}
+
+/** A single ledger leg of the double-entry transaction */
+export interface TransactionDetailEntryResponse {
+  /** Affected ledger */
+  ledgerType:
+    | 'CASH'
+    | 'CARD_TERMINAL'
+    | 'BANK_TRANSFER'
+    | 'REVENUE'
+    | 'ADJUSTMENT'
+    | 'CUSTOMER_WALLET'
+    | 'CUSTOMER_HOLD';
+  /** Entry direction on that ledger */
+  direction: 'CREDIT' | 'DEBIT';
+  /** Absolute amount of this leg (always positive) */
+  amount: number;
+  /** Signed change to this ledger's balance (asset ledgers increase on debit) */
+  signedDelta: number;
+  /** This ledger's running balance after the leg; null when not tracked for the ledger */
+  balanceAfter?: number | null;
+  /** Whether this is a system (house) ledger rather than a customer ledger */
+  systemLedger?: boolean;
+}
+
+/** Full details of a single business transaction: its double-entry legs with per-ledger movement and running balances, plus the customer-side deltas and resulting bucket balances */
+export interface TransactionDetailsResponse {
+  /** Transaction id */
+  id: string;
+  /** Owning customer id */
+  customerId: string;
+  /** Absolute transaction amount (always positive) */
+  amount: number;
+  /** Business transaction type */
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT';
+  /** When the transaction was recorded (UTC ISO-8601) */
+  recordedAt: string;
+  /** Payment method */
+  paymentMethod: string;
+  /** Free-text reason, present for adjustments */
+  reason?: string;
+  /** Source type, e.g. RENTAL */
+  sourceType?: string;
+  /** Source identifier */
+  sourceId?: string;
+  /** Operator that recorded the transaction */
+  operatorId: string;
+  /** Signed per-bucket change caused by this transaction */
+  deltas: TransactionDeltasResponse;
+  /** Customer bucket balances after this transaction */
+  balances: TransactionBalancesResponse;
+  /** All double-entry legs of this transaction with their movement and running balance */
+  entries: Array<TransactionDetailEntryResponse>;
+}
+
 export interface TransactionHistoryFilterParams {
   fromDate?: string;
   toDate?: string;
   sourceId?: string;
   sourceType?: 'RENTAL';
-}
-
-/** Customer bucket balances after this transaction */
-export interface Balances {
-  /** Available (wallet) balance after this transaction */
-  wallet: number;
-  /** Reserved (hold) balance after this transaction */
-  hold: number;
 }
 
 /** A single business transaction in the customer's history, with per-bucket money movement */
@@ -682,19 +811,9 @@ export interface CustomerTransactionResponse {
   /** Source identifier */
   sourceId?: string;
   /** Signed change per bucket caused by this transaction */
-  deltas: Deltas;
+  deltas: TransactionDeltasResponse;
   /** Customer bucket balances after this transaction was applied */
-  balances: Balances;
-}
-
-/** Signed per-bucket deltas; external = wallet + hold (money crossing the customer boundary) */
-export interface Deltas {
-  /** Change to the available (wallet) balance */
-  wallet: number;
-  /** Change to the reserved (hold) balance */
-  hold: number;
-  /** Net change of the customer's total money (to/from the external world) */
-  external: number;
+  balances: TransactionBalancesResponse;
 }
 
 export interface PageCustomerTransactionResponse {
