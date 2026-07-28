@@ -24,13 +24,26 @@
     * The same equipment item cannot be added twice; the dropdown excludes already-selected IDs
     * At least one equipment item is required to proceed to Step 3
   * **Pricing section:**
-    * Default mode: an optional discount percentage input (`0–100`); empty means no discount
-    * A "Special price" toggle switch; when enabled:
-      * The discount input is hidden
-      * A required price input field appears (positive number, currency format)
-      * Advancing to Step 3 and saving the draft are both blocked until the field is filled
+    * Three mutually exclusive price modes, switched via a compact, always-visible segmented
+      control embedded in the sticky footer next to the total: **Full price** (default, no
+      adjustment), **Discount**, **Fixed price**
+    * **Full price** — no discount, no override; this is the mode on entry to Step 2 and after
+      a full reset
+    * **Discount mode** — a percentage input (`0–100`, clamped) is embedded directly in the
+      "Total" row; default `0`; once the estimate returns, the row reads as a single
+      right-aligned formula `subtotal − discount% = total`
+    * **Fixed price mode** — the "Total" row itself becomes an input field; it is prefilled with
+      the system-calculated full price (`RentalCostEstimate.subtotal`) for the current
+      duration/equipment; the operator may replace it with any value `≥ 0`
       * `specialTariffId` is resolved from the store (loaded on init per FR-02 business rules)
-    * When special price mode is toggled off, the special price field value is cleared
+      * Advancing to Step 3 and saving the draft are both blocked only while the field is
+        genuinely empty — `0` is a valid fixed price and does not block
+    * Switching modes clears the values owned by the mode being left (discount percent when
+      leaving Discount, fixed price when leaving Fixed) so state never carries over between
+      mutually exclusive modes
+    * The segmented control is always visible; the **Discount** and **Fixed price** tabs are
+      disabled while no equipment is selected (nothing to price yet), and removing the last
+      equipment item switches the mode back to **Full price**
   * **Always-visible sticky footer:**
     * Displays: calculated total cost and projected balance after payment
     * When `costEstimate` is loading, a spinner replaces the total cost value
@@ -72,17 +85,19 @@
 * **When** the operator taps the remove button on that item
 * **Then** the item is removed from the list and `canProceedFromStep2` becomes `false`
 
-**Scenario 5: Special price mode blocks proceed when price is empty**
+**Scenario 5: Fixed price mode blocks proceed when price is empty**
 
-* **Given** the "Special price" toggle is enabled and the price field is empty
+* **Given** Fixed price mode is active and the price field is empty
 * **When** the operator taps "Next"
-* **Then** the step remains on Step 2; the price field shows a validation error; the "Next" button is disabled
+* **Then** the step remains on Step 2 and the "Next" button is disabled; a fixed price of `0` is
+  valid and does **not** block
 
-**Scenario 6: Discount mode is hidden when special price is active**
+**Scenario 6: Switching to Fixed price mode clears the discount**
 
-* **Given** a discount of 15 % was entered in default mode
-* **When** the operator enables "Special price" mode
-* **Then** the discount input is hidden; the discount value in the store is cleared
+* **Given** a discount of 15 % was entered in Discount mode
+* **When** the operator switches to Fixed price mode
+* **Then** the discount input is replaced by the fixed price field, prefilled with the calculated
+  subtotal; the discount value in the store is cleared
 
 **Scenario 7: Cost estimate updates after adding equipment**
 
