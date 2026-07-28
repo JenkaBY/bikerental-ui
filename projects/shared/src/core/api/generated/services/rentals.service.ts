@@ -21,18 +21,19 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  AddRentalEquipmentRequest,
-  ConfirmReturnRequest,
-  Pageable,
-  PageAvailableEquipmentResponse,
-  PageRentalSummaryResponse,
-  RentalForSigningRequest,
-  RentalLifecycleRequest,
   RentalRequest,
-  RentalResponse,
-  RentalReturnResponse,
   RequestOptions,
+  RentalResponse,
+  Pageable,
+  PageRentalSummaryResponse,
+  ConfirmReturnRequest,
+  RentalReturnResponse,
+  AddRentalEquipmentRequest,
   ReturnEquipmentRequest,
+  RentalForSigningRequest,
+  RentalPricingRequest,
+  RentalLifecycleRequest,
+  PageAvailableEquipmentResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -408,6 +409,55 @@ export class RentalsService {
     };
 
     return this.httpClient.post(url, rentalForSigningRequest, requestOptions);
+  }
+
+  updatePricing(
+    rentalId: number,
+    rentalPricingRequest: RentalPricingRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<RentalResponse>;
+  updatePricing(
+    rentalId: number,
+    rentalPricingRequest: RentalPricingRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<RentalResponse>>;
+  updatePricing(
+    rentalId: number,
+    rentalPricingRequest: RentalPricingRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<RentalResponse>>;
+  /** Sets, changes, or clears the discount/special price on an ACTIVE rental. A field omitted from the request body (or sent as null) clears the corresponding stored override. Every not-yet-returned equipment item is recalculated over its own started-at/expected-return-at window; already-returned items keep their frozen final cost. No payment is taken. */
+  updatePricing(
+    rentalId: number,
+    rentalPricingRequest: RentalPricingRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/${rentalId}/pricing`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.patch(url, rentalPricingRequest, requestOptions);
   }
 
   updateLifecycle(

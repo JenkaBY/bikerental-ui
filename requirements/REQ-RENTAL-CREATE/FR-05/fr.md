@@ -44,6 +44,10 @@
     * The segmented control is always visible; the **Discount** and **Fixed price** tabs are
       disabled while no equipment is selected (nothing to price yet), and removing the last
       equipment item switches the mode back to **Full price**
+    * The control itself (`RentalPriceControlComponent`, `projects/operator/src/app/pricing/`) is
+      presentational — `[value]`/`(valueChange)` on a `RentalPricingDraft`, no store injected — so
+      it is reused as-is by the active-rental "Change price" bottom sheet (see
+      `REQ-RENTAL-PRICING-UPDATE`); this step's footer owns the binding to `RentalStore`
   * **Always-visible sticky footer:**
     * Displays: calculated total cost and projected balance after payment
     * When `costEstimate` is loading, a spinner replaces the total cost value

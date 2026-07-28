@@ -2,6 +2,7 @@ import type {
   ConfirmReturnRequest,
   CustomerResponse,
   EquipmentItemResponse,
+  RentalPricingRequest,
   RentalResponse,
   RentalSummaryResponse,
   ReturnEquipmentRequest,
@@ -12,6 +13,7 @@ import type {
   EquipmentSearchItem,
   RentalEquipmentItem,
   RentalListItem,
+  RentalPricingDraft,
   ReturnEquipmentWrite,
 } from '@ui-models';
 import type { RentalDetailState } from '../state/rental.state';
@@ -130,7 +132,8 @@ export class RentalDashboardMapper {
       durationMinutes: r.plannedDurationMinutes,
       discountPercent: r.discountPercent,
       specialPrice: r.specialPrice,
-      priceMode: r.specialPrice != null ? 'FIXED' : r.discountPercent ? 'DISCOUNT' : 'FULL',
+      specialTariffId: r.specialTariffId,
+      priceMode: r.specialPrice != null ? 'FIXED' : r.discountPercent != null ? 'DISCOUNT' : 'FULL',
       startedAt,
       expectedReturnAt: r.expectedReturnAt ? new Date(r.expectedReturnAt) : undefined,
       paidDurationMinutes: r.actualDurationMinutes,
@@ -142,6 +145,7 @@ export class RentalDashboardMapper {
       overdueMinutes,
       brokenEquipmentEntries: [] as BrokenEquipmentEntry[],
       isReturning: false,
+      isUpdatingPricing: false,
       estimatedCost: r.estimatedCost ? makeMoney(r.estimatedCost) : undefined,
     };
   }
@@ -156,5 +160,25 @@ export class RentalDashboardMapper {
 
   static toConfirmReturnRequest(quoteId: string, operatorId: string): ConfirmReturnRequest {
     return { quoteId, operatorId };
+  }
+
+  static toPricingRequest(
+    draft: RentalPricingDraft,
+    operatorId: string,
+    specialTariffId: number | null,
+  ): RentalPricingRequest {
+    switch (draft.mode) {
+      case 'DISCOUNT':
+        return { discountPercent: draft.discountPercent ?? 0, operatorId };
+      case 'FIXED':
+        return {
+          specialPrice: draft.specialPrice ?? 0,
+          specialTariffId: specialTariffId ?? undefined,
+          operatorId,
+        };
+      case 'FULL':
+      default:
+        return { operatorId };
+    }
   }
 }

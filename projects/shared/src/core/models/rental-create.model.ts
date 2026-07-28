@@ -2,6 +2,12 @@ import { Money } from './transaction.model';
 
 export type RentalPriceMode = 'FULL' | 'DISCOUNT' | 'FIXED';
 
+export interface RentalPricingDraft {
+  mode: RentalPriceMode;
+  discountPercent: number | null;
+  specialPrice: number | null;
+}
+
 export type BreakdownParams = Record<string, string | number> | null;
 
 export interface RentalCostBreakdown {

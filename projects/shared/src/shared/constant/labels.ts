@@ -285,6 +285,14 @@ export class Labels {
   static readonly FixedPrice = $localize`Fixed price`;
   static readonly Fixed = $localize`Fixed`;
   static readonly TotalCost = $localize`Total Cost`;
+  static readonly ChangePrice = $localize`Change price`;
+  static readonly ChangePriceTitle = $localize`Change price`;
+  static readonly ChangePriceSubtitle = $localize`Set a discount or a fixed price for this rental`;
+  static readonly Update = $localize`Update`;
+  static readonly NewTotal = $localize`New total`;
+  static readonly ReturnedEquipment = $localize`Returned equipment`;
+  static readonly PricingUpdateSuccess = $localize`Pricing updated`;
+  static readonly SpecialTariffNotConfigured = $localize`No special tariff is configured. Ask an administrator to set one up.`;
   static readonly ProjectedBalance = $localize`Balance after payment`;
   static readonly InsufficientBalance = $localize`Insufficient balance`;
   static readonly SaveDraft = $localize`Save Draft`;

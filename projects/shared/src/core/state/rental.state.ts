@@ -33,4 +33,6 @@ export interface RentalDetailState extends RentalState {
   brokenEquipmentEntries: BrokenEquipmentEntry[];
   isReturning: boolean;
   isAddingEquipment: boolean;
+  specialTariffId?: number;
+  isUpdatingPricing: boolean;
 }

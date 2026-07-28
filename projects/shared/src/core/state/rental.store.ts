@@ -11,7 +11,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
-import type { AddRentalEquipmentRequest } from '../api/generated';
+import type { AddRentalEquipmentRequest, RentalResponse } from '../api/generated';
 import { CustomersService, RentalsService } from '../api/generated';
 import {
   type BrokenEquipmentEntry,
@@ -20,6 +20,7 @@ import {
   type Money,
   type RentalEquipmentItem,
   type RentalPriceMode,
+  type RentalPricingDraft,
 } from '@ui-models';
 import type { RentalDetailState } from './rental.state';
 import { CustomerMapper, makeMoney, RentalDashboardMapper, RentalMapper } from '../mappers';
@@ -64,6 +65,8 @@ export class RentalStore {
     brokenEquipmentEntries: [] as BrokenEquipmentEntry[],
     isReturning: false,
     isAddingEquipment: false,
+    specialTariffId: undefined,
+    isUpdatingPricing: false,
   });
 
   private patchState(partial: Partial<ReturnType<typeof this._state>>) {
@@ -173,6 +176,8 @@ export class RentalStore {
 
   readonly isReturning = computed(() => this._state().isReturning);
   readonly isAddingEquipment = computed(() => this._state().isAddingEquipment);
+  readonly isUpdatingPricing = computed(() => this._state().isUpdatingPricing);
+  readonly specialTariffId = computed(() => this._state().specialTariffId ?? null);
 
   setCustomer(customer: Customer | null, options?: { hydrateNotes?: boolean }): void {
     this.patchState({ customer });
@@ -353,27 +358,48 @@ export class RentalStore {
       );
   }
 
+  private applyRentalResponse$(response$: Observable<RentalResponse>): Observable<void> {
+    return response$.pipe(
+      switchMap((rental) => {
+        const ids = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
+        return this.batchRentalPropertyStore
+          .fetch$({ equipmentIds: ids, customerId: rental.customerId ?? null })
+          .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
+      }),
+      map(({ rental, customer, equipmentItems }) =>
+        RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
+      ),
+      tap((state) => this.applyDetail(state)),
+      map(() => undefined as void),
+    );
+  }
+
   addEquipmentToRental(equipmentIds: number[]): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
     const request: AddRentalEquipmentRequest = { equipmentIds, operatorId: this.operatorId() };
     this.patchState({ isAddingEquipment: true });
-    return this.rentalsService
-      .addEquipment(id, request, 'body', { context: suppressErrorNotification() })
-      .pipe(
-        switchMap((rental) => {
-          const ids = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
-          return this.batchRentalPropertyStore
-            .fetch$({ equipmentIds: ids, customerId: rental.customerId ?? null })
-            .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
-        }),
-        map(({ rental, customer, equipmentItems }) =>
-          RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
-        ),
-        tap((state) => this.applyDetail(state)),
-        map(() => undefined as void),
-        finalize(() => this.patchState({ isAddingEquipment: false })),
-      );
+    return this.applyRentalResponse$(
+      this.rentalsService.addEquipment(id, request, 'body', {
+        context: suppressErrorNotification(),
+      }),
+    ).pipe(finalize(() => this.patchState({ isAddingEquipment: false })));
+  }
+
+  updatePricing(draft: RentalPricingDraft, specialTariffId: number | null): Observable<void> {
+    const id = this._state().id;
+    if (id === null) throw new Error('No rental id in store');
+    const request = RentalDashboardMapper.toPricingRequest(
+      draft,
+      this.operatorId(),
+      specialTariffId,
+    );
+    this.patchState({ isUpdatingPricing: true });
+    return this.applyRentalResponse$(
+      this.rentalsService.updatePricing(id, request, 'body', {
+        context: suppressErrorNotification(),
+      }),
+    ).pipe(finalize(() => this.patchState({ isUpdatingPricing: false })));
   }
 
   cancelRental(): Observable<void> {

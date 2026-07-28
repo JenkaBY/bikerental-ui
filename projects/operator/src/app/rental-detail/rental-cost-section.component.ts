@@ -1,9 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  ViewContainerRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Labels, MoneyPipe, RentalCostCalculationStore, RentalStore } from '@bikerental/shared';
+import {
+  Labels,
+  MoneyPipe,
+  NotificationService,
+  RentalCostCalculationStore,
+  RentalStore,
+} from '@bikerental/shared';
+import { ChangePriceSheetComponent } from './change-price-sheet.component';
 import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.component';
 
 @Component({
@@ -20,7 +36,15 @@ import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.compone
   template: `
     <div class="px-4 py-3 flex items-center justify-between">
       <div>
-        <span class="text-sm font-medium text-slate-500">{{ sectionLabel() }}</span>
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-medium text-slate-500">{{ sectionLabel() }}</span>
+          <app-rental-price-mode-badge
+            [mode]="rentalStore.priceMode()"
+            [discountPercent]="rentalStore.discountPercent()"
+            [interactive]="rentalStore.isActive()"
+            (pressed)="onChangePrice()"
+          />
+        </div>
 
         @if (costStore.isCalculating()) {
           <div class="flex justify-center py-2">
@@ -32,11 +56,6 @@ import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.compone
             <p class="text-sm text-slate-400">{{ rentalStore.estimatedCost() | money }}</p>
           </div>
         }
-
-        <app-rental-price-mode-badge
-          [mode]="rentalStore.priceMode()"
-          [discountPercent]="rentalStore.discountPercent()"
-        />
       </div>
 
       <button
@@ -53,6 +72,10 @@ import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.compone
 export class RentalCostSectionComponent {
   protected readonly costStore = inject(RentalCostCalculationStore);
   protected readonly rentalStore = inject(RentalStore);
+  private readonly bottomSheet = inject(MatBottomSheet);
+  private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly notifications = inject(NotificationService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly Labels = Labels;
 
@@ -63,5 +86,15 @@ export class RentalCostSectionComponent {
   protected onRefresh(): void {
     const id = this.rentalStore.id();
     if (id !== null) this.rentalStore.loadDetail(id);
+  }
+
+  protected onChangePrice(): void {
+    this.bottomSheet
+      .open(ChangePriceSheetComponent, { viewContainerRef: this.viewContainerRef })
+      .afterDismissed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((updated: boolean | undefined) => {
+        if (updated) this.notifications.success(Labels.PricingUpdateSuccess);
+      });
   }
 }
