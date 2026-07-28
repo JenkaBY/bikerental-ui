@@ -130,7 +130,7 @@ export class RentalDashboardMapper {
       durationMinutes: r.plannedDurationMinutes,
       discountPercent: r.discountPercent,
       specialPrice: r.specialPrice,
-      specialPriceEnabled: r.specialPrice != null,
+      priceMode: r.specialPrice != null ? 'FIXED' : r.discountPercent ? 'DISCOUNT' : 'FULL',
       startedAt,
       expectedReturnAt: r.expectedReturnAt ? new Date(r.expectedReturnAt) : undefined,
       paidDurationMinutes: r.actualDurationMinutes,

@@ -56,7 +56,12 @@ export class ReturnEquipmentCostStore {
       : this.selectedItems();
     if (items.length === 0) return null;
     return this.costCalculationMapper.fromState(
-      { ...s, equipmentItems: items, specialPriceEnabled: false, specialPrice: undefined },
+      {
+        ...s,
+        equipmentItems: items,
+        priceMode: s.priceMode === 'FIXED' ? 'FULL' : s.priceMode,
+        specialPrice: undefined,
+      },
       null,
     );
   }

@@ -1,5 +1,7 @@
 import { Money } from './transaction.model';
 
+export type RentalPriceMode = 'FULL' | 'DISCOUNT' | 'FIXED';
+
 export type BreakdownParams = Record<string, string | number> | null;
 
 export interface RentalCostBreakdown {

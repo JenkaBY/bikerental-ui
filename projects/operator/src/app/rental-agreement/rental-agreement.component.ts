@@ -100,7 +100,7 @@ import { CancelRentalDialogComponent } from '../rental-detail/cancel-rental-dial
                 <span>&minus;{{ discAmt | money }}</span>
               </div>
             }
-            @if (store.specialPriceEnabled()) {
+            @if (store.isFixedPriceMode()) {
               <div class="flex justify-between">
                 <span>{{ Labels.SpecialPrice }}</span>
                 <span>{{ store.estimatedCost() | money }}</span>

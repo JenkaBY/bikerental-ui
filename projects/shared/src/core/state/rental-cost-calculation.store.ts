@@ -32,7 +32,7 @@ export class RentalCostCalculationStore {
     const s = this.rentalStore.state();
     const active = this.activeItems();
     if (active.length === 0) return null;
-    if (s.specialPriceEnabled && !s.specialPrice) return null;
+    if (s.priceMode === 'FIXED' && s.specialPrice == null) return null;
     return this.costCalculationMapper.fromState(
       { ...s, equipmentItems: active },
       this.tariffStore.specialTariffId(),

@@ -4,11 +4,19 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Labels, MoneyPipe, RentalCostCalculationStore, RentalStore } from '@bikerental/shared';
+import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.component';
 
 @Component({
   selector: 'app-rental-cost-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, MoneyPipe],
+  imports: [
+    MatButtonModule,
+    MatDividerModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MoneyPipe,
+    RentalPriceModeBadgeComponent,
+  ],
   template: `
     <div class="px-4 py-3 flex items-center justify-between">
       <div>
@@ -24,6 +32,11 @@ import { Labels, MoneyPipe, RentalCostCalculationStore, RentalStore } from '@bik
             <p class="text-sm text-slate-400">{{ rentalStore.estimatedCost() | money }}</p>
           </div>
         }
+
+        <app-rental-price-mode-badge
+          [mode]="rentalStore.priceMode()"
+          [discountPercent]="rentalStore.discountPercent()"
+        />
       </div>
 
       <button
