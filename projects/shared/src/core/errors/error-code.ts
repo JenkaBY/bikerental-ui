@@ -41,6 +41,9 @@ export const ErrorCode = {
   TARIFF_QUOTE_EXPIRED: 'tariff.quote.expired',
   TARIFF_QUOTE_ALREADY_CONSUMED: 'tariff.quote.already_consumed',
 
+  // tariff.* — special pricing
+  TARIFF_SPECIAL_TYPE_INVALID: 'tariff.special.type_invalid',
+
   // identity.* — authentication & accounts
   AUTH_REQUIRED: 'identity.authentication.required',
   ACCESS_DENIED: 'identity.access.denied',
@@ -97,6 +100,7 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.TARIFF_QUOTE_NOT_FOUND,
   ErrorCode.TARIFF_QUOTE_EXPIRED,
   ErrorCode.TARIFF_QUOTE_ALREADY_CONSUMED,
+  ErrorCode.TARIFF_SPECIAL_TYPE_INVALID,
   ErrorCode.USERNAME_DUPLICATE,
   ErrorCode.EMAIL_DUPLICATE,
   ErrorCode.PASSWORD_POLICY_VIOLATION,

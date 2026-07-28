@@ -196,9 +196,11 @@ export interface RentalResponse {
   actualDurationMinutes?: number;
   /** Estimated rental cost */
   estimatedCost: number;
+  /** Id of the SPECIAL-type tariff applied to this rental (if any) */
+  specialTariffId?: number;
   /** Special price applied to this rental (if any) */
   specialPrice?: number;
-  /** Discount percent applied to this rental (e.g. 10.5) */
+  /** Discount percent applied to this rental (0-100) */
   discountPercent?: number;
   /** Final rental cost (null until returned) */
   finalCost?: number;
@@ -512,6 +514,18 @@ export interface AgreementTemplateResponse {
 export interface AgreementPdfPreviewRequest {
   title: string;
   content: string;
+}
+
+/** Full replacement of a rental's pricing overrides; an omitted or null field clears the corresponding override */
+export interface RentalPricingRequest {
+  /** Id of a SPECIAL-type tariff; mutually exclusive with discountPercent */
+  specialTariffId?: number;
+  /** Operator-provided fixed total; required when specialTariffId is set */
+  specialPrice?: number;
+  /** Discount percentage applied to the non-special subtotal (0-100); ignored when specialTariffId is set */
+  discountPercent?: number;
+  /** Operator identifier */
+  operatorId: string;
 }
 
 export interface RentalLifecycleRequest {

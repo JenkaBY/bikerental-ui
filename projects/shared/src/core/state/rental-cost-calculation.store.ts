@@ -32,7 +32,7 @@ export class RentalCostCalculationStore {
     const s = this.rentalStore.state();
     const active = this.activeItems();
     if (active.length === 0) return null;
-    if (s.specialPriceEnabled && !s.specialPrice) return null;
+    if (s.priceMode === 'FIXED' && s.specialPrice == null) return null;
     return this.costCalculationMapper.fromState(
       { ...s, equipmentItems: active },
       this.tariffStore.specialTariffId(),
@@ -82,6 +82,9 @@ export class RentalCostCalculationStore {
       return makeMoney(returned.amount + estimate.totalCost.amount, estimate.totalCost.currency);
     }
     if (this.returnedItems().length === 0) return null;
-    return returned;
+    // Per-item finalCost is each item's own tariff cost — it does not carry the rental-level
+    // discount/fixed-price override, which the backend only reconciles in the aggregate
+    // rental.finalCost once the rental is fully settled. Prefer that authoritative total here.
+    return this.rentalStore.finalCost() ?? returned;
   });
 }

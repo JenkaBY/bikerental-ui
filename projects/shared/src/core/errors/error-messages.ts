@@ -81,6 +81,9 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.TARIFF_QUOTE_ALREADY_CONSUMED]: $localize`This rental has already been completed.`,
   [ErrorCode.RENTAL_QUOTE_MISMATCH]: $localize`The rental changed since the price was calculated. Recalculating the current price…`,
 
+  // Special pricing
+  [ErrorCode.TARIFF_SPECIAL_TYPE_INVALID]: $localize`The configured special tariff is invalid. Contact an administrator.`,
+
   // Identity (authentication & accounts)
   [ErrorCode.AUTH_REQUIRED]: $localize`Your session has expired. Please sign in again.`,
   [ErrorCode.ACCESS_DENIED]: $localize`You do not have permission to perform this action.`,
@@ -130,6 +133,10 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   'validation.future_or_present': $localize`Must be today or later.`,
   'validation.assert_true': $localize`Must be accepted.`,
   'validation.assert_false': $localize`Must not be set.`,
+
+  // Class-level rental pricing rules (field: null — render as a general form message)
+  'validation.special_tariff_consistency': $localize`A fixed price requires a special tariff — both must be set together.`,
+  'validation.special_tariff_and_discount_exclusive': $localize`A discount and a fixed price cannot be applied at the same time.`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

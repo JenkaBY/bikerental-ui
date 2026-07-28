@@ -9,7 +9,7 @@ export function applyServerErrors(form: FormGroup, error: ApiError): string[] {
 
   for (const fieldError of error.fieldErrors) {
     const message = resolveFieldErrorMessage(fieldError);
-    const control = findControl(form, fieldError.field);
+    const control = fieldError.field ? findControl(form, fieldError.field) : null;
     if (control) {
       control.setErrors({ ...(control.errors ?? {}), [SERVER_ERROR_KEY]: message });
       control.markAsTouched();
@@ -19,6 +19,10 @@ export function applyServerErrors(form: FormGroup, error: ApiError): string[] {
   }
 
   return unmatched;
+}
+
+export function resolveGeneralErrors(error: ApiError): string[] {
+  return error.fieldErrors.filter((e) => !e.field).map((e) => resolveFieldErrorMessage(e));
 }
 
 export function clearServerErrors(form: FormGroup): void {

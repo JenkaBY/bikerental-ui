@@ -11,7 +11,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
-import type { AddRentalEquipmentRequest } from '../api/generated';
+import type { AddRentalEquipmentRequest, RentalResponse } from '../api/generated';
 import { CustomersService, RentalsService } from '../api/generated';
 import {
   type BrokenEquipmentEntry,
@@ -19,6 +19,8 @@ import {
   type EquipmentSearchItem,
   type Money,
   type RentalEquipmentItem,
+  type RentalPriceMode,
+  type RentalPricingDraft,
 } from '@ui-models';
 import type { RentalDetailState } from './rental.state';
 import { CustomerMapper, makeMoney, RentalDashboardMapper, RentalMapper } from '../mappers';
@@ -50,7 +52,7 @@ export class RentalStore {
     durationMinutes: 60,
     discountPercent: undefined,
     specialPrice: undefined,
-    specialPriceEnabled: false,
+    priceMode: 'FULL',
     isSaving: false,
     isLoading: false,
     status: '',
@@ -63,6 +65,8 @@ export class RentalStore {
     brokenEquipmentEntries: [] as BrokenEquipmentEntry[],
     isReturning: false,
     isAddingEquipment: false,
+    specialTariffId: undefined,
+    isUpdatingPricing: false,
   });
 
   private patchState(partial: Partial<ReturnType<typeof this._state>>) {
@@ -84,7 +88,9 @@ export class RentalStore {
     return (this.customerFinanceStore.balance()?.available.amount ?? 0) >= 0;
   });
   readonly equipmentItems = computed(() => this._state().equipmentItems);
-  readonly specialPriceEnabled = computed(() => this._state().specialPriceEnabled);
+  readonly priceMode = computed(() => this._state().priceMode);
+  readonly isDiscountPriceMode = computed(() => this.priceMode() === 'DISCOUNT');
+  readonly isFixedPriceMode = computed(() => this.priceMode() === 'FIXED');
   readonly operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
 
   readonly isSaving = computed(() => this._state().isSaving);
@@ -151,10 +157,10 @@ export class RentalStore {
 
   readonly hasDiscount = computed(() => {
     const percent = this.discountPercent();
-    return !this.specialPriceEnabled() && percent != null && percent > 0;
+    return this.isDiscountPriceMode() && percent != null && percent > 0;
   });
 
-  readonly hasPricingBreakdown = computed(() => this.hasDiscount() || this.specialPriceEnabled());
+  readonly hasPricingBreakdown = computed(() => this.hasDiscount() || this.isFixedPriceMode());
 
   readonly discountAmount = computed<Money | null>(() => {
     if (!this.hasDiscount()) return null;
@@ -170,6 +176,8 @@ export class RentalStore {
 
   readonly isReturning = computed(() => this._state().isReturning);
   readonly isAddingEquipment = computed(() => this._state().isAddingEquipment);
+  readonly isUpdatingPricing = computed(() => this._state().isUpdatingPricing);
+  readonly specialTariffId = computed(() => this._state().specialTariffId ?? null);
 
   setCustomer(customer: Customer | null, options?: { hydrateNotes?: boolean }): void {
     this.patchState({ customer });
@@ -205,6 +213,7 @@ export class RentalStore {
 
   setEquipmentItems(items: EquipmentSearchItem[]): void {
     this.patchState({ equipmentItems: items });
+    this.revertToFullPriceWhenEmpty();
   }
 
   addEquipmentItem(item: EquipmentSearchItem): void {
@@ -217,35 +226,51 @@ export class RentalStore {
   removeEquipmentItem(id: number): void {
     const newItems = this._state().equipmentItems.filter((e) => e.id !== id);
     this.patchState({ equipmentItems: newItems });
+    this.revertToFullPriceWhenEmpty();
 
     if (this._state().id !== null) {
       this.save().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
   }
 
-  setDiscountPercent(percent: number | null): void {
-    if (this._state().specialPriceEnabled) {
-      return;
-    }
-    if (percent !== null) {
-      this.patchState({ specialPriceEnabled: false, discountPercent: percent });
+  private revertToFullPriceWhenEmpty(): void {
+    if (this._state().equipmentItems.length === 0) {
+      this.setPriceMode('FULL');
     }
   }
 
-  setSpecialPriceEnabled(enabled: boolean): void {
-    this.patchState({ specialPriceEnabled: enabled });
+  setPriceMode(mode: RentalPriceMode, fixedPricePrefill?: number): void {
+    if (this._state().priceMode === mode) {
+      return;
+    }
+    switch (mode) {
+      case 'FULL':
+        this.patchState({ priceMode: mode, discountPercent: undefined, specialPrice: undefined });
+        return;
+      case 'DISCOUNT':
+        this.patchState({ priceMode: mode, discountPercent: 0, specialPrice: undefined });
+        return;
+      case 'FIXED':
+        this.patchState({
+          priceMode: mode,
+          discountPercent: undefined,
+          specialPrice: fixedPricePrefill ?? 0,
+        });
+    }
+  }
+
+  setDiscountPercent(percent: number | null): void {
+    if (!this.isDiscountPriceMode()) {
+      return;
+    }
+    this.patchState({ discountPercent: Math.min(100, Math.max(0, percent ?? 0)) });
   }
 
   setSpecialPrice(price: number | null): void {
-    if (!this._state().specialPriceEnabled) {
+    if (!this.isFixedPriceMode()) {
       return;
     }
-
-    this.patchState({
-      specialPriceEnabled: true,
-      specialPrice: price ?? undefined,
-      discountPercent: undefined,
-    });
+    this.patchState({ specialPrice: price ?? undefined });
   }
 
   selectEquipmentItem(id: number): void {
@@ -296,9 +321,9 @@ export class RentalStore {
         customerId: s.customer?.id ?? '',
         equipmentIds: s.equipmentItems.map((e) => e.id),
         durationMinutes: s.durationMinutes,
-        discountPercent: s.specialPriceEnabled ? undefined : s.discountPercent,
-        specialPrice: s.specialPriceEnabled ? s.specialPrice : undefined,
-        specialTariffId: s.specialPriceEnabled
+        discountPercent: this.isDiscountPriceMode() ? s.discountPercent : undefined,
+        specialPrice: this.isFixedPriceMode() ? s.specialPrice : undefined,
+        specialTariffId: this.isFixedPriceMode()
           ? this.tariffStore.specialTariffId() || undefined
           : undefined,
         operatorId: this.operatorId(),
@@ -333,27 +358,48 @@ export class RentalStore {
       );
   }
 
+  private applyRentalResponse$(response$: Observable<RentalResponse>): Observable<void> {
+    return response$.pipe(
+      switchMap((rental) => {
+        const ids = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
+        return this.batchRentalPropertyStore
+          .fetch$({ equipmentIds: ids, customerId: rental.customerId ?? null })
+          .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
+      }),
+      map(({ rental, customer, equipmentItems }) =>
+        RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
+      ),
+      tap((state) => this.applyDetail(state)),
+      map(() => undefined as void),
+    );
+  }
+
   addEquipmentToRental(equipmentIds: number[]): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
     const request: AddRentalEquipmentRequest = { equipmentIds, operatorId: this.operatorId() };
     this.patchState({ isAddingEquipment: true });
-    return this.rentalsService
-      .addEquipment(id, request, 'body', { context: suppressErrorNotification() })
-      .pipe(
-        switchMap((rental) => {
-          const ids = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
-          return this.batchRentalPropertyStore
-            .fetch$({ equipmentIds: ids, customerId: rental.customerId ?? null })
-            .pipe(map(({ customer, equipmentItems }) => ({ rental, customer, equipmentItems })));
-        }),
-        map(({ rental, customer, equipmentItems }) =>
-          RentalDashboardMapper.toDetailState(rental, customer, equipmentItems),
-        ),
-        tap((state) => this.applyDetail(state)),
-        map(() => undefined as void),
-        finalize(() => this.patchState({ isAddingEquipment: false })),
-      );
+    return this.applyRentalResponse$(
+      this.rentalsService.addEquipment(id, request, 'body', {
+        context: suppressErrorNotification(),
+      }),
+    ).pipe(finalize(() => this.patchState({ isAddingEquipment: false })));
+  }
+
+  updatePricing(draft: RentalPricingDraft, specialTariffId: number | null): Observable<void> {
+    const id = this._state().id;
+    if (id === null) throw new Error('No rental id in store');
+    const request = RentalDashboardMapper.toPricingRequest(
+      draft,
+      this.operatorId(),
+      specialTariffId,
+    );
+    this.patchState({ isUpdatingPricing: true });
+    return this.applyRentalResponse$(
+      this.rentalsService.updatePricing(id, request, 'body', {
+        context: suppressErrorNotification(),
+      }),
+    ).pipe(finalize(() => this.patchState({ isUpdatingPricing: false })));
   }
 
   cancelRental(): Observable<void> {
@@ -461,7 +507,9 @@ export class RentalStore {
       id: null,
       customer: null,
       equipmentItems: [],
-      specialPriceEnabled: false,
+      priceMode: 'FULL',
+      discountPercent: undefined,
+      specialPrice: undefined,
       isSaving: false,
       isLoading: false,
     });

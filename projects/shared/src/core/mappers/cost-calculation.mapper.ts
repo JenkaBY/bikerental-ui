@@ -35,9 +35,9 @@ export class CostCalculationMapper {
       }),
       startAt: (startedAt ?? now).toISOString(),
       plannedDurationMinutes: draft.durationMinutes,
-      discountPercent: draft.specialPriceEnabled ? undefined : draft.discountPercent,
-      specialPrice: draft.specialPriceEnabled ? draft.specialPrice : undefined,
-      specialTariffId: draft.specialPriceEnabled ? (specialTariffId ?? undefined) : undefined,
+      discountPercent: draft.priceMode === 'DISCOUNT' ? draft.discountPercent : undefined,
+      specialPrice: draft.priceMode === 'FIXED' ? draft.specialPrice : undefined,
+      specialTariffId: draft.priceMode === 'FIXED' ? (specialTariffId ?? undefined) : undefined,
     };
   }
 

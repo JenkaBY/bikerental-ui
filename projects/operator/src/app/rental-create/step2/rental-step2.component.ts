@@ -30,7 +30,6 @@ import { RentalCustomerPanelComponent } from './rental-customer-panel.component'
 import { RentalReservedPanelComponent } from './rental-reserved-panel.component';
 import { RentalDurationControlComponent } from './duration/rental-duration-control.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
-import { RentalPricingSectionComponent } from './rental-pricing-section.component';
 import { RentalCostFooterComponent } from './rental-cost-footer.component';
 
 @Component({
@@ -42,7 +41,6 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
     RentalReservedPanelComponent,
     RentalDurationControlComponent,
     RentalEquipmentSectionComponent,
-    RentalPricingSectionComponent,
     RentalCostFooterComponent,
   ],
   template: `
@@ -64,7 +62,6 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
         (itemAdded)="store.addEquipmentItem($event)"
         (itemRemoved)="store.removeEquipmentItem($event)"
       />
-      <app-rental-pricing-section />
     </div>
     <app-rental-cost-footer
       (nextRequested)="onNext()"

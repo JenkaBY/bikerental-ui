@@ -2,6 +2,7 @@ import type { Money } from '@ui-models';
 import type { Customer } from '@ui-models';
 import type { EquipmentSearchItem } from '@ui-models';
 import type { BrokenEquipmentEntry } from '@ui-models';
+import type { RentalPriceMode } from '@ui-models';
 
 export interface RentalState {
   id: number | null;
@@ -10,7 +11,7 @@ export interface RentalState {
   durationMinutes: number;
   discountPercent: number | undefined;
   specialPrice: number | undefined;
-  specialPriceEnabled: boolean;
+  priceMode: RentalPriceMode;
   isSaving: boolean;
   isLoading: boolean;
 }
@@ -32,4 +33,6 @@ export interface RentalDetailState extends RentalState {
   brokenEquipmentEntries: BrokenEquipmentEntry[];
   isReturning: boolean;
   isAddingEquipment: boolean;
+  specialTariffId?: number;
+  isUpdatingPricing: boolean;
 }

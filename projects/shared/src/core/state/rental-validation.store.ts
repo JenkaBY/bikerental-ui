@@ -22,7 +22,7 @@ export class RentalValidationStore {
     const s = this.rentalStore.state();
     const hasItems = s.equipmentItems.length > 0;
     const hasEstimate = !!this.costStore.estimate();
-    const specialValid = !s.specialPriceEnabled || s.specialPrice !== undefined;
+    const specialValid = s.priceMode !== 'FIXED' || s.specialPrice !== undefined;
 
     return (
       hasItems &&

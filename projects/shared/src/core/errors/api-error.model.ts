@@ -3,7 +3,7 @@ import type { ProblemDetail } from '../api/generated';
 export type ApiErrorKind = 'validation' | 'domain' | 'system' | 'network';
 
 export interface FieldError {
-  field: string;
+  field: string | null;
   code: string;
   message?: string;
   params?: Record<string, unknown>;

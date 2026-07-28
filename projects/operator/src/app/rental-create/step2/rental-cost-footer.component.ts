@@ -1,42 +1,31 @@
-import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
 import {
   Labels,
-  makeMoney,
   MoneyPipe,
   RentalCostCalculationStore,
   RentalStore,
   RentalValidationStore,
 } from '@bikerental/shared';
+import type { RentalPricingDraft } from '@bikerental/shared';
 import { RentalBalanceWarningComponent } from '../step3/rental-balance-warning.component';
+import { RentalPriceControlComponent } from '../../pricing/rental-price-control.component';
 
 @Component({
   selector: 'app-rental-cost-footer',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatChipsModule,
-    MoneyPipe,
-    RentalBalanceWarningComponent,
-  ],
+  imports: [MatButtonModule, MoneyPipe, RentalBalanceWarningComponent, RentalPriceControlComponent],
   template: `
     <div class="bg-white border-t border-slate-200 shadow-lg px-4 py-3 flex flex-col gap-2">
-      <div class="flex items-center justify-between">
-        <span class="text-sm text-slate-600">{{ Labels.TotalCost }}</span>
-        @if (costStore.estimate(); as cost) {
-          <span class="font-semibold text-slate-900">
-            {{ cost.totalCost | money }}
-          </span>
-        } @else if (costStore.isCalculating()) {
-          <mat-spinner diameter="20" />
-        } @else {
-          <span class="text-slate-500">{{ this.makeMoney(0) | money }}</span>
-        }
-      </div>
+      <app-rental-price-control
+        [value]="pricing()"
+        [estimate]="costStore.estimate() ?? null"
+        [fixedPrefill]="costStore.estimate()?.subtotal?.amount ?? 0"
+        [isCalculating]="costStore.isCalculating()"
+        [overridesDisabled]="!rentalStore.isSelectedAnyEquipment()"
+        (valueChange)="onPricingChange($event)"
+      />
 
       @let isBalanceSufficient = validationStore.isBalanceSufficient();
       @let isSavingRental = rentalStore.isSaving();
@@ -90,13 +79,24 @@ import { RentalBalanceWarningComponent } from '../step3/rental-balance-warning.c
 })
 export class RentalCostFooterComponent {
   protected readonly rentalStore = inject(RentalStore);
-  protected readonly validationStore = inject(RentalValidationStore);
   protected readonly costStore = inject(RentalCostCalculationStore);
+  protected readonly validationStore = inject(RentalValidationStore);
   protected readonly Labels = Labels;
 
   readonly nextRequested = output<void>();
   readonly saveDraftRequested = output<void>();
   readonly topUpRequested = output<void>();
   readonly cancelRequested = output<void>();
-  protected readonly makeMoney = makeMoney;
+
+  protected readonly pricing = computed<RentalPricingDraft>(() => ({
+    mode: this.rentalStore.priceMode(),
+    discountPercent: this.rentalStore.discountPercent(),
+    specialPrice: this.rentalStore.specialPrice(),
+  }));
+
+  protected onPricingChange(draft: RentalPricingDraft): void {
+    this.rentalStore.setPriceMode(draft.mode, draft.specialPrice ?? 0);
+    this.rentalStore.setDiscountPercent(draft.discountPercent);
+    this.rentalStore.setSpecialPrice(draft.specialPrice);
+  }
 }

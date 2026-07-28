@@ -6,6 +6,7 @@ export interface SegmentTab {
   id: string;
   label: string;
   icon?: string;
+  disabled?: boolean;
 }
 
 @Component({
@@ -37,12 +38,13 @@ export interface SegmentTab {
           <button
             role="tab"
             type="button"
-            class="flex-1 flex items-center justify-center gap-1 py-2.5 px-1 text-sm border-b-2 -mb-px whitespace-nowrap"
+            class="flex-1 flex items-center justify-center gap-1 py-2.5 px-1 text-sm border-b-2 -mb-px whitespace-nowrap disabled:text-slate-300 disabled:cursor-not-allowed"
             [class.text-indigo-600]="tab.id === activeId()"
             [class.border-indigo-600]="tab.id === activeId()"
             [class.font-medium]="tab.id === activeId()"
             [class.text-slate-500]="tab.id !== activeId()"
             [class.border-transparent]="tab.id !== activeId()"
+            [disabled]="tab.disabled"
             [attr.aria-selected]="tab.id === activeId()"
             [attr.aria-label]="iconOnly() ? tab.label : null"
             [title]="iconOnly() ? tab.label : null"

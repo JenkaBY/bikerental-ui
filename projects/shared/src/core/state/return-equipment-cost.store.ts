@@ -56,8 +56,8 @@ export class ReturnEquipmentCostStore {
       : this.selectedItems();
     if (items.length === 0) return null;
     return this.costCalculationMapper.fromState(
-      { ...s, equipmentItems: items, specialPriceEnabled: false, specialPrice: undefined },
-      null,
+      { ...s, equipmentItems: items },
+      this.tariffStore.specialTariffId() ?? this.rentalStore.specialTariffId(),
     );
   }
 

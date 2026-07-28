@@ -93,11 +93,13 @@ function readFieldErrors(body: UnknownRecord): FieldError[] {
 function toFieldError(raw: unknown): FieldError | null {
   if (!isRecord(raw)) return null;
   const field = firstString(raw, ['field', 'property', 'propertyPath', 'name', 'parameter']);
-  if (!field) return null;
+  const code = firstString(raw, ['code', 'errorCode']);
+  const message = firstString(raw, ['message', 'defaultMessage', 'detail']);
+  if (!field && !code && !message) return null;
   return {
-    field,
-    code: firstString(raw, ['code', 'errorCode']) ?? UNKNOWN_ERROR_CODE,
-    message: firstString(raw, ['message', 'defaultMessage', 'detail']),
+    field: field ?? null,
+    code: code ?? UNKNOWN_ERROR_CODE,
+    message,
     params: isRecord(raw['params']) ? raw['params'] : undefined,
   };
 }

@@ -281,8 +281,18 @@ export class Labels {
   static readonly OpenActiveRentals = $localize`Open active rentals`;
   static readonly DiscountPercent = $localize`Discount (%)`;
   static readonly SpecialPrice = $localize`Special Price`;
-  static readonly SpecialPriceModeLabel = $localize`Special price mode`;
+  static readonly FullPrice = $localize`Full price`;
+  static readonly FixedPrice = $localize`Fixed price`;
+  static readonly Fixed = $localize`Fixed`;
   static readonly TotalCost = $localize`Total Cost`;
+  static readonly ChangePrice = $localize`Change price`;
+  static readonly ChangePriceTitle = $localize`Change price`;
+  static readonly ChangePriceSubtitle = $localize`Set a discount or a fixed price for this rental`;
+  static readonly Update = $localize`Update`;
+  static readonly NewTotal = $localize`New total`;
+  static readonly ReturnedEquipment = $localize`Returned equipment`;
+  static readonly PricingUpdateSuccess = $localize`Pricing updated`;
+  static readonly SpecialTariffNotConfigured = $localize`No special tariff is configured. Ask an administrator to set one up.`;
   static readonly ProjectedBalance = $localize`Balance after payment`;
   static readonly InsufficientBalance = $localize`Insufficient balance`;
   static readonly SaveDraft = $localize`Save Draft`;
@@ -316,7 +326,6 @@ export class Labels {
   static readonly Subtotal = $localize`Subtotal`;
   static readonly DiscountLabel = $localize`Discount`;
   static readonly Total = $localize`Total`;
-  static readonly SpecialPriceApplied = $localize`Special price applied`;
   static readonly ReturnPricing = $localize`Return pricing`;
   static readonly ReturnButton = $localize`Return`;
   static readonly CalculateButton = $localize`Calculate`;
