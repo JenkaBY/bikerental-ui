@@ -9,7 +9,7 @@ import { Labels, MoneyPipe, RentalValidationStore, TopUpButtonComponent } from '
   imports: [MatButtonModule, MatIconModule, MoneyPipe, TopUpButtonComponent],
   template: `
     @if (!validationStore.isBalanceSufficient()) {
-      <div class="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
+      <div class="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 py-2 px-4">
         <div class="flex items-center justify-between gap-2">
           <p class="text-sm text-red-600">
             {{ Labels.BalanceShortfall }}: {{ validationStore.balanceShortfall() | money }}

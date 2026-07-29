@@ -49,9 +49,9 @@ import {
     EquipmentUnitCardComponent,
   ],
   template: `
-    <div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-2 mt-2">
       <div class="flex gap-2">
-        <mat-form-field appearance="outline" class="flex-1">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="flex-1">
           <mat-label>{{ Labels.Equipment }}</mat-label>
           <input
             matInput
