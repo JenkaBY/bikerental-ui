@@ -94,3 +94,24 @@ mat-dialog-actions {
   width: 20px;
   height: 20px;
 }
+
+/* Equipment autocomplete option (RentalEquipmentSectionComponent) — badge + two-line text.
+   The primary-text wrapper lives in mat-option's own template, so it is unreachable from
+   the component's encapsulated styles. */
+.mat-mdc-option.equipment-option {
+  min-height: 52px;
+}
+
+.mat-mdc-option.equipment-option .mdc-list-item__primary-text {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+}
+
+.mat-mdc-option.equipment-option:not(:last-of-type) {
+  border-bottom: 1px solid rgba(100, 116, 139, 0.16);
+}
+
+.mat-mdc-option.equipment-option:hover:not(.mdc-list-item--disabled) {
+  background-color: rgba(99, 102, 241, 0.06);
+}

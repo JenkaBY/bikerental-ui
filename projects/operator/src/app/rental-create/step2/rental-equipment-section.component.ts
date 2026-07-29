@@ -33,6 +33,7 @@ import {
   RentalCostCalculationStore,
   RentalStore,
 } from '@bikerental/shared';
+import { EquipmentSearchOptionComponent } from './equipment-search-option.component';
 
 @Component({
   selector: 'app-rental-equipment-section',
@@ -47,6 +48,7 @@ import {
     MatIconModule,
     MatTooltipModule,
     EquipmentUnitCardComponent,
+    EquipmentSearchOptionComponent,
   ],
   template: `
     <div class="flex flex-col gap-2 mt-2">
@@ -62,9 +64,11 @@ import {
           />
           <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onEquipmentSelected($event)">
             @for (item of searchResults(); track item.id) {
-              <mat-option [value]="item">
-                <span class="font-mono">{{ item.uid }}</span>
-                <span class="text-slate-500 ml-2">{{ item.model }} · {{ item.type.name }}</span>
+              <mat-option [value]="item" class="equipment-option">
+                <app-equipment-search-option
+                  [item]="item"
+                  [query]="equipmentSearchStore.appliedQuery() ?? ''"
+                />
               </mat-option>
             } @empty {
               @if (equipmentSearchStore.searchQuery() && !loading()) {
