@@ -11,8 +11,8 @@ import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { of, timer } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { of, timer, type Observable } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   ApiErrorParser,
   CostCalculationMapper,
@@ -35,6 +35,8 @@ import type {
 import { RentalPriceControlComponent } from '../pricing/rental-price-control.component';
 
 type PreviewRequest = ReturnType<CostCalculationMapper['fromState']>;
+
+const DISCOUNT_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-change-price-sheet',
@@ -74,15 +76,6 @@ type PreviewRequest = ReturnType<CostCalculationMapper['fromState']>;
           <span>{{ returnedTotal() | money }}</span>
         </div>
       }
-
-      <div class="flex justify-between items-center pt-1 border-t border-slate-100">
-        <span class="text-sm font-medium text-slate-700">{{ Labels.NewTotal }}</span>
-        @if (newTotal(); as total) {
-          <span class="text-base font-semibold text-slate-900">{{ total | money }}</span>
-        } @else {
-          <mat-spinner diameter="18" />
-        }
-      </div>
 
       @for (message of generalErrors(); track message) {
         <p class="text-xs text-red-600">{{ message }}</p>
@@ -159,54 +152,55 @@ export class ChangePriceSheetComponent {
     return this.returnedTotal().amount + activeSubtotal;
   });
 
-  private readonly previewRequest = computed<PreviewRequest | null>(() => {
+  private readonly hasDiscountApplied = computed(() => {
     const d = this.draft();
-    if (d.mode === 'FIXED') return null;
-    const active = this.activeItems();
-    if (active.length === 0) return null;
-    const state = this.rentalStore.state();
-    return this.costCalculationMapper.fromState(
-      {
-        ...state,
-        equipmentItems: active,
-        priceMode: d.mode,
-        discountPercent: d.mode === 'DISCOUNT' ? (d.discountPercent ?? 0) : undefined,
-        specialPrice: undefined,
-      },
-      this.tariffStore.specialTariffId(),
-    );
+    return d.mode === 'DISCOUNT' && (d.discountPercent ?? 0) > 0;
   });
 
-  private readonly preview = rxResource<RentalCostEstimate | null, PreviewRequest | null>({
-    params: () => this.previewRequest(),
+  private readonly requestTemplate = this.buildRequestTemplate();
+  private readonly needsOwnFullQuote = !this.hasDiscountApplied();
+  private readonly lastQuote = signal<RentalCostEstimate | null>(null);
+
+  private readonly fullQuote = rxResource<RentalCostEstimate | null, PreviewRequest | null>({
+    params: () => (this.needsOwnFullQuote ? this.requestTemplate : null),
+    stream: ({ params }) => this.quote(params),
+  });
+
+  private readonly discountRequest = computed<PreviewRequest | null>(() => {
+    const d = this.draft();
+    const percent = d.discountPercent ?? 0;
+    if (d.mode !== 'DISCOUNT' || percent <= 0 || !this.requestTemplate) return null;
+    return { ...this.requestTemplate, discountPercent: percent };
+  });
+
+  private readonly discountQuote = rxResource<RentalCostEstimate | null, PreviewRequest | null>({
+    params: () => this.discountRequest(),
     stream: ({ params }) => {
       if (!params) return of(null);
-      return timer(300).pipe(
-        switchMap(() => this.tariffStore.calculateCost(params)),
-        map((res) => this.costCalculationMapper.fromResponse(res)),
-        catchError(() => of(null)),
-      );
+      return timer(DISCOUNT_DEBOUNCE_MS).pipe(switchMap(() => this.quote(params)));
     },
   });
 
-  protected readonly estimate = computed(() => this.preview.value() ?? null);
-  protected readonly isCalculating = this.preview.isLoading;
-
-  protected readonly newTotal = computed<Money | null>(() => {
-    const d = this.draft();
-    if (d.mode === 'FIXED') {
-      return d.specialPrice != null
-        ? makeMoney(d.specialPrice, this.returnedTotal().currency)
-        : null;
-    }
-    const active = this.activeItems();
-    if (active.length === 0) {
-      return this.returnedItems().length > 0 ? this.returnedTotal() : null;
-    }
-    const est = this.estimate();
-    if (!est) return null;
-    return makeMoney(this.returnedTotal().amount + est.totalCost.amount, est.totalCost.currency);
+  private readonly fullPriceEstimate = computed<RentalCostEstimate | null>(() => {
+    const quote = this.lastQuote();
+    if (!quote) return null;
+    return {
+      ...quote,
+      totalCost: quote.subtotal,
+      discountPercent: 0,
+      discountAmount: makeMoney(0, quote.subtotal.currency),
+    };
   });
+
+  protected readonly estimate = computed<RentalCostEstimate | null>(() =>
+    this.hasDiscountApplied() ? (this.discountQuote.value() ?? null) : this.fullPriceEstimate(),
+  );
+
+  protected readonly isCalculating = computed(() =>
+    this.hasDiscountApplied()
+      ? this.discountQuote.isLoading()
+      : this.fullQuote.isLoading() || this.discountQuote.isLoading(),
+  );
 
   protected readonly canSubmit = computed(() => {
     const d = this.draft();
@@ -241,6 +235,30 @@ export class ChangePriceSheetComponent {
         next: () => this.sheetRef.dismiss(true),
         error: (err: unknown) => this.handleError(err),
       });
+  }
+
+  private buildRequestTemplate(): PreviewRequest | null {
+    const active = this.activeItems();
+    if (active.length === 0) return null;
+    return this.costCalculationMapper.fromState(
+      {
+        ...this.rentalStore.state(),
+        equipmentItems: active,
+        priceMode: 'FULL',
+        discountPercent: undefined,
+        specialPrice: undefined,
+      },
+      this.tariffStore.specialTariffId(),
+    );
+  }
+
+  private quote(request: PreviewRequest | null): Observable<RentalCostEstimate | null> {
+    if (!request) return of(null);
+    return this.tariffStore.calculateCost(request).pipe(
+      map((res) => this.costCalculationMapper.fromResponse(res)),
+      tap((estimate) => this.lastQuote.set(estimate)),
+      catchError(() => of(null)),
+    );
   }
 
   private handleError(err: unknown): void {
