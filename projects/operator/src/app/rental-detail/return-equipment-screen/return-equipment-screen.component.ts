@@ -56,7 +56,7 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
   template: `
     <app-page-header [title]="Labels.ReturnDialogTitle" (back)="onCancel()" />
 
-    <div class="flex-1 min-h-0 overflow-y-auto px-4 py-3 flex flex-col gap-3">
+    <div class="flex-1 min-h-0 overflow-y-auto px-4 py-0 flex flex-col gap-3">
       <app-rental-customer-panel
         [expanded]="customerExpanded()"
         (toggled)="customerExpanded.set(!customerExpanded())"

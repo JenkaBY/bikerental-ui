@@ -123,7 +123,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
             <button mat-button (click)="store.loadDetail(rentalId())">{{ Labels.Retry }}</button>
           </div>
         } @else if (store.id() !== null) {
-          <div class="flex-1 min-h-0 overflow-y-auto px-4 py-3 flex flex-col">
+          <div class="flex-1 min-h-0 overflow-y-auto px-4 py-0 flex flex-col">
             <app-rental-customer-panel
               [expanded]="openPanel() === 'customer'"
               (toggled)="togglePanel('customer')"
