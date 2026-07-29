@@ -68,7 +68,7 @@ export class RentalCostCalculationStore {
     ...(this.estimate()?.equipmentBreakdowns ?? []),
   ]);
 
-  private readonly returnedTotal = computed<Money>(() => {
+  readonly returnedTotal = computed<Money>(() => {
     const items = this.returnedItems();
     const sum = items.reduce((acc, item) => acc + (item.finalCost?.amount ?? 0), 0);
     return makeMoney(sum, items[0]?.finalCost?.currency);

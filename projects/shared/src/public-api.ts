@@ -55,6 +55,7 @@ export * from './core/state/rental-list.store';
 export * from './core/state/rental-search.store';
 export * from './core/state/rental-lookup.store';
 export * from './core/state/rental-cost-calculation.store';
+export * from './core/state/rental-pricing.store';
 export * from './core/state/return-equipment-cost.store';
 export * from './core/state/rental-transactions.store';
 export * from './core/state/rental-validation.store';
