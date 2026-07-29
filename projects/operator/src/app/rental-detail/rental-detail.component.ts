@@ -1,4 +1,4 @@
-import { DatePipe, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -21,7 +21,6 @@ import { Router } from '@angular/router';
 import {
   BatchRentalPropertyStore,
   CustomerFinanceStore,
-  DurationPipe,
   Labels,
   mapRentalStatus,
   MOBILE_FORM_DIALOG_CONFIG,
@@ -57,7 +56,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalSignatureStore,
   ],
   imports: [
-    DatePipe,
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
@@ -71,7 +69,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalCostSectionComponent,
     RentalEquipmentSectionComponent,
     MoneyPipe,
-    DurationPipe,
   ],
   template: `
     <div class="flex flex-col h-[calc(100%+2rem)] -m-4">
@@ -101,20 +98,6 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
             <span [class]="statusBadgeClasses()">{{ statusLabel() }}</span>
           </div>
         </app-page-header>
-
-        @if (store.isActive() && store.isOverdue()) {
-          <div
-            class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-amber-700 text-sm shrink-0"
-          >
-            <mat-icon class="!text-base">warning_amber</mat-icon>
-            <span>
-              {{ Labels.OverdueBy }} {{ store.overdueMinutes() | duration }}
-              @if (store.expectedReturnAt(); as returnAt) {
-                &nbsp;&middot;&nbsp;{{ Labels.Expected }} {{ returnAt | date: 'HH:mm' }}
-              }
-            </span>
-          </div>
-        }
 
         @if (store.isDebt()) {
           <div

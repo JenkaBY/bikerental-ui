@@ -18,6 +18,7 @@ import {
   NotificationService,
   RentalCostCalculationStore,
   RentalStore,
+  RentalTransactionsStore,
 } from '@bikerental/shared';
 import { ChangePriceSheetComponent } from './change-price-sheet.component';
 import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.component';
@@ -53,7 +54,9 @@ import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.compone
         } @else if (costStore.totalCost(); as total) {
           <div class="flex items-baseline gap-3 mt-1">
             <p class="text-2xl font-bold text-slate-900">{{ total | money }}</p>
-            <p class="text-sm text-slate-400">{{ rentalStore.estimatedCost() | money }}</p>
+            @if (transactionsStore.reserved(); as reserved) {
+              <p class="text-sm text-slate-400">{{ reserved | money }}</p>
+            }
           </div>
         }
       </div>
@@ -72,6 +75,7 @@ import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.compone
 export class RentalCostSectionComponent {
   protected readonly costStore = inject(RentalCostCalculationStore);
   protected readonly rentalStore = inject(RentalStore);
+  protected readonly transactionsStore = inject(RentalTransactionsStore);
   private readonly bottomSheet = inject(MatBottomSheet);
   private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly notifications = inject(NotificationService);
