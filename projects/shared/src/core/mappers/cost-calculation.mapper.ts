@@ -4,20 +4,31 @@ import type {
   CostCalculationV2Request,
   CostQuoteResponse,
 } from '@api-models';
-import type { RentalCostEstimate, RentalCostQuote, RentalEquipmentItem } from '@ui-models';
-import type { RentalDetailState, RentalState } from '../state/rental.state';
+import type {
+  EquipmentSearchItem,
+  RentalCostEstimate,
+  RentalCostQuote,
+  RentalEquipmentItem,
+  RentalPriceMode,
+} from '@ui-models';
 import { makeMoney } from './money.mapper';
 import { TIME_TRAVEL_STORE_TOKEN } from '../state/time-travel-store.token';
+
+export interface CostQuoteInput {
+  equipmentItems: readonly EquipmentSearchItem[];
+  startedAt?: Date | null;
+  durationMinutes: number;
+  priceMode: RentalPriceMode;
+  discountPercent?: number | null;
+  specialPrice?: number | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class CostCalculationMapper {
   private readonly timeTravelStore = inject(TIME_TRAVEL_STORE_TOKEN, { optional: true });
 
-  fromState(
-    draft: RentalState | RentalDetailState,
-    specialTariffId: number | null,
-  ): CostCalculationV2Request {
-    const startedAt = 'startedAt' in draft ? draft.startedAt : null;
+  fromState(draft: CostQuoteInput, specialTariffId: number | null): CostCalculationV2Request {
+    const startedAt = draft.startedAt ?? null;
     const now = this.timeTravelStore?.getCurrentTime() ?? new Date();
     const defaultReturnAt = startedAt ? now.toISOString() : undefined;
     return {
@@ -35,8 +46,9 @@ export class CostCalculationMapper {
       }),
       startAt: (startedAt ?? now).toISOString(),
       plannedDurationMinutes: draft.durationMinutes,
-      discountPercent: draft.priceMode === 'DISCOUNT' ? draft.discountPercent : undefined,
-      specialPrice: draft.priceMode === 'FIXED' ? draft.specialPrice : undefined,
+      discountPercent:
+        draft.priceMode === 'DISCOUNT' ? (draft.discountPercent ?? undefined) : undefined,
+      specialPrice: draft.priceMode === 'FIXED' ? (draft.specialPrice ?? undefined) : undefined,
       specialTariffId: draft.priceMode === 'FIXED' ? (specialTariffId ?? undefined) : undefined,
     };
   }

@@ -9,7 +9,7 @@ import { DURATION_SNAP_POINTS, snapToNearest } from './snap-points';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DurationSliderComponent],
   template: `
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col mt-2">
       <span class="text-sm font-medium text-slate-700">{{ Labels.Duration }}</span>
       <app-duration-slider
         [value]="store.durationMinutes()"

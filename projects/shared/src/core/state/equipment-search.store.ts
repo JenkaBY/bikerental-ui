@@ -45,6 +45,7 @@ export class EquipmentSearchStore {
   readonly results = computed(() => this.resource.value() ?? []);
   readonly loading = this.resource.isLoading;
   readonly searchQuery = this._query.asReadonly();
+  readonly appliedQuery = this._debouncedQuery;
 
   search(query: string | null): void {
     const value = query?.trim() === '' ? null : query;

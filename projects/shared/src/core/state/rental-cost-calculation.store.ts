@@ -29,12 +29,20 @@ export class RentalCostCalculationStore {
   );
 
   private readonly calculationRequest = computed(() => {
-    const s = this.rentalStore.state();
     const active = this.activeItems();
     if (active.length === 0) return null;
-    if (s.priceMode === 'FIXED' && s.specialPrice == null) return null;
+    const priceMode = this.rentalStore.priceMode();
+    const specialPrice = this.rentalStore.specialPrice();
+    if (priceMode === 'FIXED' && specialPrice == null) return null;
     return this.costCalculationMapper.fromState(
-      { ...s, equipmentItems: active },
+      {
+        equipmentItems: active,
+        startedAt: this.rentalStore.startedAt(),
+        durationMinutes: this.rentalStore.durationMinutes(),
+        priceMode,
+        discountPercent: this.rentalStore.discountPercent(),
+        specialPrice,
+      },
       this.tariffStore.specialTariffId(),
     );
   });
@@ -68,7 +76,7 @@ export class RentalCostCalculationStore {
     ...(this.estimate()?.equipmentBreakdowns ?? []),
   ]);
 
-  private readonly returnedTotal = computed<Money>(() => {
+  readonly returnedTotal = computed<Money>(() => {
     const items = this.returnedItems();
     const sum = items.reduce((acc, item) => acc + (item.finalCost?.amount ?? 0), 0);
     return makeMoney(sum, items[0]?.finalCost?.currency);
