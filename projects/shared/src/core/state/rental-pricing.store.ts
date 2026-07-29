@@ -39,16 +39,23 @@ export class RentalPricingStore {
     () => this.tariffStore.specialTariffId() ?? this.rentalStore.specialTariffId(),
   );
 
+  // Frozen once submit() is called: the rental's own state patches (isUpdatingPricing toggles,
+  // then the fresh rental data landing) would otherwise re-trigger these quotes while the sheet
+  // is still alive during MatBottomSheet's close animation, wasting requests for a price the
+  // operator has already committed.
+  private readonly _isSubmitted = signal(false);
+  private readonly _frozenEstimate = signal<RentalCostEstimate | null>(null);
+
   private readonly baselineRequest = computed<CostCalculationV2Request | null>(() => {
+    if (this._isSubmitted()) return null;
     const active = this.costStore.activeItems();
     if (active.length === 0) return null;
     return this.costCalculationMapper.fromState(
       {
-        ...this.rentalStore.state(),
         equipmentItems: active,
+        startedAt: this.rentalStore.startedAt(),
+        durationMinutes: this.rentalStore.durationMinutes(),
         priceMode: 'FULL',
-        discountPercent: undefined,
-        specialPrice: undefined,
       },
       this.specialTariffId(),
     );
@@ -85,11 +92,12 @@ export class RentalPricingStore {
     return d.mode === 'DISCOUNT' && (d.discountPercent ?? 0) > 0;
   });
 
-  readonly estimate = computed<RentalCostEstimate | null>(() =>
-    this.hasDiscountApplied()
+  readonly estimate = computed<RentalCostEstimate | null>(() => {
+    if (this._isSubmitted()) return this._frozenEstimate();
+    return this.hasDiscountApplied()
       ? (this.discountQuote.value() ?? null)
-      : (this.baselineQuote.value() ?? null),
-  );
+      : (this.baselineQuote.value() ?? null);
+  });
 
   readonly isCalculating = computed(
     () => this.baselineQuote.isLoading() || this.discountQuote.isLoading(),
@@ -132,6 +140,8 @@ export class RentalPricingStore {
   }
 
   submit(): Observable<void> {
+    this._frozenEstimate.set(this.estimate());
+    this._isSubmitted.set(true);
     return this.rentalStore.updatePricing(this._draft(), this.specialTariffId());
   }
 
