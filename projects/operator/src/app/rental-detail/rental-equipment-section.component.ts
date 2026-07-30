@@ -18,6 +18,7 @@ import {
   EquipmentUnitViewModelMapper,
   Labels,
   RentalCostCalculationStore,
+  RentalDetailRefreshFacade,
   RentalStore,
   TimeStore,
 } from '@bikerental/shared';
@@ -74,6 +75,7 @@ export class RentalEquipmentSectionComponent {
 
   protected readonly store = inject(RentalStore);
   private readonly costStore = inject(RentalCostCalculationStore);
+  private readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly timeStore = inject(TimeStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -126,6 +128,7 @@ export class RentalEquipmentSectionComponent {
       .subscribe((confirmed: boolean | undefined) => {
         if (!confirmed) return;
         this.snackBar.open(Labels.RentalAddEquipmentSuccess, undefined, { duration: 3000 });
+        this.refresh.refreshFinancials();
       });
   }
 

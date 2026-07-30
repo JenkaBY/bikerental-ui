@@ -17,6 +17,7 @@ import {
   MoneyPipe,
   NotificationService,
   RentalCostCalculationStore,
+  RentalDetailRefreshFacade,
   RentalStore,
   RentalTransactionsStore,
 } from '@bikerental/shared';
@@ -64,10 +65,11 @@ import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.compone
       <button
         mat-icon-button
         class="icon-btn-sm"
+        [disabled]="refresh.isRefreshing()"
         [attr.aria-label]="Labels.Refresh"
         (click)="onRefresh()"
       >
-        <mat-icon>refresh</mat-icon>
+        <mat-icon [class.animate-spin]="refresh.isRefreshing()">refresh</mat-icon>
       </button>
     </div>
   `,
@@ -76,6 +78,7 @@ export class RentalCostSectionComponent {
   protected readonly costStore = inject(RentalCostCalculationStore);
   protected readonly rentalStore = inject(RentalStore);
   protected readonly transactionsStore = inject(RentalTransactionsStore);
+  protected readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly bottomSheet = inject(MatBottomSheet);
   private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly notifications = inject(NotificationService);
@@ -88,8 +91,7 @@ export class RentalCostSectionComponent {
   );
 
   protected onRefresh(): void {
-    const id = this.rentalStore.id();
-    if (id !== null) this.rentalStore.loadDetail(id);
+    this.refresh.refreshAll();
   }
 
   protected onChangePrice(): void {
@@ -98,7 +100,9 @@ export class RentalCostSectionComponent {
       .afterDismissed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((updated: boolean | undefined) => {
-        if (updated) this.notifications.success(Labels.PricingUpdateSuccess);
+        if (!updated) return;
+        this.notifications.success(Labels.PricingUpdateSuccess);
+        this.refresh.refreshFinancials();
       });
   }
 }

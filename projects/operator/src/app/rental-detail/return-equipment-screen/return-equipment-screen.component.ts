@@ -28,8 +28,8 @@ import {
   MOBILE_FORM_DIALOG_CONFIG,
   NotificationService,
   PageHeaderComponent,
+  RentalDetailRefreshFacade,
   RentalStore,
-  RentalTransactionsStore,
   ReturnEquipmentCostStore,
   TimeStore,
   TopUpDialogComponent,
@@ -89,13 +89,19 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
       }
     </div>
 
-    <div class="flex justify-end gap-2 px-4 py-3 border-t border-slate-200 bg-white shrink-0">
-      <button mat-button (click)="onCancel()" [disabled]="rentalStore.isReturning()">
+    <div class="flex gap-3 px-4 py-3 border-t border-slate-200 bg-white shrink-0">
+      <button
+        mat-stroked-button
+        class="flex-1"
+        (click)="onCancel()"
+        [disabled]="rentalStore.isReturning()"
+      >
         {{ Labels.Cancel }}
       </button>
       <button
         mat-flat-button
         color="primary"
+        class="flex-1"
         (click)="onConfirm()"
         [disabled]="isConfirmDisabled()"
       >
@@ -112,7 +118,7 @@ export class ReturnEquipmentScreenComponent {
   protected readonly rentalStore = inject(RentalStore);
   protected readonly costStore = inject(ReturnEquipmentCostStore);
   private readonly financeStore = inject(CustomerFinanceStore);
-  private readonly transactionsStore = inject(RentalTransactionsStore);
+  private readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -241,8 +247,7 @@ export class ReturnEquipmentScreenComponent {
     const apiError = ApiErrorParser.parse(err);
     this.notifications.error(this.resolver.resolve(apiError));
     if (apiError.code === ErrorCode.STATUS_INVALID) {
-      const id = this.rentalStore.id();
-      if (id !== null) this.rentalStore.loadDetail(id);
+      this.refresh.refreshAll();
       this.cancelled.emit();
     }
   }
@@ -264,10 +269,7 @@ export class ReturnEquipmentScreenComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: boolean | undefined) => {
-        if (result) {
-          this.financeStore.loadById(customerId);
-          this.transactionsStore.reload();
-        }
+        if (result) this.refresh.refreshFinancials();
       });
   }
 
@@ -291,10 +293,7 @@ export class ReturnEquipmentScreenComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: boolean | undefined) => {
-        if (result) {
-          this.financeStore.loadById(customerId);
-          this.transactionsStore.reload();
-        }
+        if (result) this.refresh.refreshFinancials();
       });
   }
 }

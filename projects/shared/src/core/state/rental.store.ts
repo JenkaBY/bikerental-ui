@@ -140,6 +140,16 @@ export class RentalStore {
   readonly startedAt = computed(() => this._state().startedAt);
   readonly customerId = computed(() => this._state().customerId);
   readonly paidDurationMinutes = computed(() => this._state().paidDurationMinutes);
+
+  // Actual vs planned duration, only meaningful once the rental is settled: positive = kept longer
+  // than planned, negative = returned early. Null while active (overdueMinutes covers that) or
+  // when the backend has not reported an actual duration yet.
+  readonly durationDeltaMinutes = computed<number | null>(() => {
+    const actual = this._state().paidDurationMinutes;
+    if (actual == null || this._state().isActive) return null;
+    const delta = Math.ceil(actual) - this._state().durationMinutes;
+    return delta === 0 ? null : delta;
+  });
   readonly estimatedCost = computed(() => this._state().estimatedCost);
   readonly finalCost = computed(() => this._state().finalCost);
   readonly brokenEquipmentEntries = computed(() => this._state().brokenEquipmentEntries);

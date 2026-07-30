@@ -11,8 +11,8 @@ import {
   Labels,
   MoneyPipe,
   NotificationService,
+  RentalDetailRefreshFacade,
   RentalPricingStore,
-  RentalStore,
   resolveGeneralErrors,
 } from '@bikerental/shared';
 import { RentalPriceControlComponent } from '../pricing/rental-price-control.component';
@@ -91,7 +91,7 @@ import { RentalPriceControlComponent } from '../pricing/rental-price-control.com
 })
 export class ChangePriceSheetComponent {
   private readonly sheetRef = inject(MatBottomSheetRef<ChangePriceSheetComponent, boolean>);
-  private readonly rentalStore = inject(RentalStore);
+  private readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
   private readonly destroyRef = inject(DestroyRef);
@@ -131,8 +131,7 @@ export class ChangePriceSheetComponent {
       apiError.code === ErrorCode.STATUS_INVALID ||
       apiError.code === ErrorCode.RESOURCE_NOT_FOUND
     ) {
-      const id = this.rentalStore.id();
-      if (id !== null) this.rentalStore.loadDetail(id);
+      this.refresh.refreshAll();
       this.sheetRef.dismiss(false);
     }
   }

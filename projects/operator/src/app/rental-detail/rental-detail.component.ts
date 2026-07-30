@@ -28,6 +28,7 @@ import {
   PageHeaderComponent,
   RENTAL_STORE_TOKEN,
   RentalCostCalculationStore,
+  RentalDetailRefreshFacade,
   RentalSignatureStore,
   RentalStore,
   RentalTransactionsStore,
@@ -52,6 +53,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     BatchRentalPropertyStore,
     RentalCostCalculationStore,
     RentalTransactionsStore,
+    RentalDetailRefreshFacade,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
     RentalSignatureStore,
   ],
@@ -120,7 +122,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
         } @else if (store.loadError()) {
           <div class="flex flex-col items-center gap-4 py-8 px-4">
             <p class="text-slate-500 text-sm">{{ Labels.CustomerRentalDetailLoadError }}</p>
-            <button mat-button (click)="store.loadDetail(rentalId())">{{ Labels.Retry }}</button>
+            <button mat-button (click)="refresh.refreshAll(rentalId())">{{ Labels.Retry }}</button>
           </div>
         } @else if (store.id() !== null) {
           <div class="flex-1 min-h-0 overflow-y-auto px-4 py-0 flex flex-col">
@@ -161,6 +163,7 @@ export class RentalDetailComponent {
   private readonly snackBar = inject(MatSnackBar);
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly transactionsStore = inject(RentalTransactionsStore);
+  protected readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
   protected readonly signatureStore = inject(RentalSignatureStore);
@@ -181,8 +184,7 @@ export class RentalDetailComponent {
     this.returnMode.set(false);
     this.snackBar.open(Labels.RentalReturnSuccess, undefined, { duration: 3000 });
     this.store.clearSelection();
-    const id = this.store.id();
-    if (id !== null) this.store.loadDetail(id);
+    this.refresh.refreshAll();
   }
 
   protected togglePanel(panel: 'customer' | 'reserved'): void {
@@ -269,10 +271,7 @@ export class RentalDetailComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: boolean | undefined) => {
-        if (result) {
-          this.financeStore.loadById(customerId);
-          this.transactionsStore.reload();
-        }
+        if (result) this.refresh.refreshFinancials();
       });
   }
 
@@ -299,10 +298,7 @@ export class RentalDetailComponent {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: boolean | undefined) => {
-        if (result) {
-          this.financeStore.loadById(customerId);
-          this.transactionsStore.reload();
-        }
+        if (result) this.refresh.refreshFinancials();
       });
   }
 }
