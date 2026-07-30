@@ -19,8 +19,15 @@ import { DurationPipe, RentalStore } from '@bikerental/shared';
       <span class="inline-flex items-baseline gap-1 whitespace-nowrap">
         <span class="text-slate-500">{{ store.durationMinutes() | duration }}</span>
         @if (store.isActive() && store.isOverdue()) {
-          <span class="text-amber-700 font-semibold"
-            >+&nbsp;{{ store.overdueMinutes() | duration }}</span
+          <span class="text-amber-700 font-semibold">{{
+            store.overdueMinutes() | duration: 'signed'
+          }}</span>
+        } @else if (store.durationDeltaMinutes(); as delta) {
+          <span
+            class="font-semibold"
+            [class.text-amber-700]="delta > 0"
+            [class.text-emerald-700]="delta < 0"
+            >{{ delta | duration: 'signed' }}</span
           >
         }
       </span>
