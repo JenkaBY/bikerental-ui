@@ -11,6 +11,7 @@ import {
   EquipmentSearchItem,
   Labels,
   NotificationService,
+  RentalDetailRefreshFacade,
   RentalStore,
 } from '@bikerental/shared';
 import { RentalEquipmentSectionComponent } from '../../rental-create/step2/rental-equipment-section.component';
@@ -63,6 +64,7 @@ import { RentalEquipmentSectionComponent } from '../../rental-create/step2/renta
 })
 export class AddEquipmentDialogComponent {
   protected readonly rentalStore = inject(RentalStore);
+  private readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly resolver = inject(ErrorMessageResolver);
   private readonly notifications = inject(NotificationService);
   private readonly dialogRef = inject(MatDialogRef) as MatDialogRef<
@@ -106,8 +108,7 @@ export class AddEquipmentDialogComponent {
     this.notifications.error(this.resolver.resolve(apiError));
 
     if (apiError.code === ErrorCode.STATUS_INVALID) {
-      const id = this.rentalStore.id();
-      if (id !== null) this.rentalStore.loadDetail(id);
+      this.refresh.refreshAll();
       this.dialogRef.close(false);
       return;
     }

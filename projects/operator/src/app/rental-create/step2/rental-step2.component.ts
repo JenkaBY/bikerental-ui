@@ -18,8 +18,8 @@ import {
   Labels,
   MOBILE_FORM_DIALOG_CONFIG,
   NotificationService,
+  RentalDetailRefreshFacade,
   RentalStore,
-  RentalTransactionsStore,
   RentalValidationStore,
   resolveErrorMessage,
   TopUpDialogComponent,
@@ -74,7 +74,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
 export class RentalStep2Component {
   protected readonly store = inject(RentalStore);
   private readonly financeStore = inject(CustomerFinanceStore);
-  private readonly transactionsStore = inject(RentalTransactionsStore);
+  private readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -109,10 +109,7 @@ export class RentalStep2Component {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
-        if (result === true) {
-          this.store.refreshCustomerBalance();
-          this.transactionsStore.reload();
-        }
+        if (result === true) this.refresh.refreshFinancials();
       });
   }
 
@@ -141,10 +138,7 @@ export class RentalStep2Component {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
-        if (result === true) {
-          this.store.refreshCustomerBalance();
-          this.transactionsStore.reload();
-        }
+        if (result === true) this.refresh.refreshFinancials();
       });
   }
 
