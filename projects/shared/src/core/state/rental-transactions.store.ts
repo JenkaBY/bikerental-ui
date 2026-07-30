@@ -1,10 +1,14 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import type { PageCustomerTransactionResponse } from '@api-models';
 import type { CustomerTransaction, Money } from '@ui-models';
 import { FinanceService } from '../api/generated';
+import type { ApiError } from '../errors/api-error.model';
+import { ApiErrorParser } from '../errors/api-error.parser';
+import { resolveErrorMessage } from '../errors/error-message.resolver';
+import { suppressErrorNotification } from '../errors/http-error-context';
 import { TransactionMapper } from '../mappers/transaction.mapper';
 import { makeMoney } from '../mappers/money.mapper';
 import { RentalStore } from './rental.store';
@@ -35,19 +39,28 @@ export class RentalTransactionsStore {
     return { rentalId, customerId };
   });
 
+  private readonly _error = signal<ApiError | null>(null);
+  private readonly _lastView = signal<RentalTransactionsView>(EMPTY_VIEW);
+
   private readonly resource = rxResource<RentalTransactionsView, RentalTransactionsParams | null>({
     params: () => this.params(),
     stream: ({ params }: { params: RentalTransactionsParams | null }) => {
-      if (!params) return of(EMPTY_VIEW);
+      if (!params) return of(EMPTY_VIEW).pipe(tap((view) => this.acceptView(view)));
       return this.financeService
         .getTransactionHistory(
           params.customerId,
           { sourceId: String(params.rentalId), sourceType: 'RENTAL' },
           { page: 0, size: PAGE_SIZE },
+          undefined,
+          { context: suppressErrorNotification() },
         )
         .pipe(
           map((page) => this.toView(page)),
-          catchError(() => of(EMPTY_VIEW)),
+          tap((view) => this.acceptView(view)),
+          catchError((err: unknown) => {
+            this._error.set(ApiErrorParser.parse(err));
+            return of(this._lastView());
+          }),
         );
     },
   });
@@ -58,9 +71,19 @@ export class RentalTransactionsStore {
   readonly transactionCount = computed<number>(() => this.resource.value()?.count ?? 0);
   readonly reserved = computed<Money>(() => makeMoney(this.resource.value()?.reservedAmount ?? 0));
   readonly loading = this.resource.isLoading;
+  readonly error = this._error.asReadonly();
+  readonly errorMessage = computed<string | null>(() => {
+    const err = this._error();
+    return err ? resolveErrorMessage(err) : null;
+  });
 
   reload(): void {
     this.resource.reload();
+  }
+
+  private acceptView(view: RentalTransactionsView): void {
+    this._error.set(null);
+    this._lastView.set(view);
   }
 
   private toView(page: PageCustomerTransactionResponse): RentalTransactionsView {
