@@ -89,13 +89,19 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
       }
     </div>
 
-    <div class="flex justify-end gap-2 px-4 py-3 border-t border-slate-200 bg-white shrink-0">
-      <button mat-button (click)="onCancel()" [disabled]="rentalStore.isReturning()">
+    <div class="flex gap-3 px-4 py-3 border-t border-slate-200 bg-white shrink-0">
+      <button
+        mat-stroked-button
+        class="flex-1"
+        (click)="onCancel()"
+        [disabled]="rentalStore.isReturning()"
+      >
         {{ Labels.Cancel }}
       </button>
       <button
         mat-flat-button
         color="primary"
+        class="flex-1"
         (click)="onConfirm()"
         [disabled]="isConfirmDisabled()"
       >
