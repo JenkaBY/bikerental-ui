@@ -41,59 +41,56 @@ export interface EquipmentUnitViewModel extends EquipmentUnitIdentity {
     EquipmentUnitSummaryComponent,
     EquipmentUnitDetailsComponent,
   ],
+  host: {
+    class:
+      'block rounded-lg bg-slate-50 border border-slate-200 px-3 py-1 leading-tight cursor-pointer select-none',
+    role: 'button',
+    tabindex: '0',
+    '[attr.aria-expanded]': 'expanded()',
+    '[attr.aria-label]': 'expanded() ? Labels.CollapseDetails : Labels.ShowDetails',
+    '(click)': 'toggle()',
+    '(keydown.enter)': 'toggle()',
+    '(keydown.space)': 'onSpace($event)',
+  },
   template: `
-    <div class="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1 leading-tight">
-      <div class="flex items-center gap-2">
-        @if (showCheckbox()) {
-          <mat-checkbox
-            class="shrink-0 self-center -mr-1 [--mat-checkbox-state-layer-size:18px]"
-            [checked]="checked()"
-            [disabled]="checkboxDisabled()"
-            (change)="checkedChange.emit($event.checked)"
-          />
-        }
+    <div class="flex items-center gap-2">
+      @if (showCheckbox()) {
+        <mat-checkbox
+          class="shrink-0 self-center -mr-1 [--mat-checkbox-state-layer-size:18px]"
+          [checked]="checked()"
+          [disabled]="checkboxDisabled()"
+          (click)="$event.stopPropagation()"
+          (change)="checkedChange.emit($event.checked)"
+        />
+      }
 
-        <app-equipment-unit-summary [unit]="unit()" class="ml-1" />
+      <app-equipment-unit-summary [unit]="unit()" class="ml-1" />
 
-        <div class="flex items-center gap-0.5 shrink-0">
-          <span class="text-sm font-semibold text-slate-900 whitespace-nowrap">
-            {{ unit().price ? (unit().priceKind | pricePrefix) + (unit().price | money) : '—' }}
-          </span>
+      <div class="flex items-center shrink-0">
+        <span class="text-sm font-semibold text-slate-900 whitespace-nowrap">
+          {{ unit().price ? (unit().priceKind | pricePrefix) + (unit().price | money) : '—' }}
+        </span>
 
+        @if (showRemove()) {
           <button
             mat-icon-button
             type="button"
-            class="shrink-0 !h-6 !w-6 !p-0"
-            (click)="toggle()"
-            [attr.aria-expanded]="expanded()"
-            [attr.aria-label]="expanded() ? Labels.CollapseDetails : Labels.ShowDetails"
+            class="shrink-0 ml-2 pl-1 border-l border-slate-200 [--mdc-icon-button-state-layer-size:40px]"
+            (click)="onRemove($event)"
+            [attr.aria-label]="'Remove ' + unit().uid"
           >
-            <mat-icon class="!h-5 !w-5 !text-xl !leading-5">{{
-              expanded() ? 'expand_less' : 'expand_more'
-            }}</mat-icon>
+            <mat-icon>close</mat-icon>
           </button>
-
-          @if (showRemove()) {
-            <button
-              mat-icon-button
-              type="button"
-              class="shrink-0 !h-5 !w-5 !leading-5 !p-0"
-              (click)="removed.emit()"
-              [attr.aria-label]="'Remove ' + unit().uid"
-            >
-              <mat-icon class="!h-4 !w-4 !text-base !leading-4">close</mat-icon>
-            </button>
-          }
-        </div>
+        }
       </div>
-
-      @if (expanded()) {
-        <app-equipment-unit-details
-          [plannedCost]="unit().plannedCost"
-          [breakdown]="unit().breakdown"
-        />
-      }
     </div>
+
+    @if (expanded()) {
+      <app-equipment-unit-details
+        [plannedCost]="unit().plannedCost"
+        [breakdown]="unit().breakdown"
+      />
+    }
   `,
 })
 export class EquipmentUnitCardComponent {
@@ -111,5 +108,15 @@ export class EquipmentUnitCardComponent {
 
   protected toggle(): void {
     this.expanded.update((v) => !v);
+  }
+
+  protected onSpace(event: Event): void {
+    event.preventDefault();
+    this.toggle();
+  }
+
+  protected onRemove(event: Event): void {
+    event.stopPropagation();
+    this.removed.emit();
   }
 }
