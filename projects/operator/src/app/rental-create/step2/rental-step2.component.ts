@@ -15,6 +15,7 @@ import { catchError, EMPTY, exhaustMap, filter, of, tap } from 'rxjs';
 import {
   ApiErrorParser,
   CustomerFinanceStore,
+  type EquipmentSearchItem,
   Labels,
   MOBILE_FORM_DIALOG_CONFIG,
   NotificationService,
@@ -59,7 +60,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
       <app-rental-duration-control />
       <app-rental-equipment-section
         [items]="store.equipmentItems()"
-        (itemAdded)="store.addEquipmentItem($event)"
+        (itemAdded)="onItemAdded($event)"
         (itemRemoved)="store.removeEquipmentItem($event)"
       />
     </div>
@@ -142,7 +143,18 @@ export class RentalStep2Component {
       });
   }
 
+  protected onItemAdded(item: EquipmentSearchItem): void {
+    const isFirstItem = this.store.equipmentItems().length === 0;
+    const wasNew = this.store.id() === null;
+    this.store.addEquipmentItem(item);
+    if (isFirstItem && wasNew) this.saveDraft();
+  }
+
   protected onSaveDraft(): void {
+    this.saveDraft();
+  }
+
+  private saveDraft(): void {
     const wasNew = this.store.id() === null;
     this.store
       .save()
