@@ -8,6 +8,7 @@ import { PageMapper } from '../mappers/page.mapper';
 import type { CustomerRef, DamageReportFilter, DamageReportListItem, Page } from '../models';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { toIsoDate } from '../../shared/utils/date.util';
+import { Labels } from '../../shared/constant/labels';
 
 const DEFAULT_SORT = ['reportedAt,desc'];
 
@@ -39,6 +40,12 @@ export class DamageReportStore {
 
   readonly hasPendingPenalty = computed(() =>
     this.items().some((item) => item.penalty && !item.penalty.isSettled),
+  );
+
+  readonly rentalWarningLabel = computed(() =>
+    this.hasPendingPenalty()
+      ? Labels.DamageReportRentalWarningUnpaid
+      : Labels.DamageReportRentalWarning,
   );
 
   customer(customerId: string | undefined): CustomerRef | undefined {

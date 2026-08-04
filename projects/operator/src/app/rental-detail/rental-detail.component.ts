@@ -91,8 +91,8 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
                 [class.!text-amber-500]="damageReportStore.hasPendingPenalty()"
                 [class.!text-slate-500]="!damageReportStore.hasPendingPenalty()"
                 (click)="onOpenDamageReports()"
-                [attr.aria-label]="damageWarningLabel()"
-                [title]="damageWarningLabel()"
+                [attr.aria-label]="damageReportStore.rentalWarningLabel()"
+                [title]="damageReportStore.rentalWarningLabel()"
               >
                 <mat-icon>warning</mat-icon>
               </button>
@@ -195,12 +195,6 @@ export class RentalDetailComponent {
 
   protected readonly openPanel = signal<'customer' | 'reserved' | null>(null);
   protected readonly returnMode = signal(false);
-
-  protected readonly damageWarningLabel = computed(() =>
-    this.damageReportStore.hasPendingPenalty()
-      ? Labels.DamageReportRentalWarningUnpaid
-      : Labels.DamageReportRentalWarning,
-  );
 
   protected onOpenDamageReports(): void {
     const customerId = this.store.customerId();
