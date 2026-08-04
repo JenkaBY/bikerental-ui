@@ -408,6 +408,68 @@ export interface RentalForSigningRequest {
   discountPercent?: number;
 }
 
+/** Request body for registering a damage report */
+export interface RegisterDamageReportRequest {
+  /** Equipment ids covered by the report, 1-5 elements */
+  equipmentIds: Array<number>;
+  /** Rental the damaged equipment belongs to; exactly one of rentalId or customerId is required */
+  rentalId?: number;
+  /** Customer responsible for the damage; exactly one of rentalId or customerId is required */
+  customerId?: string;
+  /** Condition applied to every listed equipment item */
+  condition: 'BROKEN' | 'MAINTENANCE';
+  /** What happened; persisted on the report and forwarded to the equipment condition audit trail */
+  description: string;
+  /** Optional penalty charged to the responsible customer */
+  penaltyAmount?: number;
+  /** Identifier of the operator filing the report */
+  operatorId: string;
+  /** Key attached to the penalty and reused verbatim for every future settlement attempt */
+  idempotencyKey: string;
+}
+
+/** One equipment item covered by a damage report */
+export interface DamageReportItemResponse {
+  /** Equipment id */
+  equipmentId?: number;
+  /** Equipment uid */
+  equipmentUid?: string;
+  /** Condition the item had before the report */
+  previousCondition?: string;
+  /** Condition the item has after the report */
+  condition?: string;
+}
+
+/** A registered damage report */
+export interface DamageReportResponse {
+  /** Damage report id */
+  id?: number;
+  /** Rental the report is tied to; null for a report filed directly against a customer */
+  rentalId?: number;
+  /** Customer held responsible */
+  customerId?: string;
+  /** Equipment items covered by the report */
+  items?: Array<DamageReportItemResponse>;
+  /** What happened */
+  description?: string;
+  /** When the report was filed */
+  reportedAt?: string;
+  /** Operator who filed the report */
+  operatorId?: string;
+  /** Penalty outcome; null when no penalty was requested */
+  penalty?: PenaltyResponse;
+}
+
+/** Penalty attached to a damage report */
+export interface PenaltyResponse {
+  /** Charged amount */
+  amount?: number;
+  /** Settlement state */
+  status?: 'PENDING' | 'SETTLED';
+  /** Finance transaction id; null while the penalty is PENDING */
+  transactionId?: string;
+}
+
 /** Request body for recording a fund withdrawal */
 export interface RecordWithdrawalRequest {
   /** Client-generated UUID sent with every request to ensure exactly-once submission */
@@ -530,6 +592,18 @@ export interface RentalPricingRequest {
 
 export interface RentalLifecycleRequest {
   status: 'DRAFT' | 'AWAITING_SIGNATURE' | 'CANCELLED';
+  operatorId: string;
+}
+
+/** Request body for a batch equipment condition change */
+export interface ChangeEquipmentConditionRequest {
+  /** Equipment ids the condition is applied to, 1-5 elements */
+  equipmentIds: Array<number>;
+  /** Target physical condition */
+  condition?: 'GOOD' | 'MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
+  /** Reason of the condition change, persisted verbatim into the audit trail */
+  reason: string;
+  /** Identifier of the operator performing the change */
   operatorId: string;
 }
 
@@ -660,6 +734,43 @@ export interface PageAvailableEquipmentResponse {
   pageRequest?: PageRequest;
 }
 
+export interface DamageReportSearchFilterParams {
+  equipmentId?: number;
+  customerId?: string;
+  rentalId?: number;
+  penaltyStatus?: 'PENDING' | 'SETTLED';
+  fromDate?: string;
+  toDate?: string;
+}
+
+/** A damage report row in the list view; the full item list is only served by the detail endpoint */
+export interface DamageReportSummaryResponse {
+  /** Damage report id */
+  id?: number;
+  /** Rental the report is tied to; null for a report filed directly against a customer */
+  rentalId?: number;
+  /** Customer held responsible */
+  customerId?: string;
+  /** What happened */
+  description?: string;
+  /** When the report was filed */
+  reportedAt?: string;
+  /** Operator who filed the report */
+  operatorId?: string;
+  /** Penalty amount; null when no penalty was requested */
+  penaltyAmount?: number;
+  /** Penalty settlement state; null when no penalty was requested */
+  penaltyStatus?: 'PENDING' | 'SETTLED';
+  /** Finance transaction id; null while the penalty is PENDING or absent */
+  penaltyTransactionId?: string;
+}
+
+export interface PageDamageReportSummaryResponse {
+  items?: Array<DamageReportSummaryResponse>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
+}
+
 export interface TransactionFilterParams {
   customerIds?: Array<string>;
   fromDate?: string;
@@ -709,16 +820,16 @@ export interface TransactionSummaryResponse {
   /** Absolute transaction amount (always positive) */
   amount: number;
   /** Business transaction type */
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT';
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT' | 'PENALTY';
   /** When the transaction was recorded (UTC ISO-8601) */
   recordedAt: string;
   /** Payment method */
   paymentMethod: string;
-  /** Free-text reason, present for adjustments */
+  /** Free-text reason, present for adjustments and penalties */
   reason?: string;
-  /** Source type, e.g. RENTAL */
+  /** Source type, e.g. RENTAL; a PENALTY raised against a rental carries RENTAL here */
   sourceType?: string;
-  /** Source identifier */
+  /** Source identifier, e.g. the rental id when sourceType is RENTAL */
   sourceId?: string;
   /** Operator that recorded the transaction */
   operatorId: string;
@@ -776,16 +887,16 @@ export interface TransactionDetailsResponse {
   /** Absolute transaction amount (always positive) */
   amount: number;
   /** Business transaction type */
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT';
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT' | 'PENALTY';
   /** When the transaction was recorded (UTC ISO-8601) */
   recordedAt: string;
   /** Payment method */
   paymentMethod: string;
-  /** Free-text reason, present for adjustments */
+  /** Free-text reason, present for adjustments and penalties */
   reason?: string;
-  /** Source type, e.g. RENTAL */
+  /** Source type, e.g. RENTAL; a PENALTY raised against a rental carries RENTAL here */
   sourceType?: string;
-  /** Source identifier */
+  /** Source identifier, e.g. the rental id when sourceType is RENTAL */
   sourceId?: string;
   /** Operator that recorded the transaction */
   operatorId: string;
@@ -811,18 +922,18 @@ export interface CustomerTransactionResponse {
   /** Absolute transaction amount (always positive); use direction/deltas for the sign */
   amount: number;
   /** Business transaction type */
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT';
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'HOLD' | 'CAPTURE' | 'RELEASE' | 'ADJUSTMENT' | 'PENALTY';
   /** Overall direction from the customer's perspective */
   direction: 'CREDIT' | 'DEBIT';
   /** When the entry was recorded (UTC ISO-8601) */
   recordedAt: string;
   /** Payment method, present for deposits and withdrawals */
   paymentMethod: string;
-  /** Free-text reason, present for adjustments */
+  /** Free-text reason, present for adjustments and penalties */
   reason?: string;
-  /** Source type, e.g. RENTAL */
+  /** Source type, e.g. RENTAL; a PENALTY raised against a rental carries RENTAL here */
   sourceType?: string;
-  /** Source identifier */
+  /** Source identifier, e.g. the rental id when sourceType is RENTAL */
   sourceId?: string;
   /** Signed change per bucket caused by this transaction */
   deltas: TransactionDeltasResponse;
