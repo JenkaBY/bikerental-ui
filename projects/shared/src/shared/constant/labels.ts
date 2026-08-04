@@ -226,6 +226,7 @@ export class Labels {
   static readonly TransactionKindCapture = $localize`Charge`;
   static readonly TransactionKindRefund = $localize`Refund`;
   static readonly TransactionKindAdjustment = $localize`Adjustment`;
+  static readonly TransactionKindPenalty = $localize`Penalty`;
   static readonly TransactionKindOther = $localize`Transaction`;
 
   // ── Admin Transactions ────────────────────────────────────────────────────
@@ -357,12 +358,65 @@ export class Labels {
   static readonly AddEquipmentBillingNote = $localize`New items are billed only for the remaining time — the rental's return time does not change.`;
   static readonly RentalAddEquipmentSuccess = $localize`Equipment added to rental`;
 
-  static readonly BrokenEquipmentTitle = $localize`Broken equipment`;
-  static readonly BrokenEquipmentSubtitle = $localize`Select items to mark as broken and enter the penalty amount if applicable`;
-  static readonly BrokenEquipmentPenaltyUnderDevelopment = $localize`Penalty submission is under development. Broken item tracking will be available in a future update.`;
+  static readonly ReportDamageTitle = $localize`Report damage`;
+  static readonly ReportDamageSubtitle = $localize`Select the affected items and describe what happened`;
+  static readonly ReportDamageEquipmentLimitHint = $localize`Up to 5 items per report`;
+  static readonly ReportDamageConditionLabel = $localize`New condition`;
+  static readonly ReportDamageConditionBroken = $localize`Broken`;
+  static readonly ReportDamageConditionMaintenance = $localize`Needs maintenance`;
+  static readonly ReportDamageDescriptionLabel = $localize`What happened`;
+  static readonly ReportDamageDescriptionPlaceholder = $localize`Describe the damage — this is recorded in the equipment's condition history`;
+  static readonly ReportDamagePenaltyLabel = $localize`Penalty (optional)`;
+  static readonly ReportDamageAvailabilityNote = $localize`Marking items broken or under maintenance removes them from the rentable pool immediately.`;
+  static readonly ReportDamageSubmit = $localize`Submit report`;
+  static readonly ReportDamageNoItemsSelected = $localize`Select at least one item`;
+  static readonly DamageReportCreatedSuccess = $localize`Damage report created`;
+  static readonly DamageReportPenaltyChargedSuccess = $localize`Damage report created — penalty charged`;
+  static readonly DamageReportPenaltyPendingInfo = $localize`Damage report created. The penalty couldn't be collected yet — it will be charged automatically once the customer tops up.`;
   static readonly ItemsAlreadyReturned = $localize`items already returned`;
   static readonly Apply = $localize`Apply`;
   static readonly CurrencySymbol = $localize`р.`;
+
+  static readonly PenaltyStatusPending = $localize`Not collected yet`;
+  static readonly PenaltyStatusSettled = $localize`Collected`;
+  static readonly PenaltyAmountLabel = $localize`Penalty`;
+
+  static readonly DamageReportsNavLabel = $localize`Damage reports`;
+  static readonly DamageReportPrefix = $localize`Report #`;
+  static readonly DamageReportDetailTitle = $localize`Broken`;
+  static readonly DamageReportRentalWarning = $localize`This rental has damage reports`;
+  static readonly DamageReportRentalWarningUnpaid = $localize`This rental has an uncollected penalty`;
+  static readonly DamageReportLoadError = $localize`Failed to load the damage report`;
+  static readonly DamageReportNotFound = $localize`Damage report not found`;
+  static readonly DamageReportItemsTitle = $localize`Reported items`;
+  static readonly DamageReportConditionChange = $localize`condition change`;
+  static readonly DamageReportOperatorLabel = $localize`Reported by`;
+  static readonly DamageReportReportedAtLabel = $localize`Reported at`;
+  static readonly DamageReportRentalLink = $localize`Open rental`;
+  static readonly DamageReportCustomerLink = $localize`Open customer`;
+  static readonly DamageReportNoPenalty = $localize`No penalty was charged`;
+
+  static readonly CustomerPenaltiesTabLabel = $localize`Penalties`;
+  static readonly CustomerPenaltiesEmptyState = $localize`No damage reports for this customer`;
+  static readonly CustomerPenaltiesLoadError = $localize`Failed to load penalties`;
+  static readonly CustomerPenaltiesRentalFilter = $localize`Rental #`;
+  static readonly CustomerPenaltiesRentalFilterClear = $localize`Show all rentals`;
+
+  static readonly DamageReportsListTitle = $localize`Damage reports`;
+  static readonly DamageReportsEmptyState = $localize`No damage reports found`;
+  static readonly DamageReportsLoadError = $localize`Failed to load damage reports`;
+  static readonly DamageReportFilterEquipmentId = $localize`Equipment ID`;
+  static readonly DamageReportFilterRentalId = $localize`Rental ID`;
+  static readonly DamageReportFilterCustomerId = $localize`Customer ID`;
+  static readonly DamageReportFilterPenaltyStatus = $localize`Penalty status`;
+  static readonly DamageReportFilterOutstandingOnly = $localize`Outstanding only`;
+  static readonly DamageReportColumnId = $localize`ID`;
+  static readonly DamageReportColumnReportedAt = $localize`Reported at`;
+  static readonly DamageReportColumnRental = $localize`Rental`;
+  static readonly DamageReportColumnCustomer = $localize`Customer`;
+  static readonly DamageReportColumnDescription = $localize`Description`;
+  static readonly DamageReportColumnPenalty = $localize`Penalty`;
+  static readonly DamageReportColumnStatus = $localize`Status`;
 
   static readonly TimeTravelDialogTitle = $localize`Server Time`;
   static readonly TimeTravelReset = $localize`Reset`;

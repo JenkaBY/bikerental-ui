@@ -18,6 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: $localize`Customers`, route: 'customers', icon: 'people' },
   { label: $localize`Rentals`, route: 'rentals', icon: 'receipt_long' },
   { label: Labels.TransactionsNavLabel, route: 'transactions', icon: 'account_balance_wallet' },
+  { label: Labels.DamageReportsNavLabel, route: 'damage-reports', icon: 'build' },
   { label: $localize`Users`, route: 'users', icon: 'manage_accounts' },
 ];
 

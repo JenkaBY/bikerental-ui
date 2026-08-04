@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import {
   BatchRentalPropertyStore,
   CustomerFinanceStore,
+  DamageReportStore,
   Labels,
   mapRentalStatus,
   MOBILE_FORM_DIALOG_CONFIG,
@@ -56,6 +57,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalDetailRefreshFacade,
     { provide: RENTAL_STORE_TOKEN, useExisting: RentalStore },
     RentalSignatureStore,
+    DamageReportStore,
   ],
   imports: [
     MatButtonModule,
@@ -82,6 +84,19 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
       } @else {
         <app-page-header [title]="Labels.RentalPrefix + rentalId()" (back)="onBack()">
           <div actions class="flex items-center gap-2">
+            @if (damageReportStore.totalItems() > 0) {
+              <button
+                mat-icon-button
+                class="icon-btn-sm shrink-0"
+                [class.!text-amber-500]="damageReportStore.hasPendingPenalty()"
+                [class.!text-slate-500]="!damageReportStore.hasPendingPenalty()"
+                (click)="onOpenDamageReports()"
+                [attr.aria-label]="damageReportStore.rentalWarningLabel()"
+                [title]="damageReportStore.rentalWarningLabel()"
+              >
+                <mat-icon>warning</mat-icon>
+              </button>
+            }
             @if (signatureStore.summary()) {
               <button
                 mat-icon-button
@@ -163,6 +178,7 @@ export class RentalDetailComponent {
   private readonly snackBar = inject(MatSnackBar);
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly transactionsStore = inject(RentalTransactionsStore);
+  protected readonly damageReportStore = inject(DamageReportStore);
   protected readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
@@ -179,6 +195,14 @@ export class RentalDetailComponent {
 
   protected readonly openPanel = signal<'customer' | 'reserved' | null>(null);
   protected readonly returnMode = signal(false);
+
+  protected onOpenDamageReports(): void {
+    const customerId = this.store.customerId();
+    if (!customerId) return;
+    void this.router.navigate(['/customers', customerId, 'penalties'], {
+      queryParams: { rentalId: this.rentalId() },
+    });
+  }
 
   protected onReturnCompleted(): void {
     this.returnMode.set(false);
@@ -203,6 +227,7 @@ export class RentalDetailComponent {
       const id = this.rentalId();
       if (!isNaN(id) && id > 0) {
         this.store.loadDetail(id);
+        this.damageReportStore.search({ rentalId: id, pageIndex: 0, pageSize: 50 });
       }
     });
 

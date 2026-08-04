@@ -14,3 +14,4 @@ export * from './role.model';
 export * from './managed-user.model';
 export * from './agreement-template.model';
 export * from './agreement-signature.model';
+export * from './damage-report.model';

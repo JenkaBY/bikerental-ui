@@ -35,6 +35,13 @@ export const CUSTOMER_PROFILE_ROUTES: Routes = [
             (m) => m.CustomerTransactionsComponent,
           ),
       },
+      {
+        path: 'penalties',
+        loadComponent: () =>
+          import('./tabs/customer-penalties/customer-penalties.component').then(
+            (m) => m.CustomerPenaltiesComponent,
+          ),
+      },
     ],
   },
 ];

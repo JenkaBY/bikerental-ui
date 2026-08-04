@@ -68,6 +68,23 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'damage-reports',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./damage-reports/damage-report-history.component').then(
+                (m) => m.DamageReportHistoryComponent,
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('@bikerental/shared').then((m) => m.DamageReportDetailComponent),
+          },
+        ],
+      },
+      {
         path: 'users',
         loadComponent: () =>
           import('./users/users-list.component').then((m) => m.UsersListComponent),

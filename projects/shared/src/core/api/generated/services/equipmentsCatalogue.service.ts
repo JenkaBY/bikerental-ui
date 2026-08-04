@@ -21,11 +21,12 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  EquipmentRequest,
+  RequestOptions,
   EquipmentResponse,
+  EquipmentRequest,
   Pageable,
   PageEquipmentResponse,
-  RequestOptions,
+  ChangeEquipmentConditionRequest,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -232,6 +233,51 @@ export class EquipmentsCatalogueService {
     };
 
     return this.httpClient.post(url, equipmentRequest, requestOptions);
+  }
+
+  changeEquipmentConditions(
+    changeEquipmentConditionRequest: ChangeEquipmentConditionRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<Array<EquipmentResponse>>;
+  changeEquipmentConditions(
+    changeEquipmentConditionRequest: ChangeEquipmentConditionRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<Array<EquipmentResponse>>>;
+  changeEquipmentConditions(
+    changeEquipmentConditionRequest: ChangeEquipmentConditionRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<Array<EquipmentResponse>>>;
+  /** Applies the same physical condition to 1-5 equipment items atomically and records one audit trail entry per item. Any unknown id rejects the whole request. */
+  changeEquipmentConditions(
+    changeEquipmentConditionRequest: ChangeEquipmentConditionRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/equipments/conditions`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.patch(url, changeEquipmentConditionRequest, requestOptions);
   }
 
   getEquipmentByUid(

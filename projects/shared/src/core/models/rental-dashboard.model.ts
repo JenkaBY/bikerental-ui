@@ -32,11 +32,6 @@ export interface RentalEquipmentItem extends EquipmentSearchItem {
   readonly startedAt?: Date;
 }
 
-export interface BrokenEquipmentEntry {
-  equipmentItemId: number;
-  penaltyAmount?: number;
-}
-
 export interface ReturnEquipmentWrite {
   rentalId: number;
   equipmentItemIds: number[];
