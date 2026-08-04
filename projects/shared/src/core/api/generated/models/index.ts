@@ -76,6 +76,7 @@ export interface EquipmentItemRequest {
 
 export interface BreakdownCostDetails {
   breakdownPatternCode?: string;
+  tariffCode?: string;
   message?: string;
   params?: any;
 }
@@ -135,6 +136,7 @@ export interface RentalRequest {
 /** Detailed calculation pattern and parameters */
 export interface CalculationDetail {
   breakdownPatternCode: string;
+  tariffCode?: string;
   message: string;
   params?: any;
 }

@@ -7,6 +7,7 @@ Every equipment line in a rental cost calculation / quote carries a **cost break
 ```json
 {
   "breakdownPatternCode": "breakdown.cost.degressive_hourly.standard",
+  "tariffCode": "degressive hourly",
   "message": "7h 0min degressive: 9+7+5+3+3*1 = 27",
   "params": { "hours": 7, "minutes": 0, "rateBreakdown": "9+7+5+3+3*1", "total": "27" }
 }
@@ -15,8 +16,30 @@ Every equipment line in a rental cost calculation / quote carries a **cost break
 | Field                  | Meaning                                                                                          |
 |------------------------|--------------------------------------------------------------------------------------------------|
 | `breakdownPatternCode` | Stable i18n key — **the key the frontend branches on / localizes**. Never branch on `message`.   |
+| `tariffCode`           | Pricing model the line was billed with. **Nullable** — absent on rentals finished before it was introduced; fall back to `pricingType` one level up (`EquipmentCostBreakdownResponse` / `CostBreakdown`). |
 | `message`              | Pre-rendered English **fallback** string (built server-side via `String.format`). Not localized. |
 | `params`               | Structured context object — the numeric parts the frontend feeds into its own localized template. |
+
+`tariffCode` values are lower-case, space-separated: `degressive hourly`, `flat hourly`, `daily`, `flat fee`,
+`special`. The backend does **not** localize them; the frontend upper-cases/underscores them into a
+`PricingTypeSlug` and looks the title up in `Labels.PricingTypeTitles`
+(`resolveTariffCodeLabel` in `shared/constant/breakdown-messages.ts`).
+
+## `rateBreakdown`
+
+Codes that bill by time carry `params.rateBreakdown` — the **complete arithmetic** of the line's addends, ready to
+print. It contains digits and `* + ( ) /` only. **Render it verbatim — never re-assemble or parse it**, and never
+recompute `total` from it. Addend shapes:
+
+- full hours: `{hours}*{rate}`
+- trailing partial hour: `{intervals}*({rate}/12)` — the remainder is billed in 5-minute intervals at `rate/12`
+- daily: `{days}*{dailyRate}` then overtime hours/intervals at the overtime rate
+- degressive: each hour's rate joined by `+`, consecutive equal rates collapsed to `{count}*{rate}`
+
+A remainder shorter than one 5-minute interval is free and is **omitted entirely** from the string.
+
+> **Rounding:** the interval rate is `rate/12` rounded to 2 decimals *before* being multiplied by the interval
+> count, so summing `rateBreakdown` by hand can differ from `total` by a cent. `total` is authoritative.
 
 The backend does **not** resolve `breakdownPatternCode` against a message bundle — the string is shipped as-is for
 the frontend to translate using `params`. Monetary values inside `message`/`params` are rendered with the money
@@ -54,6 +77,12 @@ Notation in the templates below: `{field}` = a value taken from `params`; `+`, `
 - **Template:** `Special tariff applied to group`
 - **Example:** `Special tariff applied to group`
 
+### `breakdown.cost.early_return_free`
+- **When:** equipment returned inside the free grace window — the line is not billed.
+- **params:** `{ withinMinutes: int, actualMinutes: int, total: string }`
+- **Template:** `{actualMinutes}min, free within {withinMinutes}min = {total}`
+- **Example:** `4min, free within 5min = 0`
+
 ---
 
 ## Flat hourly (`FlatHourlyTariffV2`)
@@ -65,17 +94,16 @@ Notation in the templates below: `{field}` = a value taken from `params`; `+`, `
 - **Example:** `30min minimum: 15/2 + 1 = 8.5`
 
 ### `breakdown.cost.flat_hourly.standard`
-- **When:** one or more full hours. `partial` is a literal placeholder for the fractional-hour amount already folded
-  into `total` (billed in 5-minute intervals at `rate/12`).
-- **params:** `{ hours: int, minutes: int, rate: string, total: string }`
-- **Template:** `{hours}h {minutes}min flat: {hours}*{rate} + partial = {total}`
-- **Example:** `2h 15min flat: 2*15 + partial = 33.75`
+- **When:** one or more full hours; a trailing partial hour appends `{intervals}*({rate}/12)`.
+- **params:** `{ hours: int, minutes: int, rate: string, rateBreakdown: string, total: string }`
+- **Template:** `{hours}h {minutes}min flat: {rateBreakdown} = {total}`
+- **Example:** `2h 15min flat: 2*15+3*(15/12) = 33.75`
 
 ### `breakdown.cost.flat_hourly.minutes_only`
 - **When:** above the minimum duration but under one full hour.
-- **params:** `{ minutes: int, total: string }`
-- **Template:** `{minutes}min flat: {total}`
-- **Example:** `45min flat: 11.25`
+- **params:** `{ minutes: int, rate: string, rateBreakdown: string, total: string }`
+- **Template:** `{minutes}min flat: {rateBreakdown} = {total}`
+- **Example:** `45min flat: 9*(15/12) = 11.25`
 
 ---
 
@@ -83,15 +111,15 @@ Notation in the templates below: `{field}` = a value taken from `params`; `+`, `
 
 ### `breakdown.cost.daily.standard`
 - **When:** a whole number of days with no leftover hours/minutes (includes the sub-one-day case, billed as one day).
-- **params:** `{ days: int, total: string }`
-- **Template:** `{days}d = {total}`
-- **Example:** `1d = 25` · `3d = 75`
+- **params:** `{ days: int, dailyRate: string, rateBreakdown: string, total: string }`
+- **Template:** `{days}d daily: {rateBreakdown} = {total}`
+- **Example:** `2d daily: 2*25 = 50`
 
 ### `breakdown.cost.daily.overtime`
 - **When:** whole days plus leftover hours/minutes charged at the overtime hourly rate.
-- **params:** `{ days: int, hours: int, minutes: int, total: string }`
-- **Template:** `{days}d + {hours}h {minutes}min = {total}`
-- **Example:** `2d + 3h 20min = 61.67`
+- **params:** `{ days: int, hours: int, minutes: int, dailyRate: string, overtimeRate: string, rateBreakdown: string, total: string }`
+- **Template:** `{days}d {hours}h {minutes}min daily: {rateBreakdown} = {total}`
+- **Example:** `2d 3h 20min daily: 2*25+3*4+4*(4/12) = 63.32`
 
 ---
 

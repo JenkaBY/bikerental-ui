@@ -16,6 +16,8 @@ export interface RentalCostBreakdown {
   tariffId: number;
   itemCost: Money;
   breakdownPatternCode?: string;
+  tariffCode?: string | null;
+  pricingType?: string;
   params?: BreakdownParams;
   calculationMessage: string;
 }
