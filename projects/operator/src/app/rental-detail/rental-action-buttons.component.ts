@@ -13,15 +13,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { catchError, EMPTY, exhaustMap, filter, tap } from 'rxjs';
-import type { BrokenEquipmentEntry } from '@ui-models';
+import type { DamageReport } from '@ui-models';
 import {
   ApiErrorParser,
   ErrorMessageResolver,
   Labels,
   NotificationService,
+  RentalDetailRefreshFacade,
   RentalStore,
 } from '@bikerental/shared';
-import { BrokenEquipmentSheetComponent } from './broken-equipment-sheet.component';
+import type { ReportDamageResult } from './report-damage-sheet.component';
+import { ReportDamageSheetComponent } from './report-damage-sheet.component';
 import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
 
 @Component({
@@ -40,7 +42,7 @@ import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
           >
             {{ Labels.Cancel }}
           </button>
-          <button mat-stroked-button class="flex-1" (click)="onBroken()">
+          <button mat-stroked-button class="flex-1" (click)="onReportDamage()">
             {{ Labels.BrokenEquipment }}
           </button>
           <button
@@ -57,14 +59,16 @@ import { CancelRentalDialogComponent } from './cancel-rental-dialog.component';
             }
           </button>
         </div>
-      }
-
-      @if (store.isDebt()) {
+      } @else if (store.isDebt()) {
         <button
           mat-stroked-button
           class="w-full !text-red-600 !border-red-400"
-          (click)="onBroken()"
+          (click)="onReportDamage()"
         >
+          {{ Labels.BrokenEquipment }}
+        </button>
+      } @else {
+        <button mat-stroked-button class="w-full" (click)="onReportDamage()">
           {{ Labels.BrokenEquipment }}
         </button>
       }
@@ -79,6 +83,7 @@ export class RentalActionButtonsComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
+  private readonly refresh = inject(RentalDetailRefreshFacade);
 
   readonly returnRequested = output<void>();
 
@@ -93,21 +98,34 @@ export class RentalActionButtonsComponent {
     this.returnRequested.emit();
   }
 
-  protected onBroken(): void {
+  protected onReportDamage(): void {
+    const rentalId = this.store.id();
+    if (rentalId === null) return;
     this.bottomSheet
-      .open(BrokenEquipmentSheetComponent, {
+      .open(ReportDamageSheetComponent, {
         data: {
+          rentalId,
+          operatorId: this.store.operatorId(),
           equipmentItems: this.store.rentalEquipmentItems(),
-          existingEntries: this.store.brokenEquipmentEntries(),
         },
       })
       .afterDismissed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((entries: BrokenEquipmentEntry[] | undefined) => {
-        if (entries !== undefined) {
-          this.store.setBrokenEquipmentEntries(entries);
-        }
+      .subscribe((result: ReportDamageResult) => {
+        if (result) this.onDamageReportCreated(result.report);
       });
+  }
+
+  private onDamageReportCreated(report: DamageReport): void {
+    this.refresh.refreshAll();
+    const penalty = report.penalty;
+    if (!penalty) {
+      this.notifications.success(Labels.DamageReportCreatedSuccess);
+    } else if (penalty.isSettled) {
+      this.notifications.success(Labels.DamageReportPenaltyChargedSuccess);
+    } else {
+      this.notifications.info(Labels.DamageReportPenaltyPendingInfo);
+    }
   }
 
   protected onCancel(): void {

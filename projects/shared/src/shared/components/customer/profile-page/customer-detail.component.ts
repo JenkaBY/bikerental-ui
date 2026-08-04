@@ -97,6 +97,7 @@ export class CustomerDetailComponent {
     { id: 'rentals', label: Labels.CustomerRentalsTabLabel },
     { id: 'account', label: Labels.CustomerAccountTabLabel },
     { id: 'transactions', label: Labels.CustomerTransactionsTabLabel },
+    { id: 'penalties', label: Labels.CustomerPenaltiesTabLabel },
   ];
 
   protected readonly layoutStore = inject(CustomerLayoutStore);

@@ -71,6 +71,9 @@ export * from './core/state/agreement-signing.store';
 export * from './core/state/rental-signature.store';
 export * from './core/state/transaction-search.store';
 export * from './core/state/transaction-details.store';
+export * from './core/state/damage-report.store';
+export * from './core/state/damage-report-detail.store';
+export * from './core/state/damage-report-create.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';
@@ -133,6 +136,10 @@ export * from './shared/components/cost-breakdown/cost-breakdown.component';
 export * from './shared/components/equipment-unit/equipment-unit-summary.component';
 export * from './shared/components/equipment-unit/equipment-unit-details.component';
 export * from './shared/components/equipment-unit/equipment-unit-card.component';
+export * from './shared/components/penalty-status-badge/penalty-status-badge.component';
+export * from './shared/components/damage-report/damage-report-list-item.component';
+export * from './shared/components/damage-report/damage-report-detail.component';
+export * from './shared/components/damage-report/damage-report.routes';
 // Shared UI — constants
 export * from './shared/constant/labels';
 export * from './shared/constant/breakdown-messages';
@@ -141,6 +148,7 @@ export * from './shared/constant/mobile-form-dialog.config';
 // Shared UI — presentation/meta maps (rental + equipment-item status)
 export * from './shared/rental-status.meta';
 export * from './shared/transaction.meta';
+export * from './shared/penalty-status.meta';
 
 // Shared UI — pipes
 export * from './shared/pipes/truncate.pipe';

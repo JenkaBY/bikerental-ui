@@ -14,7 +14,6 @@ import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import type { AddRentalEquipmentRequest, RentalResponse } from '../api/generated';
 import { CustomersService, RentalsService } from '../api/generated';
 import {
-  type BrokenEquipmentEntry,
   type Customer,
   type EquipmentSearchItem,
   type Money,
@@ -62,7 +61,6 @@ export class RentalStore {
     isActive: false,
     isDebt: false,
     isOverdue: false,
-    brokenEquipmentEntries: [] as BrokenEquipmentEntry[],
     isReturning: false,
     isAddingEquipment: false,
     specialTariffId: undefined,
@@ -152,7 +150,6 @@ export class RentalStore {
   });
   readonly estimatedCost = computed(() => this._state().estimatedCost);
   readonly finalCost = computed(() => this._state().finalCost);
-  readonly brokenEquipmentEntries = computed(() => this._state().brokenEquipmentEntries);
 
   readonly subtotal = computed<Money | null>(() => {
     const items = this.rentalEquipmentItems();
@@ -179,10 +176,6 @@ export class RentalStore {
     if (!sub || !total) return null;
     return makeMoney(sub.amount - total.amount, sub.currency);
   });
-
-  setBrokenEquipmentEntries(entries: BrokenEquipmentEntry[]): void {
-    this.patchState({ brokenEquipmentEntries: entries });
-  }
 
   readonly isReturning = computed(() => this._state().isReturning);
   readonly isAddingEquipment = computed(() => this._state().isAddingEquipment);

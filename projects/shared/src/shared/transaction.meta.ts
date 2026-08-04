@@ -24,6 +24,7 @@ export const TransactionKindMetaMap: Record<TransactionKind, TransactionKindMeta
   },
   REFUND: { kind: 'REFUND', icon: 'undo', label: Labels.TransactionKindRefund },
   ADJUSTMENT: { kind: 'ADJUSTMENT', icon: 'tune', label: Labels.TransactionKindAdjustment },
+  PENALTY: { kind: 'PENALTY', icon: 'gavel', label: Labels.TransactionKindPenalty },
   OTHER: { kind: 'OTHER', icon: 'receipt_long', label: Labels.TransactionKindOther },
 };
 

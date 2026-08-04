@@ -11,6 +11,7 @@ export type TransactionKind =
   | 'CAPTURE'
   | 'REFUND'
   | 'ADJUSTMENT'
+  | 'PENALTY'
   | 'OTHER';
 
 export type TransactionDirection = 'CREDIT' | 'DEBIT';

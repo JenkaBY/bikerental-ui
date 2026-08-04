@@ -28,6 +28,7 @@ const KNOWN_KINDS: ReadonlySet<TransactionKind> = new Set<TransactionKind>([
   'CAPTURE',
   'REFUND',
   'ADJUSTMENT',
+  'PENALTY',
 ]);
 
 const CREDIT_KINDS: ReadonlySet<TransactionKind> = new Set<TransactionKind>([

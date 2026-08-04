@@ -8,7 +8,6 @@ import type {
   ReturnEquipmentRequest,
 } from '@api-models';
 import type {
-  BrokenEquipmentEntry,
   Customer,
   EquipmentSearchItem,
   RentalEquipmentItem,
@@ -143,7 +142,6 @@ export class RentalDashboardMapper {
       isDebt,
       isOverdue,
       overdueMinutes,
-      brokenEquipmentEntries: [] as BrokenEquipmentEntry[],
       isReturning: false,
       isUpdatingPricing: false,
       estimatedCost: r.estimatedCost ? makeMoney(r.estimatedCost) : undefined,

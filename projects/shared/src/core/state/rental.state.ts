@@ -1,7 +1,6 @@
 import type { Money } from '@ui-models';
 import type { Customer } from '@ui-models';
 import type { EquipmentSearchItem } from '@ui-models';
-import type { BrokenEquipmentEntry } from '@ui-models';
 import type { RentalPriceMode } from '@ui-models';
 
 export interface RentalState {
@@ -30,7 +29,6 @@ export interface RentalDetailState extends RentalState {
   isDebt: boolean;
   isOverdue: boolean;
   overdueMinutes?: number;
-  brokenEquipmentEntries: BrokenEquipmentEntry[];
   isReturning: boolean;
   isAddingEquipment: boolean;
   specialTariffId?: number;

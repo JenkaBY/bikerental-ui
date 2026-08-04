@@ -40,6 +40,10 @@ export const routes: Routes = [
         loadComponent: () => import('./return/return.component').then((m) => m.ReturnComponent),
       },
       {
+        path: 'damage-reports',
+        loadChildren: () => import('@bikerental/shared').then((m) => m.DAMAGE_REPORT_ROUTES),
+      },
+      {
         path: 'customers/:id',
         canActivate: [customerProfileGuard],
         loadChildren: () => import('@bikerental/shared').then((m) => m.CUSTOMER_PROFILE_ROUTES),

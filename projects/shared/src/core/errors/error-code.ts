@@ -7,6 +7,7 @@ export const ErrorCode = {
   METHOD_ARGUMENT_TYPE_MISMATCH: 'shared.request.type_mismatch',
   REQUEST_PARAMS_MISSING: 'shared.request.param_missing',
   NOT_READABLE: 'shared.request.not_readable',
+  RESPONSIBLE_PARTY_REQUIRED: 'error.validation.responsible_party_required',
 
   // shared.* — request protocol (4xx, not user-data errors)
   REQUEST_METHOD_NOT_ALLOWED: 'shared.request.method_not_allowed',
@@ -21,6 +22,7 @@ export const ErrorCode = {
   RESOURCE_CONFLICT: 'shared.resource.conflict',
   RESOURCE_OPTIMISTIC_LOCK: 'shared.resource.optimistic_lock',
   SHARED_EQUIPMENT_NOT_AVAILABLE: 'shared.equipment.not_available',
+  SHARED_EQUIPMENT_NOT_FOUND: 'shared.equipment.not_found',
 
   // finance.*
   INSUFFICIENT_BALANCE: 'finance.insufficient_balance',
@@ -67,6 +69,9 @@ export const ErrorCode = {
   AGREEMENT_SIGNING_RENTAL_NOT_AWAITING_SIGNATURE:
     'agreement.signing.rental_not_awaiting_signature',
   AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE: 'agreement.signing.invalid_signature_image',
+
+  // maintenance.* — damage reports
+  MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL: 'maintenance.equipment.not_in_rental',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -79,6 +84,7 @@ const VALIDATION_CODES = new Set<string>([
   ErrorCode.METHOD_ARGUMENT_TYPE_MISMATCH,
   ErrorCode.REQUEST_PARAMS_MISSING,
   ErrorCode.NOT_READABLE,
+  ErrorCode.RESPONSIBLE_PARTY_REQUIRED,
 ]);
 
 const DOMAIN_CODES = new Set<string>([
@@ -87,6 +93,8 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.RESOURCE_CONFLICT,
   ErrorCode.RESOURCE_OPTIMISTIC_LOCK,
   ErrorCode.SHARED_EQUIPMENT_NOT_AVAILABLE,
+  ErrorCode.SHARED_EQUIPMENT_NOT_FOUND,
+  ErrorCode.MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL,
   ErrorCode.INSUFFICIENT_BALANCE,
   ErrorCode.OVER_BUDGET_SETTLEMENT,
   ErrorCode.INSUFFICIENT_HOLD,

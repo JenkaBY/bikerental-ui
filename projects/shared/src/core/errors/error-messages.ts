@@ -61,6 +61,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.RESOURCE_CONFLICT]: resourceConflictMessage,
   [ErrorCode.RESOURCE_OPTIMISTIC_LOCK]: $localize`This record was changed by someone else. Reload and try again.`,
   [ErrorCode.SHARED_EQUIPMENT_NOT_AVAILABLE]: sharedEquipmentNotAvailableMessage,
+  [ErrorCode.SHARED_EQUIPMENT_NOT_FOUND]: sharedEquipmentNotFoundMessage,
 
   // Finance
   [ErrorCode.INSUFFICIENT_BALANCE]: insufficientBalanceMessage,
@@ -108,6 +109,9 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
     agreementSigningRentalNotAwaitingSignatureMessage,
   [ErrorCode.AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE]: $localize`The signature image is invalid. Please sign again.`,
 
+  // Damage reports (maintenance)
+  [ErrorCode.MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL]: maintenanceEquipmentNotInRentalMessage,
+
   // ── Field-level validation codes (matched against FieldError.code) ────────
   // Derived from Bean Validation annotations as validation.<snake_case_annotation_name>
   // resolveFieldErrorMessage() uses these before falling back to field.message
@@ -137,6 +141,10 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   // Class-level rental pricing rules (field: null — render as a general form message)
   'validation.special_tariff_consistency': $localize`A fixed price requires a special tariff — both must be set together.`,
   'validation.special_tariff_and_discount_exclusive': $localize`A discount and a fixed price cannot be applied at the same time.`,
+
+  // Class-level damage report rule (field: null) — should be unreachable since the UI always
+  // supplies exactly one of rentalId/customerId, kept as a safety net
+  [ErrorCode.RESPONSIBLE_PARTY_REQUIRED]: $localize`Select either a rental or a customer to attach this report to — not both, not neither.`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -157,6 +165,23 @@ function sharedEquipmentNotAvailableMessage(params: Record<string, unknown>): st
     return $localize`Equipment ${ids.map(String).join(', ')}:ids: is out of service and cannot be rented.`;
   }
   return $localize`The selected equipment is out of service.`;
+}
+
+function sharedEquipmentNotFoundMessage(params: Record<string, unknown>): string {
+  const ids = params['identifiers'];
+  if (Array.isArray(ids) && ids.length > 0) {
+    return $localize`Equipment ${ids.map(String).join(', ')}:ids: could not be found. Nothing was changed.`;
+  }
+  return $localize`One or more equipment items could not be found. Nothing was changed.`;
+}
+
+function maintenanceEquipmentNotInRentalMessage(params: Record<string, unknown>): string {
+  const ids = params['identifiers'];
+  const rentalId = params['rentalId'];
+  if (Array.isArray(ids) && ids.length > 0 && rentalId != null) {
+    return $localize`Equipment ${ids.map(String).join(', ')}:ids: is not part of rental #${String(rentalId)}:rentalId:. Nothing was changed.`;
+  }
+  return $localize`One or more items are not part of this rental. Nothing was changed.`;
 }
 
 function insufficientBalanceMessage(params: Record<string, unknown>): string {
