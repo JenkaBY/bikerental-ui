@@ -977,35 +977,42 @@
         <source>0 <x id="minutes" equiv-text="M"/> · 0 <x id="currency" equiv-text="currency"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/breakdown-messages.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2561115339139426351" datatype="html">
         <source>Special tariff</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/breakdown-messages.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="57367713929148801" datatype="html">
         <source>Special tariff (group)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/breakdown-messages.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="36680173556464024" datatype="html">
+        <source><x id="actual" equiv-text="raw(&apos;actualMinutes&apos;)"/> <x id="minLabel" equiv-text="M"/> · free within <x id="within" equiv-text="raw(&apos;withinMinutes&apos;)"/> <x id="minLabel2" equiv-text="M"/> = <x id="total" equiv-text="money(&apos;total&apos;)"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/breakdown-messages.ts</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="806023352748463339" datatype="html">
         <source><x id="duration" equiv-text="raw(&apos;durationMinutes&apos;)"/> <x id="minLabel" equiv-text="M"/> minimum · <x id="rate" equiv-text="raw(&apos;rate&apos;)"/>/2 + <x id="surcharge" equiv-text="raw(&apos;surcharge&apos;)"/> = <x id="total" equiv-text="money(&apos;total&apos;)"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/breakdown-messages.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2828181667245332272" datatype="html">
         <source>Flat fee</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/breakdown-messages.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">72</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
