@@ -111,6 +111,8 @@ export class RentalDashboardMapper {
                 tariffId: item.tariffId ?? 0,
                 itemCost: makeMoney(item.finalCost ?? item.breakdown.itemCost),
                 breakdownPatternCode: item.breakdown.calculationBreakdown?.breakdownPatternCode,
+                tariffCode: item.breakdown.calculationBreakdown?.tariffCode ?? null,
+                pricingType: item.breakdown.pricingType,
                 params: item.breakdown.calculationBreakdown?.params ?? null,
                 calculationMessage: item.breakdown.calculationBreakdown?.message ?? '',
               }

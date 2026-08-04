@@ -67,6 +67,8 @@ export class CostCalculationMapper {
         tariffId: b.tariffId,
         itemCost: makeMoney(b.itemCost),
         breakdownPatternCode: b.calculationBreakdown?.breakdownPatternCode,
+        tariffCode: b.calculationBreakdown?.tariffCode ?? null,
+        pricingType: b.pricingType,
         params: b.calculationBreakdown?.params ?? null,
         calculationMessage: b.calculationBreakdown?.message ?? '',
       })),
