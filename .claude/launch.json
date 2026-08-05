@@ -8,6 +8,12 @@
       "port": 4202
     },
     {
+      "name": "gateway-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:gateway"],
+      "port": 4200
+    },
+    {
       "name": "admin-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start:admin"],

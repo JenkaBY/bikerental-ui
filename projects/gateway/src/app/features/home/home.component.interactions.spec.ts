@@ -39,7 +39,7 @@ describe('HomeComponent interactions', () => {
     expect(doc.location.href).toBe('https://jenkaby.github.io/bikerental-ui/admin/en/');
   });
 
-  it('activate on operator-mobile card navigates to operator/en/ on GitHub Pages', async () => {
+  it('activate on operator card navigates to operator/en/ on GitHub Pages', async () => {
     const doc = makeDocument('https://jenkaby.github.io/bikerental-ui/en/');
     await TestBed.configureTestingModule({
       imports: [HomeComponent],

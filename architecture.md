@@ -296,13 +296,9 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
   ROLE: Library
   PURPOSE: Functional HTTP interceptors; `errorInterceptor` handles global HTTP errors; `ErrorService` surfaces errors to components
 
-- PATH: `projects/shared/src/core/layout-mode.service.ts`
-  ROLE: Library
-  PURPOSE: Signal-based service for toggling between admin and operator layout modes
-
 - PATH: `projects/shared/src/shared/components/`
   ROLE: Library
-  PURPOSE: Reusable standalone UI components: shell, sidebar, app-toolbar, app-brand, bottom-nav, button, toggle-button, logout-button, cancel-button, save-button, sidebar-nav-item, dashboard-card, equipment-type-dropdown, qr-scanner, health-indicator, layout-mode-toggle
+  PURPOSE: Reusable standalone UI components: shell, sidebar, app-toolbar, app-brand, bottom-nav, button, toggle-button, logout-button, cancel-button, save-button, sidebar-nav-item, dashboard-card, equipment-type-dropdown, qr-scanner, health-indicator
 
 - PATH: `projects/shared/src/shared/constant/labels.ts`
   ROLE: Library
