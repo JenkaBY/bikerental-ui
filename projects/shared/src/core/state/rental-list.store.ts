@@ -9,8 +9,8 @@ import type { RentalSummaryResponse } from '@api-models';
 import { toIsoDate } from '../../shared/utils/date.util';
 
 export interface RentalFilter {
-  dateFrom?: Date;
-  dateTo?: Date;
+  returnedFrom?: Date;
+  returnedTo?: Date;
   filter: 'ALL' | 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT' | undefined;
 }
 
@@ -49,8 +49,10 @@ export class RentalListStore {
           statusApi,
           undefined,
           undefined,
-          params.dateFrom ? toIsoDate(params.dateFrom) : undefined,
-          params.dateTo ? toIsoDate(params.dateTo) : undefined,
+          undefined,
+          undefined,
+          params.returnedFrom ? toIsoDate(params.returnedFrom) : undefined,
+          params.returnedTo ? toIsoDate(params.returnedTo) : undefined,
         )
         .pipe(
           switchMap((page) => this.enrichItems(page.items ?? [])),
@@ -77,11 +79,11 @@ export class RentalListStore {
   }
 
   loadHistory(
-    dateFrom: Date | undefined,
-    dateTo: Date | undefined,
+    returnedFrom: Date | undefined,
+    returnedTo: Date | undefined,
     filter: RentalFilter['filter'] = 'ALL',
   ): void {
-    this.historyParams.set({ dateFrom, dateTo, filter });
+    this.historyParams.set({ returnedFrom, returnedTo, filter });
   }
 
   private enrichItems(items: RentalSummaryResponse[]): Observable<RentalListItem[]> {

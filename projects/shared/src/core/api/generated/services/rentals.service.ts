@@ -103,6 +103,8 @@ export class RentalsService {
     equipmentUid?: string,
     from?: string,
     to?: string,
+    returnedFrom?: string,
+    returnedTo?: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageRentalSummaryResponse>;
@@ -113,6 +115,8 @@ export class RentalsService {
     equipmentUid?: string,
     from?: string,
     to?: string,
+    returnedFrom?: string,
+    returnedTo?: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageRentalSummaryResponse>>;
@@ -123,6 +127,8 @@ export class RentalsService {
     equipmentUid?: string,
     from?: string,
     to?: string,
+    returnedFrom?: string,
+    returnedTo?: string,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageRentalSummaryResponse>>;
@@ -134,6 +140,8 @@ export class RentalsService {
     equipmentUid?: string,
     from?: string,
     to?: string,
+    returnedFrom?: string,
+    returnedTo?: string,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
@@ -154,6 +162,12 @@ export class RentalsService {
     }
     if (to != null) {
       params = HttpParamsBuilder.addToHttpParams(params, to, 'to');
+    }
+    if (returnedFrom != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, returnedFrom, 'returnedFrom');
+    }
+    if (returnedTo != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, returnedTo, 'returnedTo');
     }
     if (arg5 != null) {
       params = HttpParamsBuilder.addToHttpParams(params, arg5, 'arg5');
