@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { customerProfileGuard } from '@bikerental/shared';
-import { OperatorShellWrapperComponent } from './layout/operator-shell-wrapper.component';
+import { OperatorLayoutComponent } from './layout/operator-layout.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: OperatorShellWrapperComponent,
+    component: OperatorLayoutComponent,
     children: [
       { path: '', redirectTo: 'rentals', pathMatch: 'full' },
       {
