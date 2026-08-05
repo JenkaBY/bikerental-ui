@@ -134,11 +134,6 @@ export type ReportDamageResult = { outcome: 'created'; report: DamageReport } | 
             <mat-error>{{ form.controls.penaltyAmount.getError('server') }}</mat-error>
           }
         </mat-form-field>
-
-        <div class="flex items-start gap-2 bg-blue-50 rounded p-3">
-          <span class="text-blue-500 text-sm leading-none mt-0.5">ℹ</span>
-          <p class="text-xs text-blue-700">{{ Labels.ReportDamageAvailabilityNote }}</p>
-        </div>
       </form>
     </div>
 
