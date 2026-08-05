@@ -142,6 +142,9 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   'validation.special_tariff_consistency': $localize`A fixed price requires a special tariff — both must be set together.`,
   'validation.special_tariff_and_discount_exclusive': $localize`A discount and a fixed price cannot be applied at the same time.`,
 
+  // Cross-field date range rule (field: null; params.from/params.to name the invalid pair)
+  'validation.valid_date_range': validDateRangeMessage,
+
   // Class-level damage report rule (field: null) — should be unreachable since the UI always
   // supplies exactly one of rentalId/customerId, kept as a safety net
   [ErrorCode.RESPONSIBLE_PARTY_REQUIRED]: $localize`Select either a rental or a customer to attach this report to — not both, not neither.`,
@@ -318,6 +321,24 @@ function validationDecimalMaxMessage(params: Record<string, unknown>): string {
       : $localize`Must be at most ${value}:value:.`;
   }
   return $localize`The value is too large.`;
+}
+
+const DATE_RANGE_PARAM_LABELS: Record<string, string> = {
+  from: $localize`Created from`,
+  to: $localize`Created to`,
+  returnedFrom: $localize`Returned from`,
+  returnedTo: $localize`Returned to`,
+};
+
+function validDateRangeMessage(params: Record<string, unknown>): string {
+  const from = params['from'];
+  const to = params['to'];
+  const fromLabel = typeof from === 'string' ? (DATE_RANGE_PARAM_LABELS[from] ?? from) : undefined;
+  const toLabel = typeof to === 'string' ? (DATE_RANGE_PARAM_LABELS[to] ?? to) : undefined;
+  if (fromLabel && toLabel) {
+    return $localize`"${fromLabel}:from:" must be on or before "${toLabel}:to:".`;
+  }
+  return $localize`The start date must be on or before the end date.`;
 }
 
 function validationDigitsMessage(params: Record<string, unknown>): string {

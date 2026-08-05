@@ -5,6 +5,9 @@ import { ErrorMessageCatalog, MessageTemplate, ErrorMessages } from './error-mes
 export function resolveErrorMessage(error: ApiError): string {
   if (error.code === NETWORK_ERROR_CODE) return ErrorMessages.network;
 
+  const generalFieldError = error.fieldErrors.find((f) => !f.field && ErrorMessageCatalog[f.code]);
+  if (generalFieldError) return resolveFieldErrorMessage(generalFieldError);
+
   const template = ErrorMessageCatalog[error.code];
   if (template) return render(template, error.params);
 
