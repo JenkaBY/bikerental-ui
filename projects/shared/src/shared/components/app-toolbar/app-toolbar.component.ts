@@ -4,7 +4,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ToggleButtonComponent } from '../toggle-button/toggle-button.component';
-import { LayoutModeToggleComponent } from '../layout-mode-toggle/layout-mode-toggle.component';
 import { TimeTravelStore } from '../../../core/state/time-travel.store';
 import { TimeTravelDisplayComponent } from '../time-travel-display/time-travel-display.component';
 
@@ -16,7 +15,6 @@ import { TimeTravelDisplayComponent } from '../time-travel-display/time-travel-d
     MatIconModule,
     MatButtonModule,
     ToggleButtonComponent,
-    LayoutModeToggleComponent,
     TimeTravelDisplayComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,9 +50,6 @@ import { TimeTravelDisplayComponent } from '../time-travel-display/time-travel-d
       }
 
       <div class="flex-1 flex items-center justify-end gap-2">
-        @if (showDesktopModeToggle()) {
-          <app-layout-mode-toggle></app-layout-mode-toggle>
-        }
         <ng-content></ng-content>
       </div>
     </mat-toolbar>
@@ -69,8 +64,6 @@ export class AppToolbarComponent {
   menuOpen = input<boolean>(false);
 
   showLogout = input<boolean>(true);
-
-  showDesktopModeToggle = input<boolean>(false);
 
   toggleSidebar = output<void>();
 

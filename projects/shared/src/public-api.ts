@@ -25,9 +25,6 @@ export * from './core/interceptors/accept-language.interceptor';
 export * from './core/interceptors/error.interceptor';
 export * from './core/interceptors/error.service';
 
-// Core — layout mode
-export * from './core/layout-mode.service';
-
 export * from './core/locale-redirect.service';
 
 // Core — mappers
@@ -92,7 +89,6 @@ export * from './shared/components/health-indicator/health-indicator.component';
 export * from './shared/components/health-indicator/health-tooltip-line.component';
 export * from './shared/components/health-indicator/health-tooltip-lines.builder';
 export * from './shared/components/health-indicator/health-tooltip.component';
-export * from './shared/components/layout-mode-toggle/layout-mode-toggle.component';
 export * from './shared/components/logout-button/logout-button.component';
 export * from './shared/components/page-header/page-header.component';
 export * from './shared/components/segmented-tabs/segmented-tabs.component';
