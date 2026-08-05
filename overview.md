@@ -55,7 +55,7 @@
 
 - PATH: `projects/shared/src/shared/components/`
   PURPOSE: Reusable standalone UI components consumed by all three apps
-  ENTRY_FILES: `shell/`, `sidebar/`, `app-toolbar/`, `app-brand/`, `bottom-nav/`, `button/`, `toggle-button/`, `logout-button/`, `cancel-button/`, `save-button/`, `sidebar-nav-item/`, `dashboard-card/`, `equipment-type-dropdown/`, `qr-scanner/`, `health-indicator/`, `layout-mode-toggle/`
+  ENTRY_FILES: `shell/`, `sidebar/`, `app-toolbar/`, `app-brand/`, `bottom-nav/`, `button/`, `toggle-button/`, `logout-button/`, `cancel-button/`, `save-button/`, `sidebar-nav-item/`, `dashboard-card/`, `equipment-type-dropdown/`, `qr-scanner/`, `health-indicator/`
 
 - PATH: `projects/shared/src/environments/`
   PURPOSE: Environment-specific configuration values shared by all three apps
@@ -89,10 +89,10 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: HomeComponent
 TYPE: API
-PURPOSE: Landing page displaying navigation cards for Admin, Operator Mobile, and Operator Desktop.
+PURPOSE: Landing page displaying navigation cards for Admin and Operator.
 RESPONSIBILITIES:
 
-- Renders three `DashboardCardComponent` tiles
+- Renders two `DashboardCardComponent` tiles
 - On card select, performs a hard navigation via `document.location.href` to the target sub-app URL (cross-app navigation, not in-SPA routing)
   SOURCE: `projects/gateway/src/app/home/home.component.ts`
   CALLS:
@@ -150,35 +150,14 @@ RESPONSIBILITIES:
 
 ---
 
-COMPONENT_NAME: OperatorShellWrapperComponent
-TYPE: Gateway
-PURPOSE: Adaptive operator shell that switches between mobile and desktop layouts based on `LayoutModeService`.
-RESPONSIBILITIES:
-
-- Renders `OperatorLayoutComponent` when `LayoutModeService.isMobile()` is true
-- Renders `ShellComponent` (desktop sidenav) when desktop mode is active
-- Embeds `HealthIndicatorComponent` and `LogoutButtonComponent`
-- Hosts `<router-outlet>` for operator child routes
-  SOURCE: `projects/operator/src/app/layout/operator-shell-wrapper.component.ts`
-  CALLS:
-- LayoutModeService — to read `isMobile()` signal
-- OperatorLayoutComponent — for mobile layout rendering
-- ShellComponent — for desktop layout rendering
-- HealthIndicatorComponent — to embed health status
-- LogoutButtonComponent — to render logout action
-  CALLED_BY:
-- Angular Router (operator route wrapper)
-
----
-
 COMPONENT_NAME: OperatorLayoutComponent
 TYPE: API
-PURPOSE: Mobile-first layout frame for the Operator feature area.
+PURPOSE: Mobile-first layout frame for the Operator feature area, and the operator route wrapper.
 RESPONSIBILITIES:
 
 - Renders `AppToolbarComponent` at the top with title and action buttons
 - Renders `BottomNavComponent` at the bottom with three operator nav items (Dashboard, New Rental, Return)
-- Projects main content between toolbar and bottom nav
+- Hosts `<router-outlet>` for operator child routes between toolbar and bottom nav
   SOURCE: `projects/operator/src/app/layout/operator-layout.component.ts`
   CALLS:
 - AppToolbarComponent — to render the top toolbar
@@ -186,7 +165,7 @@ RESPONSIBILITIES:
 - HealthIndicatorComponent — embedded inside toolbar
 - LogoutButtonComponent — embedded inside toolbar
   CALLED_BY:
-- OperatorShellWrapperComponent
+- Angular Router (operator route wrapper)
 
 ---
 
@@ -475,11 +454,10 @@ TYPE: API
 PURPOSE: Operator view for equipment return via QR scanner or manual UID entry (TASK012 — partially stubbed).
 RESPONSIBILITIES:
 
-- Reads `LayoutModeService.isMobile()` to decide which return UI to render
-- Conditionally shows QR-scanner note (mobile) or manual-entry note (desktop)
+- Renders the QR-scanner return UI
   SOURCE: `projects/operator/src/app/return/return.component.ts`
   CALLS:
-- LayoutModeService — to read current layout mode
+- NONE
   CALLED_BY:
 - Angular Router (operator route `'return'`)
 
@@ -528,7 +506,7 @@ RESPONSIBILITIES:
 
 - Renders a `MatSidenav` with nav items, sidebar footer slot, and main content slot
 - Projects `AppToolbarComponent` at the top with optional toolbar action slot
-- Inputs: items (NavItem[]), brand, title, sidenavOpened, showModeToggle
+- Inputs: items (NavItem[]), brand, title, sidenavOpened
 - Outputs: toggleSidebar, logout
   SOURCE: `projects/shared/src/shared/components/shell/shell.component.ts`
   CALLS:
@@ -536,7 +514,6 @@ RESPONSIBILITIES:
 - AppToolbarComponent — to render the top toolbar
   CALLED_BY:
 - AdminLayoutComponent
-- OperatorShellWrapperComponent (desktop mode)
 
 ---
 
@@ -558,18 +535,17 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: AppToolbarComponent
 TYPE: API
-PURPOSE: Reusable top toolbar with title, optional menu-toggle, optional desktop-mode toggle, and action slot.
+PURPOSE: Reusable top toolbar with title, optional menu-toggle, and action slot.
 RESPONSIBILITIES:
 
 - Renders a sticky `MatToolbar` with configurable title and toggle buttons
 - Navigates to home when the title is clicked via `AppBrandComponent`
 - Emits `toggleSidebar` output when the toggle button is pressed
-- Conditionally renders `LayoutModeToggleComponent`
-- Inputs: title (required), showToggle, menuOpen, showLogout, showDesktopModeToggle
+- Inputs: title (required), showToggle, menuOpen, showLogout
 - Outputs: toggleSidebar, logout
   SOURCE: `projects/shared/src/shared/components/app-toolbar/app-toolbar.component.ts`
   CALLS:
-- LayoutModeToggleComponent — to render the mode-toggle button when `showDesktopModeToggle` is true
+- NONE
   CALLED_BY:
 - ShellComponent
 - OperatorLayoutComponent
@@ -719,21 +695,6 @@ RESPONSIBILITIES:
 - EquipmentTypeDialogComponent
 - EquipmentDialogComponent
 - TariffDialogComponent
-
----
-
-COMPONENT_NAME: LayoutModeToggleComponent
-TYPE: API
-PURPOSE: Button that toggles between mobile and desktop layout modes.
-RESPONSIBILITIES:
-
-- Reads `LayoutModeService.isMobile()` to determine the current icon (smartphone vs desktop_windows)
-- Calls `LayoutModeService.toggle()` on click
-  SOURCE: `projects/shared/src/shared/components/layout-mode-toggle/layout-mode-toggle.component.ts`
-  CALLS:
-- LayoutModeService — to read mode and call `toggle()`
-  CALLED_BY:
-- AppToolbarComponent
 
 ---
 
@@ -916,24 +877,6 @@ RESPONSIBILITIES:
 - ErrorService — to handle and display HTTP errors
   CALLED_BY:
 - Admin and Operator `appConfig` via `withInterceptors([errorInterceptor])`
-
----
-
-COMPONENT_NAME: LayoutModeService
-TYPE: Service
-PURPOSE: Persists and exposes the current layout mode (`mobile` | `desktop`) using signals and `localStorage`.
-RESPONSIBILITIES:
-
-- Reads initial mode from `localStorage` key `bikerental.operatorLayoutMode`
-- Exposes `mode()`, `isMobile()` computed signals
-- Provides `setMode()` and `toggle()` mutators; persists changes to `localStorage`
-  SOURCE: `projects/shared/src/core/layout-mode.service.ts`
-  CALLS:
-- NONE
-  CALLED_BY:
-- OperatorShellWrapperComponent
-- ReturnComponent
-- LayoutModeToggleComponent
 
 ---
 
@@ -1326,7 +1269,7 @@ REGISTRATION_FILE: Each SPA has its own `app.config.ts` — `projects/admin/src/
   CONCRETE: `environment.brand` string (`'Bike Rental'`)
   LOCATION: all three `app.config.ts` files
 
-All stores and services (`EquipmentTypeStore`, `EquipmentStore`, `TariffStore`, `PricingTypeStore`, `HealthService`, `HealthPollerService`, `LayoutModeService`, `ErrorService`, `LookupInitializerFacade`) use `@Injectable({ providedIn: 'root' })` and are therefore singletons. All generated API services also use `providedIn: 'root'`.
+All stores and services (`EquipmentTypeStore`, `EquipmentStore`, `TariffStore`, `PricingTypeStore`, `HealthService`, `HealthPollerService`, `ErrorService`, `LookupInitializerFacade`) use `@Injectable({ providedIn: 'root' })` and are therefore singletons. All generated API services also use `providedIn: 'root'`.
 
 ---
 
@@ -1346,11 +1289,6 @@ All stores and services (`EquipmentTypeStore`, `EquipmentStore`, `TariffStore`, 
   KEYS: `input` (OpenAPI spec URL), `output` (generated code directory), `dateType`, `enumStyle`, `generateServices`
   SENSITIVE: NO
   LOCATION: `projects/shared/config/openapi.config.ts`
-
-- SOURCE_TYPE: browser localStorage
-  KEYS: `bikerental.operatorLayoutMode`
-  SENSITIVE: NO
-  LOCATION: `projects/shared/src/core/layout-mode.service.ts` (runtime browser localStorage)
 
 ---
 
@@ -1407,13 +1345,6 @@ Client-side state is held in signal-based stores (`projects/shared/src/core/stat
   SNIPPET:
   ```typescript
   return forkJoin(tasks).pipe(tap(() => console.log('Lookup initialization started...')));
-  ```
-
-- PATTERN: Adaptive layout (mobile/desktop) via LayoutModeService signal
-  EVIDENCE: `projects/operator/src/app/layout/operator-shell-wrapper.component.ts`
-  SNIPPET:
-  ```typescript
-  @if (layout.isMobile()) { <app-operator-layout> } @else { <app-shell> }
   ```
 
 - PATTERN: Generated API client (ng-openapi) with client-scoped HTTP context token routing
