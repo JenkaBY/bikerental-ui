@@ -37,46 +37,33 @@
           <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8464347728110760472" datatype="html">
-        <source>Operator (Mobile)</source>
+      <trans-unit id="1179184907489210406" datatype="html">
+        <source>Operator</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/models/role.model.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
       </trans-unit>
-      <trans-unit id="1887191864493004982" datatype="html">
-        <source>Mobile-first operator flow</source>
+      <trans-unit id="1664178678528854038" datatype="html">
+        <source>Operator rental flow</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1899578612355999994" datatype="html">
-        <source>Open operator dashboard (mobile)</source>
+      <trans-unit id="4233431256118184068" datatype="html">
+        <source>Open operator dashboard</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
           <context context-type="linenumber">56</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3169054195090929527" datatype="html">
-        <source>Operator (Desktop)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">61</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7785884720381562277" datatype="html">
-        <source>Desktop layout with sidebar</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">62</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3678219638713963182" datatype="html">
-        <source>Open operator dashboard (desktop)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="883225603593837541" datatype="html">
@@ -857,17 +844,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/models/role.model.ts</context>
           <context context-type="linenumber">6</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1179184907489210406" datatype="html">
-        <source>Operator</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/core/models/role.model.ts</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="693129198066352127" datatype="html">
@@ -4634,11 +4610,7 @@
         <source>New Rental</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/operator/src/app/layout/operator-layout.component.ts</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/operator/src/app/layout/operator-shell-wrapper.component.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="605093891592449876" datatype="html">

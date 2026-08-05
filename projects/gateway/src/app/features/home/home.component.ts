@@ -21,7 +21,7 @@ interface DashboardCardDef {
         <p class="text-sm text-slate-500 mt-2">{{ subtitle }}</p>
       </header>
 
-      <div class="grid gap-4 grid-cols-1 sm:grid-cols-3">
+      <div class="grid gap-4 grid-cols-1 sm:grid-cols-2">
         @for (card of cards; track card.id) {
           <app-dashboard-card
             [title]="card.title"
@@ -50,17 +50,10 @@ export class HomeComponent {
       href: 'admin/',
     },
     {
-      id: 'operator-mobile',
-      title: $localize`Operator (Mobile)`,
-      description: $localize`Mobile-first operator flow`,
-      ariaLabel: $localize`Open operator dashboard (mobile)`,
-      href: 'operator/',
-    },
-    {
-      id: 'operator-desktop',
-      title: $localize`Operator (Desktop)`,
-      description: $localize`Desktop layout with sidebar`,
-      ariaLabel: $localize`Open operator dashboard (desktop)`,
+      id: 'operator',
+      title: $localize`Operator`,
+      description: $localize`Operator rental flow`,
+      ariaLabel: $localize`Open operator dashboard`,
       href: 'operator/',
     },
   ];

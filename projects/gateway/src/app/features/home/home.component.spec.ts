@@ -8,17 +8,15 @@ describe('HomeComponent', () => {
     }).compileComponents();
   });
 
-  it('renders three navigation cards', () => {
+  it('renders two navigation cards', () => {
     const fixture = TestBed.createComponent(HomeComponent);
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
     const adminBtn = el.querySelector('button[aria-label="Open administrator dashboard"]');
-    const opMobile = el.querySelector('button[aria-label="Open operator dashboard (mobile)"]');
-    const opDesktop = el.querySelector('button[aria-label="Open operator dashboard (desktop)"]');
+    const operatorBtn = el.querySelector('button[aria-label="Open operator dashboard"]');
 
     expect(adminBtn).toBeTruthy();
-    expect(opMobile).toBeTruthy();
-    expect(opDesktop).toBeTruthy();
+    expect(operatorBtn).toBeTruthy();
   });
 });

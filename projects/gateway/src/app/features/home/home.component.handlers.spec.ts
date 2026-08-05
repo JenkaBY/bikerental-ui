@@ -46,7 +46,7 @@ describe('HomeComponent handlers', () => {
 
     const comp = TestBed.createComponent(HomeComponent).componentInstance;
     comp.onCardSelect({
-      id: 'operator-mobile',
+      id: 'operator',
       title: '',
       description: '',
       ariaLabel: '',
