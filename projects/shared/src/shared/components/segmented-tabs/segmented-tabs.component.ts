@@ -25,10 +25,10 @@ export interface SegmentTab {
             routerLinkActive="!text-indigo-600 !border-indigo-600 !font-medium"
             [routerLinkActiveOptions]="{ exact: exact() }"
             [attr.aria-label]="iconOnly() ? tab.label : null"
-            [title]="iconOnly() ? tab.label : null"
+            [attr.title]="iconOnly() ? tab.label : null"
           >
             @if (tab.icon) {
-              <mat-icon class="!text-lg !w-5 !h-5">{{ tab.icon }}</mat-icon>
+              <mat-icon class="!text-lg !w-5 !h-5 !leading-5">{{ tab.icon }}</mat-icon>
             }
             @if (!iconOnly()) {
               {{ tab.label }}
@@ -47,11 +47,11 @@ export interface SegmentTab {
             [disabled]="tab.disabled"
             [attr.aria-selected]="tab.id === activeId()"
             [attr.aria-label]="iconOnly() ? tab.label : null"
-            [title]="iconOnly() ? tab.label : null"
+            [attr.title]="iconOnly() ? tab.label : null"
             (click)="tabSelect.emit(tab.id)"
           >
             @if (tab.icon) {
-              <mat-icon class="!text-lg !w-5 !h-5">{{ tab.icon }}</mat-icon>
+              <mat-icon class="!text-lg !w-5 !h-5 !leading-5">{{ tab.icon }}</mat-icon>
             }
             @if (!iconOnly()) {
               {{ tab.label }}
