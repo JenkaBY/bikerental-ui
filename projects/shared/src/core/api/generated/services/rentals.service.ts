@@ -24,11 +24,14 @@ import {
   RentalRequest,
   RequestOptions,
   RentalResponse,
+  RentalFilterParams,
   Pageable,
   PageRentalSummaryResponse,
   ConfirmReturnRequest,
   RentalReturnResponse,
   AddRentalEquipmentRequest,
+  DebtWriteOffRequest,
+  DebtWriteOffResponse,
   ReturnEquipmentRequest,
   RentalForSigningRequest,
   RentalPricingRequest,
@@ -97,80 +100,38 @@ export class RentalsService {
   }
 
   getRentals(
-    arg5: Pageable,
-    status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
-    customerId?: string,
-    equipmentUid?: string,
-    from?: string,
-    to?: string,
-    returnedFrom?: string,
-    returnedTo?: string,
+    arg0: RentalFilterParams,
+    arg1: Pageable,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageRentalSummaryResponse>;
   getRentals(
-    arg5: Pageable,
-    status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
-    customerId?: string,
-    equipmentUid?: string,
-    from?: string,
-    to?: string,
-    returnedFrom?: string,
-    returnedTo?: string,
+    arg0: RentalFilterParams,
+    arg1: Pageable,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageRentalSummaryResponse>>;
   getRentals(
-    arg5: Pageable,
-    status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
-    customerId?: string,
-    equipmentUid?: string,
-    from?: string,
-    to?: string,
-    returnedFrom?: string,
-    returnedTo?: string,
+    arg0: RentalFilterParams,
+    arg1: Pageable,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageRentalSummaryResponse>>;
   /** Returns a paginated list of rentals filtered by one or more statuses, customer or equipment UID */
   getRentals(
-    arg5: Pageable,
-    status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>,
-    customerId?: string,
-    equipmentUid?: string,
-    from?: string,
-    to?: string,
-    returnedFrom?: string,
-    returnedTo?: string,
+    arg0: RentalFilterParams,
+    arg1: Pageable,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/rentals`;
 
     let params = new HttpParams();
-    if (status != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, status, 'status');
+    if (arg0 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
     }
-    if (customerId != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, customerId, 'customerId');
-    }
-    if (equipmentUid != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, equipmentUid, 'equipmentUid');
-    }
-    if (from != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, from, 'from');
-    }
-    if (to != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, to, 'to');
-    }
-    if (returnedFrom != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, returnedFrom, 'returnedFrom');
-    }
-    if (returnedTo != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, returnedTo, 'returnedTo');
-    }
-    if (arg5 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg5, 'arg5');
+    if (arg1 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
     }
 
     let headers: HttpHeaders;
@@ -333,6 +294,55 @@ export class RentalsService {
     };
 
     return this.httpClient.post(url, addRentalEquipmentRequest, requestOptions);
+  }
+
+  writeOffDebt(
+    rentalId: number,
+    debtWriteOffRequest: DebtWriteOffRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<DebtWriteOffResponse>;
+  writeOffDebt(
+    rentalId: number,
+    debtWriteOffRequest: DebtWriteOffRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<DebtWriteOffResponse>>;
+  writeOffDebt(
+    rentalId: number,
+    debtWriteOffRequest: DebtWriteOffRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<DebtWriteOffResponse>>;
+  /** Closes a DEBT rental by writing off whatever shortfall remains after the customer's hold and wallet are exhausted. No amount is supplied by the caller — the Finance module computes the shortfall from live balances and either settles the rental or rejects the request when the shortfall exceeds the configured tolerance. */
+  writeOffDebt(
+    rentalId: number,
+    debtWriteOffRequest: DebtWriteOffRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/${rentalId}/debt-write-offs`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, debtWriteOffRequest, requestOptions);
   }
 
   returnEquipment(
