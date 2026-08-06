@@ -4,11 +4,11 @@ import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { CustomersService, EquipmentsCatalogueService, RentalsService } from '../api/generated';
 import { RentalMapper } from '../mappers/rental.mapper';
 import type { CustomerRentalSummary, Page, RentalCustomerRef } from '@ui-models';
-import type { PageRentalSummaryResponse } from '@api-models';
+import type { PageRentalSummaryResponse, RentalFilterParams } from '@api-models';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { toIsoDate } from '../../shared/utils/date.util';
 
-type RentalStatusApiParam = Parameters<RentalsService['getRentals']>[1];
+type RentalStatusApiParam = RentalFilterParams['status'];
 
 export interface RentalSearchQuery {
   statuses?: string[];
@@ -61,12 +61,13 @@ export class RentalSearchStore {
     const statuses = query.statuses ?? [];
     this.rentalsService
       .getRentals(
+        {
+          status: statuses.length > 0 ? (statuses as RentalStatusApiParam) : undefined,
+          customerId: query.customerId,
+          from: query.from ? toIsoDate(query.from) : undefined,
+          to: query.to ? toIsoDate(query.to) : undefined,
+        },
         { page: query.pageIndex, size: query.pageSize },
-        statuses.length > 0 ? (statuses as RentalStatusApiParam) : undefined,
-        query.customerId,
-        undefined,
-        query.from ? toIsoDate(query.from) : undefined,
-        query.to ? toIsoDate(query.to) : undefined,
       )
       .pipe(
         switchMap((response) => this.enrich(response, query.withCustomer ?? false)),
