@@ -396,13 +396,27 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
 
 ## Security Topology
 
-- AUTHN_AUTHZ: Not implemented (TASK002 deferred). All routes in all three applications are currently open with no guards.
-- TRUST_BOUNDARIES: admin/operator ↔ bikerental-backend — enforced only by CORS on the backend; no token/session on the frontend yet.
+- AUTHN_AUTHZ: Implemented for admin and operator via OIDC (`angular-auth-oidc-client`), provided by
+  `provideOidcAuth(clientId)` in `projects/shared/src/core/auth/auth.config.ts`. Admin registers as
+  OAuth client `bike-rental-admin`, operator as `bike-rental-operator`; both authorities point at
+  `environment.apiUrl`. Route guards (`authGuard`, `mustChangePasswordGuard`, `adminGuard` /
+  `operatorGuard`) gate each app's top-level layout route; unauthenticated users are redirected to the
+  IdP, users without the required role land on `/forbidden`. `apiAuthInterceptor` attaches
+  `Authorization: Bearer <token>` to every `/api/**` request and retries once on 401 via silent
+  refresh. `operatorId`/current-user id fields sent to the backend are sourced from the `uid` claim of
+  the access token (`AuthService.currentUserId()`), not from a local profile store. Gateway
+  (`projects/gateway`) has no auth — it only hosts static links to admin/operator.
+- TRUST_BOUNDARIES: admin/operator ↔ bikerental-backend — enforced by CORS plus bearer-token
+  authentication/authorization on every `/api/**` call; `/actuator/**` (health) remains unauthenticated
+  by design.
 - KNOWN_RISKS:
-  - No authentication guards on any route across any application
-  - No CSRF protection on the frontend
+  - No CSRF protection on the frontend (mitigated by bearer-token-only auth, no cookies)
   - `apiUrl` is hardcoded to `http://localhost:8080` in development environment (plain HTTP)
-  - All three SPA bundles on GitHub Pages are publicly accessible with no access control
+  - Gateway SPA bundle on GitHub Pages is publicly accessible with no access control (by design — it's
+    a static landing page linking to admin/operator, which are themselves gated)
+  - `SseService` (`core/api/event-source/sse-provider.service.ts`) uses a raw `EventSource` with no
+    `Authorization` header; currently only used for the time-travel dev endpoint
+    (`timeTravelEnabled: false` in all environments), so inactive today
 
 ## Deployment Topology
 

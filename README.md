@@ -97,19 +97,24 @@ Two build steps plus a checked-in restore script make this work on static hostin
   > Because it is checked in rather than generated, a change to the redirect contract must be applied to
   > all three files.
 
-### OIDC redirect URIs (admin auth)
+### OIDC redirect URIs (admin & operator auth)
 
-The admin SPA computes its OAuth `redirect_uri` from `document.baseURI` (the app's mount path) — it
-points at that base path directly rather than a synthetic `/login/callback` route, so it always
-resolves to a real `index.html` on static hosting instead of depending on the 404 SPA-fallback trick.
-`redirect_uri` and `post_logout_redirect_uri` are therefore the same URL, and the **backend OAuth
-client must register it for each context** the app runs in:
+Both the admin and operator SPAs compute their OAuth `redirect_uri` from `document.baseURI` (the
+app's mount path) — each points at its own base path directly rather than a synthetic
+`/login/callback` route, so it always resolves to a real `index.html` on static hosting instead of
+depending on the 404 SPA-fallback trick. `redirect_uri` and `post_logout_redirect_uri` are therefore
+the same URL per app, and the **backend OAuth client must register it for each context** the app
+runs in. Admin and operator are registered as separate OAuth clients (`bike-rental-admin` and
+`bike-rental-operator`):
 
-| Context | Mount | `redirect_uri` / `post_logout_redirect_uri` to register |
-|---------|-------|----------------------------------------------------------|
-| `ng serve admin` (direct) | `:4201/admin/` | `http://localhost:4201/admin/` |
-| Gateway proxy | `:4200/admin/` | `http://localhost:4200/admin/` |
-| GitHub Pages (per locale) | `…/admin/{en,ru}/` | `https://<user>.github.io/<repo>/admin/{en,ru}/` |
+| App | Context | Mount | `redirect_uri` / `post_logout_redirect_uri` to register |
+|-----|---------|-------|------------------------------------------------------------|
+| admin | `ng serve admin` (direct) | `:4201/admin/` | `http://localhost:4201/admin/` |
+| admin | Gateway proxy | `:4200/admin/` | `http://localhost:4200/admin/` |
+| admin | GitHub Pages (per locale) | `…/admin/{en,ru}/` | `https://<user>.github.io/<repo>/admin/{en,ru}/` |
+| operator | `ng serve operator` (direct) | `:4202/operator/` | `http://localhost:4202/operator/` |
+| operator | Gateway proxy | `:4200/operator/` | `http://localhost:4200/operator/` |
+| operator | GitHub Pages (per locale) | `…/operator/{en,ru}/` | `https://<user>.github.io/<repo>/operator/{en,ru}/` |
 
 Add the corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be
 reachable over **public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is

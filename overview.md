@@ -1364,12 +1364,43 @@ Client-side state is held in signal-based stores (`projects/shared/src/core/stat
 
 AUTHN_AUTHZ:
 
-- Mechanism: NONE — authentication (TASK002) is intentionally unimplemented; all routes are currently open across all three apps
-- Config location: `projects/admin/src/app/app.routes.ts`, `projects/operator/src/app/app.routes.ts` (no route guards present)
+- Mechanism: OIDC via `angular-auth-oidc-client`, provided per app by `provideOidcAuth(clientId)`
+  (`projects/shared/src/core/auth/auth.config.ts`) — `authority: environment.apiUrl`, `clientId:
+  'bike-rental-admin'` for admin and `'bike-rental-operator'` for operator, `redirectUrl` /
+  `postLogoutRedirectUri` derived from `document.baseURI` (the app's own mount path, not a
+  `/login/callback` route). Gateway has no auth.
+- `AuthService` (`projects/shared/src/core/auth/auth.service.ts`) wraps `OidcSecurityService`:
+  `checkAuth()` (run from each app's `provideAppInitializer`, blocks bootstrap), `login(returnUrl?)`,
+  `logout()`, `refresh()` (single-flight, used by the 401 retry path), `hydrate()` (populates
+  `UserStore` from `GET /api/auth/me` for display purposes only). Role/id claims (`roles`, `uid`,
+  `must_change_password`) are read synchronously from the decoded access token
+  (`auth.token-claims.ts`) into signals `roles`/`uid`/`mustChangePassword`, plus derived
+  `isAdmin`/`isOperator`/`currentUserId`.
+- Route guards (`CanActivateFn`, `projects/shared/src/core/auth/*.guard.ts`): `authGuard` (redirects
+  to IdP if unauthenticated, saving `returnUrl` in `sessionStorage`), `mustChangePasswordGuard`
+  (forces `/change-password`), `adminGuard` / `operatorGuard` (role check → `/forbidden`),
+  `customerProfileGuard` (allows admin or operator role on the shared customer-profile routes).
+  Config: `projects/admin/src/app/app.routes.ts` applies
+  `canActivate: [authGuard, mustChangePasswordGuard, adminGuard]` on its layout route;
+  `projects/operator/src/app/app.routes.ts` applies
+  `canActivate: [authGuard, mustChangePasswordGuard, operatorGuard]` on its layout route. Both also
+  declare top-level `/forbidden` (`ForbiddenComponent`) and `/change-password`
+  (`ChangePasswordComponent`, itself behind `authGuard`) routes outside the guarded layout.
+- `apiAuthInterceptor` (`projects/shared/src/core/auth/auth.interceptor.ts`) attaches `Authorization:
+  Bearer <token>` to requests matching `/api/**` (via `isApiRequest()`), and on a 401 response
+  performs one silent-refresh retry (`SKIP_AUTH_RETRY` context token prevents infinite loops) before
+  falling back to `auth.login()`. Both admin's and operator's `app.config.ts` register it via
+  `provideHttpClient(withInterceptors([acceptLanguageInterceptor, apiAuthInterceptor,
+  errorInterceptor]))`.
+- Request payload identity: any request field that used to carry the current operator/user id
+  (`operatorId` on rental/finance/damage-report writes) is sourced from `AuthService.currentUserId()`
+  (the access-token `uid` claim), not from `UserStore`/`/api/auth/me`.
 
 KNOWN_RISKS:
 
-- All admin and operator routes are publicly accessible; no route guards or auth interceptors
+- `SseService` (`projects/shared/src/core/api/event-source/sse-provider.service.ts`) uses a raw
+  `EventSource`, which cannot carry an `Authorization` header; only used for the time-travel dev
+  endpoint, which is disabled (`timeTravelEnabled: false`) in every environment today
 - `environment.ts` hard-codes `apiUrl: 'http://localhost:8080'`; plain HTTP in development
 - `ErrorService` surfaces raw HTTP error messages in snack bar notifications, which may expose internal server details
 - `DateInterceptor.transformDates` uses an untyped intermediary during date scanning; acceptable only inside auto-generated code
