@@ -1,11 +1,13 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { EMPTY, forkJoin, Observable, of } from 'rxjs';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { CustomersService, EquipmentsCatalogueService, RentalsService } from '../api/generated';
 import { RentalDashboardMapper } from '../mappers';
+import { suppressErrorNotification } from '../errors';
+import { UserStore } from './user.store';
 import type { RentalListItem } from '@ui-models';
-import type { RentalFilterParams, RentalSummaryResponse } from '@api-models';
+import type { DebtWriteOffRequest, RentalFilterParams, RentalSummaryResponse } from '@api-models';
 import { toIsoDate } from '../../shared/utils/date.util';
 
 export interface RentalFilter {
@@ -25,8 +27,10 @@ export class RentalListStore {
   private readonly rentalsService = inject(RentalsService);
   private readonly customersService = inject(CustomersService);
   private readonly equipmentsCatalogueService = inject(EquipmentsCatalogueService);
+  private readonly userStore = inject(UserStore);
 
   private readonly historyParams = signal<RentalFilter | null>(null);
+  private readonly writingOffIds = signal<ReadonlySet<number>>(new Set<number>());
 
   private readonly activeResource = rxResource<RentalListItem[], void>({
     stream: () =>
@@ -56,6 +60,8 @@ export class RentalListStore {
   readonly historyRentals = computed(() => this.historyResource.value() ?? []);
   readonly isLoadingActive = this.activeResource.isLoading;
   readonly isLoadingHistory = this.historyResource.isLoading;
+  readonly writingOffRentalIds = this.writingOffIds.asReadonly();
+  readonly operatorId = computed(() => this.userStore.currentUser()?.id ?? '');
 
   loadActive(): void {
     this.activeResource.reload();
@@ -75,6 +81,32 @@ export class RentalListStore {
     filter: RentalFilter['filter'] = 'ALL',
   ): void {
     this.historyParams.set({ activeFrom, activeTo, filter });
+  }
+
+  writeOffDebt(rentalId: number): Observable<void> {
+    if (this.writingOffIds().has(rentalId)) {
+      return EMPTY;
+    }
+    const request: DebtWriteOffRequest = { operatorId: this.operatorId() };
+    this.setWritingOff(rentalId, true);
+    return this.rentalsService
+      .writeOffDebt(rentalId, request, 'body', { context: suppressErrorNotification() })
+      .pipe(
+        map(() => undefined as void),
+        finalize(() => this.setWritingOff(rentalId, false)),
+      );
+  }
+
+  private setWritingOff(rentalId: number, writingOff: boolean): void {
+    this.writingOffIds.update((ids) => {
+      const next = new Set(ids);
+      if (writingOff) {
+        next.add(rentalId);
+      } else {
+        next.delete(rentalId);
+      }
+      return next;
+    });
   }
 
   private enrichItems(items: RentalSummaryResponse[]): Observable<RentalListItem[]> {

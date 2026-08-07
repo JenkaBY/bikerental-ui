@@ -134,6 +134,7 @@ export class RentalStore {
   readonly isOverdue = computed(() => this._state().isOverdue);
   readonly overdueMinutes = computed(() => this._state().overdueMinutes);
   readonly debtAmount = computed(() => this._state().debtAmount);
+  readonly writtenOffAmount = computed(() => this._state().writtenOffAmount);
   readonly expectedReturnAt = computed(() => this._state().expectedReturnAt);
   readonly startedAt = computed(() => this._state().startedAt);
   readonly customerId = computed(() => this._state().customerId);
