@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { v4 as uuid } from 'uuid';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
-import { UserStore } from '../../../core/state/user.store';
+import { AuthService } from '../../../core/auth/auth.service';
 import type { PaymentMethod, TransactionSource } from '../../../core/models/transaction.model';
 import { Labels } from '../../constant/labels';
 import { CancelButtonComponent } from '../cancel-button/cancel-button.component';
@@ -77,7 +77,7 @@ export class TopUpDialogComponent {
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly userStore = inject(UserStore);
+  private readonly auth = inject(AuthService);
 
   protected readonly submitting = signal(false);
   protected errorShown = false;
@@ -104,7 +104,7 @@ export class TopUpDialogComponent {
         customerId: this.data.customerId,
         amount: amount!,
         paymentMethod: paymentMethod as PaymentMethod,
-        operatorId: this.userStore.currentUser()?.id,
+        operatorId: this.auth.currentUserId(),
         source: this.data.source,
         sourceId: this.data.sourceId,
       })

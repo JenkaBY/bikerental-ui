@@ -16,7 +16,7 @@ import { MaxDecimalsDirective } from '../../directives/max-decimals.directive';
 import { MoneyPipe } from '../../pipes/money.pipe';
 import { PaymentMethodSelectComponent } from '../payment-method/payment-method.component';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
-import { UserStore } from '../../../core/state/user.store';
+import { AuthService } from '../../../core/auth/auth.service';
 import type {
   PaymentMethod,
   Money,
@@ -93,7 +93,7 @@ export class WithdrawDialogComponent {
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly userStore = inject(UserStore);
+  private readonly auth = inject(AuthService);
 
   public readonly submitting = signal(false);
 
@@ -119,8 +119,7 @@ export class WithdrawDialogComponent {
         customerId: this.data.customerId,
         amount: amount!,
         paymentMethod: paymentMethod as PaymentMethod,
-        // TODO remove hardcoded value after authorization is done
-        operatorId: this.userStore.currentUser()?.id || 'CALL_DEVELOPER_IF_SEE_IT',
+        operatorId: this.auth.currentUserId(),
         source: this.data.source,
         sourceId: this.data.sourceId,
       })

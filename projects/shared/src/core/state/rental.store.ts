@@ -26,7 +26,7 @@ import { CustomerMapper, makeMoney, RentalDashboardMapper, RentalMapper } from '
 import { suppressErrorNotification } from '../errors';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
-import { UserStore } from './user.store';
+import { AuthService } from '../auth/auth.service';
 import { TariffStore } from './tariff.store';
 
 export const RENTAL_VALIDATION_STORE_FOR_DELEGATION = new InjectionToken<{
@@ -38,7 +38,7 @@ export class RentalStore {
   private readonly rentalsService = inject(RentalsService);
   private readonly customersService = inject(CustomersService);
   private readonly batchRentalPropertyStore = inject(BatchRentalPropertyStore);
-  private readonly userStore = inject(UserStore);
+  private readonly auth = inject(AuthService);
   private readonly customerFinanceStore = inject(CustomerFinanceStore);
   private readonly tariffStore = inject(TariffStore);
   private readonly destroyRef = inject(DestroyRef);
@@ -89,7 +89,7 @@ export class RentalStore {
   readonly priceMode = computed(() => this._state().priceMode);
   readonly isDiscountPriceMode = computed(() => this.priceMode() === 'DISCOUNT');
   readonly isFixedPriceMode = computed(() => this.priceMode() === 'FIXED');
-  readonly operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
+  readonly operatorId = computed(() => this.auth.currentUserId());
 
   readonly isSaving = computed(() => this._state().isSaving);
   readonly isLoading = computed(() => this._state().isLoading);
