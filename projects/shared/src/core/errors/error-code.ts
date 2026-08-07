@@ -37,6 +37,7 @@ export const ErrorCode = {
   WINDOW_ELAPSED: 'rental.window.elapsed',
   ACTIVATION_NOT_READY: 'rental.activation.not_ready',
   RENTAL_QUOTE_MISMATCH: 'rental.quote.mismatch',
+  DEBT_WRITE_OFF_NOT_ALLOWED: 'rental.debt_write_off.not_allowed',
 
   // tariff.* — return quote lifecycle
   TARIFF_QUOTE_NOT_FOUND: 'tariff.quote.not_found',
@@ -105,6 +106,7 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.WINDOW_ELAPSED,
   ErrorCode.ACTIVATION_NOT_READY,
   ErrorCode.RENTAL_QUOTE_MISMATCH,
+  ErrorCode.DEBT_WRITE_OFF_NOT_ALLOWED,
   ErrorCode.TARIFF_QUOTE_NOT_FOUND,
   ErrorCode.TARIFF_QUOTE_EXPIRED,
   ErrorCode.TARIFF_QUOTE_ALREADY_CONSUMED,

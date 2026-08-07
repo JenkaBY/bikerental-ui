@@ -343,6 +343,13 @@ export class Labels {
   static readonly RentalReturnError = $localize`Failed to return equipment. Please try again.`;
   static readonly RentalCancelError = $localize`Failed to cancel rental. Please try again.`;
 
+  static readonly WriteOffDebtButton = $localize`Write off`;
+  static readonly WriteOffDebtDialogTitle = $localize`Write off this debt?`;
+  static readonly WriteOffDebtDialogMessage = $localize`The outstanding shortfall will be written off and the rental will be closed. This cannot be undone.`;
+  static readonly WriteOffDebtConfirmButton = $localize`Write off`;
+  static readonly WriteOffDebtSuccess = $localize`Debt written off`;
+  static readonly WrittenOffBadge = $localize`written off`;
+
   static readonly ReturnDialogTitle = $localize`Confirm equipment return`;
   static readonly ItemsToReturn = $localize`Items to return`;
   static readonly EstimatedCost = $localize`Estimated cost`;
