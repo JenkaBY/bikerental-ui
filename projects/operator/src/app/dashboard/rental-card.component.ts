@@ -1,5 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { DurationPipe, EquipmentBadgeComponent, Labels, mapRentalStatus } from '@bikerental/shared';
 import type { RentalListItem } from '@bikerental/shared';
@@ -8,7 +10,13 @@ import type { RentalListItem } from '@bikerental/shared';
   selector: 'app-rental-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DurationPipe, EquipmentBadgeComponent],
+  imports: [
+    DatePipe,
+    DurationPipe,
+    EquipmentBadgeComponent,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+  ],
   host: {
     '(click)': 'navigateToDetail()',
     class:
@@ -53,20 +61,34 @@ import type { RentalListItem } from '@bikerental/shared';
     }
 
     @if (variant() === 'history') {
-      <div class="mt-1 text-sm">
+      <div class="mt-1 flex items-center justify-between gap-2">
         @if (item().isDebt) {
-          <span class="text-amber-600">
+          <span class="text-sm text-amber-600">
             {{ Labels.RentalStatusDebt }}
             @if (item().expectedReturnAt; as endedAt) {
               &nbsp;&middot;&nbsp;{{ Labels.Ended }}&nbsp;{{ endedAt | date: 'HH:mm' }}
             }
           </span>
         } @else {
-          <span class="text-slate-500">
+          <span class="text-sm text-slate-500">
             @if (item().expectedReturnAt; as endedAt) {
               {{ Labels.Ended }}&nbsp;{{ endedAt | date: 'HH:mm' }}
             }
           </span>
+        }
+        @if (canWriteOffDebt()) {
+          <button
+            mat-stroked-button
+            class="!text-red-600 !border-red-400 !h-8 !px-3 !text-xs"
+            [disabled]="isWritingOffDebt()"
+            (click)="onWriteOff($event)"
+          >
+            @if (isWritingOffDebt()) {
+              <mat-spinner diameter="16" />
+            } @else {
+              {{ Labels.WriteOffDebtButton }}
+            }
+          </button>
         }
       </div>
     }
@@ -85,7 +107,13 @@ export class RentalCardComponent {
 
   readonly item = input.required<RentalListItem>();
   readonly variant = input<'active' | 'history'>('active');
+  readonly isWritingOffDebt = input(false);
+  readonly writeOffRequested = output<void>();
   readonly isWarning = computed(() => this.item().isOverdue || this.item().isDebt);
+
+  protected readonly canWriteOffDebt = computed(
+    () => this.variant() === 'history' && this.item().isDebt,
+  );
 
   protected readonly Labels = Labels;
 
@@ -104,6 +132,11 @@ export class RentalCardComponent {
 
     return diff > 0 ? diff : null;
   });
+
+  protected onWriteOff(event: Event): void {
+    event.stopPropagation();
+    this.writeOffRequested.emit();
+  }
 
   protected navigateToDetail(): void {
     if (this.item().status === 'DRAFT') {
