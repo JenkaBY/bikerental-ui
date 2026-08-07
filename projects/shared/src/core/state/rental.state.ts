@@ -25,6 +25,7 @@ export interface RentalDetailState extends RentalState {
   estimatedCost?: Money;
   finalCost?: Money;
   debtAmount?: Money;
+  writtenOffAmount?: Money;
   isActive: boolean;
   isDebt: boolean;
   isOverdue: boolean;

@@ -58,6 +58,13 @@ import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.compone
             @if (transactionsStore.reserved(); as reserved) {
               <p class="text-sm text-slate-400">{{ reserved | money }}</p>
             }
+            @if (rentalStore.writtenOffAmount(); as writtenOff) {
+              <span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700"
+              >
+                {{ Labels.WrittenOffBadge }}&nbsp;{{ writtenOff | money }}
+              </span>
+            }
           </div>
         }
       </div>

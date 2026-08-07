@@ -75,6 +75,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.STATUS_INVALID]: rentalStatusInvalidMessage,
   [ErrorCode.WINDOW_ELAPSED]: $localize`This rental is overdue — return it before adding more equipment.`,
   [ErrorCode.ACTIVATION_NOT_READY]: $localize`The rental could not be prepared for signing — please review the details and try again.`,
+  [ErrorCode.DEBT_WRITE_OFF_NOT_ALLOWED]: debtWriteOffNotAllowedMessage,
 
   // Return quote lifecycle (full-return quote → confirm flow)
   [ErrorCode.TARIFF_QUOTE_NOT_FOUND]: $localize`The price quote could not be found. Recalculating the current price…`,
@@ -219,6 +220,15 @@ function rentalStatusInvalidMessage(params: Record<string, unknown>): string {
     return $localize`This rental is no longer active (current status: ${currentStatus}:currentStatus:).`;
   }
   return $localize`This rental is no longer active.`;
+}
+
+function debtWriteOffNotAllowedMessage(params: Record<string, unknown>): string {
+  const shortfall = params['shortfall'];
+  const tolerance = params['tolerance'];
+  if (typeof shortfall === 'number' && typeof tolerance === 'number') {
+    return $localize`The remaining shortfall of ${shortfall.toFixed(2)}:shortfall: exceeds the automatic write-off limit of ${tolerance.toFixed(2)}:tolerance:. Settle this rental manually first.`;
+  }
+  return $localize`The remaining shortfall is too large to write off automatically. Settle this rental manually first.`;
 }
 
 function agreementTemplateNotEditableMessage(params: Record<string, unknown>): string {

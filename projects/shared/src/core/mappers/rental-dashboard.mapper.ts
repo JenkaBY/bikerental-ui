@@ -140,6 +140,7 @@ export class RentalDashboardMapper {
       paidDurationMinutes: r.actualDurationMinutes,
       finalCost: r.finalCost !== undefined ? makeMoney(r.finalCost) : undefined,
       debtAmount: isDebt && r.finalCost !== undefined ? makeMoney(r.finalCost) : undefined,
+      writtenOffAmount: r.writtenOffAmount ? makeMoney(r.writtenOffAmount) : undefined,
       isActive,
       isDebt,
       isOverdue,
