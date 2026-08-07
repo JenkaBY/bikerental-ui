@@ -5,18 +5,16 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { CustomersService, EquipmentsCatalogueService, RentalsService } from '../api/generated';
 import { RentalDashboardMapper } from '../mappers';
 import type { RentalListItem } from '@ui-models';
-import type { RentalSummaryResponse } from '@api-models';
+import type { RentalFilterParams, RentalSummaryResponse } from '@api-models';
 import { toIsoDate } from '../../shared/utils/date.util';
 
 export interface RentalFilter {
-  returnedFrom?: Date;
-  returnedTo?: Date;
+  activeFrom?: Date;
+  activeTo?: Date;
   filter: 'ALL' | 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT' | undefined;
 }
 
-type RentalStatusApiParam = Parameters<RentalsService['getRentals']>[1];
-
-function toStatusApiParam(filter: RentalFilter['filter']): RentalStatusApiParam {
+function toStatusApiParam(filter: RentalFilter['filter']): RentalFilterParams['status'] {
   if (filter === 'ALL' || !filter) return undefined;
   if (filter === 'DRAFT') return ['DRAFT', 'AWAITING_SIGNATURE'];
   return [filter];
@@ -32,7 +30,7 @@ export class RentalListStore {
 
   private readonly activeResource = rxResource<RentalListItem[], void>({
     stream: () =>
-      this.rentalsService.getRentals({ page: 0, size: 100 }, ['ACTIVE']).pipe(
+      this.rentalsService.getRentals({ status: ['ACTIVE'] }, { page: 0, size: 100 }).pipe(
         switchMap((page) => this.enrichItems(page.items ?? [])),
         catchError(() => of<RentalListItem[]>([])),
       ),
@@ -42,22 +40,15 @@ export class RentalListStore {
     params: () => this.historyParams(),
     stream: ({ params }) => {
       if (!params) return of([]);
-      const statusApi = toStatusApiParam(params.filter);
-      return this.rentalsService
-        .getRentals(
-          { page: 0, size: 100 },
-          statusApi,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          params.returnedFrom ? toIsoDate(params.returnedFrom) : undefined,
-          params.returnedTo ? toIsoDate(params.returnedTo) : undefined,
-        )
-        .pipe(
-          switchMap((page) => this.enrichItems(page.items ?? [])),
-          catchError(() => of<RentalListItem[]>([])),
-        );
+      const filterParams: RentalFilterParams = {
+        status: toStatusApiParam(params.filter),
+        activeFrom: params.activeFrom ? toIsoDate(params.activeFrom) : undefined,
+        activeTo: params.activeTo ? toIsoDate(params.activeTo) : undefined,
+      };
+      return this.rentalsService.getRentals(filterParams, { page: 0, size: 100 }).pipe(
+        switchMap((page) => this.enrichItems(page.items ?? [])),
+        catchError(() => of<RentalListItem[]>([])),
+      );
     },
   });
 
@@ -79,11 +70,11 @@ export class RentalListStore {
   }
 
   loadHistory(
-    returnedFrom: Date | undefined,
-    returnedTo: Date | undefined,
+    activeFrom: Date | undefined,
+    activeTo: Date | undefined,
     filter: RentalFilter['filter'] = 'ALL',
   ): void {
-    this.historyParams.set({ returnedFrom, returnedTo, filter });
+    this.historyParams.set({ activeFrom, activeTo, filter });
   }
 
   private enrichItems(items: RentalSummaryResponse[]): Observable<RentalListItem[]> {

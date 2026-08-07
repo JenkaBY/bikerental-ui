@@ -24,7 +24,7 @@ export class RentalLookupStore {
     this._foundRentalId.set(null);
 
     this.rentalsService
-      .getRentals({ size: 50 }, ['ACTIVE', 'DRAFT'], undefined, uid)
+      .getRentals({ status: ['ACTIVE', 'DRAFT'], equipmentUid: uid }, { size: 50 })
       .pipe(
         map((page) => {
           const match = (page.items ?? []).find((rental) =>

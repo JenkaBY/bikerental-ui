@@ -206,6 +206,16 @@ export interface RentalResponse {
   discountPercent?: number;
   /** Final rental cost (null until returned) */
   finalCost?: number;
+  /** Amount written off a DEBT rental's shortfall (null or 0 if none) */
+  writtenOffAmount?: number;
+  /** Final cost actually payable after any debt write-off (finalCost minus writtenOffAmount) */
+  payableAmount?: number;
+  /** Reason given for the debt write-off (null if none) */
+  writeOffReason?: string;
+  /** Operator who performed the debt write-off (null if none) */
+  writtenOffBy?: string;
+  /** Time the debt write-off was performed (null if none) */
+  writtenOffAt?: string;
   /** Rental creation time */
   createdAt: string;
 }
@@ -378,6 +388,22 @@ export interface AddRentalEquipmentRequest {
   equipmentIds: Array<number>;
   /** Operator identifier */
   operatorId: string;
+}
+
+/** Requests that a DEBT rental's shortfall be written off; no amount is supplied — the Finance module computes it from live balances and either settles or rejects the request */
+export interface DebtWriteOffRequest {
+  /** Optional free-text reason, recorded on the rental and on every resulting transaction */
+  reason?: string;
+  /** Operator identifier */
+  operatorId: string;
+}
+
+/** Result of a debt write-off operation */
+export interface DebtWriteOffResponse {
+  /** Updated rental details */
+  rental: RentalResponse;
+  /** Settlement transaction produced by the write-off */
+  settlement?: SettlementResponse;
 }
 
 /** Request body for returning rented equipment */
@@ -657,6 +683,29 @@ export interface PricingTypeResponse {
   description?: string;
 }
 
+export interface RentalFilterParams {
+  /** Rental status filter; repeat the parameter or pass a comma-separated list to match any of the given statuses */
+  status?: Array<'DRAFT' | 'AWAITING_SIGNATURE' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT'>;
+  /** Customer UUID filter */
+  customerId?: string;
+  /** Equipment UID filter */
+  equipmentUid?: string;
+  /** Created-at range start (inclusive), format yyyy-MM-dd */
+  from?: string;
+  /** Created-at range end (inclusive), format yyyy-MM-dd */
+  to?: string;
+  /** Actual-return-at range start (inclusive), format yyyy-MM-dd */
+  returnedFrom?: string;
+  /** Actual-return-at range end (inclusive), format yyyy-MM-dd */
+  returnedTo?: string;
+  /** Activity range start (inclusive), format yyyy-MM-dd; matches rentals created OR returned within the range */
+  activeFrom?: string;
+  /** Activity range end (inclusive), format yyyy-MM-dd; matches rentals created OR returned within the range */
+  activeTo?: string;
+  /** Filter by whether the rental had a debt write-off (true = writtenOffAmount > 0) */
+  writtenOff?: boolean;
+}
+
 export interface PageRentalSummaryResponse {
   items?: Array<RentalSummaryResponse>;
   totalItems?: number;
@@ -697,6 +746,8 @@ export interface RentalSummaryResponse {
   estimatedCost: number;
   /** Final rental cost (null until returned) */
   finalCost?: number;
+  /** Amount written off a DEBT rental's shortfall (null or 0 if none) */
+  writtenOffAmount?: number;
   /** Rental creation time */
   createdAt: string;
 }

@@ -328,6 +328,8 @@ const DATE_RANGE_PARAM_LABELS: Record<string, string> = {
   to: $localize`Created to`,
   returnedFrom: $localize`Returned from`,
   returnedTo: $localize`Returned to`,
+  activeFrom: $localize`Active from`,
+  activeTo: $localize`Active to`,
 };
 
 function validDateRangeMessage(params: Record<string, unknown>): string {
