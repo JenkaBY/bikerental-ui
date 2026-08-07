@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import {
   APP_BRAND,
   AppToolbarComponent,
+  AuthService,
   BottomNavComponent,
   HealthIndicatorComponent,
   NavItem,
@@ -44,8 +45,9 @@ export class OperatorLayoutComponent {
   protected navItems = NAV_ITEMS;
   protected brand = inject(APP_BRAND);
   protected title = $localize`Bike Rental`;
+  private readonly auth = inject(AuthService);
 
   protected onLogout() {
-    console.log('logout requested from operator layout');
+    this.auth.logout();
   }
 }
