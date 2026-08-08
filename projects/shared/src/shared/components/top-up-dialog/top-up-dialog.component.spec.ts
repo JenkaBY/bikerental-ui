@@ -1,19 +1,18 @@
-import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
-import { UserStore } from '../../../core/state/user.store';
+import { AuthService } from '../../../core/auth/auth.service';
 import { TopUpDialogComponent } from './top-up-dialog.component';
 
 const makeFinanceStore = () => ({
   recordDeposit: vi.fn().mockReturnValue(of({ transactionId: 't1', recordedAt: new Date() })),
 });
 
-const makeUserStore = () => ({
-  currentUser: signal<{ id: string } | null>({ id: 'op1' }),
+const makeAuthService = () => ({
+  currentUserId: () => 'op1',
 });
 
 describe('TopUpDialogComponent', () => {
@@ -29,7 +28,7 @@ describe('TopUpDialogComponent', () => {
       imports: [TopUpDialogComponent],
       providers: [
         { provide: CustomerFinanceStore, useValue: financeStore },
-        { provide: UserStore, useValue: makeUserStore() },
+        { provide: AuthService, useValue: makeAuthService() },
         { provide: MatDialogRef, useValue: { close: dialogClose } },
         { provide: MAT_DIALOG_DATA, useValue: { customerId: 'c1' } },
         { provide: MatSnackBar, useValue: { open: snackOpen } },

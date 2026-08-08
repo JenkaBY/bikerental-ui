@@ -45,19 +45,4 @@ export class UserStore {
       this.localeRedirect.redirect(patch.language);
     }
   }
-
-  // TODO: temporary dev seed for the operator app until its OIDC auth lands.
-  seedDevUser(): void {
-    this._currentUser.set({
-      id: '00000000-0000-0000-0000-000000000000',
-      username: 'dev-operator',
-      email: '',
-      displayName: 'Dev Operator',
-      roles: ['OPERATOR'],
-      isAdmin: false,
-      isOperator: true,
-      mustChangePassword: false,
-      status: 'ACTIVE',
-    });
-  }
 }

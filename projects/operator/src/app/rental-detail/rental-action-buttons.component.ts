@@ -105,7 +105,6 @@ export class RentalActionButtonsComponent {
       .open(ReportDamageSheetComponent, {
         data: {
           rentalId,
-          operatorId: this.store.operatorId(),
           equipmentItems: this.store.rentalEquipmentItems(),
         },
       })

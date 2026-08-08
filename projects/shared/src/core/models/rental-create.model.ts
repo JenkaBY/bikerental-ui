@@ -39,5 +39,4 @@ export interface RentalWrite {
   discountPercent?: number;
   specialTariffId?: number;
   specialPrice?: number;
-  operatorId: string;
 }

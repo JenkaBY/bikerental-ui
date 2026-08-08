@@ -1,11 +1,21 @@
 import { Routes } from '@angular/router';
-import { customerProfileGuard } from '@bikerental/shared';
+import {
+  authGuard,
+  ChangePasswordComponent,
+  customerProfileGuard,
+  ForbiddenComponent,
+  mustChangePasswordGuard,
+  operatorGuard,
+} from '@bikerental/shared';
 import { OperatorLayoutComponent } from './layout/operator-layout.component';
 
 export const routes: Routes = [
+  { path: 'forbidden', component: ForbiddenComponent },
+  { path: 'change-password', component: ChangePasswordComponent, canActivate: [authGuard] },
   {
     path: '',
     component: OperatorLayoutComponent,
+    canActivate: [authGuard, mustChangePasswordGuard, operatorGuard],
     children: [
       { path: '', redirectTo: 'rentals', pathMatch: 'full' },
       {

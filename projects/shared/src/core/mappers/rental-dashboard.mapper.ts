@@ -151,35 +151,32 @@ export class RentalDashboardMapper {
     };
   }
 
-  static toReturnRequest(w: ReturnEquipmentWrite, operatorId: string): ReturnEquipmentRequest {
+  static toReturnRequest(w: ReturnEquipmentWrite): ReturnEquipmentRequest {
     return {
       rentalId: w.rentalId,
       equipmentIds: w.equipmentItemIds,
-      operatorId,
     };
   }
 
-  static toConfirmReturnRequest(quoteId: string, operatorId: string): ConfirmReturnRequest {
-    return { quoteId, operatorId };
+  static toConfirmReturnRequest(quoteId: string): ConfirmReturnRequest {
+    return { quoteId };
   }
 
   static toPricingRequest(
     draft: RentalPricingDraft,
-    operatorId: string,
     specialTariffId: number | null,
   ): RentalPricingRequest {
     switch (draft.mode) {
       case 'DISCOUNT':
-        return { discountPercent: draft.discountPercent ?? 0, operatorId };
+        return { discountPercent: draft.discountPercent ?? 0 };
       case 'FIXED':
         return {
           specialPrice: draft.specialPrice ?? 0,
           specialTariffId: specialTariffId ?? undefined,
-          operatorId,
         };
       case 'FULL':
       default:
-        return { operatorId };
+        return {};
     }
   }
 }

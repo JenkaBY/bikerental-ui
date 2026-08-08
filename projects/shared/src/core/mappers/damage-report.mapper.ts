@@ -57,7 +57,6 @@ export class DamageReportMapper {
       condition: w.condition,
       description: w.description,
       penaltyAmount: w.penaltyAmount,
-      operatorId: w.operatorId,
       idempotencyKey: w.idempotencyKey,
     };
   }

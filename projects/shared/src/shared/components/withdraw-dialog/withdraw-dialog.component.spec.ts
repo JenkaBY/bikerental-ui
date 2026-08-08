@@ -5,11 +5,16 @@ import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WithdrawDialogComponent } from './withdraw-dialog.component';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
+import { AuthService } from '../../../core/auth/auth.service';
 
 const availableBalance = { amount: 100, currency: 'BYN' };
 
 const makeFinanceService = () => ({
   recordWithdrawal: vi.fn().mockReturnValue(of({ transactionId: 't1', recordedAt: new Date() })),
+});
+
+const makeAuthService = () => ({
+  currentUserId: () => 'op1',
 });
 
 describe('WithdrawDialogComponent', () => {
@@ -25,6 +30,7 @@ describe('WithdrawDialogComponent', () => {
       imports: [WithdrawDialogComponent],
       providers: [
         { provide: CustomerFinanceStore, useValue: financeService },
+        { provide: AuthService, useValue: makeAuthService() },
         { provide: MatDialogRef, useValue: { close: dialogClose } },
         { provide: MAT_DIALOG_DATA, useValue: { customerId: 'c1', availableBalance } },
         { provide: MatSnackBar, useValue: { open: snackOpen } },

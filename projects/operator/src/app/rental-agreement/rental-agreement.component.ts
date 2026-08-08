@@ -290,7 +290,7 @@ export class RentalAgreementComponent {
     if (!png || id === null) return;
 
     this.signingStore
-      .sign(id, png, this.signingVersion(), this.store.operatorId())
+      .sign(id, png, this.signingVersion())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

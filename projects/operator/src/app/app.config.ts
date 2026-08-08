@@ -11,23 +11,25 @@ import localeRu from '@angular/common/locales/ru';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
+import { firstValueFrom, tap } from 'rxjs';
 import { routes } from './app.routes';
 import { PwaUpdateService } from './core/pwa-update.service';
 import {
   acceptLanguageInterceptor,
+  apiAuthInterceptor,
   APP_BRAND,
+  AuthService,
   BRAND,
   environment,
   errorInterceptor,
   HealthPollerService,
   LookupInitializerFacade,
-  PROFILE_STUB_MODE,
   provideDefaultClient,
+  provideOidcAuth,
   SseService,
   SSE_PROVIDER,
   TIME_TRAVEL_STORE_TOKEN,
   TimeTravelStore,
-  UserStore,
 } from '@bikerental/shared';
 
 interface EnvWithBrand {
@@ -40,27 +42,34 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([acceptLanguageInterceptor, errorInterceptor])),
+    provideHttpClient(
+      withInterceptors([acceptLanguageInterceptor, apiAuthInterceptor, errorInterceptor]),
+    ),
+    provideOidcAuth('bike-rental-operator'),
     provideAppInitializer(() => {
       inject(HealthPollerService);
       inject(PwaUpdateService).init();
       registerLocaleData(localeRu, 'ru');
-      // TODO: temporary dev seed until the operator app gets its own OIDC auth.
-      inject(UserStore).seedDevUser();
+      const auth = inject(AuthService);
       const lookupFacade = inject(LookupInitializerFacade);
-      lookupFacade
-        .init({
-          loadEquipmentType: true,
-          loadPricingType: true,
-          loadSpecialTariffId: true,
-        })
-        .subscribe();
-      return Promise.resolve();
+      return firstValueFrom(
+        auth.checkAuth().pipe(
+          tap((result) => {
+            if (result.isAuthenticated) {
+              lookupFacade
+                .init({
+                  loadEquipmentType: true,
+                  loadPricingType: true,
+                  loadSpecialTariffId: true,
+                })
+                .subscribe();
+            }
+          }),
+        ),
+      ).then(() => undefined);
     }),
     { provide: LOCALE_ID, useValue: environment.defaultLocale },
     { provide: APP_BRAND, useValue: envBrand },
-    // TODO: operator has no auth yet — run profile actions offline. Remove once operator auth lands.
-    { provide: PROFILE_STUB_MODE, useValue: true },
     provideDefaultClient({ basePath: environment.apiUrl }),
     {
       provide: TIME_TRAVEL_STORE_TOKEN,

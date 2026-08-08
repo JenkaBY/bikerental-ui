@@ -178,7 +178,7 @@ await TestBed.configureTestingModule({
 - No SSR, no NgModules, no NgRx, no `any` type
 - **API models**: Use auto-generated `core/api/generated/` models (via `ng-openapi`); never manually add types to legacy `core/models/` API types folder
 - **API services**: Inject generated services from `core/api/generated/services/`; don't call `HttpClient` directly for spec-covered endpoints
-- Auth (`TASK002`) is intentionally unimplemented last — all routes are currently open
+- Auth (`TASK002`) is implemented for admin and operator via OIDC (`projects/shared/src/core/auth/`); gateway remains open (static landing page only). See `architecture.md` → Security Topology.
 - Avoid all Angular APIs marked deprecated in v21 (e.g. use `provideAnimationsAsync()` approach, not `provideAnimations()`)
 - No code comments — the code should be self-documenting
 

@@ -123,8 +123,6 @@ export interface RentalRequest {
   equipmentIds: Array<number>;
   /** Planned rental duration in minutes */
   duration: number;
-  /** Operator identifier */
-  operatorId: string;
   /** Id of a SPECIAL-type tariff; mutually exclusive with discountPercent */
   specialTariffId?: number;
   /** Operator-provided fixed total; required when specialTariffId is set */
@@ -350,7 +348,6 @@ export interface SignAgreementRequest {
   signaturePng: string;
   rentalVersion: number;
   templateId: number;
-  operatorId: string;
 }
 
 export interface SignatureCreatedResponse {
@@ -361,7 +358,6 @@ export interface SignatureCreatedResponse {
 /** Confirms the final full return of a rental against a previously created cost quote */
 export interface ConfirmReturnRequest {
   quoteId: string;
-  operatorId: string;
 }
 
 /** Result of equipment return operation */
@@ -386,16 +382,12 @@ export interface SettlementResponse {
 export interface AddRentalEquipmentRequest {
   /** List of Equipment IDs to add to the rental */
   equipmentIds: Array<number>;
-  /** Operator identifier */
-  operatorId: string;
 }
 
 /** Requests that a DEBT rental's shortfall be written off; no amount is supplied — the Finance module computes it from live balances and either settles or rejects the request */
 export interface DebtWriteOffRequest {
   /** Optional free-text reason, recorded on the rental and on every resulting transaction */
   reason?: string;
-  /** Operator identifier */
-  operatorId: string;
 }
 
 /** Result of a debt write-off operation */
@@ -414,8 +406,6 @@ export interface ReturnEquipmentRequest {
   equipmentIds?: Array<number>;
   /** List of equipment UIDs to return */
   equipmentUids?: Array<string>;
-  /** Operator identifier */
-  operatorId: string;
 }
 
 /** Request body for creating a rental directly in AWAITING_SIGNATURE */
@@ -426,8 +416,6 @@ export interface RentalForSigningRequest {
   equipmentIds: Array<number>;
   /** Planned rental duration in minutes */
   duration: number;
-  /** Operator identifier */
-  operatorId: string;
   /** Id of a SPECIAL-type tariff; mutually exclusive with discountPercent */
   specialTariffId?: number;
   /** Operator-provided fixed total; required when specialTariffId is set */
@@ -450,8 +438,6 @@ export interface RegisterDamageReportRequest {
   description: string;
   /** Optional penalty charged to the responsible customer */
   penaltyAmount?: number;
-  /** Identifier of the operator filing the report */
-  operatorId: string;
   /** Key attached to the penalty and reused verbatim for every future settlement attempt */
   idempotencyKey: string;
 }
@@ -508,8 +494,6 @@ export interface RecordWithdrawalRequest {
   amount: number;
   /** Payout method (CASH, CARD_TERMINAL, BANK_TRANSFER) */
   paymentMethod: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER';
-  /** Operator identifier */
-  operatorId: string;
   /** Origin of the transaction */
   source?: 'RENTAL';
   /** Identifier within the source (e.g. rental id when source is RENTAL) */
@@ -534,8 +518,6 @@ export interface RecordDepositRequest {
   amount: number;
   /** Payment method (CASH, CARD_TERMINAL, BANK_TRANSFER) */
   paymentMethod: 'CASH' | 'CARD_TERMINAL' | 'BANK_TRANSFER';
-  /** Operator identifier */
-  operatorId: string;
   /** Origin of the transaction */
   source?: 'RENTAL';
   /** Identifier within the source (e.g. rental id when source is RENTAL) */
@@ -546,7 +528,6 @@ export interface AdjustmentRequest {
   customerId: string;
   amount: number;
   reason: string;
-  operatorId: string;
   idempotencyKey: string;
 }
 
@@ -614,13 +595,10 @@ export interface RentalPricingRequest {
   specialPrice?: number;
   /** Discount percentage applied to the non-special subtotal (0-100); ignored when specialTariffId is set */
   discountPercent?: number;
-  /** Operator identifier */
-  operatorId: string;
 }
 
 export interface RentalLifecycleRequest {
   status: 'DRAFT' | 'AWAITING_SIGNATURE' | 'CANCELLED';
-  operatorId: string;
 }
 
 /** Request body for a batch equipment condition change */
@@ -631,8 +609,6 @@ export interface ChangeEquipmentConditionRequest {
   condition?: 'GOOD' | 'MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
   /** Reason of the condition change, persisted verbatim into the audit trail */
   reason: string;
-  /** Identifier of the operator performing the change */
-  operatorId: string;
 }
 
 export interface Pageable {

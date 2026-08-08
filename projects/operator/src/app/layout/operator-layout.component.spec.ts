@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { OperatorLayoutComponent } from './operator-layout.component';
-import { APP_BRAND, BRAND } from '@bikerental/shared';
+import { APP_BRAND, AuthService, BRAND } from '@bikerental/shared';
+
+const makeAuthService = () => ({
+  logout: vi.fn(),
+});
 
 describe('OperatorLayoutComponent', () => {
   let fixture: ComponentFixture<OperatorLayoutComponent>;
@@ -9,7 +13,11 @@ describe('OperatorLayoutComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [OperatorLayoutComponent],
-      providers: [provideRouter([]), { provide: APP_BRAND, useValue: BRAND }],
+      providers: [
+        provideRouter([]),
+        { provide: APP_BRAND, useValue: BRAND },
+        { provide: AuthService, useValue: makeAuthService() },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OperatorLayoutComponent);

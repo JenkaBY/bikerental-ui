@@ -12,8 +12,6 @@ export interface CustomerWithdrawalWrite {
   customerId: string;
   amount: number;
   paymentMethod: PaymentMethod;
-  // operatorId is usually provided by the application runtime; keep it optional in the UI model
-  operatorId?: string;
   source?: TransactionSource;
   sourceId?: string;
 }
@@ -23,8 +21,6 @@ export interface CustomerDepositWrite {
   customerId: string;
   amount: number;
   paymentMethod: PaymentMethod;
-  // operatorId is usually provided by the application runtime; keep it optional in the UI model
-  operatorId?: string;
   source?: TransactionSource;
   sourceId?: string;
 }

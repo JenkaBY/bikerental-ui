@@ -49,7 +49,6 @@ export interface DamageReportWrite {
   readonly condition: DamageCondition;
   readonly description: string;
   readonly penaltyAmount?: number;
-  readonly operatorId: string;
   readonly idempotencyKey: string;
 }
 

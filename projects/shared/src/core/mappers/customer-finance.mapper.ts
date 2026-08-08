@@ -8,7 +8,6 @@ export class CustomerFinanceMapper {
       customerId: w.customerId,
       amount: w.amount,
       paymentMethod: w.paymentMethod,
-      operatorId: w.operatorId ?? '',
       ...(w.source ? { source: w.source } : {}),
       ...(w.sourceId ? { sourceId: w.sourceId } : {}),
     };
@@ -20,7 +19,6 @@ export class CustomerFinanceMapper {
       customerId: w.customerId,
       amount: w.amount,
       paymentMethod: w.paymentMethod,
-      operatorId: w.operatorId ?? '',
       ...(w.source ? { source: w.source } : {}),
       ...(w.sourceId ? { sourceId: w.sourceId } : {}),
     };

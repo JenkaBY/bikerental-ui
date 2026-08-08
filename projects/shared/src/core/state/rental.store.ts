@@ -26,7 +26,6 @@ import { CustomerMapper, makeMoney, RentalDashboardMapper, RentalMapper } from '
 import { suppressErrorNotification } from '../errors';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
-import { UserStore } from './user.store';
 import { TariffStore } from './tariff.store';
 
 export const RENTAL_VALIDATION_STORE_FOR_DELEGATION = new InjectionToken<{
@@ -38,7 +37,6 @@ export class RentalStore {
   private readonly rentalsService = inject(RentalsService);
   private readonly customersService = inject(CustomersService);
   private readonly batchRentalPropertyStore = inject(BatchRentalPropertyStore);
-  private readonly userStore = inject(UserStore);
   private readonly customerFinanceStore = inject(CustomerFinanceStore);
   private readonly tariffStore = inject(TariffStore);
   private readonly destroyRef = inject(DestroyRef);
@@ -89,7 +87,6 @@ export class RentalStore {
   readonly priceMode = computed(() => this._state().priceMode);
   readonly isDiscountPriceMode = computed(() => this.priceMode() === 'DISCOUNT');
   readonly isFixedPriceMode = computed(() => this.priceMode() === 'FIXED');
-  readonly operatorId = computed(() => this.userStore.currentUser()?.id || 'FIX_ME');
 
   readonly isSaving = computed(() => this._state().isSaving);
   readonly isLoading = computed(() => this._state().isLoading);
@@ -330,7 +327,6 @@ export class RentalStore {
         specialTariffId: this.isFixedPriceMode()
           ? this.tariffStore.specialTariffId() || undefined
           : undefined,
-        operatorId: this.operatorId(),
       }),
     };
   }
@@ -338,10 +334,10 @@ export class RentalStore {
   returnEquipment(): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
-    const request = RentalDashboardMapper.toReturnRequest(
-      { rentalId: id, equipmentItemIds: [...this.selectedEquipmentItemIds()] },
-      this.operatorId(),
-    );
+    const request = RentalDashboardMapper.toReturnRequest({
+      rentalId: id,
+      equipmentItemIds: [...this.selectedEquipmentItemIds()],
+    });
     this.patchState({ isReturning: true });
     return this.rentalsService.returnEquipment(request).pipe(
       map(() => undefined as void),
@@ -352,7 +348,7 @@ export class RentalStore {
   confirmReturn(quoteId: string): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
-    const request = RentalDashboardMapper.toConfirmReturnRequest(quoteId, this.operatorId());
+    const request = RentalDashboardMapper.toConfirmReturnRequest(quoteId);
     this.patchState({ isReturning: true });
     return this.rentalsService
       .confirmReturn(id, request, 'body', { context: suppressErrorNotification() })
@@ -381,7 +377,7 @@ export class RentalStore {
   addEquipmentToRental(equipmentIds: number[]): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
-    const request: AddRentalEquipmentRequest = { equipmentIds, operatorId: this.operatorId() };
+    const request: AddRentalEquipmentRequest = { equipmentIds };
     this.patchState({ isAddingEquipment: true });
     return this.applyRentalResponse$(
       this.rentalsService.addEquipment(id, request, 'body', {
@@ -393,11 +389,7 @@ export class RentalStore {
   updatePricing(draft: RentalPricingDraft, specialTariffId: number | null): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
-    const request = RentalDashboardMapper.toPricingRequest(
-      draft,
-      this.operatorId(),
-      specialTariffId,
-    );
+    const request = RentalDashboardMapper.toPricingRequest(draft, specialTariffId);
     this.patchState({ isUpdatingPricing: true });
     return this.applyRentalResponse$(
       this.rentalsService.updatePricing(id, request, 'body', {
@@ -409,12 +401,10 @@ export class RentalStore {
   cancelRental(): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
-    return this.rentalsService
-      .updateLifecycle(id, { status: 'CANCELLED', operatorId: this.operatorId() })
-      .pipe(
-        tap((r) => this.patchState({ status: r.status, version: r.version })),
-        map(() => undefined as void),
-      );
+    return this.rentalsService.updateLifecycle(id, { status: 'CANCELLED' }).pipe(
+      tap((r) => this.patchState({ status: r.status, version: r.version })),
+      map(() => undefined as void),
+    );
   }
 
   createAwaitingSignature(): Observable<number> {
@@ -437,14 +427,9 @@ export class RentalStore {
     if (id === null) throw new Error('No rental id in store');
     this._isSendingToSigning.set(true);
     return this.rentalsService
-      .updateLifecycle(
-        id,
-        { status: 'AWAITING_SIGNATURE', operatorId: this.operatorId() },
-        undefined,
-        {
-          context: suppressErrorNotification(),
-        },
-      )
+      .updateLifecycle(id, { status: 'AWAITING_SIGNATURE' }, undefined, {
+        context: suppressErrorNotification(),
+      })
       .pipe(
         tap((r) => this.patchState({ status: r.status, version: r.version })),
         map((r) => r.version),
@@ -462,7 +447,7 @@ export class RentalStore {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
     return this.rentalsService
-      .updateLifecycle(id, { status: 'DRAFT', operatorId: this.operatorId() }, undefined, {
+      .updateLifecycle(id, { status: 'DRAFT' }, undefined, {
         context: suppressErrorNotification(),
       })
       .pipe(
