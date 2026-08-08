@@ -28,7 +28,6 @@ const MAX_ITEMS = 5;
 
 interface ReportDamageSheetData {
   rentalId: number;
-  operatorId: string;
   equipmentItems: RentalEquipmentItem[];
 }
 
@@ -216,7 +215,6 @@ export class ReportDamageSheetComponent {
           condition,
           description,
           penaltyAmount: penaltyAmount ?? undefined,
-          operatorId: this.data.operatorId,
           idempotencyKey: this.idempotencyKey,
         },
         { context: suppressErrorNotification() },

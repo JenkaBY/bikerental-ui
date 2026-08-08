@@ -25,7 +25,6 @@ export class RentalMapper {
       customerId: draft.customerId,
       equipmentIds: draft.equipmentIds,
       duration: draft.durationMinutes,
-      operatorId: draft.operatorId,
       ...(draft.discountPercent !== undefined && { discountPercent: draft.discountPercent }),
       ...(draft.specialTariffId !== undefined && { specialTariffId: draft.specialTariffId }),
       ...(draft.specialPrice !== undefined && { specialPrice: draft.specialPrice }),

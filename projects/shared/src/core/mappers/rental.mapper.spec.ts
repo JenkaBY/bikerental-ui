@@ -61,7 +61,6 @@ describe('RentalMapper.toRentalRequest', () => {
       equipmentIds: [10, 20],
       durationMinutes: 120,
       discountPercent: 10,
-      operatorId: 'op-1',
     };
 
     const result = RentalMapper.toRentalRequest(draft);
@@ -70,7 +69,6 @@ describe('RentalMapper.toRentalRequest', () => {
     expect(result.equipmentIds).toEqual([10, 20]);
     expect(result.duration).toBe(120);
     expect(result.discountPercent).toBe(10);
-    expect(result.operatorId).toBe('op-1');
     expect(result.specialTariffId).toBeUndefined();
     expect(result.specialPrice).toBeUndefined();
   });
@@ -82,7 +80,6 @@ describe('RentalMapper.toRentalRequest', () => {
       durationMinutes: 60,
       specialTariffId: 5,
       specialPrice: 500,
-      operatorId: 'op-2',
     };
 
     const result = RentalMapper.toRentalRequest(draft);

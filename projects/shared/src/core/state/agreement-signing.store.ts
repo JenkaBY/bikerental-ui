@@ -43,12 +43,11 @@ export class AgreementSigningStore {
     rentalId: number,
     signaturePng: string,
     rentalVersion: number,
-    operatorId: string,
   ): Observable<SignatureCreated> {
     const templateId = this._state().template?.templateId ?? 0;
     this._state.update((s) => ({ ...s, isSigning: true }));
     return this.service
-      .sign(rentalId, { signaturePng, rentalVersion, templateId, operatorId }, undefined, {
+      .sign(rentalId, { signaturePng, rentalVersion, templateId }, undefined, {
         context: suppressErrorNotification(),
       })
       .pipe(

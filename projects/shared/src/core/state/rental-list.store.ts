@@ -5,7 +5,6 @@ import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { CustomersService, EquipmentsCatalogueService, RentalsService } from '../api/generated';
 import { RentalDashboardMapper } from '../mappers';
 import { suppressErrorNotification } from '../errors';
-import { AuthService } from '../auth/auth.service';
 import type { RentalListItem } from '@ui-models';
 import type { DebtWriteOffRequest, RentalFilterParams, RentalSummaryResponse } from '@api-models';
 import { toIsoDate } from '../../shared/utils/date.util';
@@ -27,7 +26,6 @@ export class RentalListStore {
   private readonly rentalsService = inject(RentalsService);
   private readonly customersService = inject(CustomersService);
   private readonly equipmentsCatalogueService = inject(EquipmentsCatalogueService);
-  private readonly auth = inject(AuthService);
 
   private readonly historyParams = signal<RentalFilter | null>(null);
   private readonly writingOffIds = signal<ReadonlySet<number>>(new Set<number>());
@@ -61,7 +59,6 @@ export class RentalListStore {
   readonly isLoadingActive = this.activeResource.isLoading;
   readonly isLoadingHistory = this.historyResource.isLoading;
   readonly writingOffRentalIds = this.writingOffIds.asReadonly();
-  readonly operatorId = computed(() => this.auth.currentUserId());
 
   loadActive(): void {
     this.activeResource.reload();
@@ -87,7 +84,7 @@ export class RentalListStore {
     if (this.writingOffIds().has(rentalId)) {
       return EMPTY;
     }
-    const request: DebtWriteOffRequest = { operatorId: this.operatorId() };
+    const request: DebtWriteOffRequest = {};
     this.setWritingOff(rentalId, true);
     return this.rentalsService
       .writeOffDebt(rentalId, request, 'body', { context: suppressErrorNotification() })
