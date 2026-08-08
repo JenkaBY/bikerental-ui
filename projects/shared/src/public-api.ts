@@ -129,6 +129,7 @@ export * from './shared/components/transaction/transaction-entries-table.compone
 export * from './shared/components/equipment-badge/equipment-badge.component';
 export * from './shared/components/equipment-status-badge/equipment-status-badge.component';
 export * from './shared/components/cost-breakdown/cost-breakdown.component';
+export * from './shared/components/card-stack/card-stack.component';
 export * from './shared/components/equipment-unit/equipment-unit-summary.component';
 export * from './shared/components/equipment-unit/equipment-unit-details.component';
 export * from './shared/components/equipment-unit/equipment-unit-card.component';

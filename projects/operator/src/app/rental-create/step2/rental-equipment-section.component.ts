@@ -23,6 +23,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, switchMap } from 'rxjs';
 import type { EquipmentUnitViewModel, RentalCostBreakdown } from '@bikerental/shared';
 import {
+  CardStackComponent,
   EquipmentScanResolverService,
   EquipmentSearchItem,
   EquipmentSearchStore,
@@ -47,6 +48,7 @@ import { EquipmentSearchOptionComponent } from './equipment-search-option.compon
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
+    CardStackComponent,
     EquipmentUnitCardComponent,
     EquipmentSearchOptionComponent,
   ],
@@ -89,15 +91,17 @@ import { EquipmentSearchOptionComponent } from './equipment-search-option.compon
         </button>
       </div>
 
-      <div class="flex flex-col gap-2">
-        @for (item of items(); track item.id) {
-          <app-equipment-unit-card
-            [unit]="unitFor(item)"
-            [showRemove]="true"
-            (removed)="itemRemoved.emit(item.id)"
-          />
-        }
-      </div>
+      @if (items().length) {
+        <app-card-stack variant="inset">
+          @for (item of items(); track item.id) {
+            <app-equipment-unit-card
+              [unit]="unitFor(item)"
+              [showRemove]="true"
+              (removed)="itemRemoved.emit(item.id)"
+            />
+          }
+        </app-card-stack>
+      }
     </div>
   `,
   providers: [EquipmentSearchStore],

@@ -14,6 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, exhaustMap, filter, of, tap } from 'rxjs';
 import {
   ApiErrorParser,
+  CardStackComponent,
   CustomerFinanceStore,
   type EquipmentSearchItem,
   Labels,
@@ -38,6 +39,7 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CardStackComponent,
     RentalCustomerPanelComponent,
     RentalReservedPanelComponent,
     RentalDurationControlComponent,
@@ -46,17 +48,19 @@ import { RentalCostFooterComponent } from './rental-cost-footer.component';
   ],
   template: `
     <div class="flex flex-col">
-      <app-rental-customer-panel
-        [expanded]="openPanel() === 'customer'"
-        (toggled)="togglePanel('customer')"
-        (topUpRequested)="onTopUpRequested()"
-        (withdrawRequested)="onWithdrawRequested()"
-        (openProfileRequested)="onOpenProfile()"
-      />
-      <app-rental-reserved-panel
-        [expanded]="openPanel() === 'reserved'"
-        (toggled)="togglePanel('reserved')"
-      />
+      <app-card-stack>
+        <app-rental-customer-panel
+          [expanded]="openPanel() === 'customer'"
+          (toggled)="togglePanel('customer')"
+          (topUpRequested)="onTopUpRequested()"
+          (withdrawRequested)="onWithdrawRequested()"
+          (openProfileRequested)="onOpenProfile()"
+        />
+        <app-rental-reserved-panel
+          [expanded]="openPanel() === 'reserved'"
+          (toggled)="togglePanel('reserved')"
+        />
+      </app-card-stack>
       <app-rental-duration-control />
       <app-rental-equipment-section
         [items]="store.equipmentItems()"

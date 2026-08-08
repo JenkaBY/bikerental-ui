@@ -42,8 +42,7 @@ export interface EquipmentUnitViewModel extends EquipmentUnitIdentity {
     EquipmentUnitDetailsComponent,
   ],
   host: {
-    class:
-      'block rounded-lg bg-slate-50 border border-slate-200 px-3 py-1 leading-tight cursor-pointer select-none',
+    class: 'block px-3 py-2 leading-tight cursor-pointer select-none',
     role: 'button',
     tabindex: '0',
     '[attr.aria-expanded]': 'expanded()',

@@ -19,6 +19,7 @@ import { interval } from 'rxjs';
 import type { RentalEquipmentItem } from '@bikerental/shared';
 import {
   ApiErrorParser,
+  CardStackComponent,
   CustomerFinanceStore,
   EquipmentUnitCardComponent,
   EquipmentUnitViewModelMapper,
@@ -45,6 +46,7 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
   providers: [ReturnEquipmentCostStore],
   host: { class: 'flex flex-col flex-1 min-h-0' },
   imports: [
+    CardStackComponent,
     MatButtonModule,
     MatDividerModule,
     MatProgressSpinnerModule,
@@ -57,21 +59,25 @@ import { ReturnSettlementSummaryComponent } from './return-settlement-summary.co
     <app-page-header [title]="Labels.ReturnDialogTitle" (back)="onCancel()" />
 
     <div class="flex-1 min-h-0 overflow-y-auto px-4 py-0 flex flex-col gap-3">
-      <app-rental-customer-panel
-        [expanded]="customerExpanded()"
-        (toggled)="customerExpanded.set(!customerExpanded())"
-        (topUpRequested)="onTopUpRequested()"
-        (withdrawRequested)="onWithdrawRequested()"
-        (openProfileRequested)="onOpenProfile()"
-      />
+      <app-card-stack>
+        <app-rental-customer-panel
+          [expanded]="customerExpanded()"
+          (toggled)="customerExpanded.set(!customerExpanded())"
+          (topUpRequested)="onTopUpRequested()"
+          (withdrawRequested)="onWithdrawRequested()"
+          (openProfileRequested)="onOpenProfile()"
+        />
+      </app-card-stack>
 
       <span class="text-sm font-semibold text-slate-600">{{ Labels.ItemsToReturn }}</span>
 
-      <div class="flex flex-col gap-2">
-        @for (item of costStore.selectedItems(); track item.id) {
-          <app-equipment-unit-card [unit]="unitFor(item)" />
-        }
-      </div>
+      @if (costStore.selectedItems().length) {
+        <app-card-stack variant="inset">
+          @for (item of costStore.selectedItems(); track item.id) {
+            <app-equipment-unit-card [unit]="unitFor(item)" />
+          }
+        </app-card-stack>
+      }
 
       <mat-divider />
 
