@@ -45,7 +45,14 @@ export const apiAuthInterceptor: HttpInterceptorFn = (req, next) => {
                 setHeaders: { Authorization: `Bearer ${refreshedToken}` },
                 context: req.context.set(SKIP_AUTH_RETRY, true),
               });
-              return next(retriedReq);
+              return next(retriedReq).pipe(
+                catchError((retryError: HttpErrorResponse) => {
+                  if (retryError.status === 401) {
+                    auth.login();
+                  }
+                  return throwError(() => retryError);
+                }),
+              );
             }),
             catchError(() => {
               auth.login();

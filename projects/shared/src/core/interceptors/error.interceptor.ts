@@ -27,7 +27,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         const apiError = ApiErrorParser.parse(error);
         errorService.setError(apiError);
 
-        if (!req.context.get(SUPPRESS_ERROR_NOTIFICATION)) {
+        // 401 is owned end-to-end by apiAuthInterceptor (silent refresh -> retry -> login
+        // redirect on failure); notifying here would toast on every ordinary token expiry.
+        if (error.status !== 401 && !req.context.get(SUPPRESS_ERROR_NOTIFICATION)) {
           notifications.error(resolver.resolve(apiError));
         }
       }
