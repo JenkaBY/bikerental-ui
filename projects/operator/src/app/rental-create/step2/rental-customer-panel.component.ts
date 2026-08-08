@@ -23,41 +23,40 @@ import {
     CustomerPanelHeaderComponent,
     CustomerCommentsListComponent,
   ],
+  host: { class: 'block' },
   template: `
-    <div class="rounded-xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-      <app-customer-panel-header
-        [customer]="store.customer()"
-        [balance]="store.customerBalance()"
-        [rating]="rating()"
-        [balanceSufficient]="store.isBalanceSufficient()"
-        [expanded]="expanded()"
-        (toggled)="toggled.emit()"
-      />
+    <app-customer-panel-header
+      [customer]="store.customer()"
+      [balance]="store.customerBalance()"
+      [rating]="rating()"
+      [balanceSufficient]="store.isBalanceSufficient()"
+      [expanded]="expanded()"
+      (toggled)="toggled.emit()"
+    />
 
-      @if (expanded()) {
-        <div class="px-4 pb-4 flex flex-col gap-4">
-          <div class="grid grid-cols-2 gap-2 [&_button]:w-full">
-            <app-withdraw-button
-              (confirm)="withdrawRequested.emit()"
-              [disabled]="!store.customerBalance()?.isWithdrawalAvailable"
-            />
-            <app-top-up-button (confirm)="topUpRequested.emit()" />
-          </div>
-
-          <app-customer-comments-list [comments]="comments()" />
-
-          <button
-            type="button"
-            matButton
-            class="self-stretch text-emerald-700"
-            (click)="openProfileRequested.emit()"
-          >
-            {{ Labels.CustomerOpenProfile }}
-            <mat-icon iconPositionEnd aria-hidden="true">north_east</mat-icon>
-          </button>
+    @if (expanded()) {
+      <div class="px-4 pb-4 flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-2 [&_button]:w-full">
+          <app-withdraw-button
+            (confirm)="withdrawRequested.emit()"
+            [disabled]="!store.customerBalance()?.isWithdrawalAvailable"
+          />
+          <app-top-up-button (confirm)="topUpRequested.emit()" />
         </div>
-      }
-    </div>
+
+        <app-customer-comments-list [comments]="comments()" />
+
+        <button
+          type="button"
+          matButton
+          class="self-stretch text-emerald-700"
+          (click)="openProfileRequested.emit()"
+        >
+          {{ Labels.CustomerOpenProfile }}
+          <mat-icon iconPositionEnd aria-hidden="true">north_east</mat-icon>
+        </button>
+      </div>
+    }
   `,
 })
 export class RentalCustomerPanelComponent {

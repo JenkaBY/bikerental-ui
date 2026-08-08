@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import type { RentalEquipmentItem } from '@bikerental/shared';
 import {
+  CardStackComponent,
   EquipmentUnitCardComponent,
   EquipmentUnitViewModelMapper,
   Labels,
@@ -27,7 +28,7 @@ import { AddEquipmentDialogComponent } from './add-equipment-dialog/add-equipmen
 @Component({
   selector: 'app-rental-equipment-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatCheckboxModule, EquipmentUnitCardComponent],
+  imports: [CardStackComponent, MatButtonModule, MatCheckboxModule, EquipmentUnitCardComponent],
   template: `
     <div class="flex flex-col">
       <div class="flex items-center gap-2 py-3">
@@ -52,19 +53,23 @@ import { AddEquipmentDialogComponent } from './add-equipment-dialog/add-equipmen
         }
       </div>
 
-      <div class="flex flex-col gap-2 pb-3">
-        @for (item of sortedItems(); track item.id) {
-          <div [class.opacity-40]="item.isReturned">
-            <app-equipment-unit-card
-              [unit]="unitFor(item)"
-              [showCheckbox]="true"
-              [checked]="isChecked(item)"
-              [checkboxDisabled]="item.isReturned || isDebt() || disabled()"
-              (checkedChange)="onCheckboxChange(item, $event)"
-            />
-          </div>
-        }
-      </div>
+      @if (sortedItems().length) {
+        <div class="pb-3">
+          <app-card-stack variant="inset">
+            @for (item of sortedItems(); track item.id) {
+              <div [class.opacity-40]="item.isReturned">
+                <app-equipment-unit-card
+                  [unit]="unitFor(item)"
+                  [showCheckbox]="true"
+                  [checked]="isChecked(item)"
+                  [checkboxDisabled]="item.isReturned || isDebt() || disabled()"
+                  (checkedChange)="onCheckboxChange(item, $event)"
+                />
+              </div>
+            }
+          </app-card-stack>
+        </div>
+      }
     </div>
   `,
 })

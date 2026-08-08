@@ -20,6 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import {
   BatchRentalPropertyStore,
+  CardStackComponent,
   CustomerFinanceStore,
   DamageReportStore,
   Labels,
@@ -60,6 +61,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     DamageReportStore,
   ],
   imports: [
+    CardStackComponent,
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
@@ -141,17 +143,19 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
           </div>
         } @else if (store.id() !== null) {
           <div class="flex-1 min-h-0 overflow-y-auto px-4 py-0 flex flex-col">
-            <app-rental-customer-panel
-              [expanded]="openPanel() === 'customer'"
-              (toggled)="togglePanel('customer')"
-              (topUpRequested)="onTopUpRequested()"
-              (withdrawRequested)="onWithdrawRequested()"
-              (openProfileRequested)="onOpenProfile()"
-            />
-            <app-rental-reserved-panel
-              [expanded]="openPanel() === 'reserved'"
-              (toggled)="togglePanel('reserved')"
-            />
+            <app-card-stack>
+              <app-rental-customer-panel
+                [expanded]="openPanel() === 'customer'"
+                (toggled)="togglePanel('customer')"
+                (topUpRequested)="onTopUpRequested()"
+                (withdrawRequested)="onWithdrawRequested()"
+                (openProfileRequested)="onOpenProfile()"
+              />
+              <app-rental-reserved-panel
+                [expanded]="openPanel() === 'reserved'"
+                (toggled)="togglePanel('reserved')"
+              />
+            </app-card-stack>
             <div>
               <app-rental-period-section />
               <mat-divider />
