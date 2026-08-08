@@ -21,22 +21,22 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  RentalRequest,
-  RequestOptions,
-  RentalResponse,
-  RentalFilterParams,
-  Pageable,
-  PageRentalSummaryResponse,
-  ConfirmReturnRequest,
-  RentalReturnResponse,
   AddRentalEquipmentRequest,
+  ConfirmReturnRequest,
   DebtWriteOffRequest,
   DebtWriteOffResponse,
-  ReturnEquipmentRequest,
-  RentalForSigningRequest,
-  RentalPricingRequest,
-  RentalLifecycleRequest,
+  Pageable,
   PageAvailableEquipmentResponse,
+  PageRentalSummaryResponse,
+  RentalFilterParams,
+  RentalForSigningRequest,
+  RentalLifecycleRequest,
+  RentalPricingRequest,
+  RentalRequest,
+  RentalResponse,
+  RentalReturnResponse,
+  RequestOptions,
+  ReturnEquipmentRequest,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -591,7 +591,7 @@ export class RentalsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageAvailableEquipmentResponse>>;
-  /** Returns equipment that is in GOOD condition and not currently occupied by an active or assigned rental. Pagination is best-effort: the returned page may contain fewer items than the requested size. */
+  /** Returns equipment that is in the condition available for rental and not currently occupied by an active or assigned rental. Pagination is best-effort: the returned page may contain fewer items than the requested size. */
   getAvailableEquipments(
     arg1: Pageable,
     q?: string,

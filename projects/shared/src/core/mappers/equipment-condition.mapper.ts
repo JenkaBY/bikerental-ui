@@ -2,7 +2,7 @@ import type { EquipmentCondition, EquipmentConditionSlug } from '../models/equip
 
 const CONDITION_NAMES: Record<EquipmentConditionSlug, string> = {
   GOOD: $localize`Good`,
-  MAINTENANCE: $localize`Maintenance`,
+  NEEDS_MAINTENANCE: $localize`Needs maintenance`,
   BROKEN: $localize`Broken`,
   DECOMMISSIONED: $localize`Decommissioned`,
 };
