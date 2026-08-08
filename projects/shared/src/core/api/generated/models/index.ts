@@ -233,7 +233,7 @@ export interface EquipmentRequest {
   /** Condition description */
   condition?: string;
   /** Condition slug */
-  conditionSlug?: 'GOOD' | 'MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
+  conditionSlug?: 'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
 }
 
 /** Equipment record */
@@ -433,7 +433,7 @@ export interface RegisterDamageReportRequest {
   /** Customer responsible for the damage; exactly one of rentalId or customerId is required */
   customerId?: string;
   /** Condition applied to every listed equipment item */
-  condition: 'BROKEN' | 'MAINTENANCE';
+  condition: 'BROKEN' | 'NEEDS_MAINTENANCE';
   /** What happened; persisted on the report and forwarded to the equipment condition audit trail */
   description: string;
   /** Optional penalty charged to the responsible customer */
@@ -606,7 +606,7 @@ export interface ChangeEquipmentConditionRequest {
   /** Equipment ids the condition is applied to, 1-5 elements */
   equipmentIds: Array<number>;
   /** Target physical condition */
-  condition?: 'GOOD' | 'MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
+  condition?: 'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
   /** Reason of the condition change, persisted verbatim into the audit trail */
   reason: string;
 }

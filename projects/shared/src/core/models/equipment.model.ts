@@ -1,6 +1,6 @@
 import { EquipmentType } from './equipment-type.model';
 
-export type EquipmentConditionSlug = 'GOOD' | 'MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
+export type EquipmentConditionSlug = 'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
 
 export interface EquipmentCondition {
   slug: EquipmentConditionSlug;

@@ -3,8 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, finalize, map, of } from 'rxjs';
 import { RentalsService } from '../api/generated';
 
-const HELD_STATUSES = new Set(['RESERVED', 'RENTED']);
-
 @Injectable()
 export class RentalLookupStore {
   private readonly rentalsService = inject(RentalsService);
@@ -24,12 +22,12 @@ export class RentalLookupStore {
     this._foundRentalId.set(null);
 
     this.rentalsService
-      .getRentals({ status: ['ACTIVE', 'DRAFT'], equipmentUid: uid }, { size: 50 })
+      .getRentals({ status: ['ACTIVE'], equipmentUid: uid }, { size: 50 })
       .pipe(
         map((page) => {
           const match = (page.items ?? []).find((rental) =>
             (rental.equipments ?? []).some(
-              (item) => item.equipmentUid === uid && HELD_STATUSES.has(item.status),
+              (item) => item.equipmentUid === uid && item.status !== 'RETURNED',
             ),
           );
           return match?.id ?? null;

@@ -18,8 +18,8 @@ import {
   ErrorMessageResolver,
   FormErrorMessages,
   Labels,
-  MaxDecimalsDirective,
   maxDecimalPlacesValidator,
+  MaxDecimalsDirective,
   NotificationService,
   suppressErrorNotification,
 } from '@bikerental/shared';
@@ -93,7 +93,7 @@ export type ReportDamageResult = { outcome: 'created'; report: DamageReport } | 
             <mat-button-toggle value="BROKEN" class="flex-1">{{
               Labels.ReportDamageConditionBroken
             }}</mat-button-toggle>
-            <mat-button-toggle value="MAINTENANCE" class="flex-1">{{
+            <mat-button-toggle value="NEEDS_MAINTENANCE" class="flex-1">{{
               Labels.ReportDamageConditionMaintenance
             }}</mat-button-toggle>
           </mat-button-toggle-group>

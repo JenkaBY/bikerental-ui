@@ -3,7 +3,7 @@ import type { Money } from './transaction.model';
 
 export type PenaltyStatus = 'PENDING' | 'SETTLED';
 
-export type DamageCondition = 'BROKEN' | 'MAINTENANCE';
+export type DamageCondition = 'BROKEN' | 'NEEDS_MAINTENANCE';
 
 export interface Penalty {
   readonly amount: Money;
