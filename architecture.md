@@ -403,12 +403,52 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
   `operatorGuard`) gate each app's top-level layout route; unauthenticated users are redirected to the
   IdP, users without the required role land on `/forbidden`. `apiAuthInterceptor` attaches
   `Authorization: Bearer <token>` to every `/api/**` request and retries once on 401 via silent
-  refresh. `operatorId`/current-user id fields sent to the backend are sourced from the `uid` claim of
-  the access token (`AuthService.currentUserId()`), not from a local profile store. Gateway
-  (`projects/gateway`) has no auth — it only hosts static links to admin/operator.
+  refresh, redirecting to login if the retry also fails. `errorInterceptor` suppresses its own
+  notification on 401 (owned end-to-end by `apiAuthInterceptor`) but still toasts 403
+  (`identity.access.denied`, "You do not have permission to perform this action.") since that is a
+  routine, distinct outcome. The backend derives the acting user from the bearer token's `uid` claim —
+  the SPA never sends an operator/current-user id in request bodies; `AuthService.currentUserId()`
+  exists only to resolve response fields (e.g. showing "you" in an audit trail), not to build requests.
+  Gateway (`projects/gateway`) has no auth — it only hosts static links to admin/operator.
 - TRUST_BOUNDARIES: admin/operator ↔ bikerental-backend — enforced by CORS plus bearer-token
   authentication/authorization on every `/api/**` call; `/actuator/**` (health) remains unauthenticated
   by design.
+- ENDPOINT_ROLE_MATRIX: every `/api/**` endpoint requires a bearer token (401 otherwise) and, except for
+  `/api/auth/me` and `POST /api/auth/password` (any authenticated role), a specific role (403
+  otherwise). Source of truth: `docs/auth-frontend-guide.md` §7 in the backend repo
+  (`bike-rental`). Effective matrix as of this writing:
+
+  | Module | Endpoint | Method | Roles |
+  |--------|----------|--------|-------|
+  | agreement | `/api/rentals/{rentalId}/signatures` | POST, GET | OPERATOR, ADMIN |
+  | agreement | `/api/rentals/{rentalId}/agreement` | GET | OPERATOR, ADMIN |
+  | agreement | `/api/agreements`, `/api/agreements/{id}`, `/api/agreements/{id}/activate`, `/api/agreements/preview` | write + GET `/api/agreements/{id}`, GET `/api/agreements` | ADMIN |
+  | agreement | `/api/agreements/active`, `/api/agreements/variables` | GET | OPERATOR, ADMIN |
+  | customer | `/api/customers/**` | all | OPERATOR, ADMIN |
+  | equipment | `/api/equipments` (POST), `/api/equipments/{id}` (PUT), `/api/equipments/conditions` (PATCH) | write | ADMIN |
+  | equipment | `/api/equipments/**` (read), `/api/equipment-types` (GET) | GET | OPERATOR, ADMIN |
+  | equipment | `/api/equipment-types` (POST), `/api/equipment-types/{slug}` (PUT) | write | ADMIN |
+  | finance | `/api/finance/adjustments` | POST | ADMIN |
+  | finance | `/api/finance/deposits`, `/api/finance/withdrawals` | POST | OPERATOR, ADMIN |
+  | finance | `/api/finance/customers/{customerId}/balances`, `/transactions` | GET | OPERATOR, ADMIN |
+  | finance | `/api/finance/transactions`, `/api/finance/transactions/{id}` | GET | ADMIN |
+  | maintenance | `/api/maintenance/damage-reports/**` | all | OPERATOR, ADMIN |
+  | rental | `/api/rentals`, `/api/rentals/{id}` | GET | OPERATOR, ADMIN |
+  | rental | `/api/rentals/{rentalId}/debt-write-offs` | POST | OPERATOR, ADMIN |
+  | rental | everything else under `/api/rentals/**` | POST, PUT, PATCH | OPERATOR only |
+  | tariff | `/api/tariffs` (POST), `/api/tariffs/{id}` (PUT), `/activate`/`/deactivate` (PATCH) | write | ADMIN |
+  | tariff | `/api/tariffs/quotes`, `/api/tariffs/quotes/{id}` | POST, DELETE | OPERATOR only |
+  | tariff | everything else under `/api/tariffs/**` | GET, PUT | OPERATOR, ADMIN |
+  | users | `/api/auth/users/**` | all | ADMIN |
+  | users | `/api/auth/me`, `/api/auth/password` | GET, POST | any authenticated user |
+
+  Audited against every store→endpoint call in this repo (see `docs/` PR history for the full trace):
+  `projects/admin` never calls a rental write endpoint (only read-only `RentalSearchStore`), and
+  `projects/operator` never calls an agreement-template, equipment-write, tariff-write, or users-admin
+  endpoint — so `adminGuard`/`operatorGuard` at each app's root route already guarantee every call
+  inside that app is allowed. There is currently no need for finer-grained, per-action role gating
+  (a `hasRole` directive, `NavItem.roles`, etc.); re-check this matrix before adding any new shared
+  component or cross-app screen.
 - KNOWN_RISKS:
   - No CSRF protection on the frontend (mitigated by bearer-token-only auth, no cookies)
   - `apiUrl` is hardcoded to `http://localhost:8080` in development environment (plain HTTP)
