@@ -593,4 +593,47 @@ export class Labels {
   static readonly ViewAgreement = $localize`View Agreement`;
   static readonly HideAgreement = $localize`Hide Agreement`;
   static readonly ConsentSignBelowNote = $localize`By signing below, I confirm that I have reviewed the safety rules for using the rented equipment described in the Agreement, agree to comply with them, and confirm that my signature constitutes my informed and voluntary acceptance of the Agreement.`;
+
+  // ── Admin Analytics ─────────────────────────────────────────────────────
+
+  static readonly AnalyticsNavLabel = $localize`Analytics`;
+  static readonly AnalyticsPageTitle = $localize`Revenue Analytics`;
+  static readonly AnalyticsRefreshButton = $localize`Refresh`;
+  static readonly AnalyticsFreshnessNote = $localize`Figures are eventually consistent — a just-completed rental may take a few seconds to appear.`;
+  static readonly AnalyticsEmptyState = $localize`No activity in the selected range`;
+  static readonly AnalyticsLoadError = $localize`Failed to load the report`;
+
+  static readonly AnalyticsOperatorsTab = $localize`By Operator`;
+  static readonly AnalyticsOperatorFilterLabel = $localize`Operator`;
+  static readonly AnalyticsAllOperatorsOption = $localize`All operators`;
+  static readonly AnalyticsDimensionColumnOperator = $localize`Operator`;
+
+  static readonly AnalyticsGranularityLabel = $localize`Granularity`;
+  static readonly AnalyticsGranularityDay = $localize`Day`;
+  static readonly AnalyticsGranularityWeek = $localize`Week`;
+  static readonly AnalyticsGranularityMonth = $localize`Month`;
+  static readonly AnalyticsGranularityTotal = $localize`Total`;
+
+  static readonly AnalyticsGroupRevenue = $localize`Revenue`;
+  static readonly AnalyticsGroupForgone = $localize`Forgone`;
+  static readonly AnalyticsGroupCashMovement = $localize`Cash movement`;
+
+  static readonly AnalyticsMetricAccruedRentalRevenue = $localize`Accrued rental revenue`;
+  static readonly AnalyticsMetricAccruedRentalRevenueHint = $localize`Revenue recognized as rentals run, regardless of payment status.`;
+  static readonly AnalyticsMetricPaidRentalRevenue = $localize`Paid rental revenue`;
+  static readonly AnalyticsMetricPaidRentalRevenueHint = $localize`The portion of accrued revenue actually collected from customers.`;
+  static readonly AnalyticsMetricWrittenOffAmount = $localize`Written off`;
+  static readonly AnalyticsMetricWrittenOffAmountHint = $localize`Revenue forgone via debt write-off. Not subtracted from accrued revenue.`;
+  static readonly AnalyticsMetricPenaltyRevenue = $localize`Penalty revenue`;
+  static readonly AnalyticsMetricPenaltyRevenueHint = $localize`Revenue from penalties charged to customers.`;
+  static readonly AnalyticsMetricWalletDeposits = $localize`Wallet deposits`;
+  static readonly AnalyticsMetricWalletDepositsHint = $localize`Cash moved into customer wallets. Not revenue.`;
+  static readonly AnalyticsMetricWalletWithdrawals = $localize`Wallet withdrawals`;
+  static readonly AnalyticsMetricWalletWithdrawalsHint = $localize`Cash moved out of customer wallets. Not revenue.`;
+
+  static readonly AnalyticsMetricSelectorLabel = $localize`Chart metric`;
+  static readonly AnalyticsBucketColumn = $localize`Period`;
+  static readonly AnalyticsExpandBucketTooltip = $localize`Show breakdown`;
+  static readonly AnalyticsUnattributedRow = $localize`Unattributed`;
+  static readonly AnalyticsUnattributedHint = $localize`Revenue whose opening operator is unknown. Included in the totals but not in any operator row.`;
 }

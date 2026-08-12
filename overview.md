@@ -1072,6 +1072,67 @@ RESPONSIBILITIES:
 
 ---
 
+COMPONENT_NAME: AnalyticsService (generated)
+TYPE: Service
+PURPOSE: Auto-generated Angular HTTP service for the Analytics API controller (ADMIN only).
+RESPONSIBILITIES:
+
+- Provides `getOperatorRevenue(filterParams)` — `GET /api/analytics/revenue/operators`, a bucketed, zero-filled, eventually-consistent revenue series broken down by operator
+  SOURCE: `projects/shared/src/core/api/generated/services/analytics.service.ts`
+  CALLS:
+- HttpClient — to execute HTTP requests
+  CALLED_BY:
+- OperatorRevenueSource
+
+---
+
+COMPONENT_NAME: AnalyticsRevenueMapper
+TYPE: Utility
+PURPOSE: Static mapper converting analytics revenue API responses into the dimension-agnostic `RevenueReport` UI model.
+RESPONSIBILITIES:
+
+- `fromResponse(response, extractRows)` — generic bucket/date/metrics conversion parameterized by a per-dimension row extractor, so future equipment-type/equipment-unit reports reuse it as-is
+- `operatorReportFromResponse(response)` — extracts `RevenueDimensionRow[]` from each bucket's `operators` array
+  SOURCE: `projects/shared/src/core/mappers/analytics-revenue.mapper.ts`
+  CALLS:
+- NONE
+  CALLED_BY:
+- OperatorRevenueSource
+
+---
+
+COMPONENT_NAME: AnalyticsRevenueStore
+TYPE: State
+PURPOSE: Page-provided signal store driving the admin Revenue Analytics report, dimension-agnostic across report types via the `REVENUE_REPORT_SOURCES` injection token.
+RESPONSIBILITIES:
+
+- Loads the active `RevenueReportSource`'s report via `rxResource`, keyed by report id + query (from/to/granularity/dimensionId)
+- Exposes `report`, `buckets`, `totals`, `loading`, `error` (parsed `ApiError`, never a raw `HttpErrorResponse`)
+- Computes `dimensionKeys` (rows ranked by the selected metric) and `unattributedFor(bucket)` (`bucketTotals − Σ rows`) without ever deriving `totals` from the rows
+  SOURCE: `projects/shared/src/core/state/analytics-revenue.store.ts`
+  CALLS:
+- RevenueReportSource (via REVENUE_REPORT_SOURCES token) — OperatorRevenueSource today
+  CALLED_BY:
+- AnalyticsPageComponent
+
+---
+
+COMPONENT_NAME: AnalyticsPageComponent
+TYPE: API
+PURPOSE: Admin route `/admin/analytics` — revenue reporting page with a reusable filter panel, bucket table, and chart shared across report dimensions.
+RESPONSIBILITIES:
+
+- Binds report id, date range, granularity, and dimension filter to the URL query params (`report`, `from`, `to`, `granularity`, `dimensionId`)
+- Blocks the request client-side and shows an inline message when the range exceeds `MAX_REVENUE_RANGE_DAYS` (366), reusing the same localized `validation.max_date_range` copy the backend would return
+- Renders `RevenueFilterComponent` (with `OperatorSelectComponent` projected into its dimension slot), `RevenueTotalsComponent`, `RevenueChartComponent` (ngx-echarts), and `RevenueBucketTableComponent`
+  SOURCE: `projects/admin/src/app/analytics/analytics-page.component.ts`
+  CALLS:
+- AnalyticsRevenueStore — to load and hold the active report
+  CALLED_BY:
+- Angular Router (admin route `analytics`)
+
+---
+
 ## Component Call Sequences
 
 ### Use-Case: Admin creates a new tariff

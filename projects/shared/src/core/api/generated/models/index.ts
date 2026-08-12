@@ -1008,6 +1008,50 @@ export interface CustomerSearchResponse {
   lastName?: string;
 }
 
+export interface OperatorRevenueFilterParams {
+  /** Range start (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Range end (inclusive), format yyyy-MM-dd */
+  to: string;
+  /** Bucket granularity; weeks start on Monday, edge buckets are partial */
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  /** Optional operator filter; an unknown operator yields an empty zero-filled series */
+  operatorId?: string;
+}
+
+/** One time bucket; present even when there was no activity, with zeroed totals */
+export interface OperatorRevenueBucketResponse {
+  bucketStart?: string;
+  bucketEnd?: string;
+  operators?: Array<OperatorRevenueRowResponse>;
+  bucketTotals?: RevenueMetricsResponse;
+}
+
+/** Operator revenue report. Bucket totals and grand totals include revenue whose opening operator is unknown; the operator rows do not, so during cold start the rows can sum to less than the totals. */
+export interface OperatorRevenueReportResponse {
+  from?: string;
+  to?: string;
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  buckets?: Array<OperatorRevenueBucketResponse>;
+  totals?: RevenueMetricsResponse;
+}
+
+/** One operator's figures inside a bucket; the operator is an opaque identifier */
+export interface OperatorRevenueRowResponse {
+  operatorId?: string;
+  metrics?: RevenueMetricsResponse;
+}
+
+/** The six revenue metrics; wallet movement is cash movement, never revenue */
+export interface RevenueMetricsResponse {
+  accruedRentalRevenue?: number;
+  paidRentalRevenue?: number;
+  writtenOffAmount?: number;
+  penaltyRevenue?: number;
+  walletDeposits?: number;
+  walletWithdrawals?: number;
+}
+
 export interface AgreementTemplateSummaryResponse {
   id?: number;
   versionNumber?: number;
