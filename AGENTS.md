@@ -69,7 +69,7 @@ from `@bikerental/shared`. Rules:
   `server` error on the matching control and returns unmatched messages for a summary. Render with
   `@if (ctrl.hasError('server')) { <mat-error>{{ ctrl.getError('server') }}</mat-error> }`.
 - **Register every new backend error code** in `core/errors/error-code.ts` +
-  `core/errors/error-message.catalog.ts` (a `$localize` template). The resolver's
+  `core/errors/error-messages.ts` (a `$localize` template). The resolver's
   `code → status → generic` fallback is a stopgap, not a substitute for real copy.
 - **Dialogs/forms that handle errors locally** must send the request with
   `SUPPRESS_ERROR_NOTIFICATION` (see `suppressErrorNotification()`) so the global interceptor does

@@ -90,6 +90,11 @@ export const routes: Routes = [
           import('./users/users-list.component').then((m) => m.UsersListComponent),
       },
       {
+        path: 'analytics',
+        loadComponent: () =>
+          import('./analytics/analytics-page.component').then((m) => m.AnalyticsPageComponent),
+      },
+      {
         path: 'profile',
         loadChildren: () => import('@bikerental/shared').then((m) => m.PROFILE_SETTINGS_ROUTES),
       },

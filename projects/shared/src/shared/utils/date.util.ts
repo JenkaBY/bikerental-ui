@@ -25,6 +25,13 @@ export function toDateTimeLocalString(date: Date): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+export function daysInclusive(from: Date, to: Date): number {
+  const fromMidnight = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  const toMidnight = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+  const days = Math.round((toMidnight.getTime() - fromMidnight.getTime()) / 86_400_000);
+  return days + 1;
+}
+
 export function minutesBetween(start: Date | null, end: Date | null): number | null {
   if (!start || !end) return null;
   return Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000));

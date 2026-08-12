@@ -71,6 +71,9 @@ export * from './core/state/transaction-details.store';
 export * from './core/state/damage-report.store';
 export * from './core/state/damage-report-detail.store';
 export * from './core/state/damage-report-create.store';
+export * from './core/state/revenue-report-source';
+export * from './core/state/operator-revenue.source';
+export * from './core/state/analytics-revenue.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';
@@ -145,6 +148,7 @@ export * from './shared/constant/mobile-form-dialog.config';
 // Shared UI — presentation/meta maps (rental + equipment-item status)
 export * from './shared/rental-status.meta';
 export * from './shared/transaction.meta';
+export * from './shared/revenue.meta';
 export * from './shared/penalty-status.meta';
 
 // Shared UI — pipes

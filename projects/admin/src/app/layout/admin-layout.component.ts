@@ -20,6 +20,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: Labels.TransactionsNavLabel, route: 'transactions', icon: 'account_balance_wallet' },
   { label: Labels.DamageReportsNavLabel, route: 'damage-reports', icon: 'build' },
   { label: $localize`Users`, route: 'users', icon: 'manage_accounts' },
+  { label: Labels.AnalyticsNavLabel, route: 'analytics', icon: 'analytics' },
 ];
 
 @Component({

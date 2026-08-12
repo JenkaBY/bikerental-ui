@@ -146,6 +146,9 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   // Cross-field date range rule (field: null; params.from/params.to name the invalid pair)
   'validation.valid_date_range': validDateRangeMessage,
 
+  // Class-level range-size rule (field: null; params.maxDays names the limit)
+  'validation.max_date_range': maxDateRangeMessage,
+
   // Class-level damage report rule (field: null) — should be unreachable since the UI always
   // supplies exactly one of rentalId/customerId, kept as a safety net
   [ErrorCode.RESPONSIBLE_PARTY_REQUIRED]: $localize`Select either a rental or a customer to attach this report to — not both, not neither.`,
@@ -351,6 +354,14 @@ function validDateRangeMessage(params: Record<string, unknown>): string {
     return $localize`"${fromLabel}:from:" must be on or before "${toLabel}:to:".`;
   }
   return $localize`The start date must be on or before the end date.`;
+}
+
+function maxDateRangeMessage(params: Record<string, unknown>): string {
+  const maxDays = params['maxDays'];
+  if (typeof maxDays === 'number') {
+    return $localize`The selected range must not exceed ${maxDays}:maxDays: days.`;
+  }
+  return $localize`The selected date range is too large.`;
 }
 
 function validationDigitsMessage(params: Record<string, unknown>): string {
