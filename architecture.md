@@ -421,6 +421,8 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
   | Module | Endpoint | Method | Roles |
   |--------|----------|--------|-------|
   | analytics | `/api/analytics/revenue/operators` | GET | ADMIN |
+  | analytics | `/api/analytics/revenue/equipment-types` | GET | ADMIN |
+  | analytics | `/api/analytics/revenue/equipments` | GET | ADMIN |
   | agreement | `/api/rentals/{rentalId}/signatures` | POST, GET | OPERATOR, ADMIN |
   | agreement | `/api/rentals/{rentalId}/agreement` | GET | OPERATOR, ADMIN |
   | agreement | `/api/agreements`, `/api/agreements/{id}`, `/api/agreements/{id}/activate`, `/api/agreements/preview` | write + GET `/api/agreements/{id}`, GET `/api/agreements` | ADMIN |
