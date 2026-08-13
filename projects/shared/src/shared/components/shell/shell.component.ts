@@ -30,11 +30,11 @@ import { NavItem } from '../sidebar-nav-item/nav-item.model';
           class="sidenav-with-status w-72 bg-slate-50 border-r border-slate-200"
         >
           <div class="sidenav-inner flex flex-col h-full min-h-0">
-            <div class="flex-1 min-h-0 overflow-y-auto pb-12">
+            <div class="min-h-0 overflow-y-auto">
               <app-sidebar [items]="items() ?? []" [brand]="brand()"> </app-sidebar>
             </div>
             <div
-              class="sidebar-status-footer shrink-0 px-4 py-3 border-t border-slate-200 bg-slate-100"
+              class="sidebar-status-footer mt-auto shrink-0 px-4 py-3 border-t border-slate-200 bg-slate-100"
             >
               <ng-content select="[sidebar-footer]"></ng-content>
             </div>

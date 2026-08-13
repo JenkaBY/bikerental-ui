@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   template: `
     <button
       type="button"
-      class="flex items-center gap-3 px-6 py-5 hover:cursor-pointer focus:outline-none"
+      class="flex items-center gap-3 px-6 h-16 shrink-0 hover:cursor-pointer focus:outline-none"
       (click)="goHome()"
       aria-label="Navigate to home"
     >
