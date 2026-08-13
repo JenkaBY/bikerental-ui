@@ -40,7 +40,9 @@ export class AnalyticsRevenueStore {
     params: () => {
       const query = this._query();
       const source = this.currentSource();
-      return query && source ? { source, query } : null;
+      if (!query || !source) return null;
+      if (source.requiresScope && !query.scopeId) return null;
+      return { source, query };
     },
     stream: ({ params }) => {
       if (!params) return of(EMPTY_LOAD);
@@ -86,6 +88,10 @@ export class AnalyticsRevenueStore {
 
   setReportId(id: RevenueReportId): void {
     this._reportId.set(id);
+    const source = this.sources.find((s) => s.id === id);
+    if (source && !source.metricKeys.includes(this._metric())) {
+      this._metric.set(source.metricKeys[0] ?? 'accruedRentalRevenue');
+    }
   }
 
   setQuery(query: RevenueQuery): void {

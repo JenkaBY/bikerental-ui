@@ -1,4 +1,11 @@
-import type { OperatorRevenueBucketResponse, OperatorRevenueReportResponse } from '@api-models';
+import type {
+  EquipmentRevenueBucketResponse,
+  EquipmentRevenueReportResponse,
+  EquipmentTypeRevenueBucketResponse,
+  EquipmentTypeRevenueReportResponse,
+  OperatorRevenueBucketResponse,
+  OperatorRevenueReportResponse,
+} from '@api-models';
 import {
   REVENUE_METRIC_KEYS,
   type RevenueBucket,
@@ -67,6 +74,24 @@ export class AnalyticsRevenueMapper {
     return AnalyticsRevenueMapper.fromResponse(r, (bucket: OperatorRevenueBucketResponse) =>
       (bucket.operators ?? []).map((row) => ({
         key: row.operatorId ?? '',
+        metrics: AnalyticsRevenueMapper.metricsFromResponse(row.metrics),
+      })),
+    );
+  }
+
+  static equipmentTypeReportFromResponse(r: EquipmentTypeRevenueReportResponse): RevenueReport {
+    return AnalyticsRevenueMapper.fromResponse(r, (bucket: EquipmentTypeRevenueBucketResponse) =>
+      (bucket.types ?? []).map((row) => ({
+        key: row.equipmentTypeSlug ?? '',
+        metrics: AnalyticsRevenueMapper.metricsFromResponse(row.metrics),
+      })),
+    );
+  }
+
+  static equipmentUnitReportFromResponse(r: EquipmentRevenueReportResponse): RevenueReport {
+    return AnalyticsRevenueMapper.fromResponse(r, (bucket: EquipmentRevenueBucketResponse) =>
+      (bucket.units ?? []).map((row) => ({
+        key: String(row.equipmentId ?? ''),
         metrics: AnalyticsRevenueMapper.metricsFromResponse(row.metrics),
       })),
     );

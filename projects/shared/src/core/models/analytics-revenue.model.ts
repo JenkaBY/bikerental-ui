@@ -51,6 +51,13 @@ export interface RevenueQuery {
   readonly to: Date;
   readonly granularity: RevenueGranularity;
   readonly dimensionId?: string;
+  readonly scopeId?: string;
 }
 
 export const MAX_REVENUE_RANGE_DAYS = 366;
+
+export const EQUIPMENT_REVENUE_METRIC_KEYS = [
+  'accruedRentalRevenue',
+  'paidRentalRevenue',
+  'penaltyRevenue',
+] as const satisfies readonly RevenueMetricKey[];

@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { AnalyticsService } from '../api/generated';
 import type { OperatorRevenueFilterParams } from '@api-models';
 import { AnalyticsRevenueMapper } from '../mappers/analytics-revenue.mapper';
-import type { RevenueQuery, RevenueReport } from '@ui-models';
+import { REVENUE_METRIC_KEYS, type RevenueQuery, type RevenueReport } from '@ui-models';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { Labels } from '../../shared/constant/labels';
 import { toIsoDate } from '../../shared/utils/date.util';
@@ -19,6 +19,9 @@ export class OperatorRevenueSource implements RevenueReportSource {
   readonly id = 'operators' as const;
   readonly tabLabel = Labels.AnalyticsOperatorsTab;
   readonly dimensionColumnLabel = Labels.AnalyticsDimensionColumnOperator;
+  readonly metricKeys = REVENUE_METRIC_KEYS;
+  readonly requiresScope = false;
+  readonly unattributedHint = Labels.AnalyticsUnattributedHint;
 
   readonly namesLoading = this.managedUserStore.loading;
 
