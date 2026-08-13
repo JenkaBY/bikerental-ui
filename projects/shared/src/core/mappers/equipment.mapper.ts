@@ -27,7 +27,7 @@ export class EquipmentMapper {
     return {
       serialNumber: w.serialNumber,
       uid: w.uid || '',
-      typeSlug: w.typeSlug,
+      typeSlug: w.typeSlug ?? '',
       model: w.model,
       commissionedAt: w.commissionedAt ? toIsoDate(w.commissionedAt) : undefined,
       condition: w.conditionNotes,

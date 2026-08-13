@@ -24,6 +24,10 @@ import {
   OperatorRevenueFilterParams,
   RequestOptions,
   OperatorRevenueReportResponse,
+  EquipmentRevenueFilterParams,
+  EquipmentRevenueReportResponse,
+  EquipmentTypeRevenueFilterParams,
+  EquipmentTypeRevenueReportResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -59,6 +63,100 @@ export class AnalyticsService {
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/analytics/revenue/operators`;
+
+    let params = new HttpParams();
+    if (arg0 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getEquipmentRevenue(
+    arg0: EquipmentRevenueFilterParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<EquipmentRevenueReportResponse>;
+  getEquipmentRevenue(
+    arg0: EquipmentRevenueFilterParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<EquipmentRevenueReportResponse>>;
+  getEquipmentRevenue(
+    arg0: EquipmentRevenueFilterParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<EquipmentRevenueReportResponse>>;
+  /** The drill-down from a type to the units that make it up. The equipment type is mandatory: it bounds the response to one type's fleet, so a drill-down never returns the entire fleet's history. Returns a continuous, zero-filled series of buckets plus a grand total, with accrued rental revenue, paid rental revenue and penalty revenue per unit. Summing the units of a type for a period reproduces that type's figures exactly. A unit that earned nothing in the period is absent rather than present with zeros. Figures are eventually consistent. Identifiers only — the caller resolves names. */
+  getEquipmentRevenue(
+    arg0: EquipmentRevenueFilterParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/analytics/revenue/equipments`;
+
+    let params = new HttpParams();
+    if (arg0 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getEquipmentTypeRevenue(
+    arg0: EquipmentTypeRevenueFilterParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<EquipmentTypeRevenueReportResponse>;
+  getEquipmentTypeRevenue(
+    arg0: EquipmentTypeRevenueFilterParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<EquipmentTypeRevenueReportResponse>>;
+  getEquipmentTypeRevenue(
+    arg0: EquipmentTypeRevenueFilterParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<EquipmentTypeRevenueReportResponse>>;
+  /** Returns a continuous, zero-filled series of buckets plus a grand total, with the three metrics that have an equipment dimension: accrued rental revenue, paid rental revenue and penalty revenue. A rental adjusted by a special price or a percentage discount is allocated across its equipment in proportion to each line's own cost; a penalty covering several items is split equally. The type credited is the one the item carried at the time of the rental, so reclassifying an item later does not rewrite history. A type's figures equal the sum of that type's units' figures, and these totals equal the corresponding totals of the operator report. Figures are eventually consistent. Identifiers only — the caller resolves names. */
+  getEquipmentTypeRevenue(
+    arg0: EquipmentTypeRevenueFilterParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/analytics/revenue/equipment-types`;
 
     let params = new HttpParams();
     if (arg0 != null) {

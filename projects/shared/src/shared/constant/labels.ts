@@ -608,6 +608,19 @@ export class Labels {
   static readonly AnalyticsAllOperatorsOption = $localize`All operators`;
   static readonly AnalyticsDimensionColumnOperator = $localize`Operator`;
 
+  static readonly AnalyticsEquipmentTypesTab = $localize`By Equipment Type`;
+  static readonly AnalyticsEquipmentUnitsTab = $localize`By Unit`;
+  static readonly AnalyticsEquipmentTypeFilterLabel = $localize`Equipment type`;
+  static readonly AnalyticsAllEquipmentTypesOption = $localize`All equipment types`;
+  static readonly AnalyticsEquipmentTypeScopeLabel = $localize`Equipment type`;
+  static readonly AnalyticsDimensionColumnEquipmentType = $localize`Equipment type`;
+  static readonly AnalyticsEquipmentUnitFilterLabel = $localize`Unit`;
+  static readonly AnalyticsAllEquipmentUnitsOption = $localize`All units`;
+  static readonly AnalyticsDimensionColumnEquipmentUnit = $localize`Unit`;
+  static readonly AnalyticsSelectTypePrompt = $localize`Select an equipment type to see revenue per unit.`;
+  static readonly AnalyticsUnattributedHintEquipment = $localize`Revenue whose equipment is unknown. Included in the totals but not in any row.`;
+  static readonly AnalyticsDrillDownTooltip = $localize`View revenue per unit for this type`;
+
   static readonly AnalyticsGranularityLabel = $localize`Granularity`;
   static readonly AnalyticsGranularityDay = $localize`Day`;
   static readonly AnalyticsGranularityWeek = $localize`Week`;

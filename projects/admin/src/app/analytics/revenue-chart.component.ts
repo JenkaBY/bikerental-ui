@@ -10,7 +10,7 @@ import { echarts } from './echarts-setup';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideEchartsCore({ echarts })],
   imports: [NgxEchartsDirective],
-  template: ` <div echarts [options]="chartOption()" class="w-full h-80"></div> `,
+  template: ` <div echarts [options]="chartOption()" class="w-full h-96"></div> `,
 })
 export class RevenueChartComponent {
   readonly buckets = input.required<readonly RevenueBucket[]>();
@@ -30,10 +30,15 @@ export class RevenueChartComponent {
     return {
       tooltip: { trigger: 'axis' },
       legend: { type: 'scroll', top: 0 },
-      grid: { left: 56, right: 16, top: keys.length > 1 ? 40 : 16, bottom: 32 },
+      grid: {
+        left: 56,
+        right: 16,
+        top: keys.length > 1 ? 40 : 16,
+        bottom: categories.length > 20 ? 64 : 32,
+      },
       dataZoom:
         categories.length > 20
-          ? [{ type: 'inside' }, { type: 'slider', height: 16, bottom: 0 }]
+          ? [{ type: 'inside' }, { type: 'slider', height: 18, bottom: 12, left: 64, right: 40 }]
           : undefined,
       xAxis: { type: 'category', data: categories },
       yAxis: { type: 'value' },

@@ -21,7 +21,7 @@ import { TimeTravelDisplayComponent } from '../time-travel-display/time-travel-d
   template: `
     <mat-toolbar
       color="primary"
-      class="sticky top-0 z-20 shrink-0 flex items-center px-4 shadow-md h-14 min-w-0"
+      class="sticky top-0 z-20 shrink-0 flex items-center px-4 shadow-md h-16 min-w-0"
     >
       <div class="flex-1 flex items-center gap-2 min-w-0">
         @if (showToggle()) {

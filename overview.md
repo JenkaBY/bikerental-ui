@@ -1078,11 +1078,15 @@ PURPOSE: Auto-generated Angular HTTP service for the Analytics API controller (A
 RESPONSIBILITIES:
 
 - Provides `getOperatorRevenue(filterParams)` — `GET /api/analytics/revenue/operators`, a bucketed, zero-filled, eventually-consistent revenue series broken down by operator
+- Provides `getEquipmentTypeRevenue(filterParams)` — `GET /api/analytics/revenue/equipment-types`, the same shape broken down by equipment type, with only the three metrics that have an equipment dimension (accrued/paid rental revenue, penalty revenue)
+- Provides `getEquipmentRevenue(filterParams)` — `GET /api/analytics/revenue/equipments`, the drill-down to the individual units of one equipment type (`equipmentTypeSlug` mandatory)
   SOURCE: `projects/shared/src/core/api/generated/services/analytics.service.ts`
   CALLS:
 - HttpClient — to execute HTTP requests
   CALLED_BY:
 - OperatorRevenueSource
+- EquipmentTypeRevenueSource
+- EquipmentUnitRevenueSource
 
 ---
 
@@ -1091,13 +1095,62 @@ TYPE: Utility
 PURPOSE: Static mapper converting analytics revenue API responses into the dimension-agnostic `RevenueReport` UI model.
 RESPONSIBILITIES:
 
-- `fromResponse(response, extractRows)` — generic bucket/date/metrics conversion parameterized by a per-dimension row extractor, so future equipment-type/equipment-unit reports reuse it as-is
+- `fromResponse(response, extractRows)` — generic bucket/date/metrics conversion parameterized by a per-dimension row extractor
 - `operatorReportFromResponse(response)` — extracts `RevenueDimensionRow[]` from each bucket's `operators` array
+- `equipmentTypeReportFromResponse(response)` — extracts rows from each bucket's `types` array, keyed by `equipmentTypeSlug`
+- `equipmentUnitReportFromResponse(response)` — extracts rows from each bucket's `units` array, keyed by `equipmentId` (stringified)
   SOURCE: `projects/shared/src/core/mappers/analytics-revenue.mapper.ts`
   CALLS:
 - NONE
   CALLED_BY:
 - OperatorRevenueSource
+- EquipmentTypeRevenueSource
+- EquipmentUnitRevenueSource
+
+---
+
+COMPONENT_NAME: EquipmentTypeRevenueSource
+TYPE: State
+PURPOSE: `RevenueReportSource` implementation for the "By Equipment Type" analytics tab.
+RESPONSIBILITIES:
+
+- `load(query)` calls `AnalyticsService.getEquipmentTypeRevenue`, mapping `query.dimensionId` to the optional `equipmentTypeSlug` filter
+- `nameFor(slug)` resolves display names from `EquipmentTypeStore`, lazily triggering `EquipmentTypeStore.load()` via `ensureNames()`
+- Exposes only the three equipment-scoped metrics via `metricKeys`; `requiresScope` is `false`
+  SOURCE: `projects/shared/src/core/state/equipment-type-revenue.source.ts`
+  CALLS:
+- AnalyticsService, AnalyticsRevenueMapper, EquipmentTypeStore
+  CALLED_BY:
+- AnalyticsPageComponent (via REVENUE_REPORT_SOURCES token), AnalyticsRevenueStore
+
+---
+
+COMPONENT_NAME: EquipmentUnitRevenueSource
+TYPE: State
+PURPOSE: `RevenueReportSource` implementation for the "By Unit" analytics tab — the drill-down into one equipment type's fleet.
+RESPONSIBILITIES:
+
+- `load(query)` calls `AnalyticsService.getEquipmentRevenue`, requiring `query.scopeId` as the mandatory `equipmentTypeSlug` and mapping `query.dimensionId` to the optional `equipmentId` filter; `requiresScope` is `true`
+- After each load, resolves the distinct unit ids present in the response via `EquipmentsCatalogueService.getBatchEquipments` and caches `id → "uid — model"` labels, so reclassified units are labelled from the ids actually returned rather than the current fleet of the selected type
+  SOURCE: `projects/shared/src/core/state/equipment-unit-revenue.source.ts`
+  CALLS:
+- AnalyticsService, AnalyticsRevenueMapper, EquipmentsCatalogueService
+  CALLED_BY:
+- AnalyticsPageComponent (via REVENUE_REPORT_SOURCES token), AnalyticsRevenueStore
+
+---
+
+COMPONENT_NAME: EquipmentUnitOptionsStore
+TYPE: State
+PURPOSE: Component-provided store loading the fleet of one equipment type, for the unit picker on the "By Unit" analytics tab.
+RESPONSIBILITIES:
+
+- `setTypeSlug(slug)` drives an `rxResource` over `EquipmentsCatalogueService.searchEquipments`, resolved to domain `Equipment[]` via `EquipmentMapper`
+  SOURCE: `projects/shared/src/core/state/equipment-unit-options.store.ts`
+  CALLS:
+- EquipmentsCatalogueService, EquipmentTypeStore, EquipmentMapper
+  CALLED_BY:
+- EquipmentUnitSelectComponent
 
 ---
 
@@ -1106,12 +1159,13 @@ TYPE: State
 PURPOSE: Page-provided signal store driving the admin Revenue Analytics report, dimension-agnostic across report types via the `REVENUE_REPORT_SOURCES` injection token.
 RESPONSIBILITIES:
 
-- Loads the active `RevenueReportSource`'s report via `rxResource`, keyed by report id + query (from/to/granularity/dimensionId)
+- Loads the active `RevenueReportSource`'s report via `rxResource`, keyed by report id + query (from/to/granularity/dimensionId/scopeId)
 - Exposes `report`, `buckets`, `totals`, `loading`, `error` (parsed `ApiError`, never a raw `HttpErrorResponse`)
 - Computes `dimensionKeys` (rows ranked by the selected metric) and `unattributedFor(bucket)` (`bucketTotals − Σ rows`) without ever deriving `totals` from the rows
+- `setReportId(id)` resets the selected metric to the new source's first `metricKey` when the previously selected metric isn't in the new source's `metricKeys` (e.g. switching from Operators to Equipment Types while `walletDeposits` was selected)
   SOURCE: `projects/shared/src/core/state/analytics-revenue.store.ts`
   CALLS:
-- RevenueReportSource (via REVENUE_REPORT_SOURCES token) — OperatorRevenueSource today
+- RevenueReportSource (via REVENUE_REPORT_SOURCES token) — OperatorRevenueSource, EquipmentTypeRevenueSource, EquipmentUnitRevenueSource
   CALLED_BY:
 - AnalyticsPageComponent
 
@@ -1119,12 +1173,14 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: AnalyticsPageComponent
 TYPE: API
-PURPOSE: Admin route `/admin/analytics` — revenue reporting page with a reusable filter panel, bucket table, and chart shared across report dimensions.
+PURPOSE: Admin route `/admin/analytics` — revenue reporting page with three tabs (Operators, Equipment Types, Units) sharing one filter panel, bucket table, and chart.
 RESPONSIBILITIES:
 
-- Binds report id, date range, granularity, and dimension filter to the URL query params (`report`, `from`, `to`, `granularity`, `dimensionId`)
+- Binds report id, date range, granularity, dimension filter, and equipment-type scope to the URL query params (`report`, `from`, `to`, `granularity`, `dimensionId`, `scopeId`)
 - Blocks the request client-side and shows an inline message when the range exceeds `MAX_REVENUE_RANGE_DAYS` (366), reusing the same localized `validation.max_date_range` copy the backend would return
-- Renders `RevenueFilterComponent` (with `OperatorSelectComponent` projected into its dimension slot), `RevenueTotalsComponent`, `RevenueChartComponent` (ngx-echarts), and `RevenueBucketTableComponent`
+- Blocks the request and prompts for an equipment type when the active source's `requiresScope` is true and no `scopeId` is set (the Units tab, opened directly)
+- Renders `RevenueFilterComponent` with a per-report dimension filter projected into its slot (`OperatorSelectComponent`, `EquipmentTypeSelectComponent`, or both `EquipmentTypeSelectComponent` + `EquipmentUnitSelectComponent`), `RevenueTotalsComponent`, `RevenueChartComponent` (ngx-echarts), and `RevenueBucketTableComponent`
+- Wires `RevenueBucketTableComponent`'s `rowSelect` output (enabled only on the Equipment Types tab) to a drill-down that navigates to the Units tab with the clicked type as `scopeId`
   SOURCE: `projects/admin/src/app/analytics/analytics-page.component.ts`
   CALLS:
 - AnalyticsRevenueStore — to load and hold the active report

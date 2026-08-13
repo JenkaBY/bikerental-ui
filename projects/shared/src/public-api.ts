@@ -44,6 +44,7 @@ export * from './core/state/customer-finance.store';
 export * from './core/state/customer-rating.service';
 export * from './core/state/customer-list.store';
 export * from './core/state/equipment-search.store';
+export * from './core/state/equipment-unit-options.store';
 export * from './core/state/equipment-scan-resolver.service';
 export * from './core/state/rental.store';
 export * from './core/state/rental-store.token';
@@ -73,6 +74,8 @@ export * from './core/state/damage-report-detail.store';
 export * from './core/state/damage-report-create.store';
 export * from './core/state/revenue-report-source';
 export * from './core/state/operator-revenue.source';
+export * from './core/state/equipment-type-revenue.source';
+export * from './core/state/equipment-unit-revenue.source';
 export * from './core/state/analytics-revenue.store';
 
 // Shared UI — components
