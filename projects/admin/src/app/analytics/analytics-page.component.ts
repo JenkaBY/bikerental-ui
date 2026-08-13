@@ -10,12 +10,13 @@ import { MatSelectModule, MatSelectChange } from '@angular/material/select';
 import {
   AnalyticsRevenueStore,
   daysInclusive,
+  EquipmentTypeRevenueSource,
+  EquipmentUnitRevenueSource,
   Labels,
   MAX_REVENUE_RANGE_DAYS,
   OperatorRevenueSource,
   parseDate,
   REVENUE_GRANULARITIES,
-  REVENUE_METRIC_KEYS,
   REVENUE_METRIC_META,
   REVENUE_REPORT_SOURCES,
   resolveErrorMessage,
@@ -29,6 +30,8 @@ import {
   type RevenueReportId,
   type SegmentTab,
 } from '@bikerental/shared';
+import { EquipmentTypeSelectComponent } from './equipment-type-select.component';
+import { EquipmentUnitSelectComponent } from './equipment-unit-select.component';
 import { OperatorSelectComponent } from './operator-select.component';
 import { RevenueBucketTableComponent } from './revenue-bucket-table.component';
 import { RevenueChartComponent } from './revenue-chart.component';
@@ -47,7 +50,14 @@ function defaultRange(): { from: Date; to: Date } {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     AnalyticsRevenueStore,
-    { provide: REVENUE_REPORT_SOURCES, useFactory: () => [inject(OperatorRevenueSource)] },
+    {
+      provide: REVENUE_REPORT_SOURCES,
+      useFactory: () => [
+        inject(OperatorRevenueSource),
+        inject(EquipmentTypeRevenueSource),
+        inject(EquipmentUnitRevenueSource),
+      ],
+    },
   ],
   imports: [
     MatCardModule,
@@ -59,6 +69,8 @@ function defaultRange(): { from: Date; to: Date } {
     SegmentedTabsComponent,
     RevenueFilterComponent,
     OperatorSelectComponent,
+    EquipmentTypeSelectComponent,
+    EquipmentUnitSelectComponent,
     RevenueTotalsComponent,
     RevenueChartComponent,
     RevenueBucketTableComponent,
@@ -83,15 +95,41 @@ function defaultRange(): { from: Date; to: Date } {
         <p class="text-xs text-slate-400 mb-3">{{ Labels.AnalyticsFreshnessNote }}</p>
 
         <app-revenue-filter [value]="filterValue()" (filterChange)="onFilterChange($event)">
-          <app-operator-select
-            dimension-filter
-            [value]="dimensionId()"
-            (valueChange)="onDimensionChange($event)"
-          />
+          @if (reportId() === 'operators') {
+            <app-operator-select
+              dimension-filter
+              [value]="dimensionId()"
+              (valueChange)="onDimensionChange($event)"
+            />
+          } @else if (reportId() === 'equipment-types') {
+            <app-equipment-type-select
+              dimension-filter
+              [value]="dimensionId()"
+              (valueChange)="onDimensionChange($event)"
+            />
+          } @else if (reportId() === 'equipment-units') {
+            <ng-container dimension-filter>
+              <app-equipment-type-select
+                [value]="scopeId()"
+                [allowAll]="false"
+                [label]="Labels.AnalyticsEquipmentTypeScopeLabel"
+                (valueChange)="onScopeChange($event)"
+              />
+              <app-equipment-unit-select
+                [typeSlug]="scopeId()"
+                [value]="dimensionId()"
+                (valueChange)="onDimensionChange($event)"
+              />
+            </ng-container>
+          }
         </app-revenue-filter>
 
         @if (rangeErrorMessage(); as msg) {
           <p class="text-sm text-red-600 mt-2">{{ msg }}</p>
+        } @else if (needsScope()) {
+          <p class="text-sm text-slate-400 py-8 text-center">
+            {{ Labels.AnalyticsSelectTypePrompt }}
+          </p>
         } @else if (store.error(); as err) {
           <div class="text-center mt-6 flex flex-col items-center gap-2">
             <p class="text-slate-500">{{ resolveErrorMessage(err) }}</p>
@@ -103,13 +141,13 @@ function defaultRange(): { from: Date; to: Date } {
           <p class="text-sm text-slate-400 py-8 text-center">{{ Labels.AnalyticsEmptyState }}</p>
         } @else {
           <div class="mt-4 flex flex-col gap-4">
-            <app-revenue-totals [totals]="store.totals()" />
+            <app-revenue-totals [totals]="store.totals()" [metricKeys]="metricKeys()" />
 
             @if (store.hasSeries()) {
               <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-56">
                 <mat-label>{{ Labels.AnalyticsMetricSelectorLabel }}</mat-label>
                 <mat-select [value]="store.metric()" (selectionChange)="onMetricChange($event)">
-                  @for (key of METRIC_KEYS; track key) {
+                  @for (key of metricKeys(); track key) {
                     <mat-option [value]="key">{{ REVENUE_METRIC_META[key].label }}</mat-option>
                   }
                 </mat-select>
@@ -127,8 +165,13 @@ function defaultRange(): { from: Date; to: Date } {
             <app-revenue-bucket-table
               [buckets]="store.buckets()"
               [granularity]="granularity()"
+              [metricKeys]="metricKeys()"
+              [dimensionColumnLabel]="dimensionColumnLabel()"
+              [unattributedHint]="unattributedHint()"
               [nameFor]="nameForFn"
               [unattributedFor]="unattributedForFn"
+              [rowSelectable]="reportId() === 'equipment-types'"
+              (rowSelect)="onDrillDown($event)"
             />
           </div>
         }
@@ -143,7 +186,6 @@ export class AnalyticsPageComponent {
   private readonly route = inject(ActivatedRoute);
 
   protected readonly Labels = Labels;
-  protected readonly METRIC_KEYS = REVENUE_METRIC_KEYS;
   protected readonly REVENUE_METRIC_META = REVENUE_METRIC_META;
   protected readonly resolveErrorMessage = resolveErrorMessage;
 
@@ -168,6 +210,19 @@ export class AnalyticsPageComponent {
     return REVENUE_GRANULARITIES.includes(value) ? (value as RevenueGranularity) : 'DAY';
   });
   protected readonly dimensionId = computed(() => this.params()['dimensionId'] || undefined);
+  protected readonly scopeId = computed(() => this.params()['scopeId'] || undefined);
+
+  protected readonly currentSource = computed(() =>
+    this.sources.find((s) => s.id === this.reportId()),
+  );
+  protected readonly needsScope = computed(
+    () => !!this.currentSource()?.requiresScope && !this.scopeId(),
+  );
+  protected readonly metricKeys = computed(() => this.store.source()?.metricKeys ?? []);
+  protected readonly dimensionColumnLabel = computed(
+    () => this.store.source()?.dimensionColumnLabel ?? '',
+  );
+  protected readonly unattributedHint = computed(() => this.store.source()?.unattributedHint ?? '');
 
   protected readonly filterValue = computed<RevenueFilterValue>(() => ({
     from: this.from(),
@@ -193,12 +248,13 @@ export class AnalyticsPageComponent {
   constructor() {
     effect(() => {
       this.store.setReportId(this.reportId());
-      if (this.rangeExceeded()) return;
+      if (this.rangeExceeded() || this.needsScope()) return;
       this.store.setQuery({
         from: this.from(),
         to: this.to(),
         granularity: this.granularity(),
         dimensionId: this.dimensionId(),
+        scopeId: this.scopeId(),
       });
     });
   }
@@ -218,12 +274,23 @@ export class AnalyticsPageComponent {
     this.updateUrl({ dimensionId: id ?? null }, true);
   }
 
+  protected onScopeChange(slug: string | undefined): void {
+    this.updateUrl({ scopeId: slug ?? null, dimensionId: null }, true);
+  }
+
   protected onReportChange(id: string): void {
-    this.updateUrl({ report: id === this.sources[0]?.id ? null : id, dimensionId: null }, true);
+    this.updateUrl(
+      { report: id === this.sources[0]?.id ? null : id, dimensionId: null, scopeId: null },
+      true,
+    );
   }
 
   protected onMetricChange(event: MatSelectChange): void {
     this.store.setMetric(event.value as RevenueMetricKey);
+  }
+
+  protected onDrillDown(typeSlug: string): void {
+    this.updateUrl({ report: 'equipment-units', scopeId: typeSlug, dimensionId: null }, false);
   }
 
   private updateUrl(queryParams: Params, replaceUrl: boolean): void {

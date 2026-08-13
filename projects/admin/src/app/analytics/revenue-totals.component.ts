@@ -15,7 +15,7 @@ import { RevenueMetricTileComponent } from './revenue-metric-tile.component';
   imports: [RevenueMetricTileComponent],
   template: `
     <div class="flex flex-col gap-3">
-      @for (group of groups; track group) {
+      @for (group of visibleGroups(); track group) {
         <div>
           <div class="text-xs font-semibold text-slate-500 uppercase mb-1">
             {{ groupLabel(group) }}
@@ -36,21 +36,27 @@ import { RevenueMetricTileComponent } from './revenue-metric-tile.component';
 })
 export class RevenueTotalsComponent {
   readonly totals = input<RevenueMetrics | null>(null);
+  readonly metricKeys = input.required<readonly RevenueMetricKey[]>();
 
   protected readonly groups = REVENUE_METRIC_GROUP_ORDER;
   protected readonly REVENUE_METRIC_META = REVENUE_METRIC_META;
 
   private readonly keysByGroup = computed<Record<RevenueMetricGroup, RevenueMetricKey[]>>(() => {
+    const allowed = this.metricKeys();
     const grouped: Record<RevenueMetricGroup, RevenueMetricKey[]> = {
       revenue: [],
       forgone: [],
       cashMovement: [],
     };
     for (const meta of Object.values(REVENUE_METRIC_META)) {
-      grouped[meta.group].push(meta.key);
+      if (allowed.includes(meta.key)) grouped[meta.group].push(meta.key);
     }
     return grouped;
   });
+
+  protected readonly visibleGroups = computed(() =>
+    this.groups.filter((group) => this.keysFor(group).length > 0),
+  );
 
   protected keysFor(group: RevenueMetricGroup): RevenueMetricKey[] {
     return this.keysByGroup()[group];
