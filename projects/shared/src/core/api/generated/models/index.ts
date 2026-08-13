@@ -35,7 +35,7 @@ export interface PricingParams {
 export interface TariffV2Request {
   name: string;
   description?: string;
-  equipmentTypeSlug?: string;
+  equipmentTypeSlug: string;
   pricingType: 'DEGRESSIVE_HOURLY' | 'FLAT_HOURLY' | 'DAILY' | 'FLAT_FEE' | 'SPECIAL';
   params: PricingParams;
   validFrom: string;
@@ -225,7 +225,7 @@ export interface EquipmentRequest {
   /** Unique identifier tag (UID) */
   uid: string;
   /** Equipment type slug */
-  typeSlug?: string;
+  typeSlug: string;
   /** Model name */
   model?: string;
   /** Date when equipment was put into service */
@@ -534,7 +534,7 @@ export interface AdjustmentRequest {
 /** Request body for creating an equipment type */
 export interface EquipmentTypeRequest {
   /** URL-friendly identifier */
-  slug?: string;
+  slug: string;
   /** Display name */
   name: string;
   /** Description */
@@ -606,7 +606,7 @@ export interface ChangeEquipmentConditionRequest {
   /** Equipment ids the condition is applied to, 1-5 elements */
   equipmentIds: Array<number>;
   /** Target physical condition */
-  condition?: 'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
+  condition: 'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
   /** Reason of the condition change, persisted verbatim into the audit trail */
   reason: string;
 }
@@ -1050,6 +1050,89 @@ export interface RevenueMetricsResponse {
   penaltyRevenue?: number;
   walletDeposits?: number;
   walletWithdrawals?: number;
+}
+
+export interface EquipmentRevenueFilterParams {
+  /** Range start (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Range end (inclusive), format yyyy-MM-dd */
+  to: string;
+  /** Equipment type to drill into; mandatory, bounds the response to one type's fleet */
+  equipmentTypeSlug: string;
+  /** Bucket granularity; weeks start on Monday, edge buckets are partial */
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  /** Optional operator filter; narrows the report to revenue opened by that operator */
+  operatorId?: string;
+  /** Optional single unit filter */
+  equipmentId?: number;
+}
+
+/** One time bucket; present even when there was no activity, with zeroed totals */
+export interface EquipmentRevenueBucketResponse {
+  bucketStart?: string;
+  bucketEnd?: string;
+  units?: Array<EquipmentRevenueRowResponse>;
+  bucketTotals?: EquipmentRevenueMetricsResponse;
+}
+
+/** The three metrics that have an equipment dimension. Written-off amounts and wallet movement belong to a rental or a customer as a whole and are reported only by the operator report. */
+export interface EquipmentRevenueMetricsResponse {
+  accruedRentalRevenue?: number;
+  paidRentalRevenue?: number;
+  penaltyRevenue?: number;
+}
+
+/** Revenue by individual equipment unit, narrowed to one equipment type. A unit that earned nothing in the period is absent rather than present with zeros. */
+export interface EquipmentRevenueReportResponse {
+  from?: string;
+  to?: string;
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  equipmentTypeSlug?: string;
+  buckets?: Array<EquipmentRevenueBucketResponse>;
+  totals?: EquipmentRevenueMetricsResponse;
+}
+
+/** One equipment unit's figures inside a bucket; identifiers only, the caller resolves names */
+export interface EquipmentRevenueRowResponse {
+  equipmentId?: number;
+  equipmentTypeSlug?: string;
+  metrics?: EquipmentRevenueMetricsResponse;
+}
+
+export interface EquipmentTypeRevenueFilterParams {
+  /** Range start (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Range end (inclusive), format yyyy-MM-dd */
+  to: string;
+  /** Bucket granularity; weeks start on Monday, edge buckets are partial */
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  /** Optional operator filter; narrows the report to revenue opened by that operator */
+  operatorId?: string;
+  /** Optional equipment type filter; a type with no recorded revenue yields a zero-filled series, not an error */
+  equipmentTypeSlug?: string;
+}
+
+/** One time bucket; present even when there was no activity, with zeroed totals */
+export interface EquipmentTypeRevenueBucketResponse {
+  bucketStart?: string;
+  bucketEnd?: string;
+  types?: Array<EquipmentTypeRevenueRowResponse>;
+  bucketTotals?: EquipmentRevenueMetricsResponse;
+}
+
+/** Revenue by equipment type. A type's figures for a period are exactly the sum of that type's units' figures for the same period, and the grand totals equal the corresponding totals of the operator report. */
+export interface EquipmentTypeRevenueReportResponse {
+  from?: string;
+  to?: string;
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  buckets?: Array<EquipmentTypeRevenueBucketResponse>;
+  totals?: EquipmentRevenueMetricsResponse;
+}
+
+/** One equipment type's figures inside a bucket; the type is the slug the item carried at the time of the rental */
+export interface EquipmentTypeRevenueRowResponse {
+  equipmentTypeSlug?: string;
+  metrics?: EquipmentRevenueMetricsResponse;
 }
 
 export interface AgreementTemplateSummaryResponse {
