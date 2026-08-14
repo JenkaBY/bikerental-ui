@@ -28,6 +28,12 @@ import {
   EquipmentRevenueReportResponse,
   EquipmentTypeRevenueFilterParams,
   EquipmentTypeRevenueReportResponse,
+  CustomerSpendFilterParams,
+  PageCustomerSpendRowResponse,
+  CustomerEquipmentBreakdownFilterParams,
+  CustomerEquipmentBreakdownResponse,
+  CustomerAnalyticsFilterParams,
+  CustomerAnalyticsSummaryResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -157,6 +163,151 @@ export class AnalyticsService {
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/analytics/revenue/equipment-types`;
+
+    let params = new HttpParams();
+    if (arg0 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getRankedCustomers(
+    arg0: CustomerSpendFilterParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PageCustomerSpendRowResponse>;
+  getRankedCustomers(
+    arg0: CustomerSpendFilterParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PageCustomerSpendRowResponse>>;
+  getRankedCustomers(
+    arg0: CustomerSpendFilterParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PageCustomerSpendRowResponse>>;
+  /** Returns one row per customer for the whole range, ordered by a chosen metric, descending by default, with customerId ascending as the final tie-break so a page requested twice returns the same rows in the same order. Only customers with money movement in the period appear - a registered customer who did nothing has nothing to rank and is visible in the summary counts instead. A customer whose only activity was a wallet top-up appears with zero revenue. Identifiers only - the caller resolves names. */
+  getRankedCustomers(
+    arg0: CustomerSpendFilterParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/analytics/customers`;
+
+    let params = new HttpParams();
+    if (arg0 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getCustomerEquipmentBreakdown(
+    customerId: string,
+    arg1: CustomerEquipmentBreakdownFilterParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<CustomerEquipmentBreakdownResponse>;
+  getCustomerEquipmentBreakdown(
+    customerId: string,
+    arg1: CustomerEquipmentBreakdownFilterParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<CustomerEquipmentBreakdownResponse>>;
+  getCustomerEquipmentBreakdown(
+    customerId: string,
+    arg1: CustomerEquipmentBreakdownFilterParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<CustomerEquipmentBreakdownResponse>>;
+  /** Returns the customer's accrued rental revenue, paid rental revenue and penalty revenue split across the equipment they rented, at both the unit and the type level; the type level is the rollup of the unit level over the same rows. A rental adjusted by a special price or a percentage discount is allocated across its equipment in proportion to each line's own cost. Written-off amounts and wallet movement have no equipment dimension and appear only in the customer's own figures. A customer with no recorded activity - including an identifier that belongs to no customer - returns empty arrays and zero totals, not an error. */
+  getCustomerEquipmentBreakdown(
+    customerId: string,
+    arg1: CustomerEquipmentBreakdownFilterParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/analytics/customers/${customerId}/equipment`;
+
+    let params = new HttpParams();
+    if (arg1 != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getCustomerSummary(
+    arg0: CustomerAnalyticsFilterParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<CustomerAnalyticsSummaryResponse>;
+  getCustomerSummary(
+    arg0: CustomerAnalyticsFilterParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<CustomerAnalyticsSummaryResponse>>;
+  getCustomerSummary(
+    arg0: CustomerAnalyticsFilterParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<CustomerAnalyticsSummaryResponse>>;
+  /** Returns three customer counts plus a continuous, zero-filled series of buckets and a grand total over the same six metrics as the operator report. Active customers is a DISTINCT count: the top-level figure covers the whole range, each bucket's figure covers that bucket only, and neither may be obtained by summing the other - a customer active on two days is one active customer. New and registered customers come from the module's own customer dimension; registered is anchored to the end of the range, so reopening a past report never changes it, and neither count is narrowed by the operator filter. Each metric summed across all customers equals the corresponding grand total of the operator report. Figures are eventually consistent. Identifiers only - the caller resolves names. */
+  getCustomerSummary(
+    arg0: CustomerAnalyticsFilterParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/analytics/customers/summary`;
 
     let params = new HttpParams();
     if (arg0 != null) {

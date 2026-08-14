@@ -1135,6 +1135,105 @@ export interface EquipmentTypeRevenueRowResponse {
   metrics?: EquipmentRevenueMetricsResponse;
 }
 
+export interface CustomerSpendFilterParams {
+  /** Range start (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Range end (inclusive), format yyyy-MM-dd */
+  to: string;
+  /** Optional operator filter; narrows the list to money opened or performed by that operator */
+  operatorId?: string;
+  /** Zero-based page index */
+  page?: number;
+  /** Page size, 1 to 100 */
+  size?: number;
+  /** Sort as '<field>,<direction>'. Field is one of accruedRentalRevenue, paidRentalRevenue, writtenOffAmount, penaltyRevenue, walletDeposits, walletWithdrawals or customerId; direction is asc or desc and defaults to desc. Ties always break on customerId ascending, so a page requested twice returns the same rows in the same order */
+  sort?: string;
+}
+
+/** One customer's spend over the whole requested range; the customer is an opaque identifier, never a name or a contact detail */
+export interface CustomerSpendRowResponse {
+  customerId?: string;
+  metrics?: RevenueMetricsResponse;
+}
+
+export interface PageCustomerSpendRowResponse {
+  items?: Array<CustomerSpendRowResponse>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
+}
+
+export interface CustomerEquipmentBreakdownFilterParams {
+  /** Range start (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Range end (inclusive), format yyyy-MM-dd */
+  to: string;
+  /** Optional operator filter */
+  operatorId?: string;
+}
+
+/** What one customer's money went on. Only the three metrics that have an equipment dimension appear: written-off amounts and wallet movement belong to a rental or a customer as a whole and are reported by the customer summary and the ranked list instead. The type level is the rollup of the unit level over the same rows, and both reconcile with that customer's own accrued, paid and penalty figures. */
+export interface CustomerEquipmentBreakdownResponse {
+  customerId?: string;
+  from?: string;
+  to?: string;
+  types?: Array<CustomerEquipmentTypeRowResponse>;
+  units?: Array<CustomerEquipmentUnitRowResponse>;
+  totals?: EquipmentRevenueMetricsResponse;
+}
+
+/** One equipment type's share of this customer's spend */
+export interface CustomerEquipmentTypeRowResponse {
+  equipmentTypeSlug?: string;
+  metrics?: EquipmentRevenueMetricsResponse;
+}
+
+/** One equipment unit's share of this customer's spend */
+export interface CustomerEquipmentUnitRowResponse {
+  equipmentId?: number;
+  equipmentTypeSlug?: string;
+  metrics?: EquipmentRevenueMetricsResponse;
+}
+
+export interface CustomerAnalyticsFilterParams {
+  /** Range start (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Range end (inclusive), format yyyy-MM-dd */
+  to: string;
+  /** Bucket granularity; weeks start on Monday, edge buckets are partial */
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  /** Optional operator filter; narrows the money figures to money opened or performed by that operator. The customer counts are never narrowed by it - a customer belongs to the business, not to an operator */
+  operatorId?: string;
+}
+
+/** Customer analytics for a period. Each metric summed across all customers equals the corresponding grand total of the operator report for the same period. Figures are eventually consistent. Identifiers only - the caller resolves names. */
+export interface CustomerAnalyticsSummaryResponse {
+  from?: string;
+  to?: string;
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  customerCounts?: CustomerCountsResponse;
+  buckets?: Array<CustomerSummaryBucketResponse>;
+  totals?: RevenueMetricsResponse;
+}
+
+/** Three figures answering three different questions; they are never interchangeable and never added to each other */
+export interface CustomerCountsResponse {
+  /** Distinct customers with at least one money movement over the WHOLE requested range. Never the sum of the per-bucket figures - a customer active on two days is one active customer */
+  activeCustomers?: number;
+  /** Customers registered within the requested range */
+  newCustomers?: number;
+  /** All customers registered as of the end of the range; anchored to 'to', not to the moment of asking, so reopening a past report never changes it */
+  registeredCustomers?: number;
+}
+
+/** One time bucket; present even when there was no activity, with zeroed totals */
+export interface CustomerSummaryBucketResponse {
+  bucketStart?: string;
+  bucketEnd?: string;
+  /** Distinct customers active WITHIN THIS BUCKET. This figure must never be summed across buckets; the money metrics are additive, the customer counts are not */
+  activeCustomers?: number;
+  bucketTotals?: RevenueMetricsResponse;
+}
+
 export interface AgreementTemplateSummaryResponse {
   id?: number;
   versionNumber?: number;
