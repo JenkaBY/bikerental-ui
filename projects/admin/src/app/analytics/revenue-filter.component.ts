@@ -23,7 +23,7 @@ export interface RevenueFilterValue {
   providers: [provideNativeDateAdapter()],
   imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonToggleModule],
   template: `
-    <div class="flex flex-wrap items-start gap-3">
+    <div class="flex flex-wrap items-center gap-3">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-40">
         <mat-label>{{ Labels.CustomerRentalsFilterFrom }}</mat-label>
         <input

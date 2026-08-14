@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
 import type { EChartsCoreOption } from 'echarts/core';
 import type { RevenueBucket, RevenueGranularity, RevenueMetricKey } from '@bikerental/shared';
-import { toIsoDate } from '@bikerental/shared';
+import { bucketAxisLabel } from '@bikerental/shared';
 import { echarts } from './echarts-setup';
 
 @Component({
@@ -53,9 +53,6 @@ export class RevenueChartComponent {
   });
 
   private bucketLabel(bucket: RevenueBucket, granularity: RevenueGranularity): string {
-    if (granularity === 'MONTH') {
-      return `${bucket.start.getFullYear()}-${String(bucket.start.getMonth() + 1).padStart(2, '0')}`;
-    }
-    return toIsoDate(bucket.start);
+    return bucketAxisLabel(bucket.start, granularity);
   }
 }

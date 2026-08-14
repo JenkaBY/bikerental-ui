@@ -1,42 +1,42 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule, MatSelectChange } from '@angular/material/select';
+import { PageEvent } from '@angular/material/paginator';
 import {
-  AnalyticsRevenueStore,
+  CUSTOMERS_TAB_ID,
+  CUSTOMER_SPEND_PAGE_SIZE,
   daysInclusive,
   EquipmentTypeRevenueSource,
   EquipmentUnitRevenueSource,
   Labels,
+  MAX_CUSTOMER_SPEND_PAGE_SIZE,
   MAX_REVENUE_RANGE_DAYS,
   OperatorRevenueSource,
+  parseCustomerSpendSort,
   parseDate,
   REVENUE_GRANULARITIES,
-  REVENUE_METRIC_META,
   REVENUE_REPORT_SOURCES,
-  resolveErrorMessage,
   resolveFieldErrorMessage,
   SegmentedTabsComponent,
   toIsoDate,
-  type RevenueBucket,
+  type AnalyticsTabId,
+  type CustomerAnalyticsRange,
+  type CustomerSpendListState,
+  type CustomerSpendSort,
   type RevenueGranularity,
-  type RevenueMetricKey,
-  type RevenueMetrics,
+  type RevenueQuery,
   type RevenueReportId,
   type SegmentTab,
 } from '@bikerental/shared';
+import { CustomerAnalyticsPanelComponent } from './customer-analytics-panel.component';
 import { EquipmentTypeSelectComponent } from './equipment-type-select.component';
 import { EquipmentUnitSelectComponent } from './equipment-unit-select.component';
 import { OperatorSelectComponent } from './operator-select.component';
-import { RevenueBucketTableComponent } from './revenue-bucket-table.component';
-import { RevenueChartComponent } from './revenue-chart.component';
 import { RevenueFilterComponent, type RevenueFilterValue } from './revenue-filter.component';
-import { RevenueTotalsComponent } from './revenue-totals.component';
+import { RevenueReportPanelComponent } from './revenue-report-panel.component';
 
 function defaultRange(): { from: Date; to: Date } {
   const to = new Date();
@@ -49,7 +49,6 @@ function defaultRange(): { from: Date; to: Date } {
   selector: 'app-analytics-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    AnalyticsRevenueStore,
     {
       provide: REVENUE_REPORT_SOURCES,
       useFactory: () => [
@@ -63,17 +62,13 @@ function defaultRange(): { from: Date; to: Date } {
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressBarModule,
-    MatFormFieldModule,
-    MatSelectModule,
     SegmentedTabsComponent,
     RevenueFilterComponent,
     OperatorSelectComponent,
     EquipmentTypeSelectComponent,
     EquipmentUnitSelectComponent,
-    RevenueTotalsComponent,
-    RevenueChartComponent,
-    RevenueBucketTableComponent,
+    RevenueReportPanelComponent,
+    CustomerAnalyticsPanelComponent,
   ],
   template: `
     <mat-card>
@@ -87,7 +82,7 @@ function defaultRange(): { from: Date; to: Date } {
             [activeId]="reportId()"
             (tabSelect)="onReportChange($event)"
           />
-          <button mat-stroked-button (click)="store.reload()">
+          <button mat-stroked-button (click)="onRefresh()">
             <mat-icon>refresh</mat-icon>
             {{ Labels.AnalyticsRefreshButton }}
           </button>
@@ -95,7 +90,7 @@ function defaultRange(): { from: Date; to: Date } {
         <p class="text-xs text-slate-400 mb-3">{{ Labels.AnalyticsFreshnessNote }}</p>
 
         <app-revenue-filter [value]="filterValue()" (filterChange)="onFilterChange($event)">
-          @if (reportId() === 'operators') {
+          @if (reportId() === 'operators' || isCustomers()) {
             <app-operator-select
               dimension-filter
               [value]="dimensionId()"
@@ -126,82 +121,50 @@ function defaultRange(): { from: Date; to: Date } {
 
         @if (rangeErrorMessage(); as msg) {
           <p class="text-sm text-red-600 mt-2">{{ msg }}</p>
-        } @else if (needsScope()) {
-          <p class="text-sm text-slate-400 py-8 text-center">
-            {{ Labels.AnalyticsSelectTypePrompt }}
-          </p>
-        } @else if (store.error(); as err) {
-          <div class="text-center mt-6 flex flex-col items-center gap-2">
-            <p class="text-slate-500">{{ resolveErrorMessage(err) }}</p>
-            <button mat-stroked-button (click)="store.reload()">{{ Labels.Retry }}</button>
-          </div>
-        } @else if (store.loading() || !store.report()) {
-          <mat-progress-bar mode="indeterminate" class="mt-3" />
-        } @else if (isEmpty()) {
-          <p class="text-sm text-slate-400 py-8 text-center">{{ Labels.AnalyticsEmptyState }}</p>
+        } @else if (isCustomers()) {
+          <app-customer-analytics-panel
+            [range]="customerRange()"
+            [list]="listState()"
+            [customerId]="customerId()"
+            (pageChange)="onPageChange($event)"
+            (sortChange)="onSortChange($event)"
+            (customerSelect)="onCustomerSelect($event)"
+          />
         } @else {
-          <div class="mt-4 flex flex-col gap-4">
-            <app-revenue-totals [totals]="store.totals()" [metricKeys]="metricKeys()" />
-
-            @if (store.hasSeries()) {
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-56">
-                <mat-label>{{ Labels.AnalyticsMetricSelectorLabel }}</mat-label>
-                <mat-select [value]="store.metric()" (selectionChange)="onMetricChange($event)">
-                  @for (key of metricKeys(); track key) {
-                    <mat-option [value]="key">{{ REVENUE_METRIC_META[key].label }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-
-              <app-revenue-chart
-                [buckets]="store.buckets()"
-                [granularity]="granularity()"
-                [metric]="store.metric()"
-                [dimensionKeys]="store.dimensionKeys()"
-                [nameFor]="nameForFn"
-              />
-            }
-
-            <app-revenue-bucket-table
-              [buckets]="store.buckets()"
-              [granularity]="granularity()"
-              [metricKeys]="metricKeys()"
-              [dimensionColumnLabel]="dimensionColumnLabel()"
-              [unattributedHint]="unattributedHint()"
-              [nameFor]="nameForFn"
-              [unattributedFor]="unattributedForFn"
-              [rowSelectable]="reportId() === 'equipment-types'"
-              (rowSelect)="onDrillDown($event)"
-            />
-          </div>
+          <app-revenue-report-panel
+            [reportId]="revenueReportId()"
+            [query]="revenueQuery()"
+            (drillDown)="onDrillDown($event)"
+          />
         }
       </mat-card-content>
     </mat-card>
   `,
 })
 export class AnalyticsPageComponent {
-  protected readonly store = inject(AnalyticsRevenueStore);
   private readonly sources = inject(REVENUE_REPORT_SOURCES);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
+  private readonly revenuePanel = viewChild(RevenueReportPanelComponent);
+  private readonly customerPanel = viewChild(CustomerAnalyticsPanelComponent);
+
   protected readonly Labels = Labels;
-  protected readonly REVENUE_METRIC_META = REVENUE_METRIC_META;
-  protected readonly resolveErrorMessage = resolveErrorMessage;
 
-  protected readonly nameForFn = (key: string): string => this.store.source()?.nameFor(key) ?? key;
-  protected readonly unattributedForFn = (bucket: RevenueBucket): RevenueMetrics =>
-    this.store.unattributedFor(bucket);
-
-  protected readonly tabs = computed<SegmentTab[]>(() =>
-    this.sources.map((source) => ({ id: source.id, label: source.tabLabel })),
-  );
+  protected readonly tabs = computed<SegmentTab[]>(() => [
+    ...this.sources.map((source) => ({ id: source.id, label: source.tabLabel })),
+    { id: CUSTOMERS_TAB_ID, label: Labels.AnalyticsCustomersTab },
+  ]);
 
   private readonly defaults = defaultRange();
   private readonly params = toSignal(this.route.queryParams, { initialValue: {} as Params });
 
-  protected readonly reportId = computed<RevenueReportId>(
-    () => (this.params()['report'] as RevenueReportId) || this.sources[0]?.id || 'operators',
+  protected readonly reportId = computed<AnalyticsTabId>(
+    () => (this.params()['report'] as AnalyticsTabId) || this.sources[0]?.id || 'operators',
+  );
+  protected readonly isCustomers = computed(() => this.reportId() === CUSTOMERS_TAB_ID);
+  protected readonly revenueReportId = computed<RevenueReportId>(
+    () => this.reportId() as RevenueReportId,
   );
   protected readonly from = computed(() => parseDate(this.params()['from']) ?? this.defaults.from);
   protected readonly to = computed(() => parseDate(this.params()['to']) ?? this.defaults.to);
@@ -211,23 +174,47 @@ export class AnalyticsPageComponent {
   });
   protected readonly dimensionId = computed(() => this.params()['dimensionId'] || undefined);
   protected readonly scopeId = computed(() => this.params()['scopeId'] || undefined);
+  protected readonly customerId = computed(() => this.params()['customerId'] || undefined);
 
-  protected readonly currentSource = computed(() =>
-    this.sources.find((s) => s.id === this.reportId()),
+  protected readonly pageIndex = computed(() => {
+    const value = Number(this.params()['page']);
+    return Number.isInteger(value) && value >= 0 ? value : 0;
+  });
+  protected readonly pageSize = computed(() => {
+    const value = Number(this.params()['size']);
+    return Number.isInteger(value) && value >= 1 && value <= MAX_CUSTOMER_SPEND_PAGE_SIZE
+      ? value
+      : CUSTOMER_SPEND_PAGE_SIZE;
+  });
+  protected readonly sort = computed<CustomerSpendSort>(() =>
+    parseCustomerSpendSort(this.params()['sort']),
   );
-  protected readonly needsScope = computed(
-    () => !!this.currentSource()?.requiresScope && !this.scopeId(),
-  );
-  protected readonly metricKeys = computed(() => this.store.source()?.metricKeys ?? []);
-  protected readonly dimensionColumnLabel = computed(
-    () => this.store.source()?.dimensionColumnLabel ?? '',
-  );
-  protected readonly unattributedHint = computed(() => this.store.source()?.unattributedHint ?? '');
 
   protected readonly filterValue = computed<RevenueFilterValue>(() => ({
     from: this.from(),
     to: this.to(),
     granularity: this.granularity(),
+  }));
+
+  protected readonly revenueQuery = computed<RevenueQuery>(() => ({
+    from: this.from(),
+    to: this.to(),
+    granularity: this.granularity(),
+    dimensionId: this.dimensionId(),
+    scopeId: this.scopeId(),
+  }));
+
+  protected readonly customerRange = computed<CustomerAnalyticsRange>(() => ({
+    from: this.from(),
+    to: this.to(),
+    granularity: this.granularity(),
+    operatorId: this.dimensionId(),
+  }));
+
+  protected readonly listState = computed<CustomerSpendListState>(() => ({
+    pageIndex: this.pageIndex(),
+    pageSize: this.pageSize(),
+    sort: this.sort(),
   }));
 
   protected readonly rangeExceeded = computed(
@@ -243,35 +230,20 @@ export class AnalyticsPageComponent {
       : null,
   );
 
-  protected readonly isEmpty = computed(() => (this.store.report()?.buckets.length ?? 0) === 0);
-
-  constructor() {
-    effect(() => {
-      this.store.setReportId(this.reportId());
-      if (this.rangeExceeded() || this.needsScope()) return;
-      this.store.setQuery({
-        from: this.from(),
-        to: this.to(),
-        granularity: this.granularity(),
-        dimensionId: this.dimensionId(),
-        scopeId: this.scopeId(),
-      });
-    });
-  }
-
   protected onFilterChange(value: RevenueFilterValue): void {
     this.updateUrl(
       {
         from: toIsoDate(value.from),
         to: toIsoDate(value.to),
         granularity: value.granularity === 'DAY' ? null : value.granularity,
+        page: null,
       },
       true,
     );
   }
 
   protected onDimensionChange(id: string | undefined): void {
-    this.updateUrl({ dimensionId: id ?? null }, true);
+    this.updateUrl({ dimensionId: id ?? null, page: null }, true);
   }
 
   protected onScopeChange(slug: string | undefined): void {
@@ -280,17 +252,44 @@ export class AnalyticsPageComponent {
 
   protected onReportChange(id: string): void {
     this.updateUrl(
-      { report: id === this.sources[0]?.id ? null : id, dimensionId: null, scopeId: null },
+      {
+        report: id === this.sources[0]?.id ? null : id,
+        dimensionId: null,
+        scopeId: null,
+        page: null,
+        size: null,
+        sort: null,
+        customerId: null,
+      },
       true,
     );
   }
 
-  protected onMetricChange(event: MatSelectChange): void {
-    this.store.setMetric(event.value as RevenueMetricKey);
-  }
-
   protected onDrillDown(typeSlug: string): void {
     this.updateUrl({ report: 'equipment-units', scopeId: typeSlug, dimensionId: null }, false);
+  }
+
+  protected onPageChange(event: PageEvent): void {
+    this.updateUrl(
+      {
+        page: event.pageIndex === 0 ? null : event.pageIndex,
+        size: event.pageSize === CUSTOMER_SPEND_PAGE_SIZE ? null : event.pageSize,
+      },
+      false,
+    );
+  }
+
+  protected onSortChange(sort: CustomerSpendSort): void {
+    this.updateUrl({ sort: `${sort.field},${sort.direction}`, page: null }, true);
+  }
+
+  protected onCustomerSelect(id: string | undefined): void {
+    this.updateUrl({ customerId: id ?? null }, false);
+  }
+
+  protected onRefresh(): void {
+    this.revenuePanel()?.reload();
+    this.customerPanel()?.reload();
   }
 
   private updateUrl(queryParams: Params, replaceUrl: boolean): void {

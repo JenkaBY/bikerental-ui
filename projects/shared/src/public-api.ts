@@ -75,8 +75,12 @@ export * from './core/state/damage-report-create.store';
 export * from './core/state/revenue-report-source';
 export * from './core/state/operator-revenue.source';
 export * from './core/state/equipment-type-revenue.source';
+export * from './core/state/equipment-unit-label.store';
 export * from './core/state/equipment-unit-revenue.source';
 export * from './core/state/analytics-revenue.store';
+export * from './core/state/analytics-tab';
+export * from './core/state/customer-analytics.store';
+export * from './core/state/customer-equipment-breakdown.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';
@@ -167,6 +171,7 @@ export * from './shared/directives/max-decimals.directive';
 export * from './shared/utils/date.util';
 export * from './shared/utils/deployed-path';
 export * from './shared/utils/user-initials.util';
+export * from './shared/utils/revenue-bucket-label.util';
 
 // Shared UI — validators
 export * from './shared/validators/form-error-messages';

@@ -1080,6 +1080,9 @@ RESPONSIBILITIES:
 - Provides `getOperatorRevenue(filterParams)` — `GET /api/analytics/revenue/operators`, a bucketed, zero-filled, eventually-consistent revenue series broken down by operator
 - Provides `getEquipmentTypeRevenue(filterParams)` — `GET /api/analytics/revenue/equipment-types`, the same shape broken down by equipment type, with only the three metrics that have an equipment dimension (accrued/paid rental revenue, penalty revenue)
 - Provides `getEquipmentRevenue(filterParams)` — `GET /api/analytics/revenue/equipments`, the drill-down to the individual units of one equipment type (`equipmentTypeSlug` mandatory)
+- Provides `getCustomerSummary(filterParams)` — `GET /api/analytics/customers/summary`, three customer counts plus a bucketed, zero-filled series of the six money metrics and per-bucket `activeCustomers`
+- Provides `getRankedCustomers(filterParams)` — `GET /api/analytics/customers`, a paged/sortable list of customers with money movement in the range, identifiers only
+- Provides `getCustomerEquipmentBreakdown(customerId, filterParams)` — `GET /api/analytics/customers/{customerId}/equipment`, one customer's spend split by equipment type and unit (three metrics), 200 with empty arrays for an unknown or inactive customer
   SOURCE: `projects/shared/src/core/api/generated/services/analytics.service.ts`
   CALLS:
 - HttpClient — to execute HTTP requests
@@ -1087,6 +1090,8 @@ RESPONSIBILITIES:
 - OperatorRevenueSource
 - EquipmentTypeRevenueSource
 - EquipmentUnitRevenueSource
+- CustomerAnalyticsStore
+- CustomerEquipmentBreakdownStore
 
 ---
 
@@ -1131,12 +1136,27 @@ PURPOSE: `RevenueReportSource` implementation for the "By Unit" analytics tab �
 RESPONSIBILITIES:
 
 - `load(query)` calls `AnalyticsService.getEquipmentRevenue`, requiring `query.scopeId` as the mandatory `equipmentTypeSlug` and mapping `query.dimensionId` to the optional `equipmentId` filter; `requiresScope` is `true`
-- After each load, resolves the distinct unit ids present in the response via `EquipmentsCatalogueService.getBatchEquipments` and caches `id → "uid — model"` labels, so reclassified units are labelled from the ids actually returned rather than the current fleet of the selected type
+- After each load, delegates to `EquipmentUnitLabelStore.ensure(ids)` for the distinct unit ids present in the response, so reclassified units are labelled from the ids actually returned rather than the current fleet of the selected type
   SOURCE: `projects/shared/src/core/state/equipment-unit-revenue.source.ts`
   CALLS:
-- AnalyticsService, AnalyticsRevenueMapper, EquipmentsCatalogueService
+- AnalyticsService, AnalyticsRevenueMapper, EquipmentUnitLabelStore
   CALLED_BY:
 - AnalyticsPageComponent (via REVENUE_REPORT_SOURCES token), AnalyticsRevenueStore
+
+---
+
+COMPONENT_NAME: EquipmentUnitLabelStore
+TYPE: State
+PURPOSE: Root-provided cache resolving equipment unit ids to `"uid — model"` display labels, shared by every consumer that needs unit names so the same unit is never re-fetched twice.
+RESPONSIBILITIES:
+
+- `ensure(ids)` batch-fetches only the ids missing from the cache via `EquipmentsCatalogueService.getBatchEquipments`, degrading silently (`catchError`) on failure
+- `labelFor(id)` returns the cached label or falls back to the raw id
+  SOURCE: `projects/shared/src/core/state/equipment-unit-label.store.ts`
+  CALLS:
+- EquipmentsCatalogueService
+  CALLED_BY:
+- EquipmentUnitRevenueSource, CustomerEquipmentBreakdownStore
 
 ---
 
@@ -1156,7 +1176,7 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: AnalyticsRevenueStore
 TYPE: State
-PURPOSE: Page-provided signal store driving the admin Revenue Analytics report, dimension-agnostic across report types via the `REVENUE_REPORT_SOURCES` injection token.
+PURPOSE: Panel-provided signal store driving one of the three revenue report tabs, dimension-agnostic across report types via the `REVENUE_REPORT_SOURCES` injection token.
 RESPONSIBILITIES:
 
 - Loads the active `RevenueReportSource`'s report via `rxResource`, keyed by report id + query (from/to/granularity/dimensionId/scopeId)
@@ -1167,23 +1187,125 @@ RESPONSIBILITIES:
   CALLS:
 - RevenueReportSource (via REVENUE_REPORT_SOURCES token) — OperatorRevenueSource, EquipmentTypeRevenueSource, EquipmentUnitRevenueSource
   CALLED_BY:
+- RevenueReportPanelComponent
+
+---
+
+COMPONENT_NAME: RevenueReportPanelComponent
+TYPE: API
+PURPOSE: Provides `AnalyticsRevenueStore` and renders the body of whichever of the three revenue tabs (Operators, Equipment Types, Units) is active — totals, metric selector, chart, and bucket table — extracted out of `AnalyticsPageComponent` so the page stays a thin tab host.
+RESPONSIBILITIES:
+
+- Takes `reportId` and `query` (the full `RevenueQuery`) as inputs; pushes them into its own `AnalyticsRevenueStore` via an internal effect
+- Blocks on and prompts for an equipment type when the active source's `requiresScope` is true and `query.scopeId` is unset (the Units tab, opened directly)
+- Renders `RevenueTotalsComponent`, the chart metric selector, `RevenueChartComponent` (ngx-echarts), and `RevenueBucketTableComponent`
+- Emits `drillDown(typeSlug)` when a bucket-table row is selected (enabled only on the Equipment Types tab); exposes `reload()` for the page's refresh button
+  SOURCE: `projects/admin/src/app/analytics/revenue-report-panel.component.ts`
+  CALLS:
+- AnalyticsRevenueStore
+  CALLED_BY:
 - AnalyticsPageComponent
+
+---
+
+COMPONENT_NAME: AnalyticsCustomerMapper
+TYPE: Utility
+PURPOSE: Static mapper converting the three customer-analytics API responses into UI domain models.
+RESPONSIBILITIES:
+
+- `summaryFromResponse(response)` — converts counts, zero-filled buckets (each carrying its own `activeCustomers`), and totals; does not reuse the generic `AnalyticsRevenueMapper.fromResponse` because that helper has no slot for a non-money per-bucket count
+- `spendPageFromResponse(response)` — thin wrapper over `PageMapper.fromResponse`, reusing `AnalyticsRevenueMapper.metricsFromResponse` per row
+- `breakdownFromResponse(response)` — reshapes the API's two sibling arrays (`types`, `units`) into one two-level structure by grouping `units` under their `equipmentTypeSlug` and attaching them to the matching `types` row
+  SOURCE: `projects/shared/src/core/mappers/analytics-customer.mapper.ts`
+  CALLS:
+- AnalyticsRevenueMapper, PageMapper
+  CALLED_BY:
+- CustomerAnalyticsStore, CustomerEquipmentBreakdownStore
+
+---
+
+COMPONENT_NAME: CustomerAnalyticsStore
+TYPE: State
+PURPOSE: Panel-provided signal store driving the "By Customer" tab's summary (counts, money totals, bucket series) and ranked customer list (paged, sortable, name-enriched).
+RESPONSIBILITIES:
+
+- Loads the summary and the ranked list as two independent `rxResource`s, both keyed off a `CustomerAnalyticsRange` signal with a custom value-based `equal` — without it, the page's `from`/`to` computeds (which mint a new `Date` on every query-param change) would refire the summary request on every list page turn
+- The ranked-list query additionally depends on a `CustomerSpendListState` signal (page/size/sort), also compared by value
+- Enriches ranked rows with customer name/phone via `CustomersService.getCustomersBatch`, degrading to the raw `customerId` on lookup failure rather than failing the row
+- Exposes `listEmpty` as a distinct state from `listError` — an empty page is a valid result, not a failure
+- `operatorFilterActive` flags when the operator filter is narrowing money figures only, never the customer counts
+  SOURCE: `projects/shared/src/core/state/customer-analytics.store.ts`
+  CALLS:
+- AnalyticsService, CustomersService, AnalyticsCustomerMapper
+  CALLED_BY:
+- CustomerAnalyticsPanelComponent
+
+---
+
+COMPONENT_NAME: CustomerEquipmentBreakdownStore
+TYPE: State
+PURPOSE: Component-provided signal store driving the drill-down into one customer's equipment spend, scoped to the breakdown component's own lifecycle so no state needs manual resetting between customers.
+RESPONSIBILITIES:
+
+- Loads the breakdown and the customer's own name/phone in parallel (`forkJoin`) so a directly-opened drill-down URL still resolves a name with no ranked-list row to borrow it from
+- Its range signal ignores `granularity` in its equality check — the breakdown endpoint has no granularity param, so changing it must not refire the request
+- Delegates unit-id → label resolution to the shared `EquipmentUnitLabelStore`; lazily loads `EquipmentTypeStore` for type-slug → name resolution
+- `isEmpty` is true only on a successful load with zero type rows — an unknown or inactive customer id is a valid empty result (200), never an error
+  SOURCE: `projects/shared/src/core/state/customer-equipment-breakdown.store.ts`
+  CALLS:
+- AnalyticsService, CustomersService, AnalyticsCustomerMapper, EquipmentTypeStore, EquipmentUnitLabelStore
+  CALLED_BY:
+- CustomerEquipmentBreakdownComponent
+
+---
+
+COMPONENT_NAME: CustomerAnalyticsPanelComponent
+TYPE: API
+PURPOSE: Provides `CustomerAnalyticsStore` and renders the "By Customer" tab body — summary, chart, ranked list — or delegates to `CustomerEquipmentBreakdownComponent` when a customer is selected.
+RESPONSIBILITIES:
+
+- Takes `range`, `list`, and an optional `customerId` as inputs; pushes `range`/`list` into its store via effects
+- When `customerId` is set, renders only `CustomerEquipmentBreakdownComponent`, passing `range` and `customerId` through
+- Otherwise renders `CustomerSummaryPanelComponent`, the metric-selector-driven `CustomerSummaryChartComponent`, `CustomerSpendTableComponent`, and a `mat-paginator`
+- Emits `pageChange`, `sortChange`, and `customerSelect` (row click, or `undefined` from the breakdown's back button) for the page to fold into the URL; exposes `reload()`
+  SOURCE: `projects/admin/src/app/analytics/customer-analytics-panel.component.ts`
+  CALLS:
+- CustomerAnalyticsStore, CustomerEquipmentBreakdownComponent
+  CALLED_BY:
+- AnalyticsPageComponent
+
+---
+
+COMPONENT_NAME: CustomerEquipmentBreakdownComponent
+TYPE: API
+PURPOSE: Provides `CustomerEquipmentBreakdownStore` and renders one customer's equipment spend — a back control, the customer's name with a link to their profile, and a two-level type→unit table.
+RESPONSIBILITIES:
+
+- Takes `range` and `customerId` as inputs; pushes them into its store via an effect
+- Renders `RevenueTotalsComponent` scoped to `EQUIPMENT_REVENUE_METRIC_KEYS` (the three metrics that have an equipment dimension) and `CustomerEquipmentTableComponent`
+- Emits `back` for the panel to clear `customerId` from the URL; exposes `reload()`
+  SOURCE: `projects/admin/src/app/analytics/customer-equipment-breakdown.component.ts`
+  CALLS:
+- CustomerEquipmentBreakdownStore
+  CALLED_BY:
+- CustomerAnalyticsPanelComponent
 
 ---
 
 COMPONENT_NAME: AnalyticsPageComponent
 TYPE: API
-PURPOSE: Admin route `/admin/analytics` — revenue reporting page with three tabs (Operators, Equipment Types, Units) sharing one filter panel, bucket table, and chart.
+PURPOSE: Admin route `/admin/analytics` — analytics tab host with four tabs (Operators, Equipment Types, Units, By Customer) sharing one date-range/granularity filter panel.
 RESPONSIBILITIES:
 
-- Binds report id, date range, granularity, dimension filter, and equipment-type scope to the URL query params (`report`, `from`, `to`, `granularity`, `dimensionId`, `scopeId`)
-- Blocks the request client-side and shows an inline message when the range exceeds `MAX_REVENUE_RANGE_DAYS` (366), reusing the same localized `validation.max_date_range` copy the backend would return
-- Blocks the request and prompts for an equipment type when the active source's `requiresScope` is true and no `scopeId` is set (the Units tab, opened directly)
-- Renders `RevenueFilterComponent` with a per-report dimension filter projected into its slot (`OperatorSelectComponent`, `EquipmentTypeSelectComponent`, or both `EquipmentTypeSelectComponent` + `EquipmentUnitSelectComponent`), `RevenueTotalsComponent`, `RevenueChartComponent` (ngx-echarts), and `RevenueBucketTableComponent`
-- Wires `RevenueBucketTableComponent`'s `rowSelect` output (enabled only on the Equipment Types tab) to a drill-down that navigates to the Units tab with the clicked type as `scopeId`
+- Binds tab id, date range, granularity, dimension filter, equipment-type scope, and (for the customer tab) page/size/sort/customerId to the URL query params (`report`, `from`, `to`, `granularity`, `dimensionId`, `scopeId`, `page`, `size`, `sort`, `customerId`)
+- Blocks all four tabs client-side and shows an inline message when the range exceeds `MAX_REVENUE_RANGE_DAYS` (366), reusing the same localized `validation.max_date_range` copy the backend would return
+- Renders `RevenueFilterComponent` with a per-tab dimension filter projected into its slot — `OperatorSelectComponent` is reused unchanged for both the Operators tab and the By Customer tab (`dimensionId` doubles as the operator filter on both)
+- Delegates the three revenue tabs to `RevenueReportPanelComponent` and the customer tab to `CustomerAnalyticsPanelComponent`; only one of the two panel types is ever instantiated, so the customer tab never drives `AnalyticsRevenueStore` and vice versa
+- Wires the equipment-type drill-down (`RevenueReportPanelComponent`'s `drillDown` output) to the Units tab, and the customer-list drill-down (`CustomerAnalyticsPanelComponent`'s `customerSelect` output) to `customerId` in the URL
+- Refresh button uses `viewChild` on both panel types and calls `reload()` on whichever is currently rendered
   SOURCE: `projects/admin/src/app/analytics/analytics-page.component.ts`
   CALLS:
-- AnalyticsRevenueStore — to load and hold the active report
+- RevenueReportPanelComponent, CustomerAnalyticsPanelComponent
   CALLED_BY:
 - Angular Router (admin route `analytics`)
 
