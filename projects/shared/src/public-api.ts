@@ -168,6 +168,7 @@ export * from './shared/directives/max-decimals.directive';
 export * from './shared/utils/date.util';
 export * from './shared/utils/deployed-path';
 export * from './shared/utils/user-initials.util';
+export * from './shared/utils/revenue-bucket-label.util';
 
 // Shared UI — validators
 export * from './shared/validators/form-error-messages';

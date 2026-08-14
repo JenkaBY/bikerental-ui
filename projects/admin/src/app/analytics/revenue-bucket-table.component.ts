@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, input, output, signal } from '@angu
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
+  bucketRangeLabel,
   Labels,
   MoneyPipe,
   REVENUE_METRIC_META,
-  toIsoDate,
   type RevenueBucket,
   type RevenueGranularity,
   type RevenueMetricKey,
@@ -133,12 +133,6 @@ export class RevenueBucketTableComponent {
   }
 
   protected bucketLabel(bucket: RevenueBucket): string {
-    if (this.granularity() === 'MONTH') {
-      return `${bucket.start.getFullYear()}-${String(bucket.start.getMonth() + 1).padStart(2, '0')}`;
-    }
-    if (toIsoDate(bucket.start) === toIsoDate(bucket.end)) {
-      return toIsoDate(bucket.start);
-    }
-    return `${toIsoDate(bucket.start)} — ${toIsoDate(bucket.end)}`;
+    return bucketRangeLabel(bucket.start, bucket.end, this.granularity());
   }
 }
