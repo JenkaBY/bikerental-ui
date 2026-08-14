@@ -78,6 +78,9 @@ export * from './core/state/equipment-type-revenue.source';
 export * from './core/state/equipment-unit-label.store';
 export * from './core/state/equipment-unit-revenue.source';
 export * from './core/state/analytics-revenue.store';
+export * from './core/state/analytics-tab';
+export * from './core/state/customer-analytics.store';
+export * from './core/state/customer-equipment-breakdown.store';
 
 // Shared UI — components
 export * from './shared/components/app-brand/app-brand.component';
