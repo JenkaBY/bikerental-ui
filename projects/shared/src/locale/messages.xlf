@@ -1572,6 +1572,10 @@
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">115</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">657</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5867766809250320132" datatype="html">
         <source>Create Customer</source>
@@ -1861,6 +1865,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">119</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">678</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3955868613858648955" datatype="html">
@@ -2986,6 +2994,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">423</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">669</context>
         </context-group>
       </trans-unit>
       <trans-unit id="734934965373819800" datatype="html">
@@ -4755,6 +4767,157 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">651</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3648483697979225012" datatype="html">
+        <source>By Customer</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">653</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5774287591108906142" datatype="html">
+        <source>Customer summary</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">654</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3308373112719421681" datatype="html">
+        <source>Top customers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">655</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1957130249095128251" datatype="html">
+        <source>Active customers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">658</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">666</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8224115436171384269" datatype="html">
+        <source>Distinct customers with at least one money movement in the selected range. Never the sum of the per-period figures.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">659</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3698357436792397387" datatype="html">
+        <source>New customers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">660</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8050818684096562517" datatype="html">
+        <source>Customers registered within the selected range.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">661</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="751639463998502146" datatype="html">
+        <source>Registered customers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">662</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2773074232252516959" datatype="html">
+        <source>All customers registered as of the end of the range. Anchored to the end date, so reopening a past report never changes it.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">663</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="808528473966942703" datatype="html">
+        <source>The operator filter narrows the money figures only — customer counts always cover the whole business.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">664</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1910872760688559066" datatype="html">
+        <source>Distinct customers active in this period. Not additive across periods.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">667</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4331454512202430892" datatype="html">
+        <source>No customer had any money movement in the selected range</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">670</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1338931129222882327" datatype="html">
+        <source>Only customers with money movement in the range are listed. Registered but inactive customers appear in the counts above.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">671</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7864255034619765420" datatype="html">
+        <source>Summed across all customers, each metric equals the grand total of the By Operator report for the same range.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">672</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8901045409781913633" datatype="html">
+        <source>Sort ascending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">673</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1058365381390737447" datatype="html">
+        <source>Sort descending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">674</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8325933149095695694" datatype="html">
+        <source>See what this customer&apos;s money went on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">675</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3764100954703799381" datatype="html">
+        <source>Equipment breakdown</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">677</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6392675781175414499" datatype="html">
+        <source>This customer had no equipment activity in the selected range</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">679</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4834054339359157988" datatype="html">
+        <source>Written-off amounts and wallet movement have no equipment dimension and are not shown here.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">680</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4365539946737473581" datatype="html">
+        <source>Unknown customer</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">681</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">

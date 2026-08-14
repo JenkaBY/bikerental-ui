@@ -649,4 +649,34 @@ export class Labels {
   static readonly AnalyticsExpandBucketTooltip = $localize`Show breakdown`;
   static readonly AnalyticsUnattributedRow = $localize`Unattributed`;
   static readonly AnalyticsUnattributedHint = $localize`Revenue whose opening operator is unknown. Included in the totals but not in any operator row.`;
+
+  static readonly AnalyticsCustomersTab = $localize`By Customer`;
+  static readonly AnalyticsCustomerSummaryHeading = $localize`Customer summary`;
+  static readonly AnalyticsCustomerListHeading = $localize`Top customers`;
+
+  static readonly AnalyticsCustomerCountsGroupLabel = $localize`Customers`;
+  static readonly AnalyticsCountActiveCustomers = $localize`Active customers`;
+  static readonly AnalyticsCountActiveCustomersHint = $localize`Distinct customers with at least one money movement in the selected range. Never the sum of the per-period figures.`;
+  static readonly AnalyticsCountNewCustomers = $localize`New customers`;
+  static readonly AnalyticsCountNewCustomersHint = $localize`Customers registered within the selected range.`;
+  static readonly AnalyticsCountRegisteredCustomers = $localize`Registered customers`;
+  static readonly AnalyticsCountRegisteredCustomersHint = $localize`All customers registered as of the end of the range. Anchored to the end date, so reopening a past report never changes it.`;
+  static readonly AnalyticsCustomerCountsOperatorNote = $localize`The operator filter narrows the money figures only — customer counts always cover the whole business.`;
+
+  static readonly AnalyticsActiveCustomersSeriesLabel = $localize`Active customers`;
+  static readonly AnalyticsBucketActiveCustomersHint = $localize`Distinct customers active in this period. Not additive across periods.`;
+
+  static readonly AnalyticsCustomerColumn = $localize`Customer`;
+  static readonly AnalyticsCustomersEmptyState = $localize`No customer had any money movement in the selected range`;
+  static readonly AnalyticsCustomerListNote = $localize`Only customers with money movement in the range are listed. Registered but inactive customers appear in the counts above.`;
+  static readonly AnalyticsCustomerReconciliationNote = $localize`Summed across all customers, each metric equals the grand total of the By Operator report for the same range.`;
+  static readonly AnalyticsSortAscending = $localize`Sort ascending`;
+  static readonly AnalyticsSortDescending = $localize`Sort descending`;
+  static readonly AnalyticsCustomerDrillDownTooltip = $localize`See what this customer's money went on`;
+
+  static readonly AnalyticsCustomerBreakdownTitle = $localize`Equipment breakdown`;
+  static readonly AnalyticsBackToCustomers = $localize`Back to customers`;
+  static readonly AnalyticsCustomerBreakdownEmptyState = $localize`This customer had no equipment activity in the selected range`;
+  static readonly AnalyticsCustomerBreakdownNote = $localize`Written-off amounts and wallet movement have no equipment dimension and are not shown here.`;
+  static readonly AnalyticsUnknownCustomer = $localize`Unknown customer`;
 }
