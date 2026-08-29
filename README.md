@@ -81,12 +81,12 @@ Two build steps plus a checked-in restore script make this work on static hostin
   the site root; nested copies (e.g. `admin/en/404.html`) are never looked up. The root `404.html`
   inspects the requested path, works out which app/locale directory has the real `index.html`, and
   redirects there with the original path + query string packed into a `redirect` param — this is what
-  lets deep links (and the OIDC `…/login/callback?code=…&state=…` redirect) survive instead of losing
+  lets deep links (and the OIDC `…/admin/en/?code=…&state=…` redirect) survive instead of losing
   their query string to a blind bounce.
 - **SPA path-restore script** — the companion half of the previous step, checked in as the first thing
   in each app's `<head>`: `projects/{gateway,admin,operator}/src/index.html`. It reads the `redirect`
   param and calls `history.replaceState(...)` to put the original URL back *before* Angular bootstraps,
-  so the Router sees `/login/callback?code=…` instead of the bounce URL.
+  so the Router sees `…/admin/en/?code=…` instead of the bounce URL.
 
   > ⚠️ This script **must** live in the source `index.html` and must never be injected by a post-build
   > step. `index.html` is SHA1-pinned in the operator's `ngsw.json` `hashTable` at build time, so
