@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { APP_BRAND, BRAND } from '@bikerental/shared';
 import { HomeComponent } from './home.component';
 
 function makeDocument(baseURI: string) {
@@ -25,6 +26,7 @@ describe('HomeComponent interactions', () => {
       imports: [HomeComponent],
       providers: [
         { provide: DOCUMENT, useValue: doc },
+        { provide: APP_BRAND, useValue: BRAND },
         { provide: LOCALE_ID, useValue: 'en-US' },
       ],
     }).compileComponents();
@@ -45,6 +47,7 @@ describe('HomeComponent interactions', () => {
       imports: [HomeComponent],
       providers: [
         { provide: DOCUMENT, useValue: doc },
+        { provide: APP_BRAND, useValue: BRAND },
         { provide: LOCALE_ID, useValue: 'en-US' },
       ],
     }).compileComponents();
