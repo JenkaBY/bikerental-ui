@@ -167,7 +167,7 @@ import { TariffDialogComponent, TariffDialogData } from './tariff-dialog.compone
 
         @if (!loading() && items().length === 0) {
           <div class="text-sm text-slate-500 py-6">
-            {{ 'No tariffs found' }}
+            {{ Labels.TariffsEmptyState }}
           </div>
         }
       </mat-card-content>

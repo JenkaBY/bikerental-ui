@@ -24,7 +24,7 @@ import { Labels, QrScanDialogComponent, RentalLookupStore } from '@bikerental/sh
   providers: [RentalLookupStore],
   template: `
     <div class="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
-      <h1 class="text-2xl font-semibold text-slate-800" i18n>Equipment Return</h1>
+      <h1 class="text-2xl font-semibold text-slate-800">{{ Labels.EquipmentReturnPageTitle }}</h1>
 
       <button
         mat-flat-button

@@ -44,7 +44,7 @@ const NAV_ITEMS: NavItem[] = [
 export class OperatorLayoutComponent {
   protected navItems = NAV_ITEMS;
   protected brand = inject(APP_BRAND);
-  protected title = $localize`Bike Rental`;
+  protected title = this.brand;
   private readonly auth = inject(AuthService);
 
   protected onLogout() {
