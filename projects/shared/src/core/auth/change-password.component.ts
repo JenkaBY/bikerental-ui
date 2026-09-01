@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { finalize } from 'rxjs';
-import { IdentityService } from '../api/generated';
+import { UsersService } from '../api/generated';
 import {
   ApiErrorParser,
   applyServerErrors,
@@ -106,7 +106,7 @@ import { passwordPolicyValidator, passwordsMatchValidator } from './password-pol
   `,
 })
 export class ChangePasswordComponent {
-  private readonly identity = inject(IdentityService);
+  private readonly users = inject(UsersService);
   private readonly auth = inject(AuthService);
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
@@ -144,7 +144,7 @@ export class ChangePasswordComponent {
     this.saving.set(true);
     const { currentPassword, newPassword } = this.form.getRawValue();
 
-    this.identity
+    this.users
       .changePassword({ currentPassword, newPassword }, 'response', {
         context: suppressErrorNotification(),
       })
