@@ -401,9 +401,13 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
   OAuth client `bike-rental-admin`, operator as `bike-rental-operator`; both authorities point at
   `environment.apiUrl`. Route guards (`authGuard`, `mustChangePasswordGuard`, `adminGuard` /
   `operatorGuard`) gate each app's top-level layout route; unauthenticated users are redirected to the
-  IdP, users without the required role land on `/forbidden`. `apiAuthInterceptor` attaches
-  `Authorization: Bearer <token>` to every `/api/**` request and retries once on 401 via silent
-  refresh, redirecting to login if the retry also fails. `errorInterceptor` suppresses its own
+  IdP, users without the required role land on `/forbidden`. Token renewal is **event-driven, not
+  timer-driven** (`silentRenew: false`): the refresh token is exchanged on app start when `checkAuth()`
+  finds expired tokens, when the tab becomes visible or the network comes back, just before an
+  `/api/**` request whose access token is within 60s of expiry, and as a last resort on a 401.
+  `apiAuthInterceptor` attaches `Authorization: Bearer <token>` to every `/api/**` request and retries
+  once on 401, redirecting to login if the retry also fails; `AuthService` de-duplicates concurrent
+  refreshes and guards against firing more than one login redirect. `errorInterceptor` suppresses its own
   notification on 401 (owned end-to-end by `apiAuthInterceptor`) but still toasts 403
   (`identity.access.denied`, "You do not have permission to perform this action.") since that is a
   routine, distinct outcome. The backend derives the acting user from the bearer token's `uid` claim —

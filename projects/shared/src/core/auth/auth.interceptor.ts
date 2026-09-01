@@ -21,7 +21,7 @@ export const apiAuthInterceptor: HttpInterceptorFn = (req, next) => {
   const oidc = inject(OidcSecurityService);
   const auth = inject(AuthService);
 
-  return oidc.getAccessToken().pipe(
+  return auth.accessToken().pipe(
     take(1),
     switchMap((token) => {
       const initialReq = token
