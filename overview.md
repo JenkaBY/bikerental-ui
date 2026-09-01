@@ -1538,7 +1538,7 @@ DATA_ACCESS: All data access is via REST HTTP calls to the Spring Boot backend t
 MIGRATIONS_PATH: NONE
 REPOSITORY_PATTERN: NO
 
-Client-side state is held in signal-based stores (`projects/shared/src/core/state/`) for the lifetime of the browser session. No IndexedDB, WebSQL, or other client-side persistence is used beyond `localStorage` for layout mode and for the `user_settings` cache of the server-stored user settings (`GET /api/auth/me` → `settings`, written back on every successful `PATCH /api/auth/me/settings`; the server stays the source of truth).
+Client-side state is held in signal-based stores (`projects/shared/src/core/state/`) for the lifetime of the browser session. No IndexedDB, WebSQL, or other client-side persistence is used beyond the `localStorage` `user_settings` cache of the server-stored user settings (`GET /api/auth/me` → `settings`, written back on every successful `PATCH /api/auth/me/settings`; the server stays the source of truth).
 
 ---
 

@@ -4,7 +4,6 @@ import { UserSettingsMapper } from '../mappers/user-settings.mapper';
 import { LocaleRedirectService } from '../locale-redirect.service';
 
 const SETTINGS_STORAGE_KEY = 'user_settings';
-const LEGACY_PREFERENCES_STORAGE_KEY = 'user_preferences';
 
 @Injectable({ providedIn: 'root' })
 export class UserStore {
@@ -47,7 +46,6 @@ export class UserStore {
 
   private readCache(): UserSettings {
     try {
-      localStorage.removeItem(LEGACY_PREFERENCES_STORAGE_KEY);
       const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
       return stored === null ? {} : UserSettingsMapper.fromResponse(JSON.parse(stored));
     } catch {
