@@ -139,6 +139,9 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   'validation.assert_true': $localize`Must be accepted.`,
   'validation.assert_false': $localize`Must not be set.`,
 
+  // User settings (field: 'settings') — only 'locale' is validated today
+  'validation.supported_user_settings': $localize`This language is not supported.`,
+
   // Class-level rental pricing rules (field: null — render as a general form message)
   'validation.special_tariff_consistency': $localize`A fixed price requires a special tariff — both must be set together.`,
   'validation.special_tariff_and_discount_exclusive': $localize`A discount and a fixed price cannot be applied at the same time.`,

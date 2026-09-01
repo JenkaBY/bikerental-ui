@@ -16,8 +16,8 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { IdentityService } from '../api/generated';
-import { UserProfileMapper } from '../mappers';
+import { UsersService } from '../api/generated';
+import { UserProfileMapper, UserSettingsMapper } from '../mappers';
 import { UserStore } from '../state/user.store';
 import { readAccessTokenClaims } from './auth.token-claims';
 
@@ -27,7 +27,7 @@ const ACCESS_TOKEN_STALE_MS = 60_000;
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly oidc = inject(OidcSecurityService);
-  private readonly identity = inject(IdentityService);
+  private readonly users = inject(UsersService);
   private readonly userStore = inject(UserStore);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -119,14 +119,14 @@ export class AuthService {
   }
 
   hydrate(): void {
-    this.identity
+    this.users
       .me()
-      .pipe(
-        map((response) => UserProfileMapper.fromResponse(response)),
-        takeUntilDestroyed(this.destroyRef),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (profile) => this.userStore.setUser(profile),
+        next: (response) => {
+          this.userStore.setUser(UserProfileMapper.fromResponse(response));
+          this.userStore.applySettings(UserSettingsMapper.fromUserResponse(response));
+        },
       });
   }
 
