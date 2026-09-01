@@ -18,6 +18,18 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start:admin"],
       "port": 4201
+    },
+    {
+      "name": "admin-dev-ru",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:admin:ru"],
+      "port": 4201
+    },
+    {
+      "name": "operator-dev-ru",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:operator:ru"],
+      "port": 4202
     }
   ]
 }

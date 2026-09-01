@@ -223,6 +223,11 @@
                   "with": "projects/shared/src/environments/environment.lan.ts"
                 }
               ]
+            },
+            "ru": {
+              "localize": [
+                "ru"
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -242,6 +247,9 @@
               "allowedHosts": [
                 ".trycloudflare.com"
               ]
+            },
+            "ru": {
+              "buildTarget": "admin:build:development,ru"
             }
           },
           "defaultConfiguration": "development"
@@ -377,6 +385,11 @@
                   "with": "projects/shared/src/environments/environment.lan.ts"
                 }
               ]
+            },
+            "ru": {
+              "localize": [
+                "ru"
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -396,6 +409,9 @@
               "allowedHosts": [
                 ".trycloudflare.com"
               ]
+            },
+            "ru": {
+              "buildTarget": "operator:build:development,ru"
             }
           },
           "defaultConfiguration": "development"
