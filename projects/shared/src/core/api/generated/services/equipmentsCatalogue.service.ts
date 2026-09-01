@@ -130,21 +130,21 @@ export class EquipmentsCatalogueService {
   }
 
   searchEquipments(
-    arg2: Pageable,
+    pageable: Pageable,
     type?: string,
     q?: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageEquipmentResponse>;
   searchEquipments(
-    arg2: Pageable,
+    pageable: Pageable,
     type?: string,
     q?: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageEquipmentResponse>>;
   searchEquipments(
-    arg2: Pageable,
+    pageable: Pageable,
     type?: string,
     q?: string,
     observe?: 'events',
@@ -152,7 +152,7 @@ export class EquipmentsCatalogueService {
   ): Observable<HttpEvent<PageEquipmentResponse>>;
   /** Returns paginated equipment list filtered by type and/or free-text search: exact match on uid, case-insensitive substring match on serial number and model */
   searchEquipments(
-    arg2: Pageable,
+    pageable: Pageable,
     type?: string,
     q?: string,
     observe?: 'body' | 'events' | 'response',
@@ -167,8 +167,8 @@ export class EquipmentsCatalogueService {
     if (q != null) {
       params = HttpParamsBuilder.addToHttpParams(params, q, 'q');
     }
-    if (arg2 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg2, 'arg2');
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
     }
 
     let headers: HttpHeaders;

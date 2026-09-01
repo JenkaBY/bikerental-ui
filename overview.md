@@ -1538,7 +1538,7 @@ DATA_ACCESS: All data access is via REST HTTP calls to the Spring Boot backend t
 MIGRATIONS_PATH: NONE
 REPOSITORY_PATTERN: NO
 
-Client-side state is held in signal-based stores (`projects/shared/src/core/state/`) for the lifetime of the browser session. No IndexedDB, WebSQL, or other client-side persistence is used beyond `localStorage` for layout mode.
+Client-side state is held in signal-based stores (`projects/shared/src/core/state/`) for the lifetime of the browser session. No IndexedDB, WebSQL, or other client-side persistence is used beyond the `localStorage` `user_settings` cache of the server-stored user settings (`GET /api/auth/me` → `settings`, written back on every successful `PATCH /api/auth/me/settings`; the server stays the source of truth).
 
 ---
 
@@ -1611,7 +1611,10 @@ AUTHN_AUTHZ:
 - `AuthService` (`projects/shared/src/core/auth/auth.service.ts`) wraps `OidcSecurityService`:
   `checkAuth()` (run from each app's `provideAppInitializer`, blocks bootstrap), `login(returnUrl?)`,
   `logout()`, `refresh()` (single-flight, used by the 401 retry path), `hydrate()` (populates
-  `UserStore` from `GET /api/auth/me` for display purposes only). Role/id claims (`roles`, `uid`,
+  `UserStore` from `GET /api/auth/me` — the profile for display purposes, plus the effective
+  user settings map, which `UserStore.applySettings()` caches in `localStorage` (`user_settings`)
+  and applies immediately, switching the locale segment when `settings.locale` differs from the
+  served one). Role/id claims (`roles`, `uid`,
   `must_change_password`) are read synchronously from the decoded access token
   (`auth.token-claims.ts`) into signals `roles`/`uid`/`mustChangePassword`, plus derived
   `isAdmin`/`isOperator`/`currentUserId`.

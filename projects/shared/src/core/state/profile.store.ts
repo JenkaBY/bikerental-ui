@@ -1,7 +1,14 @@
 import { computed, inject, Injectable, InjectionToken, signal } from '@angular/core';
-import { finalize, map, Observable, of } from 'rxjs';
-import { IdentityService } from '../api/generated';
-import { NotificationService, suppressErrorNotification } from '../errors';
+import { UserPreferences, UserSettings } from '@ui-models';
+import { catchError, finalize, map, Observable, of, tap, throwError } from 'rxjs';
+import { UsersService } from '../api/generated';
+import {
+  ApiErrorParser,
+  ErrorMessageResolver,
+  NotificationService,
+  suppressErrorNotification,
+} from '../errors';
+import { UserSettingsMapper } from '../mappers';
 import { Labels } from '../../shared/constant/labels';
 import { UserStore } from './user.store';
 
@@ -25,12 +32,15 @@ export interface ChangePasswordInput {
 @Injectable({ providedIn: 'root' })
 export class ProfileStore {
   private readonly userStore = inject(UserStore);
-  private readonly identity = inject(IdentityService);
+  private readonly users = inject(UsersService);
   private readonly notifications = inject(NotificationService);
+  private readonly errorMessages = inject(ErrorMessageResolver);
   private readonly stubMode = inject(PROFILE_STUB_MODE);
 
   private readonly _saving = signal(false);
+  private readonly _savingPreferences = signal(false);
   readonly saving = computed(() => this._saving());
+  readonly savingPreferences = computed(() => this._savingPreferences());
 
   saveProfile(patch: ProfilePatch): void {
     const current = this.userStore.currentUser();
@@ -42,6 +52,30 @@ export class ProfileStore {
     this.notifications.success(Labels.ProfileSaved);
   }
 
+  savePreferences(patch: Partial<UserPreferences>): Observable<UserSettings> {
+    const request = UserSettingsMapper.toRequest(patch);
+
+    if (this.stubMode) {
+      const settings = { ...this.userStore.settings(), ...stripRemovedKeys(request) };
+      this.userStore.applySettings(settings);
+      return of(settings);
+    }
+
+    this._savingPreferences.set(true);
+
+    return this.users
+      .updateSettings(request, 'body', { context: suppressErrorNotification() })
+      .pipe(
+        map((response) => UserSettingsMapper.fromResponse(response)),
+        tap((settings) => this.userStore.applySettings(settings)),
+        catchError((error: unknown) => {
+          this.notifications.error(this.describeSettingsError(error));
+          return throwError(() => error);
+        }),
+        finalize(() => this._savingPreferences.set(false)),
+      );
+  }
+
   changePassword(input: ChangePasswordInput): Observable<void> {
     this._saving.set(true);
 
@@ -50,11 +84,31 @@ export class ProfileStore {
       return of(undefined);
     }
 
-    return this.identity
+    return this.users
       .changePassword(input, 'response', { context: suppressErrorNotification() })
       .pipe(
         map(() => undefined),
         finalize(() => this._saving.set(false)),
       );
   }
+
+  // The backend reports a rejected setting as a field error on `settings`, not as a response
+  // code, so prefer the field-level copy over the generic "parameters are invalid" fallback.
+  private describeSettingsError(error: unknown): string {
+    const apiError = ApiErrorParser.parse(error);
+    const fieldError = apiError.fieldErrors[0];
+    return fieldError
+      ? this.errorMessages.resolveField(fieldError)
+      : this.errorMessages.resolve(apiError);
+  }
+}
+
+function stripRemovedKeys(patch: Record<string, string | null>): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(patch)) {
+    if (value !== null) {
+      result[key] = value;
+    }
+  }
+  return result;
 }

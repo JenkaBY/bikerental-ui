@@ -21,3 +21,4 @@ export * from './equipment-unit-view-model.mapper';
 export * from './damage-report.mapper';
 export * from './analytics-revenue.mapper';
 export * from './analytics-customer.mapper';
+export * from './user-settings.mapper';

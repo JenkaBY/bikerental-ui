@@ -14,7 +14,7 @@ export const acceptLanguageInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const language = inject(UserStore).preferences().language;
+  const locale = inject(UserStore).locale();
 
-  return next(req.clone({ setHeaders: { 'Accept-Language': language } }));
+  return next(req.clone({ setHeaders: { 'Accept-Language': locale } }));
 };

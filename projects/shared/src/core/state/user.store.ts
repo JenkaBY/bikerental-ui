@@ -1,32 +1,33 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { DEFAULT_USER_PREFERENCES, UserPreferences, UserProfile } from '@ui-models';
+import { UserPreferences, UserProfile, UserSettings } from '@ui-models';
+import { UserSettingsMapper } from '../mappers/user-settings.mapper';
 import { LocaleRedirectService } from '../locale-redirect.service';
 
-const PREFERENCES_STORAGE_KEY = 'user_preferences';
+const SETTINGS_STORAGE_KEY = 'user_settings';
 
 @Injectable({ providedIn: 'root' })
 export class UserStore {
   private readonly _currentUser = signal<UserProfile | null>(null);
-  private readonly _preferences = signal<UserPreferences>(DEFAULT_USER_PREFERENCES);
+  private readonly _settings = signal<UserSettings>(this.readCache());
   private readonly localeRedirect = inject(LocaleRedirectService);
 
   readonly currentUser = computed(() => this._currentUser());
   readonly isAuthenticated = computed(() => this._currentUser() !== null);
   readonly userRoles = computed(() => this._currentUser()?.roles ?? []);
-  readonly preferences = computed(() => this._preferences());
+  readonly settings = computed(() => this._settings());
+  readonly preferences = computed<UserPreferences>(() =>
+    UserSettingsMapper.toPreferences(this._settings()),
+  );
+  readonly locale = computed(() => this.preferences().language);
 
   constructor() {
-    try {
-      const stored = localStorage.getItem(PREFERENCES_STORAGE_KEY);
-      if (stored !== null) {
-        this._preferences.set(JSON.parse(stored) as UserPreferences);
-      }
-    } catch {
-      // Silently fall back to DEFAULT_USER_PREFERENCES
-    }
-
     effect(() => {
-      localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(this._preferences()));
+      const settings = this._settings();
+      try {
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+      } catch {
+        // Cache is best-effort — the server stays the source of truth.
+      }
     });
   }
 
@@ -38,11 +39,17 @@ export class UserStore {
     this._currentUser.set(null);
   }
 
-  updatePreferences(patch: Partial<UserPreferences>): void {
-    const currentLanguage = this._preferences().language;
-    this._preferences.update((current) => ({ ...current, ...patch }));
-    if (patch.language !== undefined && patch.language !== currentLanguage) {
-      this.localeRedirect.redirect(patch.language);
+  applySettings(settings: UserSettings): void {
+    this._settings.set(settings);
+    this.localeRedirect.redirect(this.locale());
+  }
+
+  private readCache(): UserSettings {
+    try {
+      const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      return stored === null ? {} : UserSettingsMapper.fromResponse(JSON.parse(stored));
+    } catch {
+      return {};
     }
   }
 }

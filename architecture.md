@@ -418,7 +418,7 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
   authentication/authorization on every `/api/**` call; `/actuator/**` (health) remains unauthenticated
   by design.
 - ENDPOINT_ROLE_MATRIX: every `/api/**` endpoint requires a bearer token (401 otherwise) and, except for
-  `/api/auth/me` and `POST /api/auth/password` (any authenticated role), a specific role (403
+  `/api/auth/me`, `PATCH /api/auth/me/settings` and `POST /api/auth/password` (any authenticated role), a specific role (403
   otherwise). Source of truth: `docs/auth-frontend-guide.md` §7 in the backend repo
   (`bike-rental`). Effective matrix as of this writing:
 
@@ -451,6 +451,7 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
   | tariff | everything else under `/api/tariffs/**` | GET, PUT | OPERATOR, ADMIN |
   | users | `/api/auth/users/**` | all | ADMIN |
   | users | `/api/auth/me`, `/api/auth/password` | GET, POST | any authenticated user |
+  | users | `/api/auth/me/settings` | PATCH | any authenticated user |
 
   Audited against every store→endpoint call in this repo (see `docs/` PR history for the full trace):
   `projects/admin` never calls a rental write endpoint (only read-only `RentalSearchStore`), and
