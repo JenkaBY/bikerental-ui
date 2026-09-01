@@ -41,38 +41,38 @@ export class MaintenanceService {
   }
 
   findDamageReports(
-    arg0: DamageReportSearchFilterParams,
-    arg1: Pageable,
+    filterParams: DamageReportSearchFilterParams,
+    pageable: Pageable,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageDamageReportSummaryResponse>;
   findDamageReports(
-    arg0: DamageReportSearchFilterParams,
-    arg1: Pageable,
+    filterParams: DamageReportSearchFilterParams,
+    pageable: Pageable,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageDamageReportSummaryResponse>>;
   findDamageReports(
-    arg0: DamageReportSearchFilterParams,
-    arg1: Pageable,
+    filterParams: DamageReportSearchFilterParams,
+    pageable: Pageable,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageDamageReportSummaryResponse>>;
   /** Returns a paged list of damage reports filtered by any combination of equipment, customer, rental, penalty status and a reportedAt date range. Defaults to reportedAt descending. The rows carry the penalty state but not the equipment item list — use the detail endpoint for that. */
   findDamageReports(
-    arg0: DamageReportSearchFilterParams,
-    arg1: Pageable,
+    filterParams: DamageReportSearchFilterParams,
+    pageable: Pageable,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/maintenance/damage-reports`;
 
     let params = new HttpParams();
-    if (arg0 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
     }
-    if (arg1 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
     }
 
     let headers: HttpHeaders;

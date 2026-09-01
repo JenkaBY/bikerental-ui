@@ -178,30 +178,30 @@ export class TariffsService {
   }
 
   getAllTariffs(
-    arg0: Pageable,
+    pageable: Pageable,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageTariffV2Response>;
   getAllTariffs(
-    arg0: Pageable,
+    pageable: Pageable,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageTariffV2Response>>;
   getAllTariffs(
-    arg0: Pageable,
+    pageable: Pageable,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageTariffV2Response>>;
   getAllTariffs(
-    arg0: Pageable,
+    pageable: Pageable,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/tariffs`;
 
     let params = new HttpParams();
-    if (arg0 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
     }
 
     let headers: HttpHeaders;

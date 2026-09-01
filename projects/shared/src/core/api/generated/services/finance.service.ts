@@ -179,38 +179,38 @@ export class FinanceService {
   }
 
   findTransactions(
-    arg0: TransactionFilterParams,
-    arg1: Pageable,
+    filterParams: TransactionFilterParams,
+    pageable: Pageable,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageTransactionSummaryResponse>;
   findTransactions(
-    arg0: TransactionFilterParams,
-    arg1: Pageable,
+    filterParams: TransactionFilterParams,
+    pageable: Pageable,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageTransactionSummaryResponse>>;
   findTransactions(
-    arg0: TransactionFilterParams,
-    arg1: Pageable,
+    filterParams: TransactionFilterParams,
+    pageable: Pageable,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageTransactionSummaryResponse>>;
   /** Returns a paged list of business transactions filtered by any combination of customer ids, recorded-at date range, source, and affected ledger types. Sortable by recordedAt, amount or type; defaults to recordedAt descending. */
   findTransactions(
-    arg0: TransactionFilterParams,
-    arg1: Pageable,
+    filterParams: TransactionFilterParams,
+    pageable: Pageable,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/finance/transactions`;
 
     let params = new HttpParams();
-    if (arg0 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
     }
-    if (arg1 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
     }
 
     let headers: HttpHeaders;
@@ -275,40 +275,40 @@ export class FinanceService {
 
   getTransactionHistory(
     customerId: string,
-    arg1: TransactionHistoryFilterParams,
-    arg2: Pageable,
+    filterParams: TransactionHistoryFilterParams,
+    pageable: Pageable,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageCustomerTransactionResponse>;
   getTransactionHistory(
     customerId: string,
-    arg1: TransactionHistoryFilterParams,
-    arg2: Pageable,
+    filterParams: TransactionHistoryFilterParams,
+    pageable: Pageable,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageCustomerTransactionResponse>>;
   getTransactionHistory(
     customerId: string,
-    arg1: TransactionHistoryFilterParams,
-    arg2: Pageable,
+    filterParams: TransactionHistoryFilterParams,
+    pageable: Pageable,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageCustomerTransactionResponse>>;
   getTransactionHistory(
     customerId: string,
-    arg1: TransactionHistoryFilterParams,
-    arg2: Pageable,
+    filterParams: TransactionHistoryFilterParams,
+    pageable: Pageable,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/finance/customers/${customerId}/transactions`;
 
     let params = new HttpParams();
-    if (arg1 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
     }
-    if (arg2 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg2, 'arg2');
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
     }
 
     let headers: HttpHeaders;

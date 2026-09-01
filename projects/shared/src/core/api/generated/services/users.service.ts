@@ -332,6 +332,51 @@ export class UsersService {
     return this.httpClient.post(url, changePasswordRequest, requestOptions);
   }
 
+  updateSettings(
+    requestBody: Record<string, any>,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<Record<string, any>>;
+  updateSettings(
+    requestBody: Record<string, any>,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<Record<string, any>>>;
+  updateSettings(
+    requestBody: Record<string, any>,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<Record<string, any>>>;
+  /** Merges the supplied keys into the authenticated user's settings and returns the effective settings. A null value removes the key and restores its default. */
+  updateSettings(
+    requestBody: Record<string, any>,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/auth/me/settings`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.patch(url, requestBody, requestOptions);
+  }
+
   me(observe?: 'body', options?: RequestOptions<'json'>): Observable<UserResponse>;
   me(
     observe?: 'response',

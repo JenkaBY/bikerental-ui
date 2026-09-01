@@ -334,6 +334,7 @@ export interface UserResponse {
   mustChangePassword?: boolean;
   roles?: Array<'ADMIN' | 'OPERATOR'>;
   lastLoginAt?: string;
+  settings?: Record<string, string>;
 }
 
 /** A persisted rental cost quote: the frozen calculation plus its identifier and validity window */

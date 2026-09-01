@@ -100,38 +100,38 @@ export class RentalsService {
   }
 
   getRentals(
-    arg0: RentalFilterParams,
-    arg1: Pageable,
+    filterParams: RentalFilterParams,
+    pageable: Pageable,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageRentalSummaryResponse>;
   getRentals(
-    arg0: RentalFilterParams,
-    arg1: Pageable,
+    filterParams: RentalFilterParams,
+    pageable: Pageable,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageRentalSummaryResponse>>;
   getRentals(
-    arg0: RentalFilterParams,
-    arg1: Pageable,
+    filterParams: RentalFilterParams,
+    pageable: Pageable,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageRentalSummaryResponse>>;
   /** Returns a paginated list of rentals filtered by one or more statuses, customer or equipment UID */
   getRentals(
-    arg0: RentalFilterParams,
-    arg1: Pageable,
+    filterParams: RentalFilterParams,
+    pageable: Pageable,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/rentals`;
 
     let params = new HttpParams();
-    if (arg0 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg0, 'arg0');
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
     }
-    if (arg1 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
     }
 
     let headers: HttpHeaders;
@@ -574,26 +574,26 @@ export class RentalsService {
   }
 
   getAvailableEquipments(
-    arg1: Pageable,
+    pageable: Pageable,
     q?: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageAvailableEquipmentResponse>;
   getAvailableEquipments(
-    arg1: Pageable,
+    pageable: Pageable,
     q?: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageAvailableEquipmentResponse>>;
   getAvailableEquipments(
-    arg1: Pageable,
+    pageable: Pageable,
     q?: string,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageAvailableEquipmentResponse>>;
   /** Returns equipment that is in the condition available for rental and not currently occupied by an active or assigned rental. Pagination is best-effort: the returned page may contain fewer items than the requested size. */
   getAvailableEquipments(
-    arg1: Pageable,
+    pageable: Pageable,
     q?: string,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
@@ -604,8 +604,8 @@ export class RentalsService {
     if (q != null) {
       params = HttpParamsBuilder.addToHttpParams(params, q, 'q');
     }
-    if (arg1 != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, arg1, 'arg1');
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
     }
 
     let headers: HttpHeaders;
