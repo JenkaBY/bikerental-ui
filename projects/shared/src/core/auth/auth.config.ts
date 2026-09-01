@@ -42,8 +42,10 @@ export function provideOidcAuth(clientId: string): EnvironmentProviders {
       responseType: 'code',
       scope: 'openid profile offline_access',
       useRefreshToken: true,
-      silentRenew: true,
-      renewTimeBeforeTokenExpiresInSeconds: 30,
+      silentRenew: false,
+      autoUserInfo: false,
+      triggerRefreshWhenIdTokenExpired: false,
+      renewTimeBeforeTokenExpiresInSeconds: 60,
       logLevel: environment.production ? LogLevel.Error : LogLevel.Warn,
     },
   });
