@@ -11,6 +11,7 @@ import { HealthService } from '../../../core/health/health.service';
 import { HealthTooltipComponent, TooltipLine } from './health-tooltip.component';
 import { buildTooltipLines } from './health-tooltip-lines.builder';
 import { HealthStatus } from '../../../core/health/health.model';
+import { Labels } from '../../constant/labels';
 
 const DOT_CLASSES: Record<HealthStatus, string> = {
   UP: 'bg-green-500',
@@ -34,6 +35,7 @@ const OVERLAY_POSITIONS: ConnectedPosition[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HealthIndicatorComponent {
+  protected readonly Labels = Labels;
   private readonly healthService = inject(HealthService);
   private readonly locale = inject(LOCALE_ID);
 

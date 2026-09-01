@@ -28,4 +28,5 @@ export class FormErrorMessages {
   static readonly passwordLength = $localize`Must be between 8 and 20 characters`;
   static readonly passwordComposition = $localize`Must contain at least one letter and one digit`;
   static readonly passwordsMismatch = $localize`Passwords do not match`;
+  static readonly atLeastOneRoleRequired = $localize`At least one role is required`;
 }

@@ -40,6 +40,7 @@ export class Labels {
   static readonly ErrorOccurred = $localize`Error occurred`;
   static readonly Tariff = $localize`Tariff`;
   static readonly Tariffs = $localize`Tariffs`;
+  static readonly TariffsEmptyState = $localize`No tariffs found`;
   static readonly CreateTariff = $localize`Create Tariff`;
   static readonly EditTariff = $localize`Edit Tariff`;
   static readonly PricingType = $localize`Pricing Type`;
@@ -63,6 +64,8 @@ export class Labels {
   static readonly NoEndDate = $localize`No end date`;
   static readonly EquipmentType = $localize`Equipment Type`;
   static readonly Saved = $localize`Saved`;
+  static readonly EquipmentTypesPageTitle = $localize`Equipment types`;
+  static readonly NavigateToHomeAria = $localize`Navigate to home`;
 
   static readonly FirstHourPrice = $localize`First Hour Price`;
   static readonly HourlyDiscount = $localize`Hourly Discount`;
@@ -277,6 +280,7 @@ export class Labels {
   static readonly EquipmentAlreadyAdded = $localize`Equipment already added`;
   static readonly EquipmentAdded = $localize`Equipment added`;
   static readonly ScanToReturn = $localize`Scan equipment QR`;
+  static readonly EquipmentReturnPageTitle = $localize`Equipment Return`;
   static readonly ScanEquipmentToReturnTitle = $localize`Scan equipment to return`;
   static readonly NoActiveRentalForEquipment = $localize`No active or draft rental holds this equipment`;
   static readonly OpenActiveRentals = $localize`Open active rentals`;
@@ -449,6 +453,10 @@ export class Labels {
   static readonly AccessDeniedDetail = $localize`You do not have permission to view this page.`;
   static readonly BackToHome = $localize`Back to home`;
 
+  // ── Health Indicator ──────────────────────────────────────────────────────
+
+  static readonly HealthIndicatorStatusApiLabel = $localize`status API:`;
+
   // ── Profile & Settings ────────────────────────────────────────────────────
 
   static readonly AccountMenuAria = $localize`Account menu`;
@@ -572,6 +580,7 @@ export class Labels {
   static readonly VariablesReferenceExampleLabel = $localize`Example`;
 
   static readonly AgreementPdfPreviewDialogTitle = $localize`PDF Preview`;
+  static readonly AgreementPdfPreviewIframeTitle = $localize`Agreement PDF preview`;
   static readonly DownloadPdfButton = $localize`Download`;
 
   static readonly SignatureClear = $localize`Clear`;

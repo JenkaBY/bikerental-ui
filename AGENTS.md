@@ -96,10 +96,21 @@ The detailed recipe lives in the `error-handling` skill.
 ## i18n Rules
 
 All visible text must use Angular's `$localize` — never raw string literals in templates or TS.
+The app ships in two locales, English (default, `en-US` source) and Russian (`ru`).
 
 - **UI labels** → add to `shared/constant/labels.ts` as `Labels.Xyz = $localize\`...\``
 - **Form validation messages** → add to `shared/validators/form-error-messages.ts` as `FormErrorMessages.xyzRequired`
-- Extract after adding strings: `npm run i18n:extract`
+- **`projects/shared/src/locale/` is the one and only locale directory** — `messages.xlf` (extractor
+  output, English source, never hand-edited) and `messages.ru.xlf` (hand-maintained Russian
+  translations). Do not create a locale directory anywhere else in the repo.
+- **Every change that adds or edits user-visible text must, in the same change:** add/update the
+  `Labels.*`/`FormErrorMessages.*` entry, run `npm run i18n:extract` to regenerate `messages.xlf`,
+  and fill in the matching Russian `<target>` for every new `<trans-unit>` in `messages.ru.xlf`. A
+  feature is not done with English-only text — an empty or missing `<target>` is a bug, not a
+  follow-up.
+- **The app name ("Bike Rental") must never be wrapped in `$localize`** — it is not translated in
+  any locale. Reference it via the `BRAND` constant / `APP_BRAND` injection token
+  (`shared/app.tokens.ts`), the same way `admin-layout.component.ts` does, not as a literal string.
 
 ## Admin CRUD Pattern
 

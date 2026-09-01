@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, LOCALE_ID } from '@angular/core';
-import { DashboardCardComponent, DeployedPath, localeSegment } from '@bikerental/shared';
+import { APP_BRAND, DashboardCardComponent, DeployedPath, localeSegment } from '@bikerental/shared';
 
 interface DashboardCardDef {
   id: string;
@@ -38,7 +38,7 @@ export class HomeComponent {
   private readonly document = inject(DOCUMENT);
   private readonly localeId = inject(LOCALE_ID);
 
-  protected readonly title = $localize`Bike Rental`;
+  protected readonly title = inject(APP_BRAND);
   protected readonly subtitle = $localize`Choose your dashboard`;
 
   protected readonly cards: DashboardCardDef[] = [

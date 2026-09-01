@@ -19,6 +19,7 @@ import {
   ASSIGNABLE_ROLES,
   CancelButtonComponent,
   clearServerErrors,
+  FormErrorMessages,
   Labels,
   ManagedUserStore,
   NotificationService,
@@ -76,7 +77,7 @@ function atLeastOneRoleValidator(control: AbstractControl): ValidationErrors | n
             }
           </div>
           @if (form.controls.roles.hasError('atLeastOneRole') && form.controls.roles.touched) {
-            <p class="text-xs text-red-600 mt-1" i18n>At least one role is required</p>
+            <p class="text-xs text-red-600 mt-1">{{ FormErrorMessages.atLeastOneRoleRequired }}</p>
           }
         </div>
 
@@ -104,6 +105,7 @@ function atLeastOneRoleValidator(control: AbstractControl): ValidationErrors | n
 })
 export class UserEditDialogComponent {
   protected readonly Labels = Labels;
+  protected readonly FormErrorMessages = FormErrorMessages;
   protected readonly assignableRoles = ASSIGNABLE_ROLES;
   protected readonly roleLabels = ROLE_LABELS;
   protected readonly data = inject<UserEditDialogData>(MAT_DIALOG_DATA);

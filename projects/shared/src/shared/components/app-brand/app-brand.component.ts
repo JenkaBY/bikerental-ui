@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { MatIconModule } from '@angular/material/icon';
 import { APP_BRAND } from '../../../app.tokens';
 import { Router } from '@angular/router';
+import { Labels } from '../../constant/labels';
 
 @Component({
   selector: 'app-brand',
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
       type="button"
       class="flex items-center gap-3 px-6 h-16 shrink-0 hover:cursor-pointer focus:outline-none"
       (click)="goHome()"
-      aria-label="Navigate to home"
+      [attr.aria-label]="Labels.NavigateToHomeAria"
     >
       <mat-icon class="text-indigo-600 text-xl">directions_bike</mat-icon>
       <span class="text-lg font-semibold tracking-tight text-slate-800">{{ getBrand() }}</span>
@@ -21,6 +22,7 @@ import { Router } from '@angular/router';
   `,
 })
 export class AppBrandComponent {
+  protected readonly Labels = Labels;
   brand = input<string>();
   protected appBrand = inject(APP_BRAND);
   private router = inject(Router);

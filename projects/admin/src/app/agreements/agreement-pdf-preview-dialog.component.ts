@@ -16,7 +16,11 @@ export interface AgreementPdfPreviewDialogData {
   template: `
     <h2 mat-dialog-title>{{ Labels.AgreementPdfPreviewDialogTitle }}</h2>
     <mat-dialog-content class="!p-0 h-[70vh]">
-      <iframe [src]="previewUrl" class="w-full h-full border-0" title="Agreement PDF preview">
+      <iframe
+        [src]="previewUrl"
+        class="w-full h-full border-0"
+        [title]="Labels.AgreementPdfPreviewIframeTitle"
+      >
       </iframe>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
