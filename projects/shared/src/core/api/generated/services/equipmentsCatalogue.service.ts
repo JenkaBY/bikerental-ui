@@ -24,6 +24,7 @@ import {
   RequestOptions,
   EquipmentResponse,
   EquipmentRequest,
+  EquipmentFilterParams,
   Pageable,
   PageEquipmentResponse,
   ChangeEquipmentConditionRequest,
@@ -130,42 +131,35 @@ export class EquipmentsCatalogueService {
   }
 
   searchEquipments(
+    filterParams: EquipmentFilterParams,
     pageable: Pageable,
-    type?: string,
-    q?: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PageEquipmentResponse>;
   searchEquipments(
+    filterParams: EquipmentFilterParams,
     pageable: Pageable,
-    type?: string,
-    q?: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PageEquipmentResponse>>;
   searchEquipments(
+    filterParams: EquipmentFilterParams,
     pageable: Pageable,
-    type?: string,
-    q?: string,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageEquipmentResponse>>;
-  /** Returns paginated equipment list filtered by type and/or free-text search: exact match on uid, case-insensitive substring match on serial number and model */
+  /** Returns paginated equipment list filtered by type, one or more conditions and/or free-text search: exact match on uid, case-insensitive substring match on serial number and model */
   searchEquipments(
+    filterParams: EquipmentFilterParams,
     pageable: Pageable,
-    type?: string,
-    q?: string,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/equipments`;
 
     let params = new HttpParams();
-    if (type != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, type, 'type');
-    }
-    if (q != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, q, 'q');
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
     }
     if (pageable != null) {
       params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');

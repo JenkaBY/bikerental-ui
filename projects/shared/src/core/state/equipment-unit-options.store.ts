@@ -21,7 +21,7 @@ export class EquipmentUnitOptionsStore {
       if (!typeSlug) return of([]);
       const types = this.equipmentTypeStore.types();
       return this.service
-        .searchEquipments({ page: 0, size: PAGE_SIZE }, typeSlug)
+        .searchEquipments({ type: typeSlug }, { page: 0, size: PAGE_SIZE })
         .pipe(
           map((page) =>
             (page.items ?? []).map((item) => EquipmentMapper.fromResponse(item, types)),

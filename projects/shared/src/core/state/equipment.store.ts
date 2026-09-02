@@ -32,10 +32,12 @@ export class EquipmentStore {
     return this.service
       .searchEquipments(
         {
+          type: this._filterType(),
+        },
+        {
           page: this._pageIndex(),
           size: this._pageSize(),
         },
-        this._filterType(),
       )
       .pipe(
         map((page) => ({
