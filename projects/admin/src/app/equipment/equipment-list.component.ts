@@ -12,8 +12,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
-import { EquipmentStore, EquipmentTypeStore, Labels, TruncatePipe } from '@bikerental/shared';
-import { Equipment } from '@ui-models';
+import {
+  EquipmentConditionFilterComponent,
+  EquipmentStore,
+  EquipmentTypeStore,
+  Labels,
+  TruncatePipe,
+} from '@bikerental/shared';
+import { Equipment, EquipmentConditionSlug } from '@ui-models';
 
 @Component({
   selector: 'app-equipment-list',
@@ -30,6 +36,7 @@ import { Equipment } from '@ui-models';
     MatPaginatorModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    EquipmentConditionFilterComponent,
   ],
   template: `
     <mat-card>
@@ -80,7 +87,12 @@ import { Equipment } from '@ui-models';
           </ng-container>
 
           <ng-container matColumnDef="condition">
-            <th mat-header-cell *matHeaderCellDef>{{ Labels.Condition }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              <app-equipment-condition-filter
+                [value]="store.filterConditions()"
+                (valueChange)="onFilterConditionsChange($event)"
+              />
+            </th>
             <td mat-cell *matCellDef="let row">
               <span
                 [matTooltip]="row.conditionNotes"
@@ -172,6 +184,10 @@ export class EquipmentListComponent implements OnInit {
 
   onFilterTypeChange(value: string | undefined): void {
     this.store.setFilterType(value);
+  }
+
+  onFilterConditionsChange(value: EquipmentConditionSlug[]): void {
+    this.store.setFilterConditions(value);
   }
 
   onPageChange(event: PageEvent): void {

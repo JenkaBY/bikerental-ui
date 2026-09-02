@@ -93,6 +93,7 @@ export * from './shared/components/button/button.component';
 export * from './shared/components/cancel-button/cancel-button.component';
 export * from './shared/components/dashboard-card/dashboard-card.component';
 export * from './shared/components/equipment-type-dropdown/equipment-type-dropdown.component';
+export * from './shared/components/equipment-condition-filter/equipment-condition-filter.component';
 export * from './shared/components/top-up-button/top-up-button.component';
 export * from './shared/components/withdraw-button/withdraw-button.component';
 export * from './shared/components/health-indicator/health-indicator.component';

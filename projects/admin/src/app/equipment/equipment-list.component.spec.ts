@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 
 import { EquipmentListComponent } from './equipment-list.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Equipment, EquipmentType } from '@ui-models';
+import { Equipment, EquipmentConditionSlug, EquipmentType } from '@ui-models';
 import { EquipmentStore, EquipmentTypeStore } from '@bikerental/shared';
 
 describe('EquipmentListComponent', () => {
@@ -17,10 +17,12 @@ describe('EquipmentListComponent', () => {
       totalItems: vi.fn(() => 0),
       loading: vi.fn(() => false),
       filterType: vi.fn(() => undefined as string | undefined),
+      filterConditions: vi.fn(() => [] as EquipmentConditionSlug[]),
       pageIndex: vi.fn(() => 0),
       pageSize: vi.fn(() => 20),
       load: vi.fn(() => of(undefined)),
       setFilterType: vi.fn(),
+      setFilterConditions: vi.fn(),
       setPage: vi.fn(),
     }) as unknown as EquipmentStore;
 

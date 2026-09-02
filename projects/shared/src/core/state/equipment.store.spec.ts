@@ -97,7 +97,7 @@ describe('EquipmentStore', () => {
     );
 
     expect(service.searchEquipments).toHaveBeenCalledWith(
-      { type: undefined },
+      { type: undefined, condition: [] },
       { page: 0, size: 20 },
     );
     expect(result).toEqual(createdEquipment);
@@ -129,7 +129,7 @@ describe('EquipmentStore', () => {
     store.setFilterType('bike');
 
     expect(service.searchEquipments).toHaveBeenLastCalledWith(
-      { type: 'bike' },
+      { type: 'bike', condition: [] },
       { page: 0, size: 25 },
     );
   });
@@ -140,7 +140,7 @@ describe('EquipmentStore', () => {
     store.setPage(4, 10);
 
     expect(service.searchEquipments).toHaveBeenLastCalledWith(
-      { type: undefined },
+      { type: undefined, condition: [] },
       { page: 4, size: 10 },
     );
   });
