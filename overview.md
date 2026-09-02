@@ -175,7 +175,7 @@ PURPOSE: Admin table view for equipment management with filtering, pagination, a
 RESPONSIBILITIES:
 
 - Reads paginated equipment list from `EquipmentStore`
-- Provides a type filter dropdown driven by store signals
+- Provides a type filter dropdown and a multi-select condition filter, both driven by store signals
 - Opens `EquipmentDialogComponent` for create and edit operations, passing current types
 - Triggers store reload after dialog success
   SOURCE: `projects/admin/src/app/equipment/equipment-list.component.ts`
@@ -183,6 +183,7 @@ RESPONSIBILITIES:
 - EquipmentStore — to load, filter, and page equipment data
 - EquipmentTypeStore — to provide type filter options
 - MatDialog → EquipmentDialogComponent — to open create/edit form
+- EquipmentConditionFilterComponent — to render the condition multi-select filter
   CALLED_BY:
 - Angular Router (admin route `'equipment'`)
 
@@ -499,6 +500,22 @@ RESPONSIBILITIES:
 
 ---
 
+COMPONENT_NAME: EquipmentConditionFilterComponent
+TYPE: API
+PURPOSE: Reusable dumb multi-select for filtering equipment by one or more conditions.
+RESPONSIBILITIES:
+
+- Renders the localized `EQUIPMENT_CONDITIONS` options in a `mat-select multiple`
+- Takes the selected slugs via a `value` input and emits the new selection via a `valueChange` output
+- Empty selection means no condition filter (backend returns all conditions)
+  SOURCE: `projects/shared/src/shared/components/equipment-condition-filter/equipment-condition-filter.component.ts`
+  CALLS:
+- EquipmentConditionMapper (`EQUIPMENT_CONDITIONS`) — for the localized condition options
+  CALLED_BY:
+- EquipmentListComponent
+
+---
+
 COMPONENT_NAME: ShellComponent
 TYPE: API
 PURPOSE: Generic desktop layout shell with sidenav and toolbar via content projection.
@@ -738,12 +755,12 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: EquipmentStore
 TYPE: Store
-PURPOSE: Signal-based paginated store for the equipment list with type filter.
+PURPOSE: Signal-based paginated store for the equipment list with type and condition filters.
 RESPONSIBILITIES:
 
 - Loads paginated equipment from the backend via `EquipmentService`
 - Applies `EquipmentMapper.fromResponse()` using lookup data from `EquipmentTypeStore`
-- Exposes `items()`, `totalItems()`, `loading()`, `saving()`, filter, and page signals
+- Exposes `items()`, `totalItems()`, `loading()`, `saving()`, filter (`filterType`, `filterConditions`), and page signals
 - Handles create and ID-keyed update operations with automatic reload
   SOURCE: `projects/shared/src/core/state/equipment.store.ts`
   CALLS:

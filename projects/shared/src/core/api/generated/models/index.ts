@@ -987,6 +987,15 @@ export interface CustomerAccountBalancesResponse {
   lastUpdatedAt: string;
 }
 
+export interface EquipmentFilterParams {
+  /** Type slug filter */
+  type?: string;
+  /** Free-text search: exact match on uid, case-insensitive substring match on model */
+  q?: string;
+  /** Condition filter; repeat the parameter or pass a comma-separated list to match any of the given conditions */
+  condition?: Array<'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED'>;
+}
+
 export interface PageEquipmentResponse {
   items?: Array<EquipmentResponse>;
   totalItems?: number;

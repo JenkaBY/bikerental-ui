@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, defaultIfEmpty, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { Equipment, EquipmentWrite, Page } from '@ui-models';
+import { Equipment, EquipmentConditionSlug, EquipmentWrite, Page } from '@ui-models';
 import { EquipmentsCatalogueService } from '../api/generated';
 import { EquipmentTypeStore } from './equipment-type.store';
 import { EquipmentMapper } from '../mappers';
@@ -15,6 +15,7 @@ export class EquipmentStore {
   private readonly _loading = signal(false);
   private readonly _saving = signal(false);
   private readonly _filterType = signal<string | undefined>(undefined);
+  private readonly _filterConditions = signal<EquipmentConditionSlug[]>([]);
   private readonly _pageIndex = signal(0);
   private readonly _pageSize = signal(20);
 
@@ -23,6 +24,7 @@ export class EquipmentStore {
   readonly loading = computed(() => this._loading());
   readonly saving = computed(() => this._saving());
   readonly filterType = computed(() => this._filterType());
+  readonly filterConditions = computed(() => this._filterConditions());
   readonly pageIndex = computed(() => this._pageIndex());
   readonly pageSize = computed(() => this._pageSize());
 
@@ -32,10 +34,13 @@ export class EquipmentStore {
     return this.service
       .searchEquipments(
         {
+          type: this._filterType(),
+          condition: this._filterConditions(),
+        },
+        {
           page: this._pageIndex(),
           size: this._pageSize(),
         },
-        this._filterType(),
       )
       .pipe(
         map((page) => ({
@@ -52,6 +57,12 @@ export class EquipmentStore {
 
   setFilterType(type: string | undefined): void {
     this._filterType.set(type);
+    this._pageIndex.set(0);
+    this.load().subscribe();
+  }
+
+  setFilterConditions(conditions: EquipmentConditionSlug[]): void {
+    this._filterConditions.set(conditions);
     this._pageIndex.set(0);
     this.load().subscribe();
   }

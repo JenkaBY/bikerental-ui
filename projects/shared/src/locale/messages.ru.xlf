@@ -1288,7 +1288,7 @@
       </trans-unit>
       <trans-unit id="2861306361489095884" datatype="html">
         <source>Slug</source>
-        <target>Слаг</target>
+        <target>Slug</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">16</context>
@@ -5616,7 +5616,7 @@
       </trans-unit>
       <trans-unit id="8066517240031359965" datatype="html">
         <source>Slug is required</source>
-        <target>Слаг обязателен</target>
+        <target>Slug обязателен</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
           <context context-type="linenumber">3</context>

@@ -96,7 +96,10 @@ describe('EquipmentStore', () => {
       }),
     );
 
-    expect(service.searchEquipments).toHaveBeenCalledWith({ page: 0, size: 20 }, undefined);
+    expect(service.searchEquipments).toHaveBeenCalledWith(
+      { type: undefined, condition: [] },
+      { page: 0, size: 20 },
+    );
     expect(result).toEqual(createdEquipment);
     expect(store.items()).toEqual([reloadedEquipment]);
     expect(store.totalItems()).toBe(1);
@@ -125,7 +128,10 @@ describe('EquipmentStore', () => {
     store.setPage(2, 25);
     store.setFilterType('bike');
 
-    expect(service.searchEquipments).toHaveBeenLastCalledWith({ page: 0, size: 25 }, 'bike');
+    expect(service.searchEquipments).toHaveBeenLastCalledWith(
+      { type: 'bike', condition: [] },
+      { page: 0, size: 25 },
+    );
   });
 
   it('reloads with requested page and size when page changes', () => {
@@ -133,6 +139,9 @@ describe('EquipmentStore', () => {
 
     store.setPage(4, 10);
 
-    expect(service.searchEquipments).toHaveBeenLastCalledWith({ page: 4, size: 10 }, undefined);
+    expect(service.searchEquipments).toHaveBeenLastCalledWith(
+      { type: undefined, condition: [] },
+      { page: 4, size: 10 },
+    );
   });
 });
