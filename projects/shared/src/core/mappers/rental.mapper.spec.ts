@@ -45,8 +45,7 @@ describe('RentalMapper', () => {
     expect(out.status).toBe('');
     expect(out.createdAt).toBeInstanceOf(Date);
     expect((out.createdAt as Date).getTime()).toBe(new Date(0).getTime());
-    expect(out.startedAt).toBeInstanceOf(Date);
-    expect((out.startedAt as Date).getTime()).toBe(new Date(0).getTime());
+    expect(out.startedAt).toBeUndefined();
     expect(out.expectedReturnAt).toBeUndefined();
     expect(out.equipment).toEqual([]);
     expect(out.estimatedCost).toBeUndefined();

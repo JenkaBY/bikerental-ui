@@ -20,11 +20,14 @@ export interface RentalDetailState extends RentalState {
   version: number | null;
   customerId: string;
   startedAt: Date | null;
+  createdAt?: Date;
   expectedReturnAt?: Date;
+  actualReturnAt?: Date;
   paidDurationMinutes?: number;
   estimatedCost?: Money;
   finalCost?: Money;
   debtAmount?: Money;
+  payableAmount?: Money;
   writtenOffAmount?: Money;
   isActive: boolean;
   isDebt: boolean;

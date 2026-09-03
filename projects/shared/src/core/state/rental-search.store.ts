@@ -17,6 +17,7 @@ export interface RentalSearchQuery {
   to?: Date;
   pageIndex: number;
   pageSize: number;
+  sort?: string;
   withCustomer?: boolean;
 }
 
@@ -67,7 +68,11 @@ export class RentalSearchStore {
           from: query.from ? toIsoDate(query.from) : undefined,
           to: query.to ? toIsoDate(query.to) : undefined,
         },
-        { page: query.pageIndex, size: query.pageSize },
+        {
+          page: query.pageIndex,
+          size: query.pageSize,
+          sort: query.sort ? [query.sort] : undefined,
+        },
       )
       .pipe(
         switchMap((response) => this.enrich(response, query.withCustomer ?? false)),
