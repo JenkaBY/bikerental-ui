@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  input,
   output,
   signal,
 } from '@angular/core';
@@ -28,6 +30,7 @@ import {
 export interface RentalFilterValue {
   statuses: string[];
   customerId?: string;
+  customerPhone?: string;
   from?: Date;
   to?: Date;
 }
@@ -149,6 +152,7 @@ const RENTAL_STATUSES = [
 export class RentalFilterComponent {
   private readonly customerListStore = inject(CustomerListStore);
 
+  readonly value = input<RentalFilterValue>();
   readonly filterChange = output<RentalFilterValue>();
 
   protected readonly Labels = Labels;
@@ -161,6 +165,21 @@ export class RentalFilterComponent {
   protected readonly to = signal<Date | undefined>(undefined);
   protected readonly customerId = signal<string | undefined>(undefined);
   protected readonly customerPhone = signal('');
+
+  constructor() {
+    effect(() => {
+      const incoming = this.value();
+      if (!incoming) return;
+      this.statuses.set(incoming.statuses ?? []);
+      this.from.set(incoming.from);
+      this.to.set(incoming.to);
+      this.customerId.set(incoming.customerId);
+      this.customerPhone.set(incoming.customerPhone ?? '');
+      if (incoming.statuses?.length || incoming.from || incoming.to || incoming.customerId) {
+        this.expanded.set(true);
+      }
+    });
+  }
 
   protected readonly hasFilter = computed(
     () => this.statuses().length > 0 || !!this.from() || !!this.to() || !!this.customerId(),
@@ -222,6 +241,7 @@ export class RentalFilterComponent {
     this.filterChange.emit({
       statuses: this.statuses(),
       customerId: this.customerId(),
+      customerPhone: this.customerPhone() || undefined,
       from: this.from(),
       to: this.to(),
     });

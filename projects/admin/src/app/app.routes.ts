@@ -54,6 +54,11 @@ export const routes: Routes = [
           import('./rentals/rental-history.component').then((m) => m.RentalListComponent),
       },
       {
+        path: 'rentals/:id',
+        loadComponent: () =>
+          import('./rentals/rental-detail-page.component').then((m) => m.RentalDetailPageComponent),
+      },
+      {
         path: 'transactions',
         loadComponent: () =>
           import('./transactions/transaction-history.component').then(
