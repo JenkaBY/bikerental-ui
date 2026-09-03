@@ -6,35 +6,35 @@
         <source>Choose your dashboard</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2149300564474427551" datatype="html">
         <source>Administrator</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="890570656409823717" datatype="html">
         <source>Manage equipment, tariffs and customers</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4084236739370914112" datatype="html">
         <source>Open administrator dashboard</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1179184907489210406" datatype="html">
         <source>Operator</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">54</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/models/role.model.ts</context>
@@ -57,14 +57,14 @@
         <source>Operator rental flow</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">60</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4233431256118184068" datatype="html">
         <source>Open operator dashboard</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/gateway/src/app/features/home/home.component.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="883225603593837541" datatype="html">
@@ -2134,6 +2134,10 @@
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">166</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">699</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="2915112906637342975" datatype="html">
         <source>Failed to load rental draft. Starting fresh.</source>
@@ -2436,6 +2440,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">237</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">707</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8755295493430866446" datatype="html">
@@ -3020,6 +3028,10 @@
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">678</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">703</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="734934965373819800" datatype="html">
         <source>Go back</source>
@@ -3281,11 +3293,15 @@
           <context context-type="linenumber">354</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2454751421506252327" datatype="html">
-        <source>written off</source>
+      <trans-unit id="8863610143954759982" datatype="html">
+        <source>Written off</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">355</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">647</context>
         </context-group>
       </trans-unit>
       <trans-unit id="117970124145204170" datatype="html">
@@ -3589,6 +3605,10 @@
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">406</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">693</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5703104901561581497" datatype="html">
         <source>Open customer</source>
@@ -3679,6 +3699,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">426</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">692</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3167384339147596450" datatype="html">
@@ -4713,13 +4737,6 @@
           <context context-type="linenumber">646</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8863610143954759982" datatype="html">
-        <source>Written off</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">647</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="2251799195586280297" datatype="html">
         <source>Revenue forgone via debt write-off. Not subtracted from accrued revenue.</source>
         <context-group purpose="location">
@@ -4953,6 +4970,132 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">690</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5574271906938344440" datatype="html">
+        <source>Open transactions list</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">694</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4054010960957495474" datatype="html">
+        <source>Open damage reports list</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">695</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2578732368187466916" datatype="html">
+        <source>Cost</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">696</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5970674615439402941" datatype="html">
+        <source>Rental details</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">697</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8488838043216920851" datatype="html">
+        <source>Select a rental from the list to see its details</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">698</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8311797904709350639" datatype="html">
+        <source>Rental details panel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">700</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8777396771116717368" datatype="html">
+        <source>Outstanding debt</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">701</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7286430803380181008" datatype="html">
+        <source>Id</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">702</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8404603447994865982" datatype="html">
+        <source>Open customer profile</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">704</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5364944825637269043" datatype="html">
+        <source>Rentals table</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">705</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7699622144571229146" datatype="html">
+        <source>Sort by</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">706</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6644179274260069148" datatype="html">
+        <source>No transactions for this rental</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">708</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8367819691406908045" datatype="html">
+        <source>Damage and penalties</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">709</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2650248559904720874" datatype="html">
+        <source>No damage reports for this rental</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">710</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8470311110519302542" datatype="html">
+        <source>No data</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">711</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2946624699882754313" datatype="html">
+        <source>Show all</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">712</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3517550046701184661" datatype="html">
+        <source>Show less</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">713</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3791004305936615322" datatype="html">
+        <source>Rental period</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">714</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">
