@@ -70,6 +70,14 @@ const DEFAULT_EQUIPMENT_ITEM_STATUS: EquipmentItemStatusMeta = {
   label: '',
 };
 
+export const DEBT_RENTAL_STATUS = RentalStatus['DEBT'].slug;
+
+export const CANCELLABLE_RENTAL_STATUSES: ReadonlySet<string> = new Set([
+  RentalStatus['DRAFT'].slug,
+  RentalStatus['AWAITING_SIGNATURE'].slug,
+  RentalStatus['ACTIVE'].slug,
+]);
+
 export function mapRentalStatus(slug: string): RentalStatusMeta {
   return RentalStatus[slug] ?? DEFAULT_RENTAL_STATUS;
 }

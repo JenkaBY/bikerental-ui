@@ -154,6 +154,12 @@ export * from './shared/constant/breakdown-messages';
 export * from './shared/constant/mobile-form-dialog.config';
 
 // Shared UI — presentation/meta maps (rental + equipment-item status)
+export * from './shared/components/rental-status-badge/rental-status-badge.component';
+export * from './shared/components/rental-price-mode-badge/rental-price-mode-badge.component';
+export * from './shared/components/rental-period-section/rental-period-section.component';
+export * from './shared/components/rental-agreement-download/rental-agreement-download.component';
+export * from './shared/components/collapsible-section/collapsible-section.component';
+export * from './shared/components/customer/customer-ref/customer-ref.component';
 export * from './shared/rental-status.meta';
 export * from './shared/transaction.meta';
 export * from './shared/revenue.meta';
@@ -162,6 +168,8 @@ export * from './shared/penalty-status.meta';
 // Shared UI — pipes
 export * from './shared/pipes/truncate.pipe';
 export * from './shared/pipes/money.pipe';
+export * from './shared/pipes/local-timestamp.pipe';
+export * from './shared/pipes/short-id.pipe';
 export * from './shared/pipes/duration.pipe';
 export * from './shared/pipes/duration-formatter';
 export * from './shared/pipes/price-prefix.pipe';

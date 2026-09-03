@@ -24,6 +24,7 @@ import {
 import type { RentalDetailState } from './rental.state';
 import { CustomerMapper, makeMoney, RentalDashboardMapper, RentalMapper } from '../mappers';
 import { suppressErrorNotification } from '../errors';
+import { CANCELLABLE_RENTAL_STATUSES, DEBT_RENTAL_STATUS } from '../../shared/rental-status.meta';
 import { BatchRentalPropertyStore } from './batch-rental-property.store';
 import { CustomerFinanceStore } from './customer-finance.store';
 import { TariffStore } from './tariff.store';
@@ -133,7 +134,12 @@ export class RentalStore {
   readonly debtAmount = computed(() => this._state().debtAmount);
   readonly writtenOffAmount = computed(() => this._state().writtenOffAmount);
   readonly expectedReturnAt = computed(() => this._state().expectedReturnAt);
+  readonly actualReturnAt = computed(() => this._state().actualReturnAt);
+  readonly createdAt = computed(() => this._state().createdAt);
+  readonly payableAmount = computed(() => this._state().payableAmount);
   readonly startedAt = computed(() => this._state().startedAt);
+  readonly canCancel = computed(() => CANCELLABLE_RENTAL_STATUSES.has(this._state().status));
+  readonly canWriteOffDebt = computed(() => this._state().status === DEBT_RENTAL_STATUS);
   readonly customerId = computed(() => this._state().customerId);
   readonly paidDurationMinutes = computed(() => this._state().paidDurationMinutes);
 
@@ -405,6 +411,18 @@ export class RentalStore {
       tap((r) => this.patchState({ status: r.status, version: r.version })),
       map(() => undefined as void),
     );
+  }
+
+  writeOffDebt(): Observable<void> {
+    const id = this._state().id;
+    if (id === null) throw new Error('No rental id in store');
+    this.patchState({ isSaving: true });
+    return this.rentalsService
+      .writeOffDebt(id, {}, 'body', { context: suppressErrorNotification() })
+      .pipe(
+        map(() => undefined as void),
+        finalize(() => this.patchState({ isSaving: false })),
+      );
   }
 
   createAwaitingSignature(): Observable<number> {

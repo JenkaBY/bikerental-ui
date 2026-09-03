@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { DatePipe, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -7,6 +7,7 @@ import type { CustomerRef } from '../../../core/models/customer.model';
 import type { CustomerTransaction } from '../../../core/models/transaction.model';
 import { makeMoney } from '../../../core/mappers/money.mapper';
 import { Labels } from '../../constant/labels';
+import { LocalTimestampPipe } from '../../pipes/local-timestamp.pipe';
 import { MoneyPipe } from '../../pipes/money.pipe';
 import {
   mapPaymentMethodLabel,
@@ -19,7 +20,7 @@ import { DeployedPath } from '../../utils/deployed-path';
   selector: 'app-transaction-list-item',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MatButtonModule, MatIconModule, MoneyPipe, RouterLink],
+  imports: [LocalTimestampPipe, MatButtonModule, MatIconModule, MoneyPipe, RouterLink],
   template: `
     @if (transaction(); as t) {
       <div class="flex items-center gap-3 bg-slate-50 rounded-lg px-3 py-2">
@@ -39,14 +40,14 @@ import { DeployedPath } from '../../utils/deployed-path';
             @if (flow(); as f) {
               <span>{{ f.from }} → {{ f.to }} ·</span>
             }
-            <span>{{ t.recordedAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+            <span>{{ t.recordedAt | localTimestamp }}</span>
             @if (paymentMethodLabel(); as pm) {
               <span>· {{ pm }}</span>
             }
-            @if (rentalUrl(); as url) {
+            @if (rentalLink(); as link) {
               <span>·</span>
               <a
-                [href]="url"
+                [routerLink]="link"
                 class="text-emerald-700 font-medium inline-flex items-center gap-0.5 no-underline"
               >
                 {{ Labels.RentalPrefix }}{{ t.sourceId }}
@@ -113,13 +114,10 @@ export class TransactionListItemComponent {
     return method && method !== 'INTERNAL_TRANSFER' ? mapPaymentMethodLabel(method) : '';
   });
 
-  protected readonly rentalUrl = computed(() => {
+  protected readonly rentalLink = computed(() => {
     const t = this.transaction();
     if (!this.showRentalLink() || t.sourceType !== 'RENTAL' || !t.sourceId) return null;
-    return DeployedPath.fromBase(this.document.baseURI)
-      .withApp('operator')
-      .withRoute(`rentals/${t.sourceId}`)
-      .toString();
+    return ['/rentals', t.sourceId];
   });
 
   protected readonly customerUrl = computed(() => {

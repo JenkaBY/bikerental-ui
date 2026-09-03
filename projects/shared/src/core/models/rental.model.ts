@@ -10,7 +10,7 @@ export interface CustomerRentalSummary {
   readonly id: number;
   readonly status: string;
   readonly createdAt: Date;
-  readonly startedAt: Date;
+  readonly startedAt?: Date;
   readonly expectedReturnAt?: Date;
   readonly estimatedCost?: Money;
   readonly finalCost?: Money;

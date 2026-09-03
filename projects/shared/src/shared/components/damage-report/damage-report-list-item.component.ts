@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import type { DamageReportListItem } from '../../../core/models/damage-report.model';
 import { Labels } from '../../constant/labels';
+import { LocalTimestampPipe } from '../../pipes/local-timestamp.pipe';
 import { MoneyPipe } from '../../pipes/money.pipe';
 import { PenaltyStatusBadgeComponent } from '../penalty-status-badge/penalty-status-badge.component';
 
@@ -11,7 +11,7 @@ import { PenaltyStatusBadgeComponent } from '../penalty-status-badge/penalty-sta
   selector: 'app-damage-report-list-item',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MatIconModule, MoneyPipe, PenaltyStatusBadgeComponent, RouterLink],
+  imports: [LocalTimestampPipe, MatIconModule, MoneyPipe, PenaltyStatusBadgeComponent, RouterLink],
   template: `
     @if (report(); as r) {
       <a
@@ -24,7 +24,7 @@ import { PenaltyStatusBadgeComponent } from '../penalty-status-badge/penalty-sta
             >{{ Labels.DamageReportPrefix }}{{ r.id }}</span
           >
           <span class="text-xs text-slate-400 flex items-center gap-1 flex-wrap">
-            <span>{{ r.reportedAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+            <span>{{ r.reportedAt | localTimestamp }}</span>
             <span>·</span>
             <span class="truncate">{{ r.description }}</span>
           </span>

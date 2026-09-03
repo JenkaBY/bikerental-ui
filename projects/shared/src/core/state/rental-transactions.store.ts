@@ -77,6 +77,14 @@ export class RentalTransactionsStore {
     return err ? resolveErrorMessage(err) : null;
   });
 
+  readonly outstandingDebt = computed<Money | null>(() => {
+    if (!this.rentalStore.isDebt()) return null;
+    const owed = this.rentalStore.payableAmount() ?? this.rentalStore.finalCost();
+    if (!owed) return null;
+    const remaining = owed.amount - this.reserved().amount;
+    return remaining > 0 ? makeMoney(remaining, owed.currency) : null;
+  });
+
   reload(): void {
     this.resource.reload();
   }

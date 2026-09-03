@@ -10,6 +10,7 @@ import type {
 import type {
   Customer,
   EquipmentSearchItem,
+  Money,
   RentalEquipmentItem,
   RentalListItem,
   RentalPricingDraft,
@@ -77,20 +78,15 @@ export class RentalDashboardMapper {
     };
   }
 
-  static toDetailState(
-    r: RentalResponse,
-    customer: Customer | null,
-    equipmentBatch: EquipmentSearchItem[],
-  ): Partial<RentalDetailState> {
-    const isActive = r.status === 'ACTIVE';
-    const isDebt = r.status === 'DEBT';
-    const startedAt = r.startedAt ? new Date(r.startedAt) : null;
-    const { isOverdue, overdueMinutes } = this.calculateOverdue(
-      isActive,
-      startedAt,
-      r.plannedDurationMinutes,
-    );
+  private static resolveDebtAmount(r: RentalResponse): Money | undefined {
+    if (r.payableAmount !== undefined) return makeMoney(r.payableAmount);
+    return r.finalCost !== undefined ? makeMoney(r.finalCost) : undefined;
+  }
 
+  static toRentalEquipmentItems(
+    r: RentalResponse,
+    equipmentBatch: EquipmentSearchItem[],
+  ): RentalEquipmentItem[] {
     const equipmentMap = new Map<number, EquipmentSearchItem>(equipmentBatch.map((e) => [e.id, e]));
     const equipmentItems: RentalEquipmentItem[] = (r.equipmentItems ?? []).map(
       (item: EquipmentItemResponse) => {
@@ -123,6 +119,24 @@ export class RentalDashboardMapper {
       },
     );
 
+    return equipmentItems;
+  }
+
+  static toDetailState(
+    r: RentalResponse,
+    customer: Customer | null,
+    equipmentBatch: EquipmentSearchItem[],
+  ): Partial<RentalDetailState> {
+    const isActive = r.status === 'ACTIVE';
+    const isDebt = r.status === 'DEBT';
+    const startedAt = r.startedAt ? new Date(r.startedAt) : null;
+    const { isOverdue, overdueMinutes } = this.calculateOverdue(
+      isActive,
+      startedAt,
+      r.plannedDurationMinutes,
+    );
+
+    const equipmentItems = this.toRentalEquipmentItems(r, equipmentBatch);
     return {
       id: r.id,
       status: r.status,
@@ -136,10 +150,13 @@ export class RentalDashboardMapper {
       specialTariffId: r.specialTariffId,
       priceMode: r.specialPrice != null ? 'FIXED' : r.discountPercent != null ? 'DISCOUNT' : 'FULL',
       startedAt,
+      createdAt: r.createdAt ? new Date(r.createdAt) : undefined,
       expectedReturnAt: r.expectedReturnAt ? new Date(r.expectedReturnAt) : undefined,
+      actualReturnAt: r.actualReturnAt ? new Date(r.actualReturnAt) : undefined,
       paidDurationMinutes: r.actualDurationMinutes,
       finalCost: r.finalCost !== undefined ? makeMoney(r.finalCost) : undefined,
-      debtAmount: isDebt && r.finalCost !== undefined ? makeMoney(r.finalCost) : undefined,
+      payableAmount: r.payableAmount !== undefined ? makeMoney(r.payableAmount) : undefined,
+      debtAmount: isDebt ? this.resolveDebtAmount(r) : undefined,
       writtenOffAmount: r.writtenOffAmount ? makeMoney(r.writtenOffAmount) : undefined,
       isActive,
       isDebt,
