@@ -1,10 +1,12 @@
-import { DatePipe, DOCUMENT, Location } from '@angular/common';
+import { DOCUMENT, Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterLink } from '@angular/router';
 import { DamageReportDetailStore } from '../../../core/state/damage-report-detail.store';
 import { Labels } from '../../constant/labels';
+import { LocalTimestampPipe } from '../../pipes/local-timestamp.pipe';
 import { MoneyPipe } from '../../pipes/money.pipe';
 import { DeployedPath } from '../../utils/deployed-path';
 import { PageHeaderComponent } from '../page-header/page-header.component';
@@ -16,11 +18,12 @@ import { PenaltyStatusBadgeComponent } from '../penalty-status-badge/penalty-sta
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DamageReportDetailStore],
   imports: [
-    DatePipe,
+    LocalTimestampPipe,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MoneyPipe,
+    RouterLink,
     PageHeaderComponent,
     PenaltyStatusBadgeComponent,
   ],
@@ -43,16 +46,14 @@ import { PenaltyStatusBadgeComponent } from '../penalty-status-badge/penalty-sta
             <span class="text-lg font-bold text-slate-900"
               >{{ Labels.DamageReportPrefix }}{{ r.id }}</span
             >
-            <span class="text-sm text-slate-500">{{
-              r.reportedAt | date: 'dd.MM.yyyy HH:mm'
-            }}</span>
+            <span class="text-sm text-slate-500">{{ r.reportedAt | localTimestamp }}</span>
           </div>
 
           <div class="flex gap-2">
-            @if (rentalUrl(); as url) {
+            @if (rentalLink(); as link) {
               <a
                 mat-stroked-button
-                [href]="url"
+                [routerLink]="link"
                 class="flex-1 min-w-0"
                 [attr.aria-label]="Labels.DamageReportRentalLink"
                 [title]="Labels.DamageReportRentalLink"
@@ -140,14 +141,9 @@ export class DamageReportDetailComponent {
 
   private readonly reportId = computed(() => Number(this.id()));
 
-  protected readonly rentalUrl = computed(() => {
+  protected readonly rentalLink = computed(() => {
     const rentalId = this.store.report()?.rentalId;
-    return rentalId
-      ? DeployedPath.fromBase(this.document.baseURI)
-          .withApp('operator')
-          .withRoute(`rentals/${rentalId}`)
-          .toString()
-      : null;
+    return rentalId ? ['/rentals', rentalId] : null;
   });
 
   protected readonly customerUrl = computed(() => {

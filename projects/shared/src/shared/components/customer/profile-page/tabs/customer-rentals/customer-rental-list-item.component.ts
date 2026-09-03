@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { DatePipe, DOCUMENT } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import type {
   CustomerRentalSummary,
@@ -16,7 +17,14 @@ import { EquipmentBadgeComponent } from '../../../../equipment-badge/equipment-b
   selector: 'app-customer-rental-list-item',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MoneyPipe, MatButtonModule, MatIconModule, EquipmentBadgeComponent],
+  imports: [
+    DatePipe,
+    MoneyPipe,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    EquipmentBadgeComponent,
+  ],
   template: `
     @if (rental(); as r) {
       <div class="relative border border-slate-200 rounded-lg pl-4 pr-11 py-3 hover:bg-slate-50">
@@ -42,7 +50,7 @@ import { EquipmentBadgeComponent } from '../../../../equipment-badge/equipment-b
 
         <div class="mt-2 flex items-end justify-between gap-3">
           <div class="flex flex-wrap gap-1 min-w-0">
-            @for (e of r.equipment; track e.id) {
+            @for (e of r.equipment; track $index) {
               <app-equipment-badge [uid]="e.uid" [name]="e.name" />
             }
           </div>
@@ -63,7 +71,7 @@ import { EquipmentBadgeComponent } from '../../../../equipment-badge/equipment-b
 
         <a
           mat-icon-button
-          [href]="detailUrl()"
+          [routerLink]="detailLink()"
           class="!absolute top-1.5 right-1.5"
           [attr.aria-label]="detailAriaLabel()"
         >
@@ -86,12 +94,7 @@ export class CustomerRentalListItemComponent {
     () => mapRentalStatus(this.rental().status).badgeClasses,
   );
 
-  protected readonly detailUrl = computed(() =>
-    DeployedPath.fromBase(this.document.baseURI)
-      .withApp('operator')
-      .withRoute(`rentals/${this.rental().id}`)
-      .toString(),
-  );
+  protected readonly detailLink = computed(() => ['/rentals', this.rental().id]);
 
   protected readonly customerUrl = computed(() => {
     const c = this.customer();

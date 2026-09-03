@@ -1,4 +1,4 @@
-import { DatePipe, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import {
   DamageReportStore,
   DeployedPath,
   Labels,
+  LocalTimestampPipe,
   MoneyPipe,
   parseDate,
   PenaltyStatusBadgeComponent,
@@ -30,7 +31,7 @@ const PAGE_SIZE = 20;
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DamageReportStore],
   imports: [
-    DatePipe,
+    LocalTimestampPipe,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -73,15 +74,15 @@ const PAGE_SIZE = 20;
             <ng-container matColumnDef="reportedAt">
               <th mat-header-cell *matHeaderCellDef>{{ Labels.DamageReportColumnReportedAt }}</th>
               <td mat-cell *matCellDef="let row">
-                {{ row.reportedAt | date: 'dd.MM.yyyy HH:mm' }}
+                {{ row.reportedAt | localTimestamp }}
               </td>
             </ng-container>
 
             <ng-container matColumnDef="rental">
               <th mat-header-cell *matHeaderCellDef>{{ Labels.DamageReportColumnRental }}</th>
               <td mat-cell *matCellDef="let row">
-                @if (rentalUrl(row.rentalId); as url) {
-                  <a [href]="url" class="text-emerald-700 font-medium no-underline">
+                @if (rentalLink(row.rentalId); as link) {
+                  <a [routerLink]="link" class="text-emerald-700 font-medium no-underline">
                     #{{ row.rentalId }}
                   </a>
                 } @else {
@@ -180,13 +181,8 @@ export class DamageReportHistoryComponent {
 
   private readonly params = toSignal(this.route.queryParams, { initialValue: {} as Params });
 
-  protected rentalUrl(rentalId: number | undefined): string | null {
-    return rentalId
-      ? DeployedPath.fromBase(this.document.baseURI)
-          .withApp('operator')
-          .withRoute(`rentals/${rentalId}`)
-          .toString()
-      : null;
+  protected rentalLink(rentalId: number | undefined): unknown[] | null {
+    return rentalId ? ['/rentals', rentalId] : null;
   }
 
   protected customerUrl(customerId: string): string {
