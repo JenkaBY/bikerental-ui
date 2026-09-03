@@ -30,7 +30,9 @@ import {
   PageHeaderComponent,
   RENTAL_STORE_TOKEN,
   RentalCostCalculationStore,
+  RentalAgreementDownloadComponent,
   RentalDetailRefreshFacade,
+  RentalPeriodSectionComponent,
   RentalSignatureStore,
   RentalStore,
   RentalTransactionsStore,
@@ -41,7 +43,6 @@ import { RentalCustomerPanelComponent } from '../rental-create/step2/rental-cust
 import { RentalReservedPanelComponent } from '../rental-create/step2/rental-reserved-panel.component';
 import { RentalActionButtonsComponent } from './rental-action-buttons.component';
 import { ReturnEquipmentScreenComponent } from './return-equipment-screen/return-equipment-screen.component';
-import { RentalPeriodSectionComponent } from './rental-period-section.component';
 import { RentalCostSectionComponent } from './rental-cost-section.component';
 import { RentalEquipmentSectionComponent } from './rental-equipment-section.component';
 
@@ -71,6 +72,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
     RentalReservedPanelComponent,
     RentalActionButtonsComponent,
     ReturnEquipmentScreenComponent,
+    RentalAgreementDownloadComponent,
     RentalPeriodSectionComponent,
     RentalCostSectionComponent,
     RentalEquipmentSectionComponent,
@@ -99,21 +101,7 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
                 <mat-icon>warning</mat-icon>
               </button>
             }
-            @if (signatureStore.summary()) {
-              <button
-                mat-icon-button
-                [disabled]="signatureStore.isDownloading()"
-                (click)="signatureStore.downloadPdf(rentalId())"
-                [attr.aria-label]="Labels.AgreementPdf"
-                [title]="Labels.AgreementPdf"
-              >
-                @if (signatureStore.isDownloading()) {
-                  <mat-spinner diameter="18" />
-                } @else {
-                  <mat-icon>picture_as_pdf</mat-icon>
-                }
-              </button>
-            }
+            <app-rental-agreement-download [rentalId]="rentalId()" />
             <span [class]="statusBadgeClasses()">{{ statusLabel() }}</span>
           </div>
         </app-page-header>

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import type { CustomerRef } from '../../../core/models/customer.model';
 import type { Money, TransactionDetails } from '../../../core/models/transaction.model';
 import { Labels } from '../../constant/labels';
+import { LocalTimestampPipe } from '../../pipes/local-timestamp.pipe';
 import { MoneyPipe } from '../../pipes/money.pipe';
 import { mapPaymentMethodLabel } from '../../transaction.meta';
 import { TransactionEntriesTableComponent } from './transaction-entries-table.component';
@@ -12,7 +12,12 @@ import { TransactionListItemComponent } from './transaction-list-item.component'
   selector: 'app-transaction-details-view',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MoneyPipe, TransactionEntriesTableComponent, TransactionListItemComponent],
+  imports: [
+    LocalTimestampPipe,
+    MoneyPipe,
+    TransactionEntriesTableComponent,
+    TransactionListItemComponent,
+  ],
   template: `
     @if (details(); as d) {
       <div class="flex flex-col gap-4">
@@ -25,7 +30,7 @@ import { TransactionListItemComponent } from './transaction-list-item.component'
 
         <dl class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
           <dt class="text-slate-400">{{ Labels.TransactionDateLabel }}</dt>
-          <dd>{{ d.recordedAt | date: 'dd.MM.yyyy HH:mm' }}</dd>
+          <dd>{{ d.recordedAt | localTimestamp }}</dd>
 
           <dt class="text-slate-400">{{ Labels.PaymentMethod }}</dt>
           <dd>{{ paymentMethodLabel() }}</dd>

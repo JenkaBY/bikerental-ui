@@ -18,11 +18,11 @@ import {
   NotificationService,
   RentalCostCalculationStore,
   RentalDetailRefreshFacade,
+  RentalPriceModeBadgeComponent,
   RentalStore,
   RentalTransactionsStore,
 } from '@bikerental/shared';
 import { ChangePriceSheetComponent } from './change-price-sheet.component';
-import { RentalPriceModeBadgeComponent } from './rental-price-mode-badge.component';
 
 @Component({
   selector: 'app-rental-cost-section',

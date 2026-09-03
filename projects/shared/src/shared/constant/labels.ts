@@ -352,7 +352,7 @@ export class Labels {
   static readonly WriteOffDebtDialogMessage = $localize`The outstanding shortfall will be written off and the rental will be closed. This cannot be undone.`;
   static readonly WriteOffDebtConfirmButton = $localize`Write off`;
   static readonly WriteOffDebtSuccess = $localize`Debt written off`;
-  static readonly WrittenOffBadge = $localize`written off`;
+  static readonly WrittenOffBadge = $localize`Written off`;
 
   static readonly ReturnDialogTitle = $localize`Confirm equipment return`;
   static readonly ItemsToReturn = $localize`Items to return`;
@@ -688,4 +688,28 @@ export class Labels {
   static readonly AnalyticsCustomerBreakdownEmptyState = $localize`This customer had no equipment activity in the selected range`;
   static readonly AnalyticsCustomerBreakdownNote = $localize`Written-off amounts and wallet movement have no equipment dimension and are not shown here.`;
   static readonly AnalyticsUnknownCustomer = $localize`Unknown customer`;
+
+  static readonly RentalTitle = $localize`Rental`;
+  static readonly OpenRental = $localize`Open rental`;
+  static readonly OpenTransactionsList = $localize`Open transactions list`;
+  static readonly OpenDamageReportsList = $localize`Open damage reports list`;
+  static readonly Cost = $localize`Cost`;
+  static readonly RentalDetailsTitle = $localize`Rental details`;
+  static readonly RentalDetailsEmptyState = $localize`Select a rental from the list to see its details`;
+  static readonly RentalDetailsLoadError = $localize`Failed to load rental details`;
+  static readonly RentalDetailsPanelLabel = $localize`Rental details panel`;
+  static readonly RentalOutstandingDebt = $localize`Outstanding debt`;
+  static readonly RentalColumnId = $localize`Id`;
+  static readonly RentalColumnCustomer = $localize`Customer`;
+  static readonly RentalOpenCustomer = $localize`Open customer profile`;
+  static readonly RentalTableLabel = $localize`Rentals table`;
+  static readonly RentalSortBy = $localize`Sort by`;
+  static readonly RentalTransactionsTitle = $localize`Transactions`;
+  static readonly RentalTransactionsEmpty = $localize`No transactions for this rental`;
+  static readonly RentalDamageReportsTitle = $localize`Damage and penalties`;
+  static readonly RentalDamageReportsEmpty = $localize`No damage reports for this rental`;
+  static readonly NoData = $localize`No data`;
+  static readonly ShowAll = $localize`Show all`;
+  static readonly ShowLess = $localize`Show less`;
+  static readonly RentalPeriodLabel = $localize`Rental period`;
 }

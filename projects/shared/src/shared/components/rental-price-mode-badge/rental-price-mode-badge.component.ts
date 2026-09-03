@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Labels } from '@bikerental/shared';
-import type { RentalPriceMode } from '@bikerental/shared';
+import { Labels } from '../../constant/labels';
+import type { RentalPriceMode } from '../../../core/models/rental-create.model';
 
 const PILL_BASE = 'inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-medium';
 const CHEVRON_CLASS = '!text-base !w-4 !h-4 leading-none';
