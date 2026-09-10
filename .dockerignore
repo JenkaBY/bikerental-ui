@@ -1,0 +1,5 @@
+# Deny-all allowlist: the image carries build output and its routing config, nothing else. Source,
+# node_modules and every dotfile stay out of the build context, so nothing can be baked in by accident.
+*
+!staging
+!docker

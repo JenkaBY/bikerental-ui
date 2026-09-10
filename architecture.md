@@ -6,7 +6,9 @@
 - `gateway` is the landing shell (port 4200 in dev); `admin` is desktop-first CRUD management (port 4201); `operator` is mobile-first rental flow (port 4202)
 - All three SPAs communicate with one external REST backend (`http://localhost:8080`) via a shared auto-generated OpenAPI client in `projects/shared/`
 - All state is managed with Angular Signals; no NgRx, no NgModules
-- Deployment model: three static SPA bundles deployed to GitHub Pages via GitHub Actions CI/CD (`/`, `/admin/`, `/operator/`)
+- Deployment model: two targets from one commit — GitHub Pages (all three SPAs, repo-name prefix) and a
+  container image published to GHCR that carries `admin` + `operator` and is run on the API stack's host,
+  served at the root of the same public name as the API, which is split by path rather than by host
 
 ## Technology Stack
 
@@ -471,9 +473,30 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
 
 ## Deployment Topology
 
-- DEPLOYMENT_MODEL: Multi-Application (three independent static SPA bundles deployed together)
-- CONTAINER_RUNTIME: NONE
+- DEPLOYMENT_MODEL: Multi-Application, two targets built from one commit by a matrix job
+  - TARGET `pages`: gateway + admin + operator, base href prefixed with the repository name, static
+    redirect files and a root `404.html` supply routing; cross-origin to the API
+  - TARGET `pi`: all three apps, base href unprefixed, routing supplied by a generated Caddy config
+    inside the image; SAME ORIGIN as the API, so no CORS preflight on any call and none on the OIDC
+    discovery document or the token exchange
+- APP_URL_SHAPES: two, and the difference is structural. CONTAINER_APPS (admin, operator) live under a
+  segment of their own — /admin/en/. ROOT_APP (gateway) is built with a base href of `/`, so its
+  locales ARE the top-level URLs — /en/ — and it is the index page. Both are declared in
+  `scripts/apps.mjs` and generate differently shaped routing rules
+- PUBLIC_NAME: one, split by path by the API stack's router — `@published` reaches the API, everything
+  else is forwarded to this container. The site root redirects to the index application; that decision
+  lives in the container because the router does not know the application list
+- CONTAINER_RUNTIME: Docker — `docker/Dockerfile` (`caddy:2-alpine` + one COPY layer per application),
+  published to `ghcr.io/jenkaby/bike-rental-ui:sha-<7hex>` for `linux/arm64`
+- CONTAINER_ROUTING: `docker/Caddyfile.generated`, written by `scripts/gen-ui-config.mjs` from the
+  assembled `staging/` tree. Two regex alternations (applications, locales) carry the whole list; an
+  unbuilt locale redirects to `en` preserving the remaining path; `/healthz` is the one
+  application-independent probe
+- APPLICATION_MANIFEST: `scripts/apps.mjs` — `CONTAINER_APPS`, `DEFAULT_LOCALE_SEGMENT`
 - ORCHESTRATION: GitHub Actions CI/CD (`.github/workflows/build-and-deploy.yml`)
+- RELEASE_HANDOFF: this repository is public and therefore cannot host the self-hosted runner that
+  reaches the production host. The `notify-server` job POSTs a `ui-image-published` repository_dispatch to
+  the private `JenkaBY/bike-rental` repository, whose `deploy-ui.yml` runs `app/deploy-ui.sh` there
 - SERVICES_AND_PORTS:
   - `gateway` dev server: port 4200 (Angular CLI `ng serve --project=gateway --proxy-config proxy.conf.json`)
   - `admin` dev server: port 4201 (Angular CLI `ng serve --project=admin`)
@@ -486,7 +509,9 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
 - CONFIG_REFS:
   - `angular.json` — Angular workspace and build configuration for all four projects
   - `projects/shared/src/environments/environment.prod.ts` — production environment overrides
-  - `.github/workflows/build-and-deploy.yml` — CI/CD pipeline (quality → test → build → deploy)
+  - `.github/workflows/build-and-deploy.yml` — CI/CD pipeline (quality → test → build matrix → CI gate →
+    deploy to Pages, publish image, dispatch to the production host)
+  - `docker/Dockerfile`, `scripts/apps.mjs`, `scripts/gen-ui-config.mjs` — the container target
 
 ## Assumptions
 

@@ -54,9 +54,25 @@ The project uses GitHub Actions for continuous integration and deployment:
 
 - **Workflow**: `.github/workflows/build-and-deploy.yml`
 - **Trigger**: Push/PR to `main`/`master` branch or manual dispatch
-- **Pipeline**: Lint & Format → Unit Tests → Build → Deploy to GitHub Pages
+- **Pipeline**: Lint & Format → Unit Tests → Build (matrix: `pages`, `pi`) → `CI` gate → Deploy
 - **Gate job**: `CI` — aggregates all check results; fails if any job failed
-- **SPA routing**: a single path-aware `404.html` at the site root recovers deep links (see below)
+- **SPA routing**: a single path-aware `404.html` at the site root recovers deep links on Pages (see below)
+
+There are **two deployment targets**, built from the same commit by one matrix job:
+
+|               | `pages`                                 | `pi`                                                 |
+|---------------|-----------------------------------------|------------------------------------------------------|
+| Where         | GitHub Pages — the public demo          | The production host, behind the API stack's router   |
+| Apps          | gateway, admin, operator                | gateway, admin, operator (`scripts/apps.mjs`)        |
+| Base href     | `/<repo>/`, `/<repo>/admin/`, …         | `/admin/`, `/operator/`                              |
+| Origin vs API | cross-origin (needs CORS)               | **same origin** — no preflights, no CORS on login     |
+| Routing       | static redirect files + root `404.html` | generated Caddy config in the image                  |
+| Delivered by  | `actions/deploy-pages`                  | image to GHCR, then a dispatch to the API repository |
+
+The gateway is the index page on both targets: it exists because something has to answer the bare
+domain, and a page that lets a person pick beats a blind redirect into one of the two applications.
+On Pages it doubles as the workaround for static hosting having no router to pick an
+application. The container has one, so `pi` does not build it.
 
 ### Deployed layout & routing
 
@@ -97,6 +113,49 @@ Two build steps plus a checked-in restore script make this work on static hostin
   > Because it is checked in rather than generated, a change to the redirect contract must be applied to
   > all three files.
 
+### Production container (the `pi` target)
+
+The production host serves everything from **one name**, split by path. The Caddy router in the API
+stack publishes the API paths explicitly and forwards everything else to this container. That router
+never learns which applications or languages exist — the container owns that list, which is why even
+the site-root redirect lives here and not there.
+
+```
+https://bike-rental.<host>/api/…           → the API (the router publishes these paths explicitly)
+https://bike-rental.<host>/                → 302 /en/       (the gateway, ROOT_APP in apps.mjs)
+https://bike-rental.<host>/{en,ru}/        → gateway — the index page, picks admin or operator
+https://bike-rental.<host>/de/x            → 302 /en/x      (unbuilt locale falls back, path kept)
+https://bike-rental.<host>/healthz         → the container is up
+https://bike-rental.<host>/admin           → 302 /admin/en/
+https://bike-rental.<host>/admin/{en,ru}/  → admin SPA (deep links resolve to that locale's shell)
+https://bike-rental.<host>/admin/de/x      → 302 /admin/en/x  (unbuilt locale falls back, path kept)
+https://bike-rental.<host>/wat             → 404
+```
+
+> **One origin is the point, not a coincidence.** Every API call carries an `Authorization` header,
+> which is not CORS-safelisted — so a second origin would cost a preflight `OPTIONS` per endpoint per
+> max-age window, each a full round trip out through the edge router and back. Same origin removes them,
+> and removes the need for that router to preserve the `Origin` header, which was the one setting whose
+> failure looked like a broken login rather than a routing fault.
+
+Three files make that up, and none of them lists a locale by hand:
+
+- **`scripts/apps.mjs`** — the application manifest. `CONTAINER_APPS` is the one list; adding an
+  application means adding it here, adding the project to `angular.json`, and adding one `COPY` line to
+  `docker/Dockerfile`.
+- **`scripts/gen-ui-config.mjs`** (`npm run gen:ui-config`) — reads the assembled `staging/` tree and
+  writes `docker/Caddyfile.generated`. The locales come from **which directories were actually built**,
+  so adding a language (`angular.json` + `LOCALE_SEGMENTS` in `deployed-path.ts`) grows an alternation
+  rather than adding a rule. It fails the build if a locale segment could not appear safely in a regex,
+  if a locale shipped without an `index.html`, if the applications disagree on their locale sets, or if
+  the fallback locale (`en`) is missing for any application.
+- **`docker/Dockerfile`** — copies each application as **its own layer**, so a release that changed only
+  one of them re-downloads only that one over the production host's residential uplink.
+
+Deployment is indirect on purpose: this repository is public, and a self-hosted runner must not be
+attached to a public repository, so the `notify-server` job asks the private API repository to run the
+release. That needs a `PI_DEPLOY_TOKEN` secret here.
+
 ### OIDC redirect URIs (admin & operator auth)
 
 Both the admin and operator SPAs compute their OAuth `redirect_uri` from `document.baseURI` (the
@@ -107,19 +166,25 @@ the same URL per app, and the **backend OAuth client must register it for each c
 runs in. Admin and operator are registered as separate OAuth clients (`bike-rental-admin` and
 `bike-rental-operator`):
 
-| App | Context | Mount | `redirect_uri` / `post_logout_redirect_uri` to register |
-|-----|---------|-------|------------------------------------------------------------|
-| admin | `ng serve admin` (direct) | `:4201/admin/` | `http://localhost:4201/admin/` |
-| admin | Gateway proxy | `:4200/admin/` | `http://localhost:4200/admin/` |
-| admin | GitHub Pages (per locale) | `…/admin/{en,ru}/` | `https://<user>.github.io/<repo>/admin/{en,ru}/` |
-| operator | `ng serve operator` (direct) | `:4202/operator/` | `http://localhost:4202/operator/` |
-| operator | Gateway proxy | `:4200/operator/` | `http://localhost:4200/operator/` |
-| operator | GitHub Pages (per locale) | `…/operator/{en,ru}/` | `https://<user>.github.io/<repo>/operator/{en,ru}/` |
+| App      | Context                      | Mount                 | `redirect_uri` / `post_logout_redirect_uri` to register |
+|----------|------------------------------|-----------------------|---------------------------------------------------------|
+| admin    | `ng serve admin` (direct)    | `:4201/admin/`        | `http://localhost:4201/admin/`                          |
+| admin    | Gateway proxy                | `:4200/admin/`        | `http://localhost:4200/admin/`                          |
+| admin    | GitHub Pages (per locale)    | `…/admin/{en,ru}/`    | `https://<user>.github.io/<repo>/admin/{en,ru}/`        |
+| admin    | Production container         | `/admin/{en,ru}/`     | `https://bike-rental.<host>/admin/{en,ru}/`             |
+| operator | `ng serve operator` (direct) | `:4202/operator/`     | `http://localhost:4202/operator/`                       |
+| operator | Gateway proxy                | `:4200/operator/`     | `http://localhost:4200/operator/`                       |
+| operator | GitHub Pages (per locale)    | `…/operator/{en,ru}/` | `https://<user>.github.io/<repo>/operator/{en,ru}/`     |
+| operator | Production container         | `/operator/{en,ru}/`  | `https://bike-rental.<host>/operator/{en,ru}/`          |
+
+> ⚠️ **Adding a language extends this list.** The `redirect_uri` carries the locale segment because it is
+> `document.baseURI`, so a new locale needs its own entry in the backend client registration
+> (`*_SPA_REDIRECT_URIS` / `*_SPA_POST_LOGOUT_URIS` on the production host). It is the only place a new
+> language reaches outside this repository, and the failure mode is an unknown-redirect error at login.
 
 Add the corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be
 reachable over **public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is
-blocked as mixed content). Set the public API base via the `BIKE_RENTAL_API` repository variable
-(injected into `environment.prod.ts` by the **Inject Bike Rental API host** step).
+blocked as mixed content). Set the public API base via the `BIKE_RENTAL_API` repository variable (injected into `environment.prod.ts` by the **Inject Bike Rental API host** step).
 
 ### Blocking Merges on Failed Build
 
@@ -180,8 +245,7 @@ first-party service worker (`@angular/service-worker`).
 
   A mismatch between the two is the signature of a client pinned to a stale build.
 - **Kill switch (fleet-wide recovery).** If a deploy ever pins clients to a broken or stale build and no
-  ordinary fix can reach them, run the **Build and Deploy** workflow manually on `master` with
-  **`disable_service_worker: true`**. This ships Angular's `safety-worker.js` in place of
+  ordinary fix can reach them, run the **Build and Deploy** workflow manually on `master` with **`disable_service_worker: true`**. This ships Angular's `safety-worker.js` in place of
   `ngsw-worker.js`, which unregisters the service worker and deletes every `ngsw:` cache on each client
   that loads the app. Confirm clients recovered, then re-run the workflow normally to restore the PWA.
 - **i18n:** the build is per-locale, so each locale folder (`dist/operator/browser/{en,ru}/`) gets its own
