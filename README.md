@@ -55,6 +55,8 @@ The project uses GitHub Actions for continuous integration and deployment:
 - **Workflow**: `.github/workflows/build-and-deploy.yml`
 - **Trigger**: Push/PR to `main`/`master` branch or manual dispatch
 - **Pipeline**: Lint & Format → Unit Tests → Build (matrix: `pages`, `pi`) → `CI` gate → Deploy
+- **Environments**: each matrix leg builds against its own API — `pages` against the test instance,
+  `pi` against production (see the table below). Both deploy on every merge to `master`.
 - **Gate job**: `CI` — aggregates all check results; fails if any job failed
 - **SPA routing**: a single path-aware `404.html` at the site root recovers deep links on Pages (see below)
 
@@ -63,6 +65,10 @@ There are **two deployment targets**, built from the same commit by one matrix j
 |               | `pages`                                 | `pi`                                                 |
 |---------------|-----------------------------------------|------------------------------------------------------|
 | Where         | GitHub Pages — the public demo          | The production host, behind the API stack's router   |
+| API           | the test instance on Render             | the production API on the Raspberry Pi               |
+| API base from | `vars.BIKE_RENTAL_TEST_API`             | `vars.BIKE_RENTAL_API`                               |
+| Built with    | `--configuration production,staging`     | `--configuration production`                         |
+| Environment   | `environment.staging.ts`                | `environment.prod.ts`                                |
 | Apps          | gateway, admin, operator                | gateway, admin, operator (`scripts/apps.mjs`)        |
 | Base href     | `/<repo>/`, `/<repo>/admin/`, …         | `/admin/`, `/operator/`                              |
 | Origin vs API | cross-origin (needs CORS)               | **same origin** — no preflights, no CORS on login     |
@@ -184,7 +190,17 @@ runs in. Admin and operator are registered as separate OAuth clients (`bike-rent
 
 Add the corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be
 reachable over **public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is
-blocked as mixed content). Set the public API base via the `BIKE_RENTAL_API` repository variable (injected into `environment.prod.ts` by the **Inject Bike Rental API host** step).
+blocked as mixed content).
+
+Each target's API base comes from its own repository variable, injected into that target's
+environment file by the **Inject Bike Rental API host** step (the step fails the build if the
+variable is unset, rather than shipping a client that can neither call the API nor log in):
+
+| Target  | Repository variable      | Injected into            |
+|---------|--------------------------|--------------------------|
+| `pages` | `BIKE_RENTAL_TEST_API`   | `environment.staging.ts` |
+| `pi`    | `BIKE_RENTAL_API`        | `environment.prod.ts`    |
+
 
 ### Blocking Merges on Failed Build
 

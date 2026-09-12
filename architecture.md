@@ -324,7 +324,7 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
 
 - PATH: `projects/shared/src/environments/`
   ROLE: Config
-  PURPOSE: `environment.ts` / `environment.prod.ts` — `apiUrl`, `healthPollIntervalMs`, `defaultLocale`, `brand`
+  PURPOSE: `environment.ts` / `environment.prod.ts` / `environment.staging.ts` / `environment.lan.ts` — `apiUrl`, `healthPollIntervalMs`, `defaultLocale`, `brand`
 
 - PATH: `projects/shared/src/locale/`
   ROLE: Config
@@ -508,7 +508,8 @@ CONFIG_REF: `.github/workflows/build-and-deploy.yml`
   - operator: `https://jenkaby.github.io/bike-rental/operator/` (baseHref: `/operator/`)
 - CONFIG_REFS:
   - `angular.json` — Angular workspace and build configuration for all four projects
-  - `projects/shared/src/environments/environment.prod.ts` — production environment overrides
+  - `projects/shared/src/environments/environment.prod.ts` — production environment overrides (the `pi` target, `vars.BIKE_RENTAL_API`)
+  - `projects/shared/src/environments/environment.staging.ts` — test/demo environment overrides (the `pages` target, `vars.BIKE_RENTAL_TEST_API`; built as `--configuration production,staging`)
   - `.github/workflows/build-and-deploy.yml` — CI/CD pipeline (quality → test → build matrix → CI gate →
     deploy to Pages, publish image, dispatch to the production host)
   - `docker/Dockerfile`, `scripts/apps.mjs`, `scripts/gen-ui-config.mjs` — the container target
