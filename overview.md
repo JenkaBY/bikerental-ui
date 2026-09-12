@@ -59,7 +59,7 @@
 
 - PATH: `projects/shared/src/environments/`
   PURPOSE: Environment-specific configuration values shared by all three apps
-  ENTRY_FILES: `environment.ts`, `environment.prod.ts`
+  ENTRY_FILES: `environment.ts`, `environment.prod.ts`, `environment.staging.ts`, `environment.lan.ts`
 
 - PATH: `projects/shared/config/`
   PURPOSE: ng-openapi code-generation configuration
@@ -1534,7 +1534,7 @@ All stores and services (`EquipmentTypeStore`, `EquipmentStore`, `TariffStore`, 
 - SOURCE_TYPE: config file
   KEYS: `production`, `apiUrl`, `healthPollIntervalMs`, `defaultLocale`, `brand`
   SENSITIVE: NO
-  LOCATION: `projects/shared/src/environments/environment.ts` (development), `projects/shared/src/environments/environment.prod.ts` (production); consumed by all three apps
+  LOCATION: `projects/shared/src/environments/environment.ts` (development), `projects/shared/src/environments/environment.prod.ts` (production / `pi`), `projects/shared/src/environments/environment.staging.ts` (test instance / GitHub Pages), `projects/shared/src/environments/environment.lan.ts` (LAN); consumed by all three apps
 
 - SOURCE_TYPE: environment variable (CI/CD)
   KEYS: `GITHUB_TOKEN` (implicit via GitHub Actions), deployment token for GitHub Pages

@@ -144,8 +144,11 @@ jobs:
   #           base hrefs carry no prefix. The redirect files Pages needs are not written here —
   #           scripts/gen-ui-config.mjs turns those same rules into routing config instead.
   #
-  # The two differ in base href and in which of the Pages workarounds run. Nothing else, deliberately:
-  # a difference in build flags between the demo and production would be found in production.
+  # The two differ in the API they are built against, in base href, and in which of the Pages
+  # workarounds run — everything per-target is declared in the matrix below. Build FLAGS are
+  # deliberately not among the differences: the staging configuration carries nothing but the
+  # environment-file swap and composes onto production, so the demo cannot drift from the production
+  # build — a difference in build flags between the demo and production would be found in production.
   build:
     name: Build (${{ matrix.target }})
     runs-on: ubuntu-latest
@@ -154,7 +157,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [ pages, pi ]
+        include:
+          - target: pages
+            configuration: production,staging
+            env_file: projects/shared/src/environments/environment.staging.ts
+            api_url: ${{ vars.BIKE_RENTAL_TEST_API }}
+          - target: pi
+            configuration: production
+            env_file: projects/shared/src/environments/environment.prod.ts
+            api_url: ${{ vars.BIKE_RENTAL_API }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -172,11 +183,13 @@ jobs:
 
       - name: Inject Bike Rental API host into all apps
         env:
-          BIKE_RENTAL_API: ${{ vars.BIKE_RENTAL_API }}
-          BIKE_TIME_TRAVEL_ENABLED: ${{ vars.BIKE_TIME_TRAVEL_ENABLED }}
+          API_URL: ${{ matrix.api_url }}
         run: |
-          sed -i "s|BIKE_API_PLACEHOLDER|${BIKE_RENTAL_API}|g" projects/shared/src/environments/environment.prod.ts
-          sed -i "s|BIKE_TIME_TRAVEL_PLACEHOLDER|${BIKE_TIME_TRAVEL_ENABLED}|g" projects/shared/src/environments/environment.prod.ts
+          if [ -z "${API_URL}" ]; then
+            echo "::error::No API base URL for target ${{ matrix.target }} — set the repository variable (pages: BIKE_RENTAL_TEST_API, pi: BIKE_RENTAL_API)."
+            exit 1
+          fi
+          sed -i "s|BIKE_API_PLACEHOLDER|${API_URL}|g" "${{ matrix.env_file }}"
 
       # Stamps the deployed commit into two places, so "which version is this
       # client actually running?" is answerable without guesswork:
@@ -190,12 +203,13 @@ jobs:
         run: |
           VERSION="${GITHUB_SHA:0:7}"
           BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          sed -i "s|BIKE_VERSION_PLACEHOLDER|${VERSION}|g" projects/shared/src/environments/environment.prod.ts
+          sed -i "s|BIKE_VERSION_PLACEHOLDER|${VERSION}|g" "${{ matrix.env_file }}"
           sed -i "s|BIKE_VERSION_PLACEHOLDER|${VERSION}|g" projects/operator/ngsw-config.json
           sed -i "s|BIKE_BUILD_TIME_PLACEHOLDER|${BUILD_TIME}|g" projects/operator/ngsw-config.json
           echo "Stamped version ${VERSION} (${BUILD_TIME})"
 
-      # The one difference between the targets that every build step reads.
+      # The other per-target value every build step reads. It is derived rather than declared in the
+      # matrix because it carries the repository name, which only the github context knows.
       - name: Resolve base href prefix
         id: href
         run: |
@@ -209,13 +223,13 @@ jobs:
       # index page, so its locales ARE the top-level URLs. Where the two targets differ is only where
       # that tree is put — see the assembly step.
       - name: Build gateway
-        run: npx ng build gateway --configuration production --base-href ${{ steps.href.outputs.prefix }}/
+        run: npx ng build gateway --configuration ${{ matrix.configuration }} --base-href ${{ steps.href.outputs.prefix }}/
 
       - name: Build admin
-        run: npx ng build admin --configuration production --base-href ${{ steps.href.outputs.prefix }}/admin/
+        run: npx ng build admin --configuration ${{ matrix.configuration }} --base-href ${{ steps.href.outputs.prefix }}/admin/
 
       - name: Build operator
-        run: npx ng build operator --configuration production --base-href ${{ steps.href.outputs.prefix }}/operator/
+        run: npx ng build operator --configuration ${{ matrix.configuration }} --base-href ${{ steps.href.outputs.prefix }}/operator/
 
       # THE ONE PLACE THE TWO TARGETS LAY OUT THE SAME BUILD DIFFERENTLY, and the reason is the gateway.
       # Its locales are addressed as top-level URLs (/en/, /ru/) in both, but Pages serves files straight
@@ -506,10 +520,6 @@ jobs:
             echo "Deploy it by hand: run 'Deploy UI to production' in JenkaBY/bike-rental with version ${TAG}."
             exit 1
           fi
-          # PIN THE API VERSION, and keep it current. 2022-11-28 was not deprecated, but it is the
-          # older of the two GitHub supports, and it is also what an unversioned request falls back to
-          # — so omitting the header would silently ride the old version rather than the new one. Ask
-          # the API itself which versions it accepts by sending a bogus one; it answers with the list.
           curl -fsS -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${DISPATCH_TOKEN}" \
