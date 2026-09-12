@@ -64,6 +64,14 @@
                 }
               ]
             },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.staging.ts"
+                }
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -205,6 +213,14 @@
                 {
                   "replace": "projects/shared/src/environments/environment.ts",
                   "with": "projects/shared/src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.staging.ts"
                 }
               ]
             },
@@ -367,6 +383,14 @@
                 {
                   "replace": "projects/shared/src/environments/environment.ts",
                   "with": "projects/shared/src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/shared/src/environments/environment.ts",
+                  "with": "projects/shared/src/environments/environment.staging.ts"
                 }
               ]
             },
