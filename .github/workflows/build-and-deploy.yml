@@ -520,10 +520,6 @@ jobs:
             echo "Deploy it by hand: run 'Deploy UI to production' in JenkaBY/bike-rental with version ${TAG}."
             exit 1
           fi
-          # PIN THE API VERSION, and keep it current. 2022-11-28 was not deprecated, but it is the
-          # older of the two GitHub supports, and it is also what an unversioned request falls back to
-          # — so omitting the header would silently ride the old version rather than the new one. Ask
-          # the API itself which versions it accepts by sending a bogus one; it answers with the list.
           curl -fsS -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${DISPATCH_TOKEN}" \
