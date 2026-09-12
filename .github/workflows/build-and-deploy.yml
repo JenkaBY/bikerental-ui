@@ -1,4 +1,4 @@
-name: Build and Deploy to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
@@ -16,7 +16,7 @@ env:
   PROJECT_NAME: bikerental-ui
 
 concurrency:
-  group: pages-${{ github.ref }}
+  group: deploy-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -29,12 +29,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -61,12 +61,12 @@ jobs:
       checks: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -128,26 +128,41 @@ jobs:
           json-final-path: coverage/shared/coverage-final.json
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-report
           path: coverage/
           retention-days: 30
 
+  # TWO DEPLOYMENT TARGETS, ONE BUILD DEFINITION.
+  #
+  #   pages — GitHub Pages. Served from a repository-name prefix, so every base href carries it, and
+  #           the gateway ships as the application chooser. Pages serves static files only, so the
+  #           locale redirects and the SPA deep-link recovery are files this job writes by hand.
+  #   pi    — the production host. Served at the domain root behind the API stack's router, so the
+  #           base hrefs carry no prefix. The redirect files Pages needs are not written here —
+  #           scripts/gen-ui-config.mjs turns those same rules into routing config instead.
+  #
+  # The two differ in base href and in which of the Pages workarounds run. Nothing else, deliberately:
+  # a difference in build flags between the demo and production would be found in production.
   build:
-    name: Build Angular Application
+    name: Build (${{ matrix.target }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [ quality, test ]
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ pages, pi ]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -170,7 +185,7 @@ jobs:
       #    worker is serving a stale build, which is exactly when it matters.
       #  - ngsw.json appData describes the manifest, so the deployed version can
       #    be read straight off the live site:
-      #      curl -s https://<pages-host>/<repo>/operator/en/ngsw.json | jq .appData
+      #      curl -s https://<host>/operator/en/ngsw.json | jq .appData
       - name: Stamp build version
         run: |
           VERSION="${GITHUB_SHA:0:7}"
@@ -180,23 +195,48 @@ jobs:
           sed -i "s|BIKE_BUILD_TIME_PLACEHOLDER|${BUILD_TIME}|g" projects/operator/ngsw-config.json
           echo "Stamped version ${VERSION} (${BUILD_TIME})"
 
+      # The one difference between the targets that every build step reads.
+      - name: Resolve base href prefix
+        id: href
+        run: |
+          if [ "${{ matrix.target }}" = "pages" ]; then
+            echo "prefix=/${{ github.event.repository.name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "prefix=" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Built for both targets, and with the same base href of `<prefix>/` for both: the gateway is the
+      # index page, so its locales ARE the top-level URLs. Where the two targets differ is only where
+      # that tree is put — see the assembly step.
       - name: Build gateway
-        run: npx ng build gateway --configuration production --base-href /${{ github.event.repository.name }}/
+        run: npx ng build gateway --configuration production --base-href ${{ steps.href.outputs.prefix }}/
 
       - name: Build admin
-        run: npx ng build admin --configuration production --base-href /${{ github.event.repository.name }}/admin/
+        run: npx ng build admin --configuration production --base-href ${{ steps.href.outputs.prefix }}/admin/
 
       - name: Build operator
-        run: npx ng build operator --configuration production --base-href /${{ github.event.repository.name }}/operator/
+        run: npx ng build operator --configuration production --base-href ${{ steps.href.outputs.prefix }}/operator/
 
+      # THE ONE PLACE THE TWO TARGETS LAY OUT THE SAME BUILD DIFFERENTLY, and the reason is the gateway.
+      # Its locales are addressed as top-level URLs (/en/, /ru/) in both, but Pages serves files straight
+      # off the tree, so there they must physically sit at the top; the container has a router, so there
+      # they get a directory of their own and the routing points at it. That directory is what keeps one
+      # image layer per application — an unchanged application then re-uses its layer instead of being
+      # pushed again over a residential uplink.
       - name: Assemble staging directory
         run: |
           mkdir -p staging/admin staging/operator
-          cp -r dist/gateway/browser/. staging/
+          if [ "${{ matrix.target }}" = "pages" ]; then
+            cp -r dist/gateway/browser/. staging/
+          else
+            mkdir -p staging/gateway
+            cp -r dist/gateway/browser/. staging/gateway/
+          fi
           cp -r dist/admin/browser/. staging/admin/
           cp -r dist/operator/browser/. staging/operator/
 
       - name: Create root redirect to /en/
+        if: matrix.target == 'pages'
         run: |
           BASE="/${{ github.event.repository.name }}"
           cat > staging/index.html << 'HTMLEOF'
@@ -218,7 +258,11 @@ jobs:
       # fall through to the site 404.html and bounce to the gateway. This adds an
       # entry index.html per app that forwards to the default (en) locale — which is
       # also the URL the OIDC redirect_uri / app links should target.
+      #
+      # The pi target needs none of this: its router answers a bare /admin with a
+      # 302, and answers an unbuilt locale with one too, which a static file cannot.
       - name: Create per-app locale redirects
+        if: matrix.target == 'pages'
         run: |
           BASE="/${{ github.event.repository.name }}"
           for app in admin operator; do
@@ -251,8 +295,10 @@ jobs:
       # That script MUST stay in the source index.html and must never be
       # injected here: index.html is SHA1-pinned in the operator's ngsw.json
       # hashTable at build time, so rewriting it post-build breaks the service
-      # worker (see the integrity check below).
+      # worker (see the integrity check below). It is harmless on the pi target,
+      # where nothing ever sets the `redirect` parameter.
       - name: Add smart 404.html for SPA routing
+        if: matrix.target == 'pages'
         run: |
           BASE="/${{ github.event.repository.name }}"
           cat > staging/404.html << 'HTMLEOF'
@@ -287,6 +333,13 @@ jobs:
           </html>
           HTMLEOF
           sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/404.html
+
+      # Turns the assembled tree into the container's routing config. It reads which
+      # locales exist rather than being told, so adding a language changes nothing
+      # here, and it refuses to emit a config whose fallback locale is missing.
+      - name: Generate UI container routing config
+        if: matrix.target == 'pi'
+        run: npm run gen:ui-config
 
       # Emergency kill switch — the fleet-wide recovery path of last resort.
       # Replaces the operator's ngsw-worker.js with Angular's safety-worker,
@@ -328,9 +381,20 @@ jobs:
         run: npm run verify:ngsw
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
+        if: matrix.target == 'pages'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: staging
+
+      - name: Upload container payload
+        if: matrix.target == 'pi'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ui-container-payload
+          path: |
+            staging
+            docker/Caddyfile.generated
+          retention-days: 7
 
   ci:
     name: CI
@@ -361,4 +425,95 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+
+  # The image carries the already-built tree and nothing else, so building for a foreign architecture
+  # from an amd64 runner needs no emulation: a COPY has no architecture. The package is public, which
+  # is what lets the production host pull it without holding a credential for this repository.
+  image:
+    name: Publish UI image to GHCR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [ ci ]
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Download container payload
+        uses: actions/download-artifact@v8
+        with:
+          name: ui-container-payload
+
+      # Same shape as the API's image tags (sha-<7hex>), because the production host's deploy script
+      # validates that shape and refuses anything else — including `latest`.
+      - name: Derive image tag
+        id: tag
+        run: echo "version=sha-${GITHUB_SHA:0:7}" >> "$GITHUB_OUTPUT"
+
+      # Both of these are v4: their 4.0.0 moved to Node 24, which needs Actions Runner 2.327.1 or
+      # later. These two jobs run on GitHub-hosted runners, which are well past that — but note the
+      # constraint before copying either line into a job that targets the production host's runner.
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        env:
+          OWNER: ${{ github.repository_owner }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          IMAGE="ghcr.io/${OWNER,,}/bike-rental-ui"
+          # BOTH ARCHITECTURES. The production host is arm64; amd64 is what a developer runs the image
+          # on locally, and what the API image already publishes. Neither costs build time here: this
+          # Dockerfile only copies an already-built tree, so there is nothing to emulate under QEMU.
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --provenance=false \
+            --file docker/Dockerfile \
+            --tag "${IMAGE}:${VERSION}" \
+            --tag "${IMAGE}:latest" \
+            --push .
+          echo "Pushed ${IMAGE}:${VERSION}" >> "$GITHUB_STEP_SUMMARY"
+  notify-server:
+    name: Notify production host
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [ image ]
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
+    permissions: {}
+    steps:
+      - name: Dispatch deployment event
+        env:
+          TAG: ${{ needs.image.outputs.version }}
+          DISPATCH_TOKEN: ${{ secrets.PI_DEPLOY_TOKEN }}
+        run: |
+          if [ -z "${DISPATCH_TOKEN}" ]; then
+            echo "::error::PI_DEPLOY_TOKEN is not set — the production host was not told about ${TAG}."
+            echo "Deploy it by hand: run 'Deploy UI to production' in JenkaBY/bike-rental with version ${TAG}."
+            exit 1
+          fi
+          # PIN THE API VERSION, and keep it current. 2022-11-28 was not deprecated, but it is the
+          # older of the two GitHub supports, and it is also what an unversioned request falls back to
+          # — so omitting the header would silently ride the old version rather than the new one. Ask
+          # the API itself which versions it accepts by sending a bogus one; it answers with the list.
+          curl -fsS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${DISPATCH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            https://api.github.com/repos/JenkaBY/bike-rental/dispatches \
+            -d "$(jq -nc --arg v "${TAG}" '{event_type:"ui-image-published",client_payload:{version:$v}}')"
+          echo "Dispatched ui-image-published for ${TAG}" >> "$GITHUB_STEP_SUMMARY"

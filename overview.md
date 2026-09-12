@@ -1673,7 +1673,16 @@ OBSERVABILITY:
 
 DEPLOYMENT:
 
-- No Dockerfile or docker-compose in the repository
-- CI/CD: `.github/workflows/build-and-deploy.yml` — quality (lint + type-check) → test (Vitest per project + coverage merge) → build (gateway + admin + operator) → deploy to GitHub Pages
-- Build outputs: `dist/gateway/`, `dist/admin/`, `dist/operator/` (Angular CLI `ng build --project=*`)
+- `docker/Dockerfile` — the production container: `caddy:2-alpine` with one COPY layer per application
+  (so an unchanged application is not re-downloaded on release) plus `docker/Caddyfile.generated`. No
+  compilation happens in it; the Angular build has already run on the CI runner, which is why targeting
+  `linux/arm64` needs no emulation. No docker-compose here — the service is declared in the API
+  repository's stack, joined to its network and reached only through its router, on a public name of its
+  same public name as the API, split by path rather than by host — so the applications are SAME-ORIGIN to
+  the API and no call, including the OIDC discovery document and the token exchange, needs CORS. The
+  gateway ships in that image too, as the index page answering the site root
+- `scripts/apps.mjs` / `scripts/gen-ui-config.mjs` — the application manifest and the generator that
+  turns the assembled `staging/` tree into the container's routing config
+- CI/CD: `.github/workflows/build-and-deploy.yml` — quality (lint + type-check) → test (Vitest per project + coverage merge) → build matrix (`pages`: gateway + admin + operator; `pi`: admin + operator) → CI gate → deploy to GitHub Pages, publish image to GHCR, dispatch `ui-image-published` to `JenkaBY/bike-rental`
+- Build outputs: `dist/gateway/`, `dist/admin/`, `dist/operator/` (Angular CLI `ng build --project=*`), assembled into `staging/`
 - GitHub Actions Node version: 24; package manager: npm with `npm ci`

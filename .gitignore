@@ -48,3 +48,7 @@ Thumbs.db
 
 # Claude Code — local-only settings (project config .claude/settings.json IS tracked)
 .claude/settings.local.json
+
+# Container build (CI-generated, never committed)
+/staging
+docker/Caddyfile.generated
