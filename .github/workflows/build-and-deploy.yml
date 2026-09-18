@@ -135,22 +135,24 @@ jobs:
           path: coverage/
           retention-days: 30
 
-  # TWO DEPLOYMENT TARGETS, ONE BUILD DEFINITION.
+  # THREE ENVIRONMENTS (dev, preview, production), TWO BUILD TARGETS, ONE BUILD DEFINITION.
   #
-  #   pages — GitHub Pages. Served from a repository-name prefix, so every base href carries it, and
-  #           the gateway ships as the application chooser. Pages serves static files only, so the
-  #           locale redirects and the SPA deep-link recovery are files this job writes by hand.
-  #   pi    — the production host. Served at the domain root behind the API stack's router, so the
-  #           base hrefs carry no prefix. The redirect files Pages needs are not written here —
-  #           scripts/gen-ui-config.mjs turns those same rules into routing config instead.
+  #   pages — GitHub Pages. Serves the dev environment, the Render web service. Served from a
+  #           repository-name prefix, so every base href carries it, and the gateway ships as the
+  #           application chooser. Pages serves static files only, so the locale redirects and the
+  #           SPA deep-link recovery are files this job writes by hand.
+  #   pi    — the Raspberry Pi host. ONE image serves both preview and production: the router puts
+  #           the browser clients and the API on the same origin in both, so environment.prod.ts reads
+  #           that origin at runtime instead of a build-time host, and nothing in this build tells the
+  #           two apart — that only happens at deploy time (see notify-server below, and bike-rental's
+  #           own manual promotion trigger). Served at the domain root, so the base hrefs carry no
+  #           prefix. The redirect files Pages needs are not written here — scripts/gen-ui-config.mjs
+  #           turns those same rules into routing config instead.
   #
   # The two differ in base href and in which of the Pages workarounds run — everything per-target is
   # declared in the matrix below. `pages` is also the only target built against an absolute API host:
-  # it is genuinely cross-origin (GitHub Pages → Render), so that host is injected at build time. `pi`
-  # is served on the same origin as its API by the router in front of it, so environment.prod.ts reads
-  # that origin at runtime — the same published image then works unchanged on every Pi environment,
-  # which is what lets one `sha-<7>` be promoted from preview to production. Build FLAGS are
-  # deliberately not among the differences: the staging configuration carries nothing but the
+  # it is genuinely cross-origin (GitHub Pages → Render), so that host is injected at build time. Build
+  # FLAGS are deliberately not among the differences: the dev configuration carries nothing but the
   # environment-file swap and composes onto production, so the demo cannot drift from the production
   # build — a difference in build flags between the demo and production would be found in production.
   build:
@@ -163,8 +165,8 @@ jobs:
       matrix:
         include:
           - target: pages
-            configuration: production,staging
-            env_file: projects/shared/src/environments/environment.staging.ts
+            configuration: production,dev
+            env_file: projects/shared/src/environments/environment.dev.ts
             api_url: ${{ vars.BIKE_RENTAL_TEST_API }}
           - target: pi
             configuration: production
@@ -509,22 +511,26 @@ jobs:
             --tag "${IMAGE}:latest" \
             --push .
           echo "Pushed ${IMAGE}:${VERSION}" >> "$GITHUB_STEP_SUMMARY"
+  # Releases to PREVIEW only. Production is a deliberate act, not a side effect of a merge: a person
+  # promotes an already-published sha-<7> tag to production by hand, by running "Deploy UI to
+  # production" in JenkaBY/bike-rental with that version — no rebuild, since one image serves both Pi
+  # environments (see the `pi` target above).
   notify-server:
-    name: Notify production host
+    name: Release to preview
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: [ image ]
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
     permissions: {}
     steps:
-      - name: Dispatch deployment event
+      - name: Dispatch preview deployment event
         env:
           TAG: ${{ needs.image.outputs.version }}
           DISPATCH_TOKEN: ${{ secrets.PI_DEPLOY_TOKEN }}
         run: |
           if [ -z "${DISPATCH_TOKEN}" ]; then
-            echo "::error::PI_DEPLOY_TOKEN is not set — the production host was not told about ${TAG}."
-            echo "Deploy it by hand: run 'Deploy UI to production' in JenkaBY/bike-rental with version ${TAG}."
+            echo "::error::PI_DEPLOY_TOKEN is not set — preview was not told about ${TAG}."
+            echo "Deploy it by hand: run 'Deploy UI to production' in JenkaBY/bike-rental with version ${TAG} and environment preview."
             exit 1
           fi
           curl -fsS -X POST \
@@ -532,5 +538,5 @@ jobs:
             -H "Authorization: Bearer ${DISPATCH_TOKEN}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
             https://api.github.com/repos/JenkaBY/bike-rental/dispatches \
-            -d "$(jq -nc --arg v "${TAG}" '{event_type:"ui-image-published",client_payload:{version:$v}}')"
-          echo "Dispatched ui-image-published for ${TAG}" >> "$GITHUB_STEP_SUMMARY"
+            -d "$(jq -nc --arg v "${TAG}" '{event_type:"ui-image-published",client_payload:{version:$v,environment:"preview"}}')"
+          echo "Dispatched ui-image-published for ${TAG} (preview)" >> "$GITHUB_STEP_SUMMARY"
