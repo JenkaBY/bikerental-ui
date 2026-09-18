@@ -144,8 +144,12 @@ jobs:
   #           base hrefs carry no prefix. The redirect files Pages needs are not written here —
   #           scripts/gen-ui-config.mjs turns those same rules into routing config instead.
   #
-  # The two differ in the API they are built against, in base href, and in which of the Pages
-  # workarounds run — everything per-target is declared in the matrix below. Build FLAGS are
+  # The two differ in base href and in which of the Pages workarounds run — everything per-target is
+  # declared in the matrix below. `pages` is also the only target built against an absolute API host:
+  # it is genuinely cross-origin (GitHub Pages → Render), so that host is injected at build time. `pi`
+  # is served on the same origin as its API by the router in front of it, so environment.prod.ts reads
+  # that origin at runtime — the same published image then works unchanged on every Pi environment,
+  # which is what lets one `sha-<7>` be promoted from preview to production. Build FLAGS are
   # deliberately not among the differences: the staging configuration carries nothing but the
   # environment-file swap and composes onto production, so the demo cannot drift from the production
   # build — a difference in build flags between the demo and production would be found in production.
@@ -165,7 +169,6 @@ jobs:
           - target: pi
             configuration: production
             env_file: projects/shared/src/environments/environment.prod.ts
-            api_url: ${{ vars.BIKE_RENTAL_API }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -181,12 +184,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Inject Bike Rental API host into all apps
+      # pages only: it is the one target that is genuinely cross-origin from its API, so the host has
+      # to be known at build time. pi resolves its API from window.location.origin at runtime instead
+      # (see environment.prod.ts) — there is no placeholder left in that file for this step to fill.
+      - name: Inject Bike Rental API host into pages
+        if: matrix.target == 'pages'
         env:
           API_URL: ${{ matrix.api_url }}
         run: |
           if [ -z "${API_URL}" ]; then
-            echo "::error::No API base URL for target ${{ matrix.target }} — set the repository variable (pages: BIKE_RENTAL_TEST_API, pi: BIKE_RENTAL_API)."
+            echo "::error::No API base URL for target ${{ matrix.target }} — set the repository variable BIKE_RENTAL_TEST_API."
             exit 1
           fi
           sed -i "s|BIKE_API_PLACEHOLDER|${API_URL}|g" "${{ matrix.env_file }}"

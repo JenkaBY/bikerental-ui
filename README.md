@@ -66,7 +66,7 @@ There are **two deployment targets**, built from the same commit by one matrix j
 |---------------|-----------------------------------------|------------------------------------------------------|
 | Where         | GitHub Pages — the public demo          | The production host, behind the API stack's router   |
 | API           | the test instance on Render             | the production API on the Raspberry Pi               |
-| API base from | `vars.BIKE_RENTAL_TEST_API`             | `vars.BIKE_RENTAL_API`                               |
+| API base from | `vars.BIKE_RENTAL_TEST_API` (build time) | `window.location.origin` (runtime)                  |
 | Built with    | `--configuration production,staging`     | `--configuration production`                         |
 | Environment   | `environment.staging.ts`                | `environment.prod.ts`                                |
 | Apps          | gateway, admin, operator                | gateway, admin, operator (`scripts/apps.mjs`)        |
@@ -192,14 +192,19 @@ Add the corresponding origins to the backend CORS allow-list. For Pages the issu
 reachable over **public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is
 blocked as mixed content).
 
-Each target's API base comes from its own repository variable, injected into that target's
-environment file by the **Inject Bike Rental API host** step (the step fails the build if the
-variable is unset, rather than shipping a client that can neither call the API nor log in):
+`pages` is genuinely cross-origin from its API (GitHub Pages → Render), so its base comes from a
+repository variable injected into `environment.staging.ts` at build time by the **Inject Bike Rental
+API host into pages** step (the step fails the build if the variable is unset, rather than shipping a
+client that can neither call the API nor log in):
 
-| Target  | Repository variable      | Injected into            |
-|---------|--------------------------|--------------------------|
-| `pages` | `BIKE_RENTAL_TEST_API`   | `environment.staging.ts` |
-| `pi`    | `BIKE_RENTAL_API`        | `environment.prod.ts`    |
+| Target  | Repository variable    | Injected into             |
+|---------|-------------------------|---------------------------|
+| `pages` | `BIKE_RENTAL_TEST_API`  | `environment.staging.ts`  |
+
+`pi` is served on the same origin as its API (see "Production container" above), so
+`environment.prod.ts` reads `window.location.origin` at runtime instead of taking a build-time
+variable — the one published image then works unchanged on both the preview and production Pi
+environments, which is what lets a single `sha-<7>` be promoted from one to the other.
 
 
 ### Blocking Merges on Failed Build
