@@ -53,27 +53,32 @@ npm run fix
 The project uses GitHub Actions for continuous integration and deployment:
 
 - **Workflow**: `.github/workflows/build-and-deploy.yml`
-- **Trigger**: Push/PR to `main`/`master` branch or manual dispatch
+- **Trigger**: Push/PR to `main`/`master` branch (lint, test, build, release preview) or manual
+  dispatch (also builds and tests, but deploys nothing unless you ask it to — see below)
 - **Pipeline**: Lint & Format → Unit Tests → Build (matrix: `pages`, `pi`) → `CI` gate → Deploy
-- **Environments**: each matrix leg builds against its own API — `pages` against the test instance,
-  `pi` against production (see the table below). Both deploy on every merge to `master`.
+- **Environments**: three — **dev** (`pages`, built against the Render test instance), **preview**
+  and **production** (both `pi`, one image, split only by which host it is deployed to — see the
+  table below). A merge to `master` releases **preview only**, automatically. **dev** (GitHub Pages)
+  never deploys on a merge — it is a manual `workflow_dispatch` with `deploy_pages: true`, run from
+  whichever branch you want the public demo to show. **production** is likewise a deliberate act, done
+  by hand in `bike-rental` against an already-published tag (see "The `pi` container" below).
 - **Gate job**: `CI` — aggregates all check results; fails if any job failed
 - **SPA routing**: a single path-aware `404.html` at the site root recovers deep links on Pages (see below)
 
 There are **two deployment targets**, built from the same commit by one matrix job:
 
-|               | `pages`                                 | `pi`                                                 |
+|               | `pages` (dev)                           | `pi` (preview & production)                          |
 |---------------|-----------------------------------------|------------------------------------------------------|
-| Where         | GitHub Pages — the public demo          | The production host, behind the API stack's router   |
-| API           | the test instance on Render             | the production API on the Raspberry Pi               |
-| API base from | `vars.BIKE_RENTAL_TEST_API`             | `vars.BIKE_RENTAL_API`                               |
-| Built with    | `--configuration production,staging`     | `--configuration production`                         |
-| Environment   | `environment.staging.ts`                | `environment.prod.ts`                                |
+| Where         | GitHub Pages — the public demo          | Both Pi hosts, behind the API stack's router         |
+| API           | the Render web service                  | that same Pi host's API — one image, either host     |
+| API base from | `vars.BIKE_RENTAL_TEST_API` (build time) | `window.location.origin` (runtime)                  |
+| Built with    | `--configuration production,dev`         | `--configuration production`                         |
+| Environment   | `environment.dev.ts`                    | `environment.prod.ts`                                |
 | Apps          | gateway, admin, operator                | gateway, admin, operator (`scripts/apps.mjs`)        |
 | Base href     | `/<repo>/`, `/<repo>/admin/`, …         | `/admin/`, `/operator/`                              |
 | Origin vs API | cross-origin (needs CORS)               | **same origin** — no preflights, no CORS on login     |
 | Routing       | static redirect files + root `404.html` | generated Caddy config in the image                  |
-| Delivered by  | `actions/deploy-pages`                  | image to GHCR, then a dispatch to the API repository |
+| Delivered by  | `actions/deploy-pages`, manual dispatch only | image to GHCR; `notify-server` auto-releases preview, production is promoted by hand |
 
 The gateway is the index page on both targets: it exists because something has to answer the bare
 domain, and a page that lets a person pick beats a blind redirect into one of the two applications.
@@ -119,12 +124,14 @@ Two build steps plus a checked-in restore script make this work on static hostin
   > Because it is checked in rather than generated, a change to the redirect contract must be applied to
   > all three files.
 
-### Production container (the `pi` target)
+### The `pi` container (preview & production)
 
-The production host serves everything from **one name**, split by path. The Caddy router in the API
-stack publishes the API paths explicitly and forwards everything else to this container. That router
-never learns which applications or languages exist — the container owns that list, which is why even
-the site-root redirect lives here and not there.
+Each Pi host serves everything from **one name**, split by path — the example below uses the
+production host, and preview's router is configured identically under its own name
+(`br-preview.jenkalt.keenetic.pro`). The Caddy router in the API stack publishes the API paths
+explicitly and forwards everything else to this container. That router never learns which
+applications or languages exist — the container owns that list, which is why even the site-root
+redirect lives here and not there.
 
 ```
 https://bike-rental.<host>/api/…           → the API (the router publishes these paths explicitly)
@@ -159,8 +166,11 @@ Three files make that up, and none of them lists a locale by hand:
   one of them re-downloads only that one over the production host's residential uplink.
 
 Deployment is indirect on purpose: this repository is public, and a self-hosted runner must not be
-attached to a public repository, so the `notify-server` job asks the private API repository to run the
-release. That needs a `PI_DEPLOY_TOKEN` secret here.
+attached to a public repository, so the `notify-server` job asks the private API repository to
+release the published tag to **preview** on every merge to `master`. That needs a `PI_DEPLOY_TOKEN`
+secret here. Production never happens automatically: a person promotes that same tag by running
+"Deploy UI to production" in `bike-rental` by hand, with `environment: production` — no rebuild, since
+one image serves both hosts.
 
 ### OIDC redirect URIs (admin & operator auth)
 
@@ -172,34 +182,20 @@ the same URL per app, and the **backend OAuth client must register it for each c
 runs in. Admin and operator are registered as separate OAuth clients (`bike-rental-admin` and
 `bike-rental-operator`):
 
-| App      | Context                      | Mount                 | `redirect_uri` / `post_logout_redirect_uri` to register |
-|----------|------------------------------|-----------------------|---------------------------------------------------------|
-| admin    | `ng serve admin` (direct)    | `:4201/admin/`        | `http://localhost:4201/admin/`                          |
-| admin    | Gateway proxy                | `:4200/admin/`        | `http://localhost:4200/admin/`                          |
-| admin    | GitHub Pages (per locale)    | `…/admin/{en,ru}/`    | `https://<user>.github.io/<repo>/admin/{en,ru}/`        |
-| admin    | Production container         | `/admin/{en,ru}/`     | `https://bike-rental.<host>/admin/{en,ru}/`             |
-| operator | `ng serve operator` (direct) | `:4202/operator/`     | `http://localhost:4202/operator/`                       |
-| operator | Gateway proxy                | `:4200/operator/`     | `http://localhost:4200/operator/`                       |
-| operator | GitHub Pages (per locale)    | `…/operator/{en,ru}/` | `https://<user>.github.io/<repo>/operator/{en,ru}/`     |
-| operator | Production container         | `/operator/{en,ru}/`  | `https://bike-rental.<host>/operator/{en,ru}/`          |
+`pages` (dev) is genuinely cross-origin from its API (GitHub Pages → Render), so its base comes from a
+repository variable injected into `environment.dev.ts` at build time by the **Inject Bike Rental
+API host into pages** step (the step fails the build if the variable is unset, rather than shipping a
+client that can neither call the API nor log in). The variable is still named `BIKE_RENTAL_TEST_API`
+— it held the same Render host before "dev" had that name, and renaming it needs no code change here:
 
-> ⚠️ **Adding a language extends this list.** The `redirect_uri` carries the locale segment because it is
-> `document.baseURI`, so a new locale needs its own entry in the backend client registration
-> (`*_SPA_REDIRECT_URIS` / `*_SPA_POST_LOGOUT_URIS` on the production host). It is the only place a new
-> language reaches outside this repository, and the failure mode is an unknown-redirect error at login.
+| Target  | Repository variable    | Injected into        |
+|---------|-------------------------|----------------------|
+| `pages` | `BIKE_RENTAL_TEST_API`  | `environment.dev.ts` |
 
-Add the corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be
-reachable over **public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is
-blocked as mixed content).
-
-Each target's API base comes from its own repository variable, injected into that target's
-environment file by the **Inject Bike Rental API host** step (the step fails the build if the
-variable is unset, rather than shipping a client that can neither call the API nor log in):
-
-| Target  | Repository variable      | Injected into            |
-|---------|--------------------------|--------------------------|
-| `pages` | `BIKE_RENTAL_TEST_API`   | `environment.staging.ts` |
-| `pi`    | `BIKE_RENTAL_API`        | `environment.prod.ts`    |
+`pi` (preview and production) is served on the same origin as its API (see "The `pi` container"
+above), so `environment.prod.ts` reads `window.location.origin` at runtime instead of taking a
+build-time variable — the one published image then works unchanged on both Pi environments, which is
+what lets a single `sha-<7>` be promoted from preview to production.
 
 
 ### Blocking Merges on Failed Build
@@ -220,6 +216,10 @@ To enable deployment, configure your repository:
 
 1. Go to **Settings → Pages**
 2. Set **Source** to **GitHub Actions**
+3. Go to **Settings → Environments → github-pages → Deployment branches and tags** and allow
+   **All branches** — Pages is deployed by manually running **Build and Deploy** with
+   `deploy_pages: true` from whichever branch should become the public demo, so the environment must
+   not be restricted to `main`/`master` the way GitHub sets it up by default.
 
 ## PWA (Operator)
 

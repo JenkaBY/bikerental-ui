@@ -52,3 +52,6 @@ Thumbs.db
 # Container build (CI-generated, never committed)
 /staging
 docker/Caddyfile.generated
+
+# handoff: local session state, not for committing
+.handoff/state.env

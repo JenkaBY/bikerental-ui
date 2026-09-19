@@ -64,11 +64,11 @@
                 }
               ]
             },
-            "staging": {
+            "dev": {
               "fileReplacements": [
                 {
                   "replace": "projects/shared/src/environments/environment.ts",
-                  "with": "projects/shared/src/environments/environment.staging.ts"
+                  "with": "projects/shared/src/environments/environment.dev.ts"
                 }
               ]
             },
@@ -216,11 +216,11 @@
                 }
               ]
             },
-            "staging": {
+            "dev": {
               "fileReplacements": [
                 {
                   "replace": "projects/shared/src/environments/environment.ts",
-                  "with": "projects/shared/src/environments/environment.staging.ts"
+                  "with": "projects/shared/src/environments/environment.dev.ts"
                 }
               ]
             },
@@ -386,11 +386,11 @@
                 }
               ]
             },
-            "staging": {
+            "dev": {
               "fileReplacements": [
                 {
                   "replace": "projects/shared/src/environments/environment.ts",
-                  "with": "projects/shared/src/environments/environment.staging.ts"
+                  "with": "projects/shared/src/environments/environment.dev.ts"
                 }
               ]
             },
