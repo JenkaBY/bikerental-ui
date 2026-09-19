@@ -7,6 +7,10 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
     inputs:
+      deploy_pages:
+        description: 'Deploy the dev build of this ref to GitHub Pages (the only way Pages is ever deployed — a merge to master does not do it)'
+        type: boolean
+        default: false
       disable_service_worker:
         description: 'EMERGENCY: unregister the operator PWA service worker and wipe its caches on every client'
         type: boolean
@@ -433,12 +437,16 @@ jobs:
           fi
           echo "All CI checks passed."
 
+  # Manual and cross-branch on purpose: Pages is the public demo, and publishing whatever the current
+  # branch happens to contain must be a decision someone makes, not a side effect of merging or of an
+  # unrelated workflow_dispatch (e.g. the service-worker kill switch below) — hence its own input
+  # rather than "any manual run deploys Pages".
   deploy:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [ ci ]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_pages
     permissions:
       pages: write
       id-token: write
@@ -453,12 +461,16 @@ jobs:
   # The image carries the already-built tree and nothing else, so building for a foreign architecture
   # from an amd64 runner needs no emulation: a COPY has no architecture. The package is public, which
   # is what lets the production host pull it without holding a credential for this repository.
+  # Runs on an actual merge to master (releasing to preview, see notify-server below), plus the one
+  # exception that must reach the Pi container regardless: the service-worker kill switch, which is
+  # itself only ever a deliberate, explicit workflow_dispatch. An ordinary manual run (e.g. one that
+  # only sets deploy_pages) publishes nothing here.
   image:
     name: Publish UI image to GHCR
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [ ci ]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.disable_service_worker))
     permissions:
       contents: read
       packages: write
@@ -511,26 +523,29 @@ jobs:
             --tag "${IMAGE}:latest" \
             --push .
           echo "Pushed ${IMAGE}:${VERSION}" >> "$GITHUB_STEP_SUMMARY"
-  # Releases to PREVIEW only. Production is a deliberate act, not a side effect of a merge: a person
-  # promotes an already-published sha-<7> tag to production by hand, by running "Deploy UI to
-  # production" in JenkaBY/bike-rental with that version — no rebuild, since one image serves both Pi
-  # environments (see the `pi` target above).
+  # Releases to PREVIEW on an ordinary merge. Production is a deliberate act, not a side effect of a
+  # merge: a person promotes an already-published sha-<7> tag to production by hand, by running
+  # "Deploy UI to production" in JenkaBY/bike-rental with that version — no rebuild, since one image
+  # serves both Pi environments (see the `pi` target above). The one exception is the service-worker
+  # kill switch: that emergency exists to recover PRODUCTION clients, so it targets production instead
+  # of preview even though it also runs through this job.
   notify-server:
     name: Release to preview
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: [ image ]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.disable_service_worker))
     permissions: {}
     steps:
-      - name: Dispatch preview deployment event
+      - name: Dispatch deployment event
         env:
           TAG: ${{ needs.image.outputs.version }}
+          TARGET_ENV: ${{ (github.event_name == 'workflow_dispatch' && inputs.disable_service_worker) && 'production' || 'preview' }}
           DISPATCH_TOKEN: ${{ secrets.PI_DEPLOY_TOKEN }}
         run: |
           if [ -z "${DISPATCH_TOKEN}" ]; then
-            echo "::error::PI_DEPLOY_TOKEN is not set — preview was not told about ${TAG}."
-            echo "Deploy it by hand: run 'Deploy UI to production' in JenkaBY/bike-rental with version ${TAG} and environment preview."
+            echo "::error::PI_DEPLOY_TOKEN is not set — ${TARGET_ENV} was not told about ${TAG}."
+            echo "Deploy it by hand: run 'Deploy UI to production' in JenkaBY/bike-rental with version ${TAG} and environment ${TARGET_ENV}."
             exit 1
           fi
           curl -fsS -X POST \
@@ -538,5 +553,5 @@ jobs:
             -H "Authorization: Bearer ${DISPATCH_TOKEN}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
             https://api.github.com/repos/JenkaBY/bike-rental/dispatches \
-            -d "$(jq -nc --arg v "${TAG}" '{event_type:"ui-image-published",client_payload:{version:$v,environment:"preview"}}')"
-          echo "Dispatched ui-image-published for ${TAG} (preview)" >> "$GITHUB_STEP_SUMMARY"
+            -d "$(jq -nc --arg v "${TAG}" --arg e "${TARGET_ENV}" '{event_type:"ui-image-published",client_payload:{version:$v,environment:$e}}')"
+          echo "Dispatched ui-image-published for ${TAG} (${TARGET_ENV})" >> "$GITHUB_STEP_SUMMARY"

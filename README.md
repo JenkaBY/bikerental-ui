@@ -53,12 +53,15 @@ npm run fix
 The project uses GitHub Actions for continuous integration and deployment:
 
 - **Workflow**: `.github/workflows/build-and-deploy.yml`
-- **Trigger**: Push/PR to `main`/`master` branch or manual dispatch
+- **Trigger**: Push/PR to `main`/`master` branch (lint, test, build, release preview) or manual
+  dispatch (also builds and tests, but deploys nothing unless you ask it to — see below)
 - **Pipeline**: Lint & Format → Unit Tests → Build (matrix: `pages`, `pi`) → `CI` gate → Deploy
 - **Environments**: three — **dev** (`pages`, built against the Render test instance), **preview**
   and **production** (both `pi`, one image, split only by which host it is deployed to — see the
-  table below). A merge to `master` deploys dev and preview; production is a deliberate act, done by
-  hand in `bike-rental` against an already-published tag (see "The `pi` container" below).
+  table below). A merge to `master` releases **preview only**, automatically. **dev** (GitHub Pages)
+  never deploys on a merge — it is a manual `workflow_dispatch` with `deploy_pages: true`, run from
+  whichever branch you want the public demo to show. **production** is likewise a deliberate act, done
+  by hand in `bike-rental` against an already-published tag (see "The `pi` container" below).
 - **Gate job**: `CI` — aggregates all check results; fails if any job failed
 - **SPA routing**: a single path-aware `404.html` at the site root recovers deep links on Pages (see below)
 
@@ -75,7 +78,7 @@ There are **two deployment targets**, built from the same commit by one matrix j
 | Base href     | `/<repo>/`, `/<repo>/admin/`, …         | `/admin/`, `/operator/`                              |
 | Origin vs API | cross-origin (needs CORS)               | **same origin** — no preflights, no CORS on login     |
 | Routing       | static redirect files + root `404.html` | generated Caddy config in the image                  |
-| Delivered by  | `actions/deploy-pages`                  | image to GHCR; `notify-server` auto-releases preview, production is promoted by hand |
+| Delivered by  | `actions/deploy-pages`, manual dispatch only | image to GHCR; `notify-server` auto-releases preview, production is promoted by hand |
 
 The gateway is the index page on both targets: it exists because something has to answer the bare
 domain, and a page that lets a person pick beats a blind redirect into one of the two applications.
@@ -213,6 +216,10 @@ To enable deployment, configure your repository:
 
 1. Go to **Settings → Pages**
 2. Set **Source** to **GitHub Actions**
+3. Go to **Settings → Environments → github-pages → Deployment branches and tags** and allow
+   **All branches** — Pages is deployed by manually running **Build and Deploy** with
+   `deploy_pages: true` from whichever branch should become the public demo, so the environment must
+   not be restricted to `main`/`master` the way GitHub sets it up by default.
 
 ## PWA (Operator)
 
