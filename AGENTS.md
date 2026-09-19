@@ -193,3 +193,18 @@ await TestBed.configureTestingModule({
 - Avoid all Angular APIs marked deprecated in v21 (e.g. use `provideAnimationsAsync()` approach, not `provideAnimations()`)
 - No code comments — the code should be self-documenting
 
+## Git Policy — hard constraint
+
+**Never run `git commit` or `git push` unless the user asked for it in the current session.** Finish the work, leave the
+changes in the working tree, and report what changed — deciding when history moves is the user's call, not yours.
+
+- **Explicit means explicit.** "Commit this" / "push it" counts, and so does invoking a command whose documented job is
+  committing (`/smart-commit`, `/spec-delegate`, `/dependency-upgrade`). "Fix X", "implement the task", "update the
+  docs", or "the tests pass now" are **not** permission to commit.
+- **One approval, one action.** Permission to commit once does not carry over to the next change, and permission to
+  commit is not permission to push.
+- **Same rule for anything else that publishes work:** `git push --force`, `git tag`, `gh pr create`, `gh pr merge`, and
+  triggering deploy workflows.
+- **Staging** (`git add`) belongs to a commit you were asked to make — don't rearrange the index otherwise.
+- Read-only git (`status`, `diff`, `log`, `show`, `branch --list`) is always fine, as is creating a local branch when
+  the work needs one.
