@@ -179,28 +179,6 @@ the same URL per app, and the **backend OAuth client must register it for each c
 runs in. Admin and operator are registered as separate OAuth clients (`bike-rental-admin` and
 `bike-rental-operator`):
 
-| App      | Context                      | Mount                 | `redirect_uri` / `post_logout_redirect_uri` to register |
-|----------|------------------------------|-----------------------|---------------------------------------------------------|
-| admin    | `ng serve admin` (direct)    | `:4201/admin/`        | `http://localhost:4201/admin/`                          |
-| admin    | Gateway proxy                | `:4200/admin/`        | `http://localhost:4200/admin/`                          |
-| admin    | GitHub Pages (per locale)    | `…/admin/{en,ru}/`    | `https://<user>.github.io/<repo>/admin/{en,ru}/`        |
-| admin    | Preview container            | `/admin/{en,ru}/`     | `https://br-preview.jenkalt.keenetic.pro/admin/{en,ru}/` |
-| admin    | Production container         | `/admin/{en,ru}/`     | `https://bike-rental.<host>/admin/{en,ru}/`             |
-| operator | `ng serve operator` (direct) | `:4202/operator/`     | `http://localhost:4202/operator/`                       |
-| operator | Gateway proxy                | `:4200/operator/`     | `http://localhost:4200/operator/`                       |
-| operator | GitHub Pages (per locale)    | `…/operator/{en,ru}/` | `https://<user>.github.io/<repo>/operator/{en,ru}/`     |
-| operator | Preview container            | `/operator/{en,ru}/`  | `https://br-preview.jenkalt.keenetic.pro/operator/{en,ru}/` |
-| operator | Production container         | `/operator/{en,ru}/`  | `https://bike-rental.<host>/operator/{en,ru}/`          |
-
-> ⚠️ **Adding a language extends this list.** The `redirect_uri` carries the locale segment because it is
-> `document.baseURI`, so a new locale needs its own entry in the backend client registration
-> (`*_SPA_REDIRECT_URIS` / `*_SPA_POST_LOGOUT_URIS` on the production host). It is the only place a new
-> language reaches outside this repository, and the failure mode is an unknown-redirect error at login.
-
-Add the corresponding origins to the backend CORS allow-list. For Pages the issuer/API must be
-reachable over **public HTTPS** (a `localhost` backend cannot serve a public site, and HTTP is
-blocked as mixed content).
-
 `pages` (dev) is genuinely cross-origin from its API (GitHub Pages → Render), so its base comes from a
 repository variable injected into `environment.dev.ts` at build time by the **Inject Bike Rental
 API host into pages** step (the step fails the build if the variable is unset, rather than shipping a
