@@ -1,6 +1,7 @@
 # Bike Rental UI
 
 [![Build and Deploy](../../actions/workflows/build-and-deploy.yml/badge.svg)](../../actions/workflows/build-and-deploy.yml)
+[![Deploy to GitHub Pages](../../actions/workflows/deploy-pages.yml/badge.svg)](../../actions/workflows/deploy-pages.yml)
 
 A web-based point-of-sale (POS) interface for a bicycle rental shop, built with Angular 21 and Angular Material.
 
@@ -50,24 +51,29 @@ npm run fix
 
 ## CI/CD
 
-The project uses GitHub Actions for continuous integration and deployment:
+The project uses GitHub Actions for continuous integration and deployment, split across **two
+independent workflows** — they share no trigger and no job graph, because what they ship and when
+they run are genuinely different decisions:
 
-- **Workflow**: `.github/workflows/build-and-deploy.yml`
-- **Trigger**: Push/PR to `main`/`master` branch (lint, test, build, release preview) or manual
-  dispatch (also builds and tests, but deploys nothing unless you ask it to — see below)
-- **Pipeline**: Lint & Format → Unit Tests → Build (matrix: `pages`, `pi`) → `CI` gate → Deploy
-- **Environments**: three — **dev** (`pages`, built against the Render test instance), **preview**
-  and **production** (both `pi`, one image, split only by which host it is deployed to — see the
-  table below). A merge to `master` releases **preview only**, automatically. **dev** (GitHub Pages)
-  never deploys on a merge — it is a manual `workflow_dispatch` with `deploy_pages: true`, run from
-  whichever branch you want the public demo to show. **production** is likewise a deliberate act, done
-  by hand in `bike-rental` against an already-published tag (see "The `pi` container" below).
-- **Gate job**: `CI` — aggregates all check results; fails if any job failed
+- **`build-and-deploy.yml`** — the `pi` target (preview & production). Runs on every push/PR to
+  `main`/`master`: Lint & Format → Unit Tests → Build → `CI` gate → publish image to GHCR →
+  **release preview automatically**. Also runnable by hand (`workflow_dispatch`) for the
+  `disable_service_worker` emergency kill switch, master-only — an ordinary manual run builds and
+  tests but publishes nothing. **Production** is never touched by this workflow: promoting an
+  already-published tag to production is a deliberate act done by hand in `bike-rental` (see "The
+  `pi` container" below).
+- **`deploy-pages.yml`** — the `dev` target, GitHub Pages. **Manual only** (`workflow_dispatch`,
+  never on push), and can be dispatched from **any branch or tag** — whichever ref should become the
+  public demo. Runs its own Lint & Format → Unit Tests → Build → Deploy; nothing here talks to the
+  `pi` target's build, GHCR, or `bike-rental`.
+- **Gate job**: `build-and-deploy.yml`'s `CI` job aggregates lint/test/build results and fails if any
+  of them failed; `deploy-pages.yml` has no separate gate since its own three jobs already run in
+  sequence.
 - **SPA routing**: a single path-aware `404.html` at the site root recovers deep links on Pages (see below)
 
-There are **two deployment targets**, built from the same commit by one matrix job:
+There are **two deployment targets**, one per workflow:
 
-|               | `pages` (dev)                           | `pi` (preview & production)                          |
+|               | `pages` (dev) — `deploy-pages.yml`      | `pi` (preview & production) — `build-and-deploy.yml` |
 |---------------|-----------------------------------------|------------------------------------------------------|
 | Where         | GitHub Pages — the public demo          | Both Pi hosts, behind the API stack's router         |
 | API           | the Render web service                  | that same Pi host's API — one image, either host     |
@@ -78,7 +84,8 @@ There are **two deployment targets**, built from the same commit by one matrix j
 | Base href     | `/<repo>/`, `/<repo>/admin/`, …         | `/admin/`, `/operator/`                              |
 | Origin vs API | cross-origin (needs CORS)               | **same origin** — no preflights, no CORS on login     |
 | Routing       | static redirect files + root `404.html` | generated Caddy config in the image                  |
-| Delivered by  | `actions/deploy-pages`, manual dispatch only | image to GHCR; `notify-server` auto-releases preview, production is promoted by hand |
+| Triggered by  | manual dispatch only, any branch        | push to master (preview); production promoted by hand in `bike-rental` |
+| Delivered by  | `actions/deploy-pages`                  | image to GHCR + repository dispatch to `bike-rental` |
 
 The gateway is the index page on both targets: it exists because something has to answer the bare
 domain, and a page that lets a person pick beats a blind redirect into one of the two applications.
@@ -217,8 +224,8 @@ To enable deployment, configure your repository:
 1. Go to **Settings → Pages**
 2. Set **Source** to **GitHub Actions**
 3. Go to **Settings → Environments → github-pages → Deployment branches and tags** and allow
-   **All branches** — Pages is deployed by manually running **Build and Deploy** with
-   `deploy_pages: true` from whichever branch should become the public demo, so the environment must
+   **All branches** — Pages is deployed by manually running **Deploy to GitHub Pages**
+   (`deploy-pages.yml`) from whichever branch should become the public demo, so the environment must
    not be restricted to `main`/`master` the way GitHub sets it up by default.
 
 ## PWA (Operator)

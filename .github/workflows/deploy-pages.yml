@@ -1,0 +1,246 @@
+name: Deploy to GitHub Pages
+
+# Manual and cross-branch on purpose: GitHub Pages serves the dev environment, the public demo, and
+# publishing whatever a branch contains there is a decision someone makes, not a side effect of a
+# merge — see build-and-deploy.yml, which is what actually ships to real users (preview and, once
+# promoted, production) and runs on every push instead. Dispatching this workflow already lets you
+# pick any branch or tag from the Actions UI, so no extra input is needed for that part.
+on:
+  workflow_dispatch: {}
+
+env:
+  PROJECT_NAME: bikerental-ui
+
+concurrency:
+  group: deploy-pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run gateway tests
+        run: npx ng test gateway --watch=false
+
+      - name: Run admin tests
+        run: npx ng test admin --watch=false
+
+      - name: Run operator tests
+        run: npx ng test operator --watch=false
+
+      - name: Run shared tests
+        run: npx ng test shared --watch=false
+
+  build:
+    name: Build (pages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [ test ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # dev is the one environment genuinely cross-origin from its API (GitHub Pages → Render), so the
+      # host has to be known at build time — unlike the pi target, which resolves it at runtime from
+      # window.location.origin (see environment.prod.ts in build-and-deploy.yml).
+      - name: Inject Bike Rental API host
+        env:
+          API_URL: ${{ vars.BIKE_RENTAL_TEST_API }}
+        run: |
+          if [ -z "${API_URL}" ]; then
+            echo "::error::No API base URL — set the repository variable BIKE_RENTAL_TEST_API."
+            exit 1
+          fi
+          sed -i "s|BIKE_API_PLACEHOLDER|${API_URL}|g" projects/shared/src/environments/environment.dev.ts
+
+      # Stamps the deployed commit into two places, so "which version is this
+      # client actually running?" is answerable without guesswork:
+      #  - environment.appVersion is baked into the bundle, so it reports the
+      #    version of the code that is really executing — even when the service
+      #    worker is serving a stale build, which is exactly when it matters.
+      #  - ngsw.json appData describes the manifest, so the deployed version can
+      #    be read straight off the live site:
+      #      curl -s https://<pages-host>/<repo>/operator/en/ngsw.json | jq .appData
+      - name: Stamp build version
+        run: |
+          VERSION="${GITHUB_SHA:0:7}"
+          BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          sed -i "s|BIKE_VERSION_PLACEHOLDER|${VERSION}|g" projects/shared/src/environments/environment.dev.ts
+          sed -i "s|BIKE_VERSION_PLACEHOLDER|${VERSION}|g" projects/operator/ngsw-config.json
+          sed -i "s|BIKE_BUILD_TIME_PLACEHOLDER|${BUILD_TIME}|g" projects/operator/ngsw-config.json
+          echo "Stamped version ${VERSION} (${BUILD_TIME})"
+
+      # Served from a repository-name prefix, so every base href carries it, and the gateway ships as
+      # the application chooser — Pages serves static files only, so it needs an actual page to answer
+      # the bare domain, unlike the pi target's router.
+      - name: Build gateway
+        run: npx ng build gateway --configuration production,dev --base-href /${{ github.event.repository.name }}/
+
+      - name: Build admin
+        run: npx ng build admin --configuration production,dev --base-href /${{ github.event.repository.name }}/admin/
+
+      - name: Build operator
+        run: npx ng build operator --configuration production,dev --base-href /${{ github.event.repository.name }}/operator/
+
+      # The gateway's locales are top-level URLs (/en/, /ru/), so its files sit at the tree root; admin
+      # and operator each get a directory of their own.
+      - name: Assemble staging directory
+        run: |
+          mkdir -p staging/admin staging/operator
+          cp -r dist/gateway/browser/. staging/
+          cp -r dist/admin/browser/. staging/admin/
+          cp -r dist/operator/browser/. staging/operator/
+
+      - name: Create root redirect to /en/
+        run: |
+          BASE="/${{ github.event.repository.name }}"
+          cat > staging/index.html << 'HTMLEOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <title>Bike Rental</title>
+              <meta http-equiv="refresh" content="0; url=BASE_PLACEHOLDER/en/" />
+              <script>window.location.replace('BASE_PLACEHOLDER/en/');</script>
+            </head>
+            <body></body>
+          </html>
+          HTMLEOF
+          sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/index.html
+
+      # Each app is built into per-locale subdirectories (admin/en, admin/ru, ...).
+      # A bare /admin/ or /operator/ URL has no index.html, so without this it would
+      # fall through to the site 404.html and bounce to the gateway. This adds an
+      # entry index.html per app that forwards to the default (en) locale — which is
+      # also the URL the OIDC redirect_uri / app links should target.
+      - name: Create per-app locale redirects
+        run: |
+          BASE="/${{ github.event.repository.name }}"
+          for app in admin operator; do
+            cat > "staging/${app}/index.html" << 'HTMLEOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <title>Bike Rental</title>
+              <meta http-equiv="refresh" content="0; url=BASE_PLACEHOLDER/APP_PLACEHOLDER/en/" />
+              <script>window.location.replace('BASE_PLACEHOLDER/APP_PLACEHOLDER/en/');</script>
+            </head>
+            <body></body>
+          </html>
+          HTMLEOF
+            sed -i "s|BASE_PLACEHOLDER|${BASE}|g; s|APP_PLACEHOLDER|${app}|g" "staging/${app}/index.html"
+          done
+
+      # GitHub Pages only ever serves the 404.html at the SITE ROOT — nested
+      # 404.html files (admin/en/404.html, etc.) are never looked up and are
+      # dead weight. This single root 404.html inspects the requested path,
+      # works out which app/locale directory actually has a real index.html,
+      # and bounces there with the original path+query preserved in a
+      # `redirect` param (classic GH Pages SPA trick). The matching
+      # restore-script lives in each app's checked-in entry point —
+      # projects/{gateway,admin,operator}/src/index.html — and puts the real
+      # URL back via history.replaceState before Angular bootstraps, so deep
+      # links survive the 404 hop instead of losing their query string.
+      #
+      # That script MUST stay in the source index.html and must never be
+      # injected here: index.html is SHA1-pinned in the operator's ngsw.json
+      # hashTable at build time, so rewriting it post-build breaks the service
+      # worker (see the integrity check below).
+      - name: Add smart 404.html for SPA routing
+        run: |
+          BASE="/${{ github.event.repository.name }}"
+          cat > staging/404.html << 'HTMLEOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <title>Bike Rental</title>
+              <script>
+                (function () {
+                  var base = 'BASE_PLACEHOLDER/';
+                  var path = window.location.pathname;
+                  var rel = path.indexOf(base) === 0 ? path.slice(base.length) : path.replace(/^\//, '');
+                  var segments = rel.split('/').filter(Boolean);
+                  var apps = ['admin', 'operator'];
+                  var locales = ['en', 'ru'];
+                  var appDir;
+                  if (apps.indexOf(segments[0]) !== -1) {
+                    var locale = locales.indexOf(segments[1]) !== -1 ? segments[1] : 'en';
+                    appDir = segments[0] + '/' + locale;
+                  } else if (locales.indexOf(segments[0]) !== -1) {
+                    appDir = segments[0];
+                  } else {
+                    appDir = 'en';
+                  }
+                  var original = path + window.location.search + window.location.hash;
+                  window.location.replace(base + appDir + '/?redirect=' + encodeURIComponent(original));
+                })();
+              </script>
+            </head>
+            <body></body>
+          </html>
+          HTMLEOF
+          sed -i "s|BASE_PLACEHOLDER|${BASE}|g" staging/404.html
+
+      # Guards the service worker's integrity. Every file listed in an ngsw.json
+      # hashTable is pinned by SHA1 at build time; if any of those files is
+      # mutated after the build (e.g. a post-build HTML rewrite), the worker
+      # fails to install the new version, degrades to EXISTING_CLIENTS_ONLY, and
+      # pins clients to the stale cached version forever. This fails the build
+      # instead, so such a regression can never reach the demo. It also
+      # asserts one manifest per app/locale declared in angular.json, so a
+      # locale silently losing its service worker fails the build too.
+      - name: Verify ngsw.json hash integrity
+        run: npm run verify:ngsw
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: staging
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [ build ]
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
