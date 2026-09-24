@@ -6054,6 +6054,118 @@
           <context context-type="linenumber">695</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="12198356341081919" datatype="html">
+        <source>Additional phone</source>
+        <target>Дополнительный телефон</target>
+      </trans-unit>
+      <trans-unit id="1350105028443951724" datatype="html">
+        <source>Register rental point</source>
+        <target>Регистрация пункта проката</target>
+      </trans-unit>
+      <trans-unit id="1584331036827923106" datatype="html">
+        <source>Select a rental point or create a new one</source>
+        <target>Выберите пункт проката или создайте новый</target>
+      </trans-unit>
+      <trans-unit id="1859131936150262113" datatype="html">
+        <source>Inactive</source>
+        <target>Неактивен</target>
+      </trans-unit>
+      <trans-unit id="2314075913167237221" datatype="html">
+        <source>City</source>
+        <target>Город</target>
+      </trans-unit>
+      <trans-unit id="2376338029039255131" datatype="html">
+        <source>Still attached to the point at the moment of closure:</source>
+        <target>На момент закрытия к пункту было привязано:</target>
+      </trans-unit>
+      <trans-unit id="2585810285043341585" datatype="html">
+        <source>Rental points list</source>
+        <target>Список пунктов проката</target>
+      </trans-unit>
+      <trans-unit id="2886516716691419507" datatype="html">
+        <source>Close permanently</source>
+        <target>Закрыть навсегда</target>
+      </trans-unit>
+      <trans-unit id="4097761430561209267" datatype="html">
+        <source>unknown</source>
+        <target>неизвестно</target>
+      </trans-unit>
+      <trans-unit id="4222846916260318127" datatype="html">
+        <source>Cannot be changed after registration</source>
+        <target>Нельзя изменить после регистрации</target>
+      </trans-unit>
+      <trans-unit id="4360306987409712828" datatype="html">
+        <source>Rental point saved</source>
+        <target>Пункт проката сохранён</target>
+      </trans-unit>
+      <trans-unit id="4372097958352169738" datatype="html">
+        <source>Close rental point permanently?</source>
+        <target>Закрыть пункт проката навсегда?</target>
+      </trans-unit>
+      <trans-unit id="4526714495197091449" datatype="html">
+        <source>Primary phone</source>
+        <target>Основной телефон</target>
+      </trans-unit>
+      <trans-unit id="4565426374722901057" datatype="html">
+        <source>A permanently closed point cannot be reopened or edited. This action cannot be undone.</source>
+        <target>Закрытый навсегда пункт нельзя открыть снова или изменить. Это действие необратимо.</target>
+      </trans-unit>
+      <trans-unit id="516176798986294299" datatype="html">
+        <source>Country</source>
+        <target>Страна</target>
+      </trans-unit>
+      <trans-unit id="5300299752747305537" datatype="html">
+        <source>This status change is not allowed for the rental point.</source>
+        <target>Такое изменение статуса пункта проката недопустимо.</target>
+      </trans-unit>
+      <trans-unit id="5359164678559943913" datatype="html">
+        <source>A rental point with this slug already exists.</source>
+        <target>Пункт проката с таким кодом уже существует.</target>
+      </trans-unit>
+      <trans-unit id="5555255729162006348" datatype="html">
+        <source>Street and building</source>
+        <target>Улица и дом</target>
+      </trans-unit>
+      <trans-unit id="5945986349492910662" datatype="html">
+        <source>Contacts</source>
+        <target>Контакты</target>
+      </trans-unit>
+      <trans-unit id="5976645058078007459" datatype="html">
+        <source>Permanently closed</source>
+        <target>Закрыт навсегда</target>
+      </trans-unit>
+      <trans-unit id="6304432362546770951" datatype="html">
+        <source>Address</source>
+        <target>Адрес</target>
+      </trans-unit>
+      <trans-unit id="6577561663614598871" datatype="html">
+        <source>Nothing was attached to the point.</source>
+        <target>К пункту ничего не было привязано.</target>
+      </trans-unit>
+      <trans-unit id="6753223316028737302" datatype="html">
+        <source>No rental points yet</source>
+        <target>Пунктов проката пока нет</target>
+      </trans-unit>
+      <trans-unit id="6894541864959780828" datatype="html">
+        <source>New point</source>
+        <target>Новый пункт</target>
+      </trans-unit>
+      <trans-unit id="7810909371088935073" datatype="html">
+        <source>This point is permanently closed and can no longer be edited.</source>
+        <target>Пункт закрыт навсегда и больше не может быть изменён.</target>
+      </trans-unit>
+      <trans-unit id="8552274045691402149" datatype="html">
+        <source>Rental point closed</source>
+        <target>Пункт проката закрыт</target>
+      </trans-unit>
+      <trans-unit id="8770044386641458870" datatype="html">
+        <source>Rental points</source>
+        <target>Пункты проката</target>
+      </trans-unit>
+      <trans-unit id="9192252250573112754" datatype="html">
+        <source>Current rental point</source>
+        <target>Текущий пункт проката</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

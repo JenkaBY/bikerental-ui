@@ -17,3 +17,4 @@ export * from './agreement-signature.model';
 export * from './damage-report.model';
 export * from './analytics-revenue.model';
 export * from './analytics-customer.model';
+export * from './point.model';

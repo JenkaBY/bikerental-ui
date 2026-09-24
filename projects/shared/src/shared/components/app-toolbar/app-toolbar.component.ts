@@ -45,6 +45,8 @@ import { TimeTravelDisplayComponent } from '../time-travel-display/time-travel-d
         </span>
       </div>
 
+      <ng-content select="[toolbarCenter]"></ng-content>
+
       @if (timeTravelStore.timeTravelEnabled) {
         <app-time-travel-display />
       }

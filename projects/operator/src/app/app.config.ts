@@ -20,10 +20,12 @@ import {
   APP_BRAND,
   AuthService,
   BRAND,
+  CurrentPointStore,
   environment,
   errorInterceptor,
   HealthPollerService,
   LookupInitializerFacade,
+  pointInterceptor,
   provideDefaultClient,
   provideOidcAuth,
   SseService,
@@ -43,7 +45,12 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
-      withInterceptors([acceptLanguageInterceptor, apiAuthInterceptor, errorInterceptor]),
+      withInterceptors([
+        acceptLanguageInterceptor,
+        pointInterceptor,
+        apiAuthInterceptor,
+        errorInterceptor,
+      ]),
     ),
     provideOidcAuth('bike-rental-operator'),
     provideAppInitializer(() => {
@@ -52,6 +59,7 @@ export const appConfig: ApplicationConfig = {
       registerLocaleData(localeRu, 'ru');
       const auth = inject(AuthService);
       const lookupFacade = inject(LookupInitializerFacade);
+      const pointStore = inject(CurrentPointStore);
       return firstValueFrom(
         auth.checkAuth().pipe(
           tap((result) => {
@@ -63,6 +71,7 @@ export const appConfig: ApplicationConfig = {
                   loadSpecialTariffId: true,
                 })
                 .subscribe();
+              pointStore.load().subscribe();
             }
           }),
         ),

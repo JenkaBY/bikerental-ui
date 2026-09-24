@@ -1,0 +1,105 @@
+@if (point() || creating()) {
+  <form [formGroup]="form" class="flex flex-col gap-2" (ngSubmit)="save()">
+    <div class="flex items-center justify-between gap-4 mb-2">
+      <div class="flex items-center gap-3 min-w-0">
+        <h2 class="text-lg font-medium m-0 truncate">
+          {{ creating() ? labels.PointRegisterTitle : point()?.name }}
+        </h2>
+        @if (point(); as p) {
+          <span class="px-2 py-0.5 rounded-full text-sm shrink-0" [class]="statusClasses[p.status]">
+            {{ statusLabels[p.status] }}
+          </span>
+        }
+      </div>
+      @if (point(); as p) {
+        <app-point-status-actions [point]="p" />
+      }
+    </div>
+
+    @if (closed()) {
+      <p class="text-slate-500">{{ labels.PointClosedReadOnly }}</p>
+    }
+
+    <div class="grid grid-cols-2 gap-x-4">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ labels.Slug }}</mat-label>
+        <input matInput formControlName="slug" />
+        @if (creating()) {
+          <mat-hint>{{ labels.PointSlugHint }}</mat-hint>
+        }
+        @if (form.controls.slug.hasError('required')) {
+          <mat-error>{{ errors.slugRequired }}</mat-error>
+        }
+        @if (form.controls.slug.hasError('server')) {
+          <mat-error>{{ form.controls.slug.getError('server') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ labels.Name }}</mat-label>
+        <input matInput formControlName="name" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>{{ errors.nameRequired }}</mat-error>
+        }
+        @if (form.controls.name.hasError('server')) {
+          <mat-error>{{ form.controls.name.getError('server') }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <h3 class="text-base font-medium m-0">{{ labels.PointAddressTitle }}</h3>
+    <div formGroupName="address" class="grid grid-cols-3 gap-x-4">
+      @for (f of addressFields; track f.key) {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ f.label }}</mat-label>
+          <input matInput [formControlName]="f.key" />
+          @if (form.controls.address.controls[f.key].hasError('required')) {
+            <mat-error>{{ errors.required }}</mat-error>
+          }
+          @if (form.controls.address.controls[f.key].hasError('server')) {
+            <mat-error>{{ form.controls.address.controls[f.key].getError('server') }}</mat-error>
+          }
+        </mat-form-field>
+      }
+    </div>
+
+    <h3 class="text-base font-medium m-0">{{ labels.PointContactsTitle }}</h3>
+    <div formGroupName="contacts" class="grid grid-cols-3 gap-x-4">
+      @for (f of contactFields; track f.key) {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ f.label }}</mat-label>
+          <input matInput [type]="f.type" [formControlName]="f.key" />
+          @if (form.controls.contacts.controls[f.key].hasError('required')) {
+            <mat-error>{{ errors.phoneRequired }}</mat-error>
+          }
+          @if (form.controls.contacts.controls[f.key].hasError('phonePattern')) {
+            <mat-error>{{ errors.phonePattern }}</mat-error>
+          }
+          @if (form.controls.contacts.controls[f.key].hasError('email')) {
+            <mat-error>{{ errors.emailInvalid }}</mat-error>
+          }
+          @if (form.controls.contacts.controls[f.key].hasError('server')) {
+            <mat-error>{{ form.controls.contacts.controls[f.key].getError('server') }}</mat-error>
+          }
+        </mat-form-field>
+      }
+    </div>
+
+    @if (editing()) {
+      <div class="flex justify-end gap-2">
+        <button mat-button type="button" [disabled]="saving()" (click)="cancel()">
+          {{ labels.Cancel }}
+        </button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
+          {{ labels.Save }}
+        </button>
+      </div>
+    } @else if (point() && !closed()) {
+      <div class="flex justify-end gap-2">
+        <button mat-stroked-button type="button" (click)="edit()">{{ labels.Edit }}</button>
+      </div>
+    }
+  </form>
+} @else {
+  <p class="text-slate-500">{{ labels.PointSelectHint }}</p>
+}

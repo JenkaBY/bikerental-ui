@@ -218,6 +218,72 @@ export interface RentalResponse {
   createdAt: string;
 }
 
+/** Postal address of a rental point */
+export interface PointAddressRequest {
+  /** Street and building */
+  street: string;
+  /** City */
+  city: string;
+  /** Country */
+  country: string;
+}
+
+/** Contact details of a rental point */
+export interface PointContactsRequest {
+  /** Primary contact phone */
+  primaryPhone: string;
+  /** Additional contact phone */
+  additionalPhone?: string;
+  /** Contact e-mail */
+  email?: string;
+}
+
+/** Request body for updating a rental point; the slug is immutable and cannot be supplied */
+export interface PointUpdateRequest {
+  /** Display name */
+  name: string;
+  /** Postal address */
+  address: PointAddressRequest;
+  /** Contact details */
+  contacts: PointContactsRequest;
+}
+
+/** Postal address of a rental point */
+export interface PointAddressResponse {
+  /** Street and building */
+  street: string;
+  /** City */
+  city: string;
+  /** Country */
+  country: string;
+}
+
+/** Contact details of a rental point */
+export interface PointContactsResponse {
+  /** Primary contact phone */
+  primaryPhone: string;
+  /** Additional contact phone */
+  additionalPhone?: string;
+  /** Contact e-mail */
+  email?: string;
+}
+
+/** Full rental point record */
+export interface PointResponse {
+  /** Rental point UUID */
+  id: string;
+  /** URL-friendly identifier */
+  slug: string;
+  /** Display name */
+  name: string;
+  /** Postal address */
+  address: PointAddressResponse;
+  /** Contact details */
+  contacts: PointContactsResponse;
+  /** Lifecycle status */
+  status: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED';
+}
+
 /** Request body for creating or updating equipment */
 export interface EquipmentRequest {
   /** Unique serial number */
@@ -425,6 +491,18 @@ export interface RentalForSigningRequest {
   discountPercent?: number;
 }
 
+/** Request body for registering a rental point */
+export interface PointRequest {
+  /** URL-friendly identifier, immutable after registration */
+  slug: string;
+  /** Display name */
+  name: string;
+  /** Postal address */
+  address: PointAddressRequest;
+  /** Contact details */
+  contacts: PointContactsRequest;
+}
+
 /** Request body for registering a damage report */
 export interface RegisterDamageReportRequest {
   /** Equipment ids covered by the report, 1-5 elements */
@@ -602,6 +680,30 @@ export interface RentalLifecycleRequest {
   status: 'DRAFT' | 'AWAITING_SIGNATURE' | 'CANCELLED';
 }
 
+/** Request body for changing the lifecycle status of a rental point */
+export interface PointStatusChangeRequest {
+  /** Target status */
+  status: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED';
+}
+
+/** What remains attached to a rental point that has been closed permanently */
+export interface PointOccupancyResponse {
+  /** What is being counted */
+  kind: string;
+  /** How many, absent when the count could not be determined */
+  count?: number;
+  /** Whether the count could be determined */
+  determined?: boolean;
+}
+
+/** Result of a rental point status change, including what a permanent closure stranded */
+export interface PointStatusChangeResponse {
+  /** The rental point in its new status */
+  point?: PointResponse;
+  /** Occupancy at the moment of permanent closure, empty for any other transition */
+  closureSummary?: Array<PointOccupancyResponse>;
+}
+
 /** Request body for a batch equipment condition change */
 export interface ChangeEquipmentConditionRequest {
   /** Equipment ids the condition is applied to, 1-5 elements */
@@ -760,6 +862,12 @@ export interface AvailableEquipmentResponse {
 
 export interface PageAvailableEquipmentResponse {
   items?: Array<AvailableEquipmentResponse>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
+}
+
+export interface PagePointResponse {
+  items?: Array<PointResponse>;
   totalItems?: number;
   pageRequest?: PageRequest;
 }

@@ -73,6 +73,10 @@ export const ErrorCode = {
 
   // maintenance.* — damage reports
   MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL: 'maintenance.equipment.not_in_rental',
+
+  // point.* — rental point registry
+  POINT_SLUG_DUPLICATE: 'point.slug.duplicate',
+  POINT_STATUS_TRANSITION_FORBIDDEN: 'point.status.transition_forbidden',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];

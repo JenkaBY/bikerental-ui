@@ -107,7 +107,7 @@ CONSUMES:
 
 SERVICE_NAME: admin
 TYPE: Frontend
-PURPOSE: Authenticated, desktop-first SPA for equipment/tariff/agreement/customer/rental/transaction/damage-report/user CRUD and revenue/customer analytics.
+PURPOSE: Authenticated, desktop-first SPA for equipment/tariff/agreement/customer/rental/transaction/damage-report/user/rental-point CRUD and revenue/customer analytics.
 OVERVIEW_REF: `overview.md` (see "Components" → admin feature components, and "Dependency Registration and Wiring" for its OIDC client id)
 ENTRY_POINT: `projects/admin/src/main.ts`
 EXPOSES:
@@ -116,7 +116,7 @@ EXPOSES:
     DESCRIPTION: Compiled static bundle for the back-office area
 CONSUMES:
   - PROTOCOL: HTTP
-    ENDPOINT_OR_TOPIC: every endpoint under `AgreementsService`, `AnalyticsService`, `CustomersService`, `EquipmentsCatalogueService`, `EquipmentTypesService`, `FinanceService`, `MaintenanceService`, `RentalsService`, `TariffsService`, `UsersService`
+    ENDPOINT_OR_TOPIC: every endpoint under `AgreementsService`, `AnalyticsService`, `CustomersService`, `EquipmentsCatalogueService`, `EquipmentTypesService`, `FinanceService`, `MaintenanceService`, `RentalsService`, `RentalPointsService`, `TariffsService`, `UsersService`
     FROM_SERVICE: bikerental-backend
     DESCRIPTION: All domain CRUD, search and analytics operations, via the shared generated client
   - PROTOCOL: HTTP
@@ -145,9 +145,9 @@ EXPOSES:
     DESCRIPTION: Compiled static bundle for the rental-workflow area; installable as a PWA (service worker + manifest)
 CONSUMES:
   - PROTOCOL: HTTP
-    ENDPOINT_OR_TOPIC: every endpoint under `AgreementsService`, `CustomersService`, `EquipmentsCatalogueService`, `FinanceService`, `MaintenanceService`, `RentalsService`, `TariffsService`
+    ENDPOINT_OR_TOPIC: every endpoint under `AgreementsService`, `CustomersService`, `EquipmentsCatalogueService`, `FinanceService`, `MaintenanceService`, `RentalPointsService`, `RentalsService`, `TariffsService`
     FROM_SERVICE: bikerental-backend
-    DESCRIPTION: Rental lifecycle, equipment search/return, pricing quotes, damage reports and customer finance, via the shared generated client
+    DESCRIPTION: Rental lifecycle, equipment search/return, pricing quotes, damage reports, customer finance and the active rental-point list (selected point sent as `X-Point-Id` header by `pointInterceptor`), via the shared generated client
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: OIDC authorization/token/end-session endpoints (client id `bike-rental-operator`)
     FROM_SERVICE: bikerental-backend
@@ -187,7 +187,7 @@ EXPOSES:
     ENDPOINT_OR_TOPIC: `/v3/api-docs/all`
     DESCRIPTION: OpenAPI spec consumed by `ng-openapi` to regenerate `projects/shared/src/core/api/generated/`
   - PROTOCOL: HTTP
-    ENDPOINT_OR_TOPIC: domain REST endpoints behind `AgreementsService`, `AnalyticsService`, `CustomersService`, `EquipmentsCatalogueService`, `EquipmentTypesService`, `FinanceService`, `IdentityService`, `MaintenanceService`, `RentalsService`, `TariffsService`, `TimeTravelControllerService`, `UsersService`
+    ENDPOINT_OR_TOPIC: domain REST endpoints behind `AgreementsService`, `AnalyticsService`, `CustomersService`, `EquipmentsCatalogueService`, `EquipmentTypesService`, `FinanceService`, `IdentityService`, `MaintenanceService`, `RentalPointsService`, `RentalsService`, `TariffsService`, `TimeTravelControllerService`, `UsersService`
     DESCRIPTION: All domain, analytics and identity endpoints covered by the OpenAPI spec
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: `/actuator/health`, `/actuator/info`
@@ -212,7 +212,7 @@ INTERACTION_ID: 1
 FROM_SERVICE: admin
 TO_SERVICE: bikerental-backend
 PROTOCOL: HTTP
-CHANNEL: REST — `AgreementsService`, `AnalyticsService`, `CustomersService`, `EquipmentsCatalogueService`, `EquipmentTypesService`, `FinanceService`, `MaintenanceService`, `RentalsService`, `TariffsService`, `UsersService`
+CHANNEL: REST — `AgreementsService`, `AnalyticsService`, `CustomersService`, `EquipmentsCatalogueService`, `EquipmentTypesService`, `FinanceService`, `MaintenanceService`, `RentalPointsService`, `RentalsService`, `TariffsService`, `UsersService`
 DIRECTION: Request-Response
 PURPOSE: CRUD, search and analytics operations for every domain entity managed in the back office
 CONTRACT_REF: `projects/shared/src/core/api/generated/` (auto-generated from the OpenAPI spec by `ng-openapi`)

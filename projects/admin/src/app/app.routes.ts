@@ -95,6 +95,11 @@ export const routes: Routes = [
           import('./users/users-list.component').then((m) => m.UsersListComponent),
       },
       {
+        path: 'points',
+        loadComponent: () =>
+          import('./points/points-page.component').then((m) => m.PointsPageComponent),
+      },
+      {
         path: 'analytics',
         loadComponent: () =>
           import('./analytics/analytics-page.component').then((m) => m.AnalyticsPageComponent),
