@@ -712,4 +712,34 @@ export class Labels {
   static readonly ShowAll = $localize`Show all`;
   static readonly ShowLess = $localize`Show less`;
   static readonly RentalPeriodLabel = $localize`Rental period`;
+
+  static readonly Points = $localize`Rental points`;
+  static readonly PointNew = $localize`New point`;
+  static readonly PointListLabel = $localize`Rental points list`;
+  static readonly PointsEmpty = $localize`No rental points yet`;
+  static readonly PointSelectHint = $localize`Select a rental point or create a new one`;
+  static readonly PointRegisterTitle = $localize`Register rental point`;
+  static readonly PointSlugHint = $localize`Cannot be changed after registration`;
+  static readonly PointAddressTitle = $localize`Address`;
+  static readonly PointStreet = $localize`Street and building`;
+  static readonly PointCity = $localize`City`;
+  static readonly PointCountry = $localize`Country`;
+  static readonly PointContactsTitle = $localize`Contacts`;
+  static readonly PointPrimaryPhone = $localize`Primary phone`;
+  static readonly PointAdditionalPhone = $localize`Additional phone`;
+  static readonly PointStatusActive = $localize`Active`;
+  static readonly PointStatusInactive = $localize`Inactive`;
+  static readonly PointStatusClosed = $localize`Permanently closed`;
+  static readonly PointActivate = $localize`Activate`;
+  static readonly PointDeactivate = $localize`Deactivate`;
+  static readonly PointClosePermanently = $localize`Close permanently`;
+  static readonly PointCloseConfirmTitle = $localize`Close rental point permanently?`;
+  static readonly PointCloseConfirmMessage = $localize`A permanently closed point cannot be reopened or edited. This action cannot be undone.`;
+  static readonly PointClosedReadOnly = $localize`This point is permanently closed and can no longer be edited.`;
+  static readonly PointClosureSummaryTitle = $localize`Rental point closed`;
+  static readonly PointClosureSummaryIntro = $localize`Still attached to the point at the moment of closure:`;
+  static readonly PointClosureSummaryEmpty = $localize`Nothing was attached to the point.`;
+  static readonly PointClosureCountUnknown = $localize`unknown`;
+  static readonly PointSaved = $localize`Rental point saved`;
+  static readonly CurrentPoint = $localize`Current rental point`;
 }

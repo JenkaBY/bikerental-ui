@@ -155,6 +155,10 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   // Class-level damage report rule (field: null) — should be unreachable since the UI always
   // supplies exactly one of rentalId/customerId, kept as a safety net
   [ErrorCode.RESPONSIBLE_PARTY_REQUIRED]: $localize`Select either a rental or a customer to attach this report to — not both, not neither.`,
+
+  // Rental point registry
+  [ErrorCode.POINT_SLUG_DUPLICATE]: $localize`A rental point with this slug already exists.`,
+  [ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN]: $localize`This status change is not allowed for the rental point.`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

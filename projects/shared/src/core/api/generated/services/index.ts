@@ -15,6 +15,7 @@ export { EquipmentTypesService } from './equipmentTypes.service';
 export { FinanceService } from './finance.service';
 export { IdentityService } from './identity.service';
 export { MaintenanceService } from './maintenance.service';
+export { RentalPointsService } from './rentalPoints.service';
 export { RentalsService } from './rentals.service';
 export { TariffsService } from './tariffs.service';
 export { TimeTravelControllerService } from './timeTravelController.service';

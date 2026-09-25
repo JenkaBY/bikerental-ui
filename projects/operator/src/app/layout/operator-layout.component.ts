@@ -5,8 +5,10 @@ import {
   AppToolbarComponent,
   AuthService,
   BottomNavComponent,
+  CurrentPointStore,
   HealthIndicatorComponent,
   NavItem,
+  PointSwitcherComponent,
   ProfileMenuComponent,
 } from '@bikerental/shared';
 
@@ -25,11 +27,19 @@ const NAV_ITEMS: NavItem[] = [
     AppToolbarComponent,
     BottomNavComponent,
     HealthIndicatorComponent,
+    PointSwitcherComponent,
     ProfileMenuComponent,
   ],
   host: { class: 'flex flex-col h-screen max-w-[480px] mx-auto' },
   template: `
     <app-toolbar [title]="title" [showToggle]="false">
+      <app-point-switcher
+        toolbarCenter
+        [points]="pointStore.points()"
+        [current]="pointStore.current()"
+        [disabled]="!pointStore.canSwitch()"
+        (pointSelect)="pointStore.select($event)"
+      />
       <app-health-indicator />
       <app-profile-menu (logout)="onLogout()" />
     </app-toolbar>
@@ -45,6 +55,7 @@ export class OperatorLayoutComponent {
   protected navItems = NAV_ITEMS;
   protected brand = inject(APP_BRAND);
   protected title = this.brand;
+  protected readonly pointStore = inject(CurrentPointStore);
   private readonly auth = inject(AuthService);
 
   protected onLogout() {
