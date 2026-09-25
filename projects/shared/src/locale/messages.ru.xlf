@@ -6166,6 +6166,22 @@
         <source>Current rental point</source>
         <target>Текущий пункт проката</target>
       </trans-unit>
+      <trans-unit id="4532496425403941189" datatype="html">
+        <source><x id="message" equiv-text="message"/> (Ref: <x id="traceId" equiv-text="traceId"/>)</source>
+        <target><x id="message" equiv-text="message"/> (Код: <x id="traceId" equiv-text="traceId"/>)</target>
+      </trans-unit>
+      <trans-unit id="2789703760518234806" datatype="html">
+        <source>No working point is assigned to you. Ask an administrator to assign one.</source>
+        <target>Вам не назначен рабочий пункт проката. Обратитесь к администратору.</target>
+      </trans-unit>
+      <trans-unit id="1462190043303627194" datatype="html">
+        <source>The app sent an invalid request. Please report this issue.</source>
+        <target>Приложение отправило некорректный запрос. Пожалуйста, сообщите об этой ошибке.</target>
+      </trans-unit>
+      <trans-unit id="8446492569448480403" datatype="html">
+        <source>No working point assigned</source>
+        <target>Рабочий пункт не назначен</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
