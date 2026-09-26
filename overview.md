@@ -21,7 +21,7 @@
   ENTRY_FILES: `projects/admin/src/main.ts`, `projects/admin/src/app/app.config.ts`, `projects/admin/src/app/app.routes.ts`, `projects/admin/src/index.html`
 
 - PATH: `projects/operator/`
-  PURPOSE: Mobile-first installable PWA — rental creation wizard, agreement signing, active-rental dashboard, QR-scan equipment return, damage reporting, read-only toolbar label for the operator's rental point (or "no working point assigned")
+  PURPOSE: Mobile-first installable PWA — rental creation wizard, agreement signing, active-rental dashboard, QR-scan equipment return, damage reporting, toolbar rental-point switcher (or "no working point assigned" chip)
   ENTRY_FILES: `projects/operator/src/main.ts`, `projects/operator/src/app/app.config.ts`, `projects/operator/src/app/app.routes.ts`, `projects/operator/src/index.html`
   PWA_FILES: `projects/operator/ngsw-config.json`, `projects/operator/public/manifest.webmanifest`, `projects/operator/public/icons/`, `projects/operator/src/app/core/pwa-update.service.ts`
 
@@ -354,7 +354,7 @@ CALLS:
   - HttpClient — transport.
 CALLED_BY:
   - PointAdminStore (admin `/admin/points` master-detail page)
-  - CurrentPointStore (operator toolbar label; ACTIVE points loaded at startup — server-scoped to the operator's own point; the client never sends a working point)
+  - CurrentPointStore (operator toolbar switcher; ACTIVE points loaded at startup, selection persisted in localStorage for the UI only — never sent to the API)
 
 COMPONENT_NAME: UsersService
 TYPE: API

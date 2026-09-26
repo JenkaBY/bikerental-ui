@@ -11,6 +11,7 @@ import {
   Labels,
   NavItem,
   OperatingScopeStore,
+  PointSwitcherComponent,
   ProfileMenuComponent,
 } from '@bikerental/shared';
 
@@ -30,6 +31,7 @@ const NAV_ITEMS: NavItem[] = [
     AppToolbarComponent,
     BottomNavComponent,
     HealthIndicatorComponent,
+    PointSwitcherComponent,
     ProfileMenuComponent,
   ],
   host: { class: 'flex flex-col h-screen max-w-[480px] mx-auto' },
@@ -40,14 +42,14 @@ const NAV_ITEMS: NavItem[] = [
           <mat-icon class="!text-base !w-4 !h-4">location_off</mat-icon>
           {{ labels.NoWorkingPoint }}
         </span>
-      } @else if (pointStore.current(); as point) {
-        <span
+      } @else {
+        <app-point-switcher
           toolbarCenter
-          class="text-sm font-medium underline underline-offset-4 truncate max-w-[10rem]"
-          [attr.aria-label]="labels.CurrentPoint"
-        >
-          {{ point.name }}
-        </span>
+          [points]="pointStore.points()"
+          [current]="pointStore.current()"
+          [disabled]="!pointStore.canSwitch()"
+          (pointSelect)="pointStore.select($event)"
+        />
       }
       <app-health-indicator />
       <app-profile-menu (logout)="onLogout()" />
