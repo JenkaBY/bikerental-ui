@@ -77,6 +77,10 @@ export const ErrorCode = {
   // point.* — rental point registry
   POINT_SLUG_DUPLICATE: 'point.slug.duplicate',
   POINT_STATUS_TRANSITION_FORBIDDEN: 'point.status.transition_forbidden',
+
+  // scope.* — operating scope (working point resolved from the session)
+  SCOPE_NOT_ESTABLISHED: 'scope.not_established',
+  SCOPE_CALLER_SUPPLIED: 'scope.caller_supplied',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -130,6 +134,16 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.AGREEMENT_SIGNING_RENTAL_VERSION_MISMATCH,
   ErrorCode.AGREEMENT_SIGNING_RENTAL_NOT_AWAITING_SIGNATURE,
   ErrorCode.AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE,
+  ErrorCode.SCOPE_NOT_ESTABLISHED,
+  ErrorCode.SCOPE_CALLER_SUPPLIED,
+]);
+
+const CLIENT_DEFECT_CODES = new Set<string>([
+  ErrorCode.REQUEST_METHOD_NOT_ALLOWED,
+  ErrorCode.REQUEST_MEDIA_TYPE_NOT_SUPPORTED,
+  ErrorCode.API_VERSION_MISSING,
+  ErrorCode.API_VERSION_INVALID,
+  ErrorCode.SCOPE_CALLER_SUPPLIED,
 ]);
 
 export function isValidationCode(code: string): boolean {
@@ -138,4 +152,8 @@ export function isValidationCode(code: string): boolean {
 
 export function isDomainCode(code: string): boolean {
   return DOMAIN_CODES.has(code);
+}
+
+export function isClientDefectCode(code: string): boolean {
+  return CLIENT_DEFECT_CODES.has(code);
 }

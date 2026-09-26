@@ -742,4 +742,5 @@ export class Labels {
   static readonly PointClosureCountUnknown = $localize`unknown`;
   static readonly PointSaved = $localize`Rental point saved`;
   static readonly CurrentPoint = $localize`Current rental point`;
+  static readonly NoWorkingPoint = $localize`No working point assigned`;
 }

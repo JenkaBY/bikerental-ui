@@ -147,7 +147,7 @@ CONSUMES:
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: every endpoint under `AgreementsService`, `CustomersService`, `EquipmentsCatalogueService`, `FinanceService`, `MaintenanceService`, `RentalPointsService`, `RentalsService`, `TariffsService`
     FROM_SERVICE: bikerental-backend
-    DESCRIPTION: Rental lifecycle, equipment search/return, pricing quotes, damage reports, customer finance and the active rental-point list (selected point sent as `X-Point-Id` header by `pointInterceptor`), via the shared generated client
+    DESCRIPTION: Rental lifecycle, equipment search/return, pricing quotes, damage reports, customer finance and the operator's own rental point (scope resolved server-side from the session — the client never sends a working point; `409 scope.not_established` sets `OperatingScopeStore.notEstablished`), via the shared generated client
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: OIDC authorization/token/end-session endpoints (client id `bike-rental-operator`)
     FROM_SERVICE: bikerental-backend
