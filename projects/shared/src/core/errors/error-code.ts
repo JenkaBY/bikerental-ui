@@ -54,6 +54,7 @@ export const ErrorCode = {
   EMAIL_DUPLICATE: 'identity.email.duplicate',
   PASSWORD_POLICY_VIOLATION: 'identity.password.policy_violation',
   PASSWORD_INVALID_CURRENT: 'identity.password.invalid_current',
+  SETTINGS_WORKING_POINT_NOT_APPLICABLE: 'identity.settings.working_point_not_applicable',
 
   // agreement.* — template lifecycle
   AGREEMENT_TEMPLATE_NOT_EDITABLE: 'agreement.template.not_editable',
@@ -81,6 +82,7 @@ export const ErrorCode = {
   // scope.* — operating scope (working point resolved from the session)
   SCOPE_NOT_ESTABLISHED: 'scope.not_established',
   SCOPE_CALLER_SUPPLIED: 'scope.caller_supplied',
+  SCOPE_POINT_HEADER_INVALID: 'scope.point_header_invalid',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -136,6 +138,8 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE,
   ErrorCode.SCOPE_NOT_ESTABLISHED,
   ErrorCode.SCOPE_CALLER_SUPPLIED,
+  ErrorCode.SCOPE_POINT_HEADER_INVALID,
+  ErrorCode.SETTINGS_WORKING_POINT_NOT_APPLICABLE,
 ]);
 
 const CLIENT_DEFECT_CODES = new Set<string>([
@@ -144,6 +148,7 @@ const CLIENT_DEFECT_CODES = new Set<string>([
   ErrorCode.API_VERSION_MISSING,
   ErrorCode.API_VERSION_INVALID,
   ErrorCode.SCOPE_CALLER_SUPPLIED,
+  ErrorCode.SCOPE_POINT_HEADER_INVALID,
 ]);
 
 export function isValidationCode(code: string): boolean {

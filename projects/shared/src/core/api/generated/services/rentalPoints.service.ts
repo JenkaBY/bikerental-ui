@@ -28,7 +28,6 @@ import {
   PagePointResponse,
   PointRequest,
   PointStatusChangeRequest,
-  PointStatusChangeResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -236,20 +235,20 @@ export class RentalPointsService {
     pointStatusChangeRequest: PointStatusChangeRequest,
     observe?: 'body',
     options?: RequestOptions<'json'>,
-  ): Observable<PointStatusChangeResponse>;
+  ): Observable<PointResponse>;
   changeStatus(
     pointId: string,
     pointStatusChangeRequest: PointStatusChangeRequest,
     observe?: 'response',
     options?: RequestOptions<'json'>,
-  ): Observable<HttpResponse<PointStatusChangeResponse>>;
+  ): Observable<HttpResponse<PointResponse>>;
   changeStatus(
     pointId: string,
     pointStatusChangeRequest: PointStatusChangeRequest,
     observe?: 'events',
     options?: RequestOptions<'json'>,
-  ): Observable<HttpEvent<PointStatusChangeResponse>>;
-  /** Moves a rental point between INACTIVE, ACTIVE and PERMANENTLY_CLOSED. Permanent closure is irreversible, has no preconditions, and reports what it stranded (admin only) */
+  ): Observable<HttpEvent<PointResponse>>;
+  /** Moves a rental point between INACTIVE, ACTIVE and PERMANENTLY_CLOSED. Permanent closure is irreversible and has no preconditions; every change publishes a point status event (admin only) */
   changeStatus(
     pointId: string,
     pointStatusChangeRequest: PointStatusChangeRequest,

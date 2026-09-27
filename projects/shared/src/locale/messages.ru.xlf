@@ -6074,10 +6074,6 @@
         <source>City</source>
         <target>Город</target>
       </trans-unit>
-      <trans-unit id="2376338029039255131" datatype="html">
-        <source>Still attached to the point at the moment of closure:</source>
-        <target>На момент закрытия к пункту было привязано:</target>
-      </trans-unit>
       <trans-unit id="2585810285043341585" datatype="html">
         <source>Rental points list</source>
         <target>Список пунктов проката</target>
@@ -6086,9 +6082,9 @@
         <source>Close permanently</source>
         <target>Закрыть навсегда</target>
       </trans-unit>
-      <trans-unit id="4097761430561209267" datatype="html">
-        <source>unknown</source>
-        <target>неизвестно</target>
+      <trans-unit id="3928304615425510889" datatype="html">
+        <source>Rental point closed permanently</source>
+        <target>Пункт проката закрыт навсегда</target>
       </trans-unit>
       <trans-unit id="4222846916260318127" datatype="html">
         <source>Cannot be changed after registration</source>
@@ -6138,10 +6134,6 @@
         <source>Address</source>
         <target>Адрес</target>
       </trans-unit>
-      <trans-unit id="6577561663614598871" datatype="html">
-        <source>Nothing was attached to the point.</source>
-        <target>К пункту ничего не было привязано.</target>
-      </trans-unit>
       <trans-unit id="6753223316028737302" datatype="html">
         <source>No rental points yet</source>
         <target>Пунктов проката пока нет</target>
@@ -6150,13 +6142,17 @@
         <source>New point</source>
         <target>Новый пункт</target>
       </trans-unit>
+      <trans-unit id="7489297968526341319" datatype="html">
+        <source>Your account has no working point to assign.</source>
+        <target>У вашей учётной записи нет рабочего пункта для назначения.</target>
+      </trans-unit>
+      <trans-unit id="7575122597500884042" datatype="html">
+        <source>The app sent an invalid working point. Please report this issue.</source>
+        <target>Приложение отправило некорректный рабочий пункт. Пожалуйста, сообщите об этой ошибке.</target>
+      </trans-unit>
       <trans-unit id="7810909371088935073" datatype="html">
         <source>This point is permanently closed and can no longer be edited.</source>
         <target>Пункт закрыт навсегда и больше не может быть изменён.</target>
-      </trans-unit>
-      <trans-unit id="8552274045691402149" datatype="html">
-        <source>Rental point closed</source>
-        <target>Пункт проката закрыт</target>
       </trans-unit>
       <trans-unit id="8770044386641458870" datatype="html">
         <source>Rental points</source>

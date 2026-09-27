@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, InjectionToken, signal } from '@angular/core';
-import { UserPreferences, UserSettings } from '@ui-models';
+import { UserPreferences, UserSettingKey, UserSettings } from '@ui-models';
 import { catchError, finalize, map, Observable, of, tap, throwError } from 'rxjs';
 import { UsersService } from '../api/generated';
 import {
@@ -73,6 +73,27 @@ export class ProfileStore {
           return throwError(() => error);
         }),
         finalize(() => this._savingPreferences.set(false)),
+      );
+  }
+
+  saveWorkingPoint(pointId: string | null): Observable<UserSettings> {
+    const request = { [UserSettingKey.WorkingPointId]: pointId };
+
+    if (this.stubMode) {
+      const settings = { ...this.userStore.settings(), ...stripRemovedKeys(request) };
+      this.userStore.applySettings(settings);
+      return of(settings);
+    }
+
+    return this.users
+      .updateSettings(request, 'body', { context: suppressErrorNotification() })
+      .pipe(
+        map((response) => UserSettingsMapper.fromResponse(response)),
+        tap((settings) => this.userStore.applySettings(settings)),
+        catchError((error: unknown) => {
+          this.notifications.error(this.describeSettingsError(error));
+          return throwError(() => error);
+        }),
       );
   }
 

@@ -1,18 +1,5 @@
-import {
-  PointContactsRequest,
-  PointOccupancyResponse,
-  PointRequest,
-  PointResponse,
-  PointStatusChangeResponse,
-  PointUpdateRequest,
-} from '@api-models';
-import {
-  Point,
-  PointContacts,
-  PointOccupancy,
-  PointStatusChangeResult,
-  PointWrite,
-} from '../models';
+import { PointContactsRequest, PointRequest, PointResponse, PointUpdateRequest } from '@api-models';
+import { Point, PointContacts, PointWrite } from '../models';
 
 export class PointMapper {
   static fromResponse(r: PointResponse): Point {
@@ -40,17 +27,6 @@ export class PointMapper {
       address: { street: w.address.street, city: w.address.city, country: w.address.country },
       contacts: PointMapper.toContactsRequest(w.contacts),
     };
-  }
-
-  static fromStatusChangeResponse(r: PointStatusChangeResponse): PointStatusChangeResult {
-    return {
-      point: r.point ? PointMapper.fromResponse(r.point) : undefined,
-      closureSummary: (r.closureSummary ?? []).map(PointMapper.fromOccupancyResponse),
-    };
-  }
-
-  private static fromOccupancyResponse(r: PointOccupancyResponse): PointOccupancy {
-    return { kind: r.kind, count: r.count, determined: r.determined ?? r.count !== undefined };
   }
 
   private static toContactsRequest(c: PointContacts): PointContactsRequest {

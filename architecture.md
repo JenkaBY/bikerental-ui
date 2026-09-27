@@ -147,7 +147,7 @@ CONSUMES:
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: every endpoint under `AgreementsService`, `CustomersService`, `EquipmentsCatalogueService`, `FinanceService`, `MaintenanceService`, `RentalPointsService`, `RentalsService`, `TariffsService`
     FROM_SERVICE: bikerental-backend
-    DESCRIPTION: Rental lifecycle, equipment search/return, pricing quotes, damage reports, customer finance and the operator's own rental point (scope resolved server-side from the session — the client never sends a working point; `409 scope.not_established` sets `OperatingScopeStore.notEstablished`), via the shared generated client
+    DESCRIPTION: Rental lifecycle, equipment search/return, pricing quotes, damage reports and customer finance, via the shared generated client. Every business request carries an `X-Point-Id` header naming the operator's working point (`pointInterceptor`, sourced from `CurrentPointStore`); the working point itself is read/written through `GET`/`PATCH /api/auth/me(/settings)` (`workingPointId`), never through a body/query/path parameter. `409 scope.not_established` (no header sent — no usable point) sets `OperatingScopeStore.notEstablished`; `400 scope.point_header_invalid` and `422 identity.settings.working_point_not_applicable` are client-defect/domain codes handled distinctly from 401/403
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: OIDC authorization/token/end-session endpoints (client id `bike-rental-operator`)
     FROM_SERVICE: bikerental-backend

@@ -7,13 +7,10 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogData,
   Labels,
+  NotificationService,
   PointAdminStore,
 } from '@bikerental/shared';
 import type { Point, PointStatus } from '@ui-models';
-import {
-  PointClosureDialogComponent,
-  PointClosureDialogData,
-} from './point-closure-dialog.component';
 
 @Component({
   selector: 'app-point-status-actions',
@@ -47,6 +44,7 @@ export class PointStatusActionsComponent {
   private readonly store = inject(PointAdminStore);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly notifications = inject(NotificationService);
 
   protected readonly saving = this.store.saving;
 
@@ -75,11 +73,6 @@ export class PointStatusActionsComponent {
         switchMap(() => this.store.changeStatus(point.id, 'PERMANENTLY_CLOSED')),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((result) =>
-        this.dialog.open<PointClosureDialogComponent, PointClosureDialogData>(
-          PointClosureDialogComponent,
-          { data: { pointName: point.name, summary: result.closureSummary } },
-        ),
-      );
+      .subscribe(() => this.notifications.success(Labels.PointClosedSuccess));
   }
 }

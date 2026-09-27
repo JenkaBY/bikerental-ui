@@ -167,6 +167,8 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   // Operating scope
   [ErrorCode.SCOPE_NOT_ESTABLISHED]: $localize`No working point is assigned to you. Ask an administrator to assign one.`,
   [ErrorCode.SCOPE_CALLER_SUPPLIED]: $localize`The app sent an invalid request. Please report this issue.`,
+  [ErrorCode.SCOPE_POINT_HEADER_INVALID]: $localize`The app sent an invalid working point. Please report this issue.`,
+  [ErrorCode.SETTINGS_WORKING_POINT_NOT_APPLICABLE]: $localize`Your account has no working point to assign.`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
