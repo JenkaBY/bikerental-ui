@@ -25,6 +25,10 @@ export class UserSettingsMapper {
     return result;
   }
 
+  static workingPointId(settings: UserSettings): string | null {
+    return settings[UserSettingKey.WorkingPointId] ?? null;
+  }
+
   static toPreferences(settings: UserSettings): UserPreferences {
     const theme = settings[UserSettingKey.Theme];
     return {

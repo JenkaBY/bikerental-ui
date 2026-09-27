@@ -27,14 +27,3 @@ export interface PointWrite {
   address: PointAddress;
   contacts: PointContacts;
 }
-
-export interface PointOccupancy {
-  kind: string;
-  count?: number;
-  determined: boolean;
-}
-
-export interface PointStatusChangeResult {
-  point?: Point;
-  closureSummary: PointOccupancy[];
-}

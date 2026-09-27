@@ -12,6 +12,7 @@ export type UserSettingsPatch = Record<string, string | null>;
 export const UserSettingKey = {
   Locale: 'locale',
   Theme: 'theme',
+  WorkingPointId: 'workingPointId',
 } as const;
 
 export const DEFAULT_USER_PREFERENCES: Readonly<UserPreferences> = {

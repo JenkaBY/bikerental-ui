@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
 import { RentalPointsService, RequestOptions } from '../api/generated';
 import { PointMapper } from '../mappers';
-import type { Point, PointStatus, PointStatusChangeResult, PointWrite } from '../models';
+import type { Point, PointStatus, PointWrite } from '../models';
 
 const MAX_POINTS = 100;
 
@@ -93,15 +93,11 @@ export class PointAdminStore {
       );
   }
 
-  changeStatus(id: string, status: PointStatus): Observable<PointStatusChangeResult> {
+  changeStatus(id: string, status: PointStatus): Observable<Point> {
     this._saving.set(true);
     return this.service.changeStatus(id, { status }).pipe(
-      map(PointMapper.fromStatusChangeResponse),
-      tap((result) => {
-        if (result.point) {
-          this.replace(result.point);
-        }
-      }),
+      map(PointMapper.fromResponse),
+      tap((point) => this.replace(point)),
       finalize(() => this._saving.set(false)),
     );
   }

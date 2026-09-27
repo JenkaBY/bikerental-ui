@@ -736,10 +736,7 @@ export class Labels {
   static readonly PointCloseConfirmTitle = $localize`Close rental point permanently?`;
   static readonly PointCloseConfirmMessage = $localize`A permanently closed point cannot be reopened or edited. This action cannot be undone.`;
   static readonly PointClosedReadOnly = $localize`This point is permanently closed and can no longer be edited.`;
-  static readonly PointClosureSummaryTitle = $localize`Rental point closed`;
-  static readonly PointClosureSummaryIntro = $localize`Still attached to the point at the moment of closure:`;
-  static readonly PointClosureSummaryEmpty = $localize`Nothing was attached to the point.`;
-  static readonly PointClosureCountUnknown = $localize`unknown`;
+  static readonly PointClosedSuccess = $localize`Rental point closed permanently`;
   static readonly PointSaved = $localize`Rental point saved`;
   static readonly CurrentPoint = $localize`Current rental point`;
   static readonly NoWorkingPoint = $localize`No working point assigned`;

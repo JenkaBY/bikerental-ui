@@ -686,24 +686,6 @@ export interface PointStatusChangeRequest {
   status: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED';
 }
 
-/** What remains attached to a rental point that has been closed permanently */
-export interface PointOccupancyResponse {
-  /** What is being counted */
-  kind: string;
-  /** How many, absent when the count could not be determined */
-  count?: number;
-  /** Whether the count could be determined */
-  determined?: boolean;
-}
-
-/** Result of a rental point status change, including what a permanent closure stranded */
-export interface PointStatusChangeResponse {
-  /** The rental point in its new status */
-  point?: PointResponse;
-  /** Occupancy at the moment of permanent closure, empty for any other transition */
-  closureSummary?: Array<PointOccupancyResponse>;
-}
-
 /** Request body for a batch equipment condition change */
 export interface ChangeEquipmentConditionRequest {
   /** Equipment ids the condition is applied to, 1-5 elements */

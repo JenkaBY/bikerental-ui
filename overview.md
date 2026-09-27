@@ -354,7 +354,7 @@ CALLS:
   - HttpClient — transport.
 CALLED_BY:
   - PointAdminStore (admin `/admin/points` master-detail page)
-  - CurrentPointStore (operator toolbar switcher; ACTIVE points loaded at startup, selection persisted in localStorage for the UI only — never sent to the API)
+  - CurrentPointStore (operator toolbar switcher; non-permanently-closed points loaded at startup; current point sourced from `UserStore`'s `workingPointId` setting — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`)
 
 COMPONENT_NAME: UsersService
 TYPE: API
@@ -639,7 +639,7 @@ RESPONSIBILITIES:
   - Parse every failed response with `ApiErrorParser`.
   - Record it in `ErrorService`.
   - On `scope.not_established` (409): mark `OperatingScopeStore.notEstablished` and warn once — never a login redirect.
-  - Otherwise toast the resolved message unless the status is 401 or the request carries `SUPPRESS_ERROR_NOTIFICATION`; client-defect codes (e.g. `scope.caller_supplied`) get the correlation id appended by `ErrorMessageResolver`.
+  - Otherwise toast the resolved message unless the status is 401 or the request carries `SUPPRESS_ERROR_NOTIFICATION`; client-defect codes (e.g. `scope.caller_supplied`, `scope.point_header_invalid`) get the correlation id appended by `ErrorMessageResolver`. `identity.settings.working_point_not_applicable` (422, non-operator setting a working point) resolves to its own message the same way, with no special store handling.
   - Rethrow so callers can still handle the error locally.
 SOURCE: `projects/shared/src/core/interceptors/error.interceptor.ts`
 CALLS:

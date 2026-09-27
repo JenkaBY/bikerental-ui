@@ -24,6 +24,7 @@ export * from './core/auth';
 export * from './core/interceptors/accept-language.interceptor';
 export * from './core/interceptors/error.interceptor';
 export * from './core/interceptors/error.service';
+export * from './core/interceptors/point.interceptor';
 
 export * from './core/locale-redirect.service';
 

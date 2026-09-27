@@ -18,6 +18,7 @@ export class UserStore {
   readonly preferences = computed<UserPreferences>(() =>
     UserSettingsMapper.toPreferences(this._settings()),
   );
+  readonly workingPointId = computed(() => UserSettingsMapper.workingPointId(this._settings()));
   readonly locale = computed(() => this.preferences().language);
 
   constructor() {
