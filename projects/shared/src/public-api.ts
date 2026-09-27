@@ -24,7 +24,6 @@ export * from './core/auth';
 export * from './core/interceptors/accept-language.interceptor';
 export * from './core/interceptors/error.interceptor';
 export * from './core/interceptors/error.service';
-export * from './core/interceptors/point.interceptor';
 
 export * from './core/locale-redirect.service';
 
@@ -41,6 +40,7 @@ export * from './core/state/pricing-type.store';
 export * from './core/state/tariff.store';
 export * from './core/state/point-admin.store';
 export * from './core/state/current-point.store';
+export * from './core/state/operating-scope.store';
 export * from './core/state/lookup-initializer.facade';
 export * from './core/state/customer.store';
 export * from './core/state/customer-finance.store';

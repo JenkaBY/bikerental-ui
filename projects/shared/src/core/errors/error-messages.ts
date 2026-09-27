@@ -10,6 +10,10 @@ export class ErrorMessages {
   static readonly generic = $localize`Something went wrong. Please try again.`;
   static readonly network = $localize`No connection to the server. Check your network and try again.`;
 
+  static withReference(message: string, traceId: string): string {
+    return $localize`${message}:message: (Ref: ${traceId}:traceId:)`;
+  }
+
   // Per-status fallback messages (used when code is unknown but status is known)
   static readonly status400 = $localize`The request could not be processed.`;
   static readonly status401 = $localize`You are not authorized. Please sign in again.`;
@@ -159,6 +163,10 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   // Rental point registry
   [ErrorCode.POINT_SLUG_DUPLICATE]: $localize`A rental point with this slug already exists.`,
   [ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN]: $localize`This status change is not allowed for the rental point.`,
+
+  // Operating scope
+  [ErrorCode.SCOPE_NOT_ESTABLISHED]: $localize`No working point is assigned to you. Ask an administrator to assign one.`,
+  [ErrorCode.SCOPE_CALLER_SUPPLIED]: $localize`The app sent an invalid request. Please report this issue.`,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -1,8 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ApiError, FieldError, NETWORK_ERROR_CODE } from './api-error.model';
+import { isClientDefectCode } from './error-code';
 import { ErrorMessageCatalog, MessageTemplate, ErrorMessages } from './error-messages';
 
 export function resolveErrorMessage(error: ApiError): string {
+  const message = resolveBaseMessage(error);
+  return isClientDefectCode(error.code) && error.traceId
+    ? ErrorMessages.withReference(message, error.traceId)
+    : message;
+}
+
+function resolveBaseMessage(error: ApiError): string {
   if (error.code === NETWORK_ERROR_CODE) return ErrorMessages.network;
 
   const generalFieldError = error.fieldErrors.find((f) => !f.field && ErrorMessageCatalog[f.code]);

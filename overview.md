@@ -21,7 +21,7 @@
   ENTRY_FILES: `projects/admin/src/main.ts`, `projects/admin/src/app/app.config.ts`, `projects/admin/src/app/app.routes.ts`, `projects/admin/src/index.html`
 
 - PATH: `projects/operator/`
-  PURPOSE: Mobile-first installable PWA — rental creation wizard, agreement signing, active-rental dashboard, QR-scan equipment return, damage reporting, toolbar rental-point switcher
+  PURPOSE: Mobile-first installable PWA — rental creation wizard, agreement signing, active-rental dashboard, QR-scan equipment return, damage reporting, toolbar rental-point switcher (or "no working point assigned" chip)
   ENTRY_FILES: `projects/operator/src/main.ts`, `projects/operator/src/app/app.config.ts`, `projects/operator/src/app/app.routes.ts`, `projects/operator/src/index.html`
   PWA_FILES: `projects/operator/ngsw-config.json`, `projects/operator/public/manifest.webmanifest`, `projects/operator/public/icons/`, `projects/operator/src/app/core/pwa-update.service.ts`
 
@@ -354,7 +354,7 @@ CALLS:
   - HttpClient — transport.
 CALLED_BY:
   - PointAdminStore (admin `/admin/points` master-detail page)
-  - CurrentPointStore (operator toolbar switcher; ACTIVE points loaded at startup, selection persisted in localStorage and sent as `X-Point-Id` by `pointInterceptor`)
+  - CurrentPointStore (operator toolbar switcher; ACTIVE points loaded at startup, selection persisted in localStorage for the UI only — never sent to the API)
 
 COMPONENT_NAME: UsersService
 TYPE: API
@@ -638,7 +638,8 @@ PURPOSE: Global HTTP error funnel — parses, records and toasts failures, then 
 RESPONSIBILITIES:
   - Parse every failed response with `ApiErrorParser`.
   - Record it in `ErrorService`.
-  - Toast the resolved message unless the status is 401 or the request carries `SUPPRESS_ERROR_NOTIFICATION`.
+  - On `scope.not_established` (409): mark `OperatingScopeStore.notEstablished` and warn once — never a login redirect.
+  - Otherwise toast the resolved message unless the status is 401 or the request carries `SUPPRESS_ERROR_NOTIFICATION`; client-defect codes (e.g. `scope.caller_supplied`) get the correlation id appended by `ErrorMessageResolver`.
   - Rethrow so callers can still handle the error locally.
 SOURCE: `projects/shared/src/core/interceptors/error.interceptor.ts`
 CALLS:

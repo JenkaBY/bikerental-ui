@@ -81,817 +81,838 @@
           <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="4532496425403941189" datatype="html">
+        <source><x id="message" equiv-text="message"/> (Ref: <x id="traceId" equiv-text="traceId"/>)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="9132173970234967776" datatype="html">
         <source>The request could not be processed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6383975496158312072" datatype="html">
         <source>You are not authorized. Please sign in again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7189048380135498679" datatype="html">
         <source>You do not have permission to perform this action.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">20</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1178484467601613788" datatype="html">
         <source>The requested resource was not found.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">17</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8420534013969808006" datatype="html">
         <source>This action conflicts with the current state of the data.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3997937239913606369" datatype="html">
         <source>Some of the submitted data is invalid.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">23</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3622943183133476924" datatype="html">
         <source>A server error occurred. Please try again later.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">24</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4098334337617353611" datatype="html">
         <source>Some of the submitted data is invalid. Please review the highlighted fields.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">47</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1532515900908450492" datatype="html">
         <source>One or more request parameters are invalid.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5922892045391687376" datatype="html">
         <source>A request parameter has an invalid value.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3832547121368792781" datatype="html">
         <source>A required request parameter is missing.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6898995892236871757" datatype="html">
         <source>The request body is missing or malformed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9051465985431946223" datatype="html">
         <source>This action is not supported.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7431180921123110047" datatype="html">
         <source>Unsupported content type.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6519566649615588299" datatype="html">
         <source>API version header is required.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8526399203817725088" datatype="html">
         <source>The API version is no longer supported. Please refresh the page.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7954154648075969172" datatype="html">
         <source>The requested item was not found.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8506247556846282806" datatype="html">
         <source>A referenced item no longer exists. Please refresh and try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">60</context>
+          <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1581792861877321473" datatype="html">
         <source>This record was changed by someone else. Reload and try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5258545535838660833" datatype="html">
         <source>The settlement amount exceeds the available balance.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6759666639287058453" datatype="html">
         <source>The reserved amount is insufficient for this operation.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4537289786288869405" datatype="html">
         <source>A payment hold is required before this action can proceed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2807175121825245897" datatype="html">
         <source>This rental is overdue — return it before adding more equipment.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1339383263726221788" datatype="html">
         <source>The rental could not be prepared for signing — please review the details and try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">77</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="156564747968193493" datatype="html">
         <source>The price quote could not be found. Recalculating the current price…</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">81</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6108904538676205092" datatype="html">
         <source>The price has expired and was recalculated. Review the new total and confirm again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">82</context>
+          <context context-type="linenumber">86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1179711879629268047" datatype="html">
         <source>This rental has already been completed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7834845842615519501" datatype="html">
         <source>The rental changed since the price was calculated. Recalculating the current price…</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1227018814286423136" datatype="html">
         <source>The configured special tariff is invalid. Contact an administrator.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3239589020047044075" datatype="html">
         <source>Your session has expired. Please sign in again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7375976616621427013" datatype="html">
         <source>This username is already taken.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">96</context>
         </context-group>
       </trans-unit>
       <trans-unit id="301565970318735798" datatype="html">
         <source>This email address is already in use.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7935325875313320523" datatype="html">
         <source>The password does not meet the required policy (8–20 characters, at least one letter and one digit).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8164049561976354920" datatype="html">
         <source>The current password is incorrect.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3376522247574188228" datatype="html">
         <source>Another template was activated concurrently. The list has been refreshed — please retry.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1411348892546118663" datatype="html">
         <source>The PDF could not be generated. Please try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">106</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6862007031136864612" datatype="html">
         <source>There is no active agreement version. Ask an administrator to activate one.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="652560629495219933" datatype="html">
         <source>This rental has already been signed and is now active.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="linenumber">111</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8922770904450594661" datatype="html">
         <source>The rental data changed since this screen was loaded. It has been reloaded — please review and try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3672447228597270736" datatype="html">
         <source>The signature image is invalid. Please sign again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">115</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1417693714872528491" datatype="html">
         <source>This field is required.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">124</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">121</context>
+          <context context-type="linenumber">125</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7064496514412597563" datatype="html">
         <source>Must be greater than zero.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">129</context>
+          <context context-type="linenumber">133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7585185735182970187" datatype="html">
         <source>Must be zero or greater.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">130</context>
+          <context context-type="linenumber">134</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5943788274737169812" datatype="html">
         <source>Must be less than zero.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">131</context>
+          <context context-type="linenumber">135</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3825078412008710603" datatype="html">
         <source>Must be zero or less.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">132</context>
+          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2112768397949905814" datatype="html">
         <source>Enter a valid email address.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1588071096511873954" datatype="html">
         <source>The value does not match the required format.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4829501797258201481" datatype="html">
         <source>Must be a date in the past.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4608734030476320955" datatype="html">
         <source>Must be today or earlier.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">136</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8119760462716122518" datatype="html">
         <source>Must be a date in the future.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6788086613376730051" datatype="html">
         <source>Must be today or later.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">138</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6514998768555341918" datatype="html">
         <source>Must be accepted.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">139</context>
+          <context context-type="linenumber">143</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7485913058853195243" datatype="html">
         <source>Must not be set.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">140</context>
+          <context context-type="linenumber">144</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8871806520427244040" datatype="html">
         <source>This language is not supported.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2741530272498119619" datatype="html">
         <source>A fixed price requires a special tariff — both must be set together.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">146</context>
+          <context context-type="linenumber">150</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7601701957936009343" datatype="html">
         <source>A discount and a fixed price cannot be applied at the same time.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">147</context>
+          <context context-type="linenumber">151</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5366437111317353401" datatype="html">
         <source>Select either a rental or a customer to attach this report to — not both, not neither.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">157</context>
+          <context context-type="linenumber">161</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5359164678559943913" datatype="html">
         <source>A rental point with this slug already exists.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">160</context>
+          <context context-type="linenumber">164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5300299752747305537" datatype="html">
         <source>This status change is not allowed for the rental point.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">161</context>
+          <context context-type="linenumber">165</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2789703760518234806" datatype="html">
+        <source>No working point is assigned to you. Ask an administrator to assign one.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">168</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1462190043303627194" datatype="html">
+        <source>The app sent an invalid request. Please report this issue.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">169</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4959251015407963492" datatype="html">
         <source>&quot;<x id="identifier" equiv-text="identifier"/>&quot; already exists.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">179</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6768612675545337474" datatype="html">
         <source>This record already exists.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">173</context>
+          <context context-type="linenumber">181</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5255013920436999856" datatype="html">
         <source>Equipment <x id="ids" equiv-text="ids.map(String).join(&apos;, &apos;)"/> is out of service and cannot be rented.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">179</context>
+          <context context-type="linenumber">187</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8914090258875845197" datatype="html">
         <source>The selected equipment is out of service.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">181</context>
+          <context context-type="linenumber">189</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7305802196108703495" datatype="html">
         <source>Equipment <x id="ids" equiv-text="ids.map(String).join(&apos;, &apos;)"/> could not be found. Nothing was changed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">187</context>
+          <context context-type="linenumber">195</context>
         </context-group>
       </trans-unit>
       <trans-unit id="669818629456028083" datatype="html">
         <source>One or more equipment items could not be found. Nothing was changed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">189</context>
+          <context context-type="linenumber">197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5581181399645748202" datatype="html">
         <source>Equipment <x id="ids" equiv-text="ids.map(String).join(&apos;, &apos;)"/> is not part of rental #<x id="rentalId" equiv-text="String(rentalId)"/>. Nothing was changed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">196</context>
+          <context context-type="linenumber">204</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1361636200239389496" datatype="html">
         <source>One or more items are not part of this rental. Nothing was changed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">198</context>
+          <context context-type="linenumber">206</context>
         </context-group>
       </trans-unit>
       <trans-unit id="622700775964402325" datatype="html">
         <source>Insufficient balance. Available: <x id="available" equiv-text="available.toFixed(2)"/>, requested: <x id="requested" equiv-text="requested.toFixed(2)"/>.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">205</context>
+          <context context-type="linenumber">213</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2297026795507264944" datatype="html">
         <source>The account balance is insufficient for this operation.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">207</context>
+          <context context-type="linenumber">215</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2034869597484991211" datatype="html">
         <source>The customer has insufficient funds. Available: <x id="available" equiv-text="available.toFixed(2)"/>, required: <x id="required" equiv-text="requested.toFixed(2)"/>.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">214</context>
+          <context context-type="linenumber">222</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3295508387565220025" datatype="html">
         <source>The customer has insufficient funds for this rental.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">216</context>
+          <context context-type="linenumber">224</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6621826824237475142" datatype="html">
         <source>Equipment <x id="ids" equiv-text="ids.map(String).join(&apos;, &apos;)"/> is already rented out.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">222</context>
+          <context context-type="linenumber">230</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4062511727977855826" datatype="html">
         <source>The selected equipment is already rented out.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">224</context>
+          <context context-type="linenumber">232</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7896222490018143920" datatype="html">
         <source>This rental is no longer active (current status: <x id="currentStatus" equiv-text="currentStatus"/>).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">230</context>
+          <context context-type="linenumber">238</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3031868606481278376" datatype="html">
         <source>This rental is no longer active.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">232</context>
+          <context context-type="linenumber">240</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2471823645364332364" datatype="html">
         <source>The remaining shortfall of <x id="shortfall" equiv-text="shortfall.toFixed(2)"/> exceeds the automatic write-off limit of <x id="tolerance" equiv-text="tolerance.toFixed(2)"/>. Settle this rental manually first.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">239</context>
+          <context context-type="linenumber">247</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8589560105085256357" datatype="html">
         <source>The remaining shortfall is too large to write off automatically. Settle this rental manually first.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">241</context>
+          <context context-type="linenumber">249</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1175181793770221137" datatype="html">
         <source>This template can no longer be edited (current status: <x id="currentStatus" equiv-text="currentStatus"/>).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">247</context>
+          <context context-type="linenumber">255</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3401307694831000419" datatype="html">
         <source>This template can no longer be edited.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">249</context>
+          <context context-type="linenumber">257</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9052048958862640443" datatype="html">
         <source>This template cannot be activated (current status: <x id="currentStatus" equiv-text="currentStatus"/>).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">255</context>
+          <context context-type="linenumber">263</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3452726221474047637" datatype="html">
         <source>This template cannot be activated.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">257</context>
+          <context context-type="linenumber">265</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5330899780583254047" datatype="html">
         <source>This template cannot be deleted (current status: <x id="currentStatus" equiv-text="currentStatus"/>).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">263</context>
+          <context context-type="linenumber">271</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3256343779835855526" datatype="html">
         <source>This template cannot be deleted.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">265</context>
+          <context context-type="linenumber">273</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3306887158709345276" datatype="html">
         <source>The agreement text changed since this screen was loaded (was version <x id="requestedTemplateId" equiv-text="String(requestedTemplateId)"/>, now <x id="activeTemplateId" equiv-text="String(activeTemplateId)"/>). Please review the updated text and try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">272</context>
+          <context context-type="linenumber">280</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2232697311037143260" datatype="html">
         <source>The agreement text changed since this screen was loaded. Please review the updated text and try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">274</context>
+          <context context-type="linenumber">282</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1737748900044723477" datatype="html">
         <source>This rental is no longer awaiting signature (current status: <x id="currentStatus" equiv-text="currentStatus"/>).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">282</context>
+          <context context-type="linenumber">290</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1490760587618202166" datatype="html">
         <source>This rental is no longer awaiting signature.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">284</context>
+          <context context-type="linenumber">292</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3509261384006447972" datatype="html">
         <source>Must be between <x id="min" equiv-text="min"/> and <x id="max" equiv-text="max"/> characters.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">297</context>
+          <context context-type="linenumber">305</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3187653239080336256" datatype="html">
         <source>Must be at least <x id="min" equiv-text="min"/> characters.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">300</context>
+          <context context-type="linenumber">308</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6253767305505938486" datatype="html">
         <source>Must be at most <x id="max" equiv-text="max"/> characters.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">303</context>
+          <context context-type="linenumber">311</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4989596495896446900" datatype="html">
         <source>The value is too short or too long.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">305</context>
+          <context context-type="linenumber">313</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6614500152583811957" datatype="html">
         <source>Must be at least <x id="value" equiv-text="value"/>.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">311</context>
+          <context context-type="linenumber">319</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">330</context>
+          <context context-type="linenumber">338</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2678414666461269694" datatype="html">
         <source>The value is too small.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">313</context>
+          <context context-type="linenumber">321</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">332</context>
+          <context context-type="linenumber">340</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8807016761644874606" datatype="html">
         <source>Must be no more than <x id="value" equiv-text="value"/>.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">319</context>
+          <context context-type="linenumber">327</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3321436561334295760" datatype="html">
         <source>The value is too large.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">321</context>
+          <context context-type="linenumber">329</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">343</context>
+          <context context-type="linenumber">351</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4087807598070624714" datatype="html">
         <source>Must be greater than <x id="value" equiv-text="value"/>.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">329</context>
+          <context context-type="linenumber">337</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7723138161422122017" datatype="html">
         <source>Must be less than <x id="value" equiv-text="value"/>.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">340</context>
+          <context context-type="linenumber">348</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2468907247721102691" datatype="html">
         <source>Must be at most <x id="value" equiv-text="value"/>.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">341</context>
+          <context context-type="linenumber">349</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1117464905470501190" datatype="html">
         <source>Created from</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">347</context>
+          <context context-type="linenumber">355</context>
         </context-group>
       </trans-unit>
       <trans-unit id="458417428882569669" datatype="html">
         <source>Created to</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">348</context>
+          <context context-type="linenumber">356</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5285944139232559594" datatype="html">
         <source>Returned from</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">349</context>
+          <context context-type="linenumber">357</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8855669868346331045" datatype="html">
         <source>Returned to</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">350</context>
+          <context context-type="linenumber">358</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2757206413407736132" datatype="html">
         <source>Active from</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">351</context>
+          <context context-type="linenumber">359</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3108392874292189582" datatype="html">
         <source>Active to</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">352</context>
+          <context context-type="linenumber">360</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4031997703145113181" datatype="html">
         <source>&quot;<x id="from" equiv-text="fromLabel"/>&quot; must be on or before &quot;<x id="to" equiv-text="toLabel"/>&quot;.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">361</context>
+          <context context-type="linenumber">369</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8986867293005123009" datatype="html">
         <source>The start date must be on or before the end date.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">363</context>
+          <context context-type="linenumber">371</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4017807445832107459" datatype="html">
         <source>The selected range must not exceed <x id="maxDays" equiv-text="maxDays"/> days.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">369</context>
+          <context context-type="linenumber">377</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9093093462954371128" datatype="html">
         <source>The selected date range is too large.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">371</context>
+          <context context-type="linenumber">379</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1649335260802503390" datatype="html">
         <source>Must have at most <x id="integer" equiv-text="integer"/> digits.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">379</context>
+          <context context-type="linenumber">387</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5051610533859967163" datatype="html">
         <source>Must have at most <x id="integer" equiv-text="integer"/> digits and <x id="fraction" equiv-text="fraction"/> decimal places.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">380</context>
+          <context context-type="linenumber">388</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9206250774466205518" datatype="html">
         <source>The value has too many digits.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
-          <context context-type="linenumber">382</context>
+          <context context-type="linenumber">390</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7819314041543176992" datatype="html">
@@ -5306,6 +5327,13 @@
           <context context-type="linenumber">744</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="8446492569448480403" datatype="html">
+        <source>No working point assigned</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">745</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">
         <source>This field is required</source>
         <context-group purpose="location">
@@ -5577,7 +5605,7 @@
         <source>New Rental</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/operator/src/app/layout/operator-layout.component.ts</context>
-          <context context-type="linenumber">17</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
     </body>

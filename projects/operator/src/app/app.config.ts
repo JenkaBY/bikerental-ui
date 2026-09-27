@@ -25,7 +25,6 @@ import {
   errorInterceptor,
   HealthPollerService,
   LookupInitializerFacade,
-  pointInterceptor,
   provideDefaultClient,
   provideOidcAuth,
   SseService,
@@ -45,12 +44,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
-      withInterceptors([
-        acceptLanguageInterceptor,
-        pointInterceptor,
-        apiAuthInterceptor,
-        errorInterceptor,
-      ]),
+      withInterceptors([acceptLanguageInterceptor, apiAuthInterceptor, errorInterceptor]),
     ),
     provideOidcAuth('bike-rental-operator'),
     provideAppInitializer(() => {
