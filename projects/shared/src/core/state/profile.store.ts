@@ -76,8 +76,8 @@ export class ProfileStore {
       );
   }
 
-  saveWorkingPoint(pointId: string | null): Observable<UserSettings> {
-    const request = { [UserSettingKey.WorkingPointId]: pointId };
+  saveWorkingPoint(pointSlug: string | null): Observable<UserSettings> {
+    const request = { [UserSettingKey.WorkingPointSlug]: pointSlug };
 
     if (this.stubMode) {
       const settings = { ...this.userStore.settings(), ...stripRemovedKeys(request) };

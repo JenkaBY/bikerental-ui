@@ -25,8 +25,8 @@ export class UserSettingsMapper {
     return result;
   }
 
-  static workingPointId(settings: UserSettings): string | null {
-    return settings[UserSettingKey.WorkingPointId] ?? null;
+  static workingPointSlug(settings: UserSettings): string | null {
+    return settings[UserSettingKey.WorkingPointSlug] ?? null;
   }
 
   static toPreferences(settings: UserSettings): UserPreferences {

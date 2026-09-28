@@ -6,6 +6,7 @@ export class FormErrorMessages {
   static readonly nameRequired = $localize`Name is required`;
   // Common equipment-related messages
   static readonly conditionIsRequired = $localize`Condition is required`;
+  static readonly pointRequired = $localize`Rental point is required`;
   static readonly serialNumberRequired = $localize`Serial number is required`;
   static readonly serialNumberMaxLength = $localize`Maximum 50 characters`;
   static readonly nameMaxLength = $localize`Maximum 200 characters`;

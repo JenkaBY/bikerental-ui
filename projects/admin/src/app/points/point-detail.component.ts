@@ -99,7 +99,7 @@ export class PointDetailComponent {
     const options = { context: suppressErrorNotification() };
     const current = this.point();
     const request$ = current
-      ? this.store.update(current.id, write, options)
+      ? this.store.update(current.slug, write, options)
       : this.store.create(write, options);
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => this.notifications.success(Labels.PointSaved),

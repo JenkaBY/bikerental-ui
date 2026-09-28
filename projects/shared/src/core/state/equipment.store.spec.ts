@@ -18,6 +18,7 @@ const createdEquipmentResponse = {
   uid: 'UID-010',
   type: 'bike',
   model: 'Roadster',
+  locationState: 'AT_POINT',
 };
 
 const reloadedEquipmentResponse = {
@@ -26,6 +27,7 @@ const reloadedEquipmentResponse = {
   uid: 'UID-011',
   type: 'bike',
   model: 'City',
+  locationState: 'AT_POINT',
 };
 
 const createdEquipment: Equipment = {
@@ -34,6 +36,7 @@ const createdEquipment: Equipment = {
   uid: 'UID-010',
   type: bikeType,
   model: 'Roadster',
+  locationState: 'AT_POINT',
 };
 
 const reloadedEquipment: Equipment = {
@@ -42,11 +45,13 @@ const reloadedEquipment: Equipment = {
   uid: 'UID-011',
   type: bikeType,
   model: 'City',
+  locationState: 'AT_POINT',
 };
 
 const write: EquipmentWrite = {
   serialNumber: 'SN-010',
   typeSlug: 'bike',
+  pointSlug: 'MAIN',
 };
 
 describe('EquipmentStore', () => {
@@ -93,7 +98,10 @@ describe('EquipmentStore', () => {
       expect.objectContaining({
         serialNumber: 'SN-010',
         typeSlug: 'bike',
+        pointSlug: 'MAIN',
       }),
+      undefined,
+      undefined,
     );
 
     expect(service.searchEquipments).toHaveBeenCalledWith(

@@ -79,6 +79,10 @@ export const ErrorCode = {
   POINT_SLUG_DUPLICATE: 'point.slug.duplicate',
   POINT_STATUS_TRANSITION_FORBIDDEN: 'point.status.transition_forbidden',
 
+  // equipment.* — equipment ownership by rental point
+  EQUIPMENT_POINT_REQUIRED: 'equipment.point.required',
+  EQUIPMENT_POINT_NOT_ACCEPTING: 'equipment.point.not_accepting_equipment',
+
   // scope.* — operating scope (working point resolved from the session)
   SCOPE_NOT_ESTABLISHED: 'scope.not_established',
   SCOPE_CALLER_SUPPLIED: 'scope.caller_supplied',
@@ -96,6 +100,7 @@ const VALIDATION_CODES = new Set<string>([
   ErrorCode.REQUEST_PARAMS_MISSING,
   ErrorCode.NOT_READABLE,
   ErrorCode.RESPONSIBLE_PARTY_REQUIRED,
+  ErrorCode.EQUIPMENT_POINT_REQUIRED,
 ]);
 
 const DOMAIN_CODES = new Set<string>([
@@ -106,6 +111,7 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.SHARED_EQUIPMENT_NOT_AVAILABLE,
   ErrorCode.SHARED_EQUIPMENT_NOT_FOUND,
   ErrorCode.MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL,
+  ErrorCode.EQUIPMENT_POINT_NOT_ACCEPTING,
   ErrorCode.INSUFFICIENT_BALANCE,
   ErrorCode.OVER_BUDGET_SETTLEMENT,
   ErrorCode.INSUFFICIENT_HOLD,

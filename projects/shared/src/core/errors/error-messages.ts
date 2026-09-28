@@ -164,6 +164,10 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.POINT_SLUG_DUPLICATE]: $localize`A rental point with this slug already exists.`,
   [ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN]: $localize`This status change is not allowed for the rental point.`,
 
+  // Equipment ownership by rental point
+  [ErrorCode.EQUIPMENT_POINT_REQUIRED]: $localize`Select the rental point this equipment belongs to.`,
+  [ErrorCode.EQUIPMENT_POINT_NOT_ACCEPTING]: $localize`This rental point is permanently closed and does not accept equipment.`,
+
   // Operating scope
   [ErrorCode.SCOPE_NOT_ESTABLISHED]: $localize`No working point is assigned to you. Ask an administrator to assign one.`,
   [ErrorCode.SCOPE_CALLER_SUPPLIED]: $localize`The app sent an invalid request. Please report this issue.`,

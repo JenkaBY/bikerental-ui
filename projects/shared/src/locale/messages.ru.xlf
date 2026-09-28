@@ -5870,14 +5870,6 @@
           <context context-type="linenumber">178</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5069097118164580978" datatype="html">
-        <source>Failed to save equipment</source>
-        <target>Не удалось сохранить оборудование</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/admin/src/app/equipment/equipment-dialog.component.ts</context>
-          <context context-type="linenumber">183</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="8125836281039108098" datatype="html">
         <source>Equipment Types</source>
         <target>Типы оборудования</target>
@@ -6177,6 +6169,26 @@
       <trans-unit id="8446492569448480403" datatype="html">
         <source>No working point assigned</source>
         <target>Рабочий пункт не назначен</target>
+      </trans-unit>
+      <trans-unit id="7470775818177495946" datatype="html">
+        <source>Select the rental point this equipment belongs to.</source>
+        <target>Выберите пункт проката, к которому относится оборудование.</target>
+      </trans-unit>
+      <trans-unit id="7265921227767684501" datatype="html">
+        <source>This rental point is permanently closed and does not accept equipment.</source>
+        <target>Этот пункт проката закрыт навсегда и не принимает оборудование.</target>
+      </trans-unit>
+      <trans-unit id="6275128351421181901" datatype="html">
+        <source>Rental point</source>
+        <target>Пункт проката</target>
+      </trans-unit>
+      <trans-unit id="5628530245590912911" datatype="html">
+        <source>In transit</source>
+        <target>В пути</target>
+      </trans-unit>
+      <trans-unit id="6708352290193932913" datatype="html">
+        <source>Rental point is required</source>
+        <target>Пункт проката обязателен</target>
       </trans-unit>
     </body>
   </file>

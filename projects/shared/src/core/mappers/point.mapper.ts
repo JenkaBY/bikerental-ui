@@ -4,7 +4,6 @@ import { Point, PointContacts, PointWrite } from '../models';
 export class PointMapper {
   static fromResponse(r: PointResponse): Point {
     return {
-      id: r.id,
       slug: r.slug,
       name: r.name,
       address: { street: r.address.street, city: r.address.city, country: r.address.country },

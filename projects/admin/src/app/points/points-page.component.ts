@@ -14,7 +14,7 @@ import { PointListComponent } from './point-list.component';
       <section class="min-w-0">
         <app-point-list
           [points]="store.points()"
-          [selectedId]="store.selectedId()"
+          [selectedSlug]="store.selectedSlug()"
           (pointSelect)="store.select($event)"
           (create)="store.startCreate()"
         />

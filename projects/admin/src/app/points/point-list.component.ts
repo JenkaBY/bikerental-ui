@@ -22,14 +22,14 @@ import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
       <p class="text-slate-500">{{ labels.PointsEmpty }}</p>
     } @else {
       <mat-action-list [attr.aria-label]="labels.PointListLabel">
-        @for (point of points(); track point.id) {
+        @for (point of points(); track point.slug) {
           <button
             mat-list-item
             type="button"
-            [activated]="point.id === selectedId()"
-            [attr.aria-current]="point.id === selectedId()"
-            [class.!bg-blue-100]="point.id === selectedId()"
-            (click)="pointSelect.emit(point.id)"
+            [activated]="point.slug === selectedSlug()"
+            [attr.aria-current]="point.slug === selectedSlug()"
+            [class.!bg-blue-100]="point.slug === selectedSlug()"
+            (click)="pointSelect.emit(point.slug)"
           >
             <span matListItemTitle>{{ point.name }}</span>
             <span matListItemLine class="flex items-center gap-2">
@@ -50,7 +50,7 @@ export class PointListComponent {
   protected readonly statusClasses = POINT_STATUS_CLASSES;
 
   readonly points = input.required<Point[]>();
-  readonly selectedId = input<string | null>(null);
+  readonly selectedSlug = input<string | null>(null);
 
   readonly pointSelect = output<string>();
   readonly create = output<void>();

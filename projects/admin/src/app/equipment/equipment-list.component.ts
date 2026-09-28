@@ -17,6 +17,7 @@ import {
   EquipmentStore,
   EquipmentTypeStore,
   Labels,
+  PointAdminStore,
   TruncatePipe,
 } from '@bikerental/shared';
 import { Equipment, EquipmentConditionSlug } from '@ui-models';
@@ -24,6 +25,7 @@ import { Equipment, EquipmentConditionSlug } from '@ui-models';
 @Component({
   selector: 'app-equipment-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [PointAdminStore],
   imports: [
     CommonModule,
     TruncatePipe,
@@ -106,6 +108,18 @@ import { Equipment, EquipmentConditionSlug } from '@ui-models';
             </td>
           </ng-container>
 
+          <ng-container matColumnDef="point">
+            <th mat-header-cell *matHeaderCellDef>{{ Labels.EquipmentPoint }}</th>
+            <td mat-cell *matCellDef="let row">
+              {{ pointStore.nameBySlug().get(row.pointSlug) ?? row.pointSlug ?? '' }}
+              @if (row.locationState === 'IN_TRANSIT') {
+                <span class="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
+                  {{ Labels.EquipmentInTransit }}
+                </span>
+              }
+            </td>
+          </ng-container>
+
           <ng-container matColumnDef="model">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.Model }}</th>
             <td mat-cell *matCellDef="let equipment">
@@ -161,6 +175,7 @@ export class EquipmentListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   readonly store = inject(EquipmentStore);
   readonly equipmentTypeStore = inject(EquipmentTypeStore);
+  readonly pointStore = inject(PointAdminStore);
 
   readonly Labels = Labels;
 
@@ -168,6 +183,7 @@ export class EquipmentListComponent implements OnInit {
     'uid',
     'serialNumber',
     'type',
+    'point',
     'model',
     'condition',
     'commissionedAt',
@@ -176,6 +192,7 @@ export class EquipmentListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadEquipment();
+    this.pointStore.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   loadEquipment(): void {
@@ -200,6 +217,7 @@ export class EquipmentListComponent implements OnInit {
       {
         data: {
           types: this.equipmentTypeStore.types(),
+          points: this.pointStore.points(),
         },
         disableClose: true,
         autoFocus: true,
@@ -214,6 +232,7 @@ export class EquipmentListComponent implements OnInit {
         data: {
           equipment: e,
           types: this.equipmentTypeStore.types(),
+          points: this.pointStore.points(),
         },
         autoFocus: 'first-tabbable',
       },

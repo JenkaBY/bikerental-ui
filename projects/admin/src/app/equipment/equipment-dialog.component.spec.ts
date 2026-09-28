@@ -51,7 +51,7 @@ describe('EquipmentDialogComponent', () => {
   }
 
   it('should initialize form in create mode with defaults', async () => {
-    const data: EquipmentDialogData = { types: [] };
+    const data: EquipmentDialogData = { types: [], points: [] };
     await createComponentWithData(data);
 
     fixture.detectChanges();
@@ -61,11 +61,11 @@ describe('EquipmentDialogComponent', () => {
   });
 
   it('should call store.create on save and close dialog on success', async () => {
-    const data: EquipmentDialogData = { types: [] };
+    const data: EquipmentDialogData = { types: [], points: [] };
     const { store, snack, dialogRef } = await createComponentWithData(data);
 
     store.create.mockReturnValue(of({ id: 100 }));
-    component.form.patchValue({ serialNumber: 'SN123', typeSlug: 'bike' });
+    component.form.patchValue({ serialNumber: 'SN123', typeSlug: 'bike', pointSlug: 'MAIN' });
 
     component.save();
 
@@ -83,9 +83,11 @@ describe('EquipmentDialogComponent', () => {
       model: 'M',
       condition: { slug: 'GOOD', name: 'Good' },
       conditionNotes: 'ok',
+      pointSlug: 'MAIN',
+      locationState: 'AT_POINT',
     };
 
-    const data: EquipmentDialogData = { equipment: existing, types: [] };
+    const data: EquipmentDialogData = { equipment: existing, types: [], points: [] };
 
     const { store, snack, dialogRef } = await createComponentWithData(data);
 
@@ -95,13 +97,13 @@ describe('EquipmentDialogComponent', () => {
     component.form.patchValue({ serialNumber: 'NEW-SN' });
     component.save();
 
-    expect(store.update).toHaveBeenCalledWith(42, expect.any(Object));
+    expect(store.update).toHaveBeenCalledWith(42, expect.any(Object), expect.any(Object));
     expect(snack.open).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
 
   it('should include commissionedAt date in create request', async () => {
-    const data: EquipmentDialogData = { types: [] };
+    const data: EquipmentDialogData = { types: [], points: [] };
     const { store } = await createComponentWithData(data);
 
     store.create.mockReturnValue(of({ id: 100 }));
@@ -110,6 +112,7 @@ describe('EquipmentDialogComponent', () => {
     component.form.patchValue({
       serialNumber: 'SNX',
       typeSlug: 'bike',
+      pointSlug: 'MAIN',
       commissionedAt: date,
     });
 
@@ -120,12 +123,12 @@ describe('EquipmentDialogComponent', () => {
   });
 
   it('should show error and keep dialog open on create failure', async () => {
-    const data: EquipmentDialogData = { types: [] };
+    const data: EquipmentDialogData = { types: [], points: [] };
     const { store, snack, dialogRef } = await createComponentWithData(data);
 
     store.create.mockReturnValue(throwError(() => new Error('fail')));
 
-    component.form.patchValue({ serialNumber: 'SN', typeSlug: 'bike' });
+    component.form.patchValue({ serialNumber: 'SN', typeSlug: 'bike', pointSlug: 'MAIN' });
     component.save();
 
     expect(snack.open).toHaveBeenCalled();
