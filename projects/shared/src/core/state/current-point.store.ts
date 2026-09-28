@@ -19,8 +19,10 @@ export class CurrentPointStore {
   private readonly _switching = signal(false);
 
   readonly points = computed(() => this._points());
-  readonly currentId = computed(() => this.userStore.workingPointId());
-  readonly current = computed(() => this._points().find((p) => p.id === this.currentId()) ?? null);
+  readonly currentSlug = computed(() => this.userStore.workingPointSlug());
+  readonly current = computed(
+    () => this._points().find((p) => p.slug === this.currentSlug()) ?? null,
+  );
   readonly canSwitch = computed(() => this._points().length > 1 && !this._switching());
 
   load(): Observable<void> {
@@ -35,13 +37,13 @@ export class CurrentPointStore {
     );
   }
 
-  select(id: string): void {
-    if (id === this.currentId() || !this._points().some((p) => p.id === id)) {
+  select(slug: string): void {
+    if (slug === this.currentSlug() || !this._points().some((p) => p.slug === slug)) {
       return;
     }
     this._switching.set(true);
     this.profileStore
-      .saveWorkingPoint(id)
+      .saveWorkingPoint(slug)
       .pipe(finalize(() => this._switching.set(false)))
       .subscribe();
   }

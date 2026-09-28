@@ -353,8 +353,8 @@ SOURCE: `projects/shared/src/core/api/generated/services/rentalPoints.service.ts
 CALLS:
   - HttpClient — transport.
 CALLED_BY:
-  - PointAdminStore (admin `/admin/points` master-detail page)
-  - CurrentPointStore (operator toolbar switcher; non-permanently-closed points loaded at startup; current point sourced from `UserStore`'s `workingPointId` setting — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`)
+  - PointAdminStore (admin `/admin/points` master-detail page; points are addressed by `slug` — `PointResponse` has no `id`)
+  - CurrentPointStore (operator toolbar switcher; non-permanently-closed points loaded at startup; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`)
 
 COMPONENT_NAME: UsersService
 TYPE: API
@@ -1841,11 +1841,13 @@ TYPE: Gateway
 PURPOSE: Paged, filtered equipment catalogue table with create/edit dialogs.
 RESPONSIBILITIES:
   - Drive page, type filter and condition filters on the store.
+  - Show each unit's owning rental point (name joined by `pointSlug` from `PointAdminStore`, provided at this component) and an "In transit" badge for `locationState = IN_TRANSIT`.
   - Open the equipment dialog and reload on a truthy result.
 SOURCE: `projects/admin/src/app/equipment/equipment-list.component.ts`
 CALLS:
   - EquipmentStore — `load()`, `setFilterType()`, `setFilterConditions()`, `setPage()`, items/total/page signals.
   - EquipmentTypeStore — `types()`, `typesForEquipment()`.
+  - PointAdminStore — `load()`, `points()`, `nameBySlug()`.
   - EquipmentDialogComponent — create and edit.
   - EquipmentConditionFilterComponent — condition filter control.
 CALLED_BY:
@@ -1856,11 +1858,13 @@ TYPE: Gateway
 PURPOSE: Create/edit dialog for an equipment unit.
 RESPONSIBILITIES:
   - Build the reactive form from `MAT_DIALOG_DATA`.
-  - Create or update and close with `true` on success.
+  - Require the owning rental point (`pointSlug`, admin-only selector; permanently closed points are hidden except the unit's current one). A different point on edit moves the unit.
+  - Create or update and close with `true` on success; errors are handled locally (`suppressErrorNotification`), with `equipment.point.required` / `equipment.point.not_accepting_equipment` bound to the point field.
 SOURCE: `projects/admin/src/app/equipment/equipment-dialog.component.ts`
 CALLS:
   - EquipmentStore — `create()`, `update()`, `saving`.
-  - MatSnackBar — failure message.
+  - ApiErrorParser / ErrorMessageResolver / applyServerErrors / NotificationService — failure handling.
+  - MatSnackBar — success message.
   - EquipmentTypeDropdownComponent — type selection.
 CALLED_BY:
   - EquipmentListComponent

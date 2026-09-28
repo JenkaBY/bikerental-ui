@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, defaultIfEmpty, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { Equipment, EquipmentConditionSlug, EquipmentWrite, Page } from '@ui-models';
-import { EquipmentsCatalogueService } from '../api/generated';
+import { EquipmentsCatalogueService, RequestOptions } from '../api/generated';
 import { EquipmentTypeStore } from './equipment-type.store';
 import { EquipmentMapper } from '../mappers';
 
@@ -73,10 +73,10 @@ export class EquipmentStore {
     this.load().subscribe();
   }
 
-  create(write: EquipmentWrite): Observable<Equipment> {
+  create(write: EquipmentWrite, options?: RequestOptions<'json'>): Observable<Equipment> {
     this._saving.set(true);
     const types = this.equipmentTypeStore.types();
-    return this.service.createEquipment(EquipmentMapper.toRequest(write)).pipe(
+    return this.service.createEquipment(EquipmentMapper.toRequest(write), undefined, options).pipe(
       map((response) => EquipmentMapper.fromResponse(response, types)),
       switchMap((created) =>
         this.load().pipe(
@@ -88,18 +88,24 @@ export class EquipmentStore {
     );
   }
 
-  update(id: number, write: EquipmentWrite): Observable<Equipment> {
+  update(
+    id: number,
+    write: EquipmentWrite,
+    options?: RequestOptions<'json'>,
+  ): Observable<Equipment> {
     this._saving.set(true);
     const types = this.equipmentTypeStore.types();
-    return this.service.updateEquipment(id, EquipmentMapper.toRequest(write)).pipe(
-      map((response) => EquipmentMapper.fromResponse(response, types)),
-      tap((updated) => {
-        this._page.update((p) => ({
-          ...p,
-          items: p.items.map((e) => (e.id === id ? updated : e)),
-        }));
-      }),
-      finalize(() => this._saving.set(false)),
-    );
+    return this.service
+      .updateEquipment(id, EquipmentMapper.toRequest(write), undefined, options)
+      .pipe(
+        map((response) => EquipmentMapper.fromResponse(response, types)),
+        tap((updated) => {
+          this._page.update((p) => ({
+            ...p,
+            items: p.items.map((e) => (e.id === id ? updated : e)),
+          }));
+        }),
+        finalize(() => this._saving.set(false)),
+      );
   }
 }

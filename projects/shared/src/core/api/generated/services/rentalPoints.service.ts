@@ -42,27 +42,27 @@ export class RentalPointsService {
   }
 
   getPoint(
-    pointId: string,
+    pointSlug: string,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PointResponse>;
   getPoint(
-    pointId: string,
+    pointSlug: string,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PointResponse>>;
   getPoint(
-    pointId: string,
+    pointSlug: string,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PointResponse>>;
   /** Returns a single rental point */
   getPoint(
-    pointId: string,
+    pointSlug: string,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
-    const url = `${this.basePath}/api/points/${pointId}`;
+    const url = `${this.basePath}/api/points/${pointSlug}`;
 
     let headers: HttpHeaders;
     if (options?.headers instanceof HttpHeaders) {
@@ -83,31 +83,31 @@ export class RentalPointsService {
   }
 
   updatePoint(
-    pointId: string,
+    pointSlug: string,
     pointUpdateRequest: PointUpdateRequest,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PointResponse>;
   updatePoint(
-    pointId: string,
+    pointSlug: string,
     pointUpdateRequest: PointUpdateRequest,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PointResponse>>;
   updatePoint(
-    pointId: string,
+    pointSlug: string,
     pointUpdateRequest: PointUpdateRequest,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PointResponse>>;
   /** Replaces the mutable details of a rental point; the slug is immutable and is not part of the payload (admin only) */
   updatePoint(
-    pointId: string,
+    pointSlug: string,
     pointUpdateRequest: PointUpdateRequest,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
-    const url = `${this.basePath}/api/points/${pointId}`;
+    const url = `${this.basePath}/api/points/${pointSlug}`;
 
     let headers: HttpHeaders;
     if (options?.headers instanceof HttpHeaders) {
@@ -231,31 +231,31 @@ export class RentalPointsService {
   }
 
   changeStatus(
-    pointId: string,
+    pointSlug: string,
     pointStatusChangeRequest: PointStatusChangeRequest,
     observe?: 'body',
     options?: RequestOptions<'json'>,
   ): Observable<PointResponse>;
   changeStatus(
-    pointId: string,
+    pointSlug: string,
     pointStatusChangeRequest: PointStatusChangeRequest,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<PointResponse>>;
   changeStatus(
-    pointId: string,
+    pointSlug: string,
     pointStatusChangeRequest: PointStatusChangeRequest,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PointResponse>>;
   /** Moves a rental point between INACTIVE, ACTIVE and PERMANENTLY_CLOSED. Permanent closure is irreversible and has no preconditions; every change publishes a point status event (admin only) */
   changeStatus(
-    pointId: string,
+    pointSlug: string,
     pointStatusChangeRequest: PointStatusChangeRequest,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
-    const url = `${this.basePath}/api/points/${pointId}/status`;
+    const url = `${this.basePath}/api/points/${pointSlug}/status`;
 
     let headers: HttpHeaders;
     if (options?.headers instanceof HttpHeaders) {

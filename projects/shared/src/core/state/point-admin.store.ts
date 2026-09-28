@@ -12,17 +12,18 @@ export class PointAdminStore {
   private readonly service = inject(RentalPointsService);
 
   private readonly _points = signal<Point[]>([]);
-  private readonly _selectedId = signal<string | null>(null);
+  private readonly _selectedSlug = signal<string | null>(null);
   private readonly _creating = signal(false);
   private readonly _editing = signal(false);
   private readonly _loading = signal(false);
   private readonly _saving = signal(false);
 
   readonly points = computed(() => this._points());
-  readonly selectedId = computed(() => this._selectedId());
+  readonly selectedSlug = computed(() => this._selectedSlug());
   readonly selected = computed(
-    () => this._points().find((p) => p.id === this._selectedId()) ?? null,
+    () => this._points().find((p) => p.slug === this._selectedSlug()) ?? null,
   );
+  readonly nameBySlug = computed(() => new Map(this._points().map((p) => [p.slug, p.name])));
   readonly creating = computed(() => this._creating());
   readonly editing = computed(() => this._editing() || this._creating());
   readonly loading = computed(() => this._loading());
@@ -34,8 +35,8 @@ export class PointAdminStore {
       map((page) => (page.items ?? []).map(PointMapper.fromResponse)),
       tap((points) => {
         this._points.set(points);
-        if (!this._creating() && !points.some((p) => p.id === this._selectedId())) {
-          this._selectedId.set(points[0]?.id ?? null);
+        if (!this._creating() && !points.some((p) => p.slug === this._selectedSlug())) {
+          this._selectedSlug.set(points[0]?.slug ?? null);
         }
       }),
       map(() => undefined as void),
@@ -43,10 +44,10 @@ export class PointAdminStore {
     );
   }
 
-  select(id: string): void {
+  select(slug: string): void {
     this._creating.set(false);
     this._editing.set(false);
-    this._selectedId.set(id);
+    this._selectedSlug.set(slug);
   }
 
   startEdit(): void {
@@ -56,15 +57,15 @@ export class PointAdminStore {
   cancelEdit(): void {
     this._creating.set(false);
     this._editing.set(false);
-    if (this._selectedId() === null) {
-      this._selectedId.set(this._points()[0]?.id ?? null);
+    if (this._selectedSlug() === null) {
+      this._selectedSlug.set(this._points()[0]?.slug ?? null);
     }
   }
 
   startCreate(): void {
     this._creating.set(true);
     this._editing.set(true);
-    this._selectedId.set(null);
+    this._selectedSlug.set(null);
   }
 
   create(write: PointWrite, options?: RequestOptions<'json'>): Observable<Point> {
@@ -73,16 +74,16 @@ export class PointAdminStore {
       map(PointMapper.fromResponse),
       tap((created) => {
         this._points.set([...this._points(), created]);
-        this.select(created.id);
+        this.select(created.slug);
       }),
       finalize(() => this._saving.set(false)),
     );
   }
 
-  update(id: string, write: PointWrite, options?: RequestOptions<'json'>): Observable<Point> {
+  update(slug: string, write: PointWrite, options?: RequestOptions<'json'>): Observable<Point> {
     this._saving.set(true);
     return this.service
-      .updatePoint(id, PointMapper.toUpdateRequest(write), undefined, options)
+      .updatePoint(slug, PointMapper.toUpdateRequest(write), undefined, options)
       .pipe(
         map(PointMapper.fromResponse),
         tap((updated) => {
@@ -93,9 +94,9 @@ export class PointAdminStore {
       );
   }
 
-  changeStatus(id: string, status: PointStatus): Observable<Point> {
+  changeStatus(slug: string, status: PointStatus): Observable<Point> {
     this._saving.set(true);
-    return this.service.changeStatus(id, { status }).pipe(
+    return this.service.changeStatus(slug, { status }).pipe(
       map(PointMapper.fromResponse),
       tap((point) => this.replace(point)),
       finalize(() => this._saving.set(false)),
@@ -103,6 +104,6 @@ export class PointAdminStore {
   }
 
   private replace(point: Point): void {
-    this._points.set(this._points().map((p) => (p.id === point.id ? point : p)));
+    this._points.set(this._points().map((p) => (p.slug === point.slug ? point : p)));
   }
 }

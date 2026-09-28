@@ -11,22 +11,41 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
+  ApiErrorParser,
+  applyServerErrors,
   CancelButtonComponent,
+  clearServerErrors,
   EQUIPMENT_CONDITIONS,
   EquipmentStore,
   EquipmentTypeDropdownComponent,
+  ErrorCode,
+  ErrorMessageResolver,
   FormErrorMessages,
   Labels,
+  NotificationService,
   parseDate,
   SaveButtonComponent,
+  suppressErrorNotification,
 } from '@bikerental/shared';
 import { formatDate } from '@angular/common';
-import { Equipment, EquipmentConditionSlug, EquipmentType, EquipmentWrite } from '@ui-models';
+import {
+  Equipment,
+  EquipmentConditionSlug,
+  EquipmentType,
+  EquipmentWrite,
+  Point,
+} from '@ui-models';
 
 export interface EquipmentDialogData {
   equipment?: Equipment;
   types: EquipmentType[];
+  points: Point[];
 }
+
+const POINT_ERROR_CODES = new Set<string>([
+  ErrorCode.EQUIPMENT_POINT_REQUIRED,
+  ErrorCode.EQUIPMENT_POINT_NOT_ACCEPTING,
+]);
 
 @Component({
   selector: 'app-equipment-dialog',
@@ -88,6 +107,21 @@ export interface EquipmentDialogData {
           }
         </mat-form-field>
 
+        <mat-form-field appearance="outline" class="w-full col-span-2">
+          <mat-label>{{ labels.EquipmentPoint }}</mat-label>
+          <mat-select formControlName="pointSlug">
+            @for (point of pointOptions; track point.slug) {
+              <mat-option [value]="point.slug">{{ point.name }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.pointSlug.hasError('required')) {
+            <mat-error>{{ errors.pointRequired }}</mat-error>
+          }
+          @if (form.controls.pointSlug.hasError('server')) {
+            <mat-error>{{ form.controls.pointSlug.getError('server') }}</mat-error>
+          }
+        </mat-form-field>
+
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ labels.Model }}</mat-label>
           <input matInput formControlName="model" maxlength="200" />
@@ -122,6 +156,8 @@ export class EquipmentDialogComponent {
   private store = inject(EquipmentStore);
   readonly data = inject<EquipmentDialogData>(MAT_DIALOG_DATA);
   private snackBar = inject(MatSnackBar);
+  private notifications = inject(NotificationService);
+  private resolver = new ErrorMessageResolver();
 
   readonly labels = Labels;
   readonly errors = FormErrorMessages;
@@ -146,7 +182,12 @@ export class EquipmentDialogComponent {
       [Validators.required],
     ),
     conditionNotes: new FormControl(this.data?.equipment?.conditionNotes ?? ''),
+    pointSlug: new FormControl(this.data?.equipment?.pointSlug ?? '', [Validators.required]),
   });
+
+  readonly pointOptions = (this.data?.points ?? []).filter(
+    (p) => p.status !== 'PERMANENTLY_CLOSED' || p.slug === this.data?.equipment?.pointSlug,
+  );
 
   readonly conditionOptions = EQUIPMENT_CONDITIONS;
 
@@ -155,6 +196,7 @@ export class EquipmentDialogComponent {
       this.form.markAllAsTouched();
       return;
     }
+    clearServerErrors(this.form);
 
     const raw = this.form.getRawValue();
     const write: EquipmentWrite = {
@@ -165,11 +207,13 @@ export class EquipmentDialogComponent {
       commissionedAt: raw.commissionedAt ?? undefined,
       conditionSlug: raw.conditionSlug ?? undefined,
       conditionNotes: raw.conditionNotes || undefined,
+      pointSlug: raw.pointSlug ?? '',
     };
 
+    const options = { context: suppressErrorNotification() };
     const op$ = this.data?.equipment?.id
-      ? this.store.update(this.data.equipment.id, write)
-      : this.store.create(write);
+      ? this.store.update(this.data.equipment.id, write, options)
+      : this.store.create(write, options);
 
     op$.subscribe({
       next: () => {
@@ -179,11 +223,23 @@ export class EquipmentDialogComponent {
         this.snackBar.open(msg, this.labels.Close, { duration: 3000 });
         this.dialogRef.close(true);
       },
-      error: () => {
-        this.snackBar.open($localize`Failed to save equipment`, this.labels.Close, {
-          duration: 4000,
-        });
-      },
+      error: (err: unknown) => this.handleSaveError(err),
     });
+  }
+
+  private handleSaveError(err: unknown): void {
+    const apiError = ApiErrorParser.parse(err);
+    const message = this.resolver.resolve(apiError);
+    if (POINT_ERROR_CODES.has(apiError.code)) {
+      this.form.controls.pointSlug.setErrors({ server: message });
+      this.form.controls.pointSlug.markAsTouched();
+      return;
+    }
+    const summary = applyServerErrors(this.form, apiError);
+    if (summary.length) {
+      this.notifications.error(summary.join(' '));
+    } else if (apiError.fieldErrors.length === 0) {
+      this.notifications.error(message);
+    }
   }
 }

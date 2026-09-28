@@ -99,7 +99,7 @@ export class EquipmentsCatalogueService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentResponse>>;
-  /** Replaces all fields of an existing equipment record */
+  /** Replaces all fields of an existing equipment record; a different pointSlug moves the equipment to that point */
   updateEquipment(
     id: number,
     equipmentRequest: EquipmentRequest,

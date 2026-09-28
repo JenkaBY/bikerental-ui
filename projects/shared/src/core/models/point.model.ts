@@ -13,7 +13,6 @@ export interface PointContacts {
 }
 
 export interface Point {
-  id: string;
   slug: string;
   name: string;
   address: PointAddress;

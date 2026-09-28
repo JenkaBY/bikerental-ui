@@ -270,9 +270,7 @@ export interface PointContactsResponse {
 
 /** Full rental point record */
 export interface PointResponse {
-  /** Rental point UUID */
-  id: string;
-  /** URL-friendly identifier */
+  /** URL-friendly identifier, the key the point is addressed by */
   slug: string;
   /** Display name */
   name: string;
@@ -300,6 +298,8 @@ export interface EquipmentRequest {
   condition?: string;
   /** Condition slug */
   conditionSlug?: 'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
+  /** Slug of the rental point the equipment belongs to. Required on create and on update; a different value on update moves the equipment to that point. The point must not be PERMANENTLY_CLOSED */
+  pointSlug?: string;
 }
 
 /** Equipment record */
@@ -320,6 +320,10 @@ export interface EquipmentResponse {
   conditionNotes?: string;
   /** Physical condition slug */
   condition?: string;
+  /** Slug of the rental point the equipment belongs to */
+  pointSlug?: string;
+  /** Where the item is relative to its owning point */
+  locationState: 'AT_POINT' | 'IN_TRANSIT';
 }
 
 /** Request body for updating an equipment type */

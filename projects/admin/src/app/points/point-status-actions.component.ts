@@ -50,7 +50,7 @@ export class PointStatusActionsComponent {
 
   protected change(status: PointStatus): void {
     this.store
-      .changeStatus(this.point().id, status)
+      .changeStatus(this.point().slug, status)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
@@ -70,7 +70,7 @@ export class PointStatusActionsComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        switchMap(() => this.store.changeStatus(point.id, 'PERMANENTLY_CLOSED')),
+        switchMap(() => this.store.changeStatus(point.slug, 'PERMANENTLY_CLOSED')),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.notifications.success(Labels.PointClosedSuccess));

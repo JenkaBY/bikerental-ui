@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 import { CurrentPointStore } from '../state/current-point.store';
 
 const API_PATH = '/api';
-export const POINT_ID_HEADER = 'X-Point-Id';
+export const POINT_SLUG_HEADER = 'X-Point-Slug';
 
 function isApiRequest(url: string): boolean {
   return url.startsWith(`${environment.apiUrl}${API_PATH}`) || url.startsWith(API_PATH);
@@ -14,8 +14,8 @@ export const pointInterceptor: HttpInterceptorFn = (req, next) => {
   if (!isApiRequest(req.url)) {
     return next(req);
   }
-  const pointId = inject(CurrentPointStore).currentId();
-  return pointId === null
+  const pointSlug = inject(CurrentPointStore).currentSlug();
+  return pointSlug === null
     ? next(req)
-    : next(req.clone({ setHeaders: { [POINT_ID_HEADER]: pointId } }));
+    : next(req.clone({ setHeaders: { [POINT_SLUG_HEADER]: pointSlug } }));
 };

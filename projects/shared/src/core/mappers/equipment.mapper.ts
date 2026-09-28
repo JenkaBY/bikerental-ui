@@ -20,6 +20,8 @@ export class EquipmentMapper {
         : undefined,
       conditionNotes: r.conditionNotes,
       condition: EquipmentConditionMapper.fromSlugString(r.condition),
+      pointSlug: r.pointSlug,
+      locationState: r.locationState,
     };
   }
 
@@ -32,6 +34,7 @@ export class EquipmentMapper {
       commissionedAt: w.commissionedAt ? toIsoDate(w.commissionedAt) : undefined,
       condition: w.conditionNotes,
       conditionSlug: w.conditionSlug,
+      pointSlug: w.pointSlug,
     };
   }
 }

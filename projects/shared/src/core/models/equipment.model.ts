@@ -2,6 +2,8 @@ import { EquipmentType } from './equipment-type.model';
 
 export type EquipmentConditionSlug = 'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED';
 
+export type EquipmentLocationState = 'AT_POINT' | 'IN_TRANSIT';
+
 export interface EquipmentCondition {
   slug: EquipmentConditionSlug;
   name: string;
@@ -16,6 +18,8 @@ export interface Equipment {
   commissionedAt?: Date;
   conditionNotes?: string;
   condition?: EquipmentCondition;
+  pointSlug?: string;
+  locationState: EquipmentLocationState;
 }
 
 export interface EquipmentWrite {
@@ -26,6 +30,7 @@ export interface EquipmentWrite {
   commissionedAt?: Date;
   conditionNotes?: string;
   conditionSlug?: EquipmentConditionSlug;
+  pointSlug: string;
 }
 
 export interface EquipmentSearchItem {

@@ -29,9 +29,9 @@ import { Labels } from '../../constant/labels';
           <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          @for (p of points(); track p.id) {
-            <button mat-menu-item (click)="pointSelect.emit(p.id)">
-              @if (p.id === point.id) {
+          @for (p of points(); track p.slug) {
+            <button mat-menu-item (click)="pointSelect.emit(p.slug)">
+              @if (p.slug === point.slug) {
                 <mat-icon>check</mat-icon>
               }
               <span>{{ p.name }}</span>
