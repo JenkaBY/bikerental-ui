@@ -109,7 +109,20 @@ import { Equipment, EquipmentConditionSlug } from '@ui-models';
           </ng-container>
 
           <ng-container matColumnDef="point">
-            <th mat-header-cell *matHeaderCellDef>{{ Labels.EquipmentPoint }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ Labels.EquipmentPoint }}</mat-label>
+                <mat-select
+                  [value]="store.filterPoint()"
+                  (selectionChange)="onFilterPointChange($event.value)"
+                >
+                  <mat-option [value]="undefined">{{ Labels.All }}</mat-option>
+                  @for (p of pointStore.points(); track p.slug) {
+                    <mat-option [value]="p.slug">{{ p.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </th>
             <td mat-cell *matCellDef="let row">
               {{ pointStore.nameBySlug().get(row.pointSlug) ?? row.pointSlug ?? '' }}
               @if (row.locationState === 'IN_TRANSIT') {
@@ -205,6 +218,10 @@ export class EquipmentListComponent implements OnInit {
 
   onFilterConditionsChange(value: EquipmentConditionSlug[]): void {
     this.store.setFilterConditions(value);
+  }
+
+  onFilterPointChange(value: string | undefined): void {
+    this.store.setFilterPoint(value);
   }
 
   onPageChange(event: PageEvent): void {

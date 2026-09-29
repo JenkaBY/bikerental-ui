@@ -38,6 +38,7 @@ export const ErrorCode = {
   ACTIVATION_NOT_READY: 'rental.activation.not_ready',
   RENTAL_QUOTE_MISMATCH: 'rental.quote.mismatch',
   DEBT_WRITE_OFF_NOT_ALLOWED: 'rental.debt_write_off.not_allowed',
+  RENTAL_POINT_PERMANENTLY_CLOSED: 'rental.point.permanently_closed',
 
   // tariff.* — return quote lifecycle
   TARIFF_QUOTE_NOT_FOUND: 'tariff.quote.not_found',
@@ -123,6 +124,7 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.ACTIVATION_NOT_READY,
   ErrorCode.RENTAL_QUOTE_MISMATCH,
   ErrorCode.DEBT_WRITE_OFF_NOT_ALLOWED,
+  ErrorCode.RENTAL_POINT_PERMANENTLY_CLOSED,
   ErrorCode.TARIFF_QUOTE_NOT_FOUND,
   ErrorCode.TARIFF_QUOTE_EXPIRED,
   ErrorCode.TARIFF_QUOTE_ALREADY_CONSUMED,

@@ -16,6 +16,7 @@ export class EquipmentStore {
   private readonly _saving = signal(false);
   private readonly _filterType = signal<string | undefined>(undefined);
   private readonly _filterConditions = signal<EquipmentConditionSlug[]>([]);
+  private readonly _filterPoint = signal<string | undefined>(undefined);
   private readonly _pageIndex = signal(0);
   private readonly _pageSize = signal(20);
 
@@ -25,6 +26,7 @@ export class EquipmentStore {
   readonly saving = computed(() => this._saving());
   readonly filterType = computed(() => this._filterType());
   readonly filterConditions = computed(() => this._filterConditions());
+  readonly filterPoint = computed(() => this._filterPoint());
   readonly pageIndex = computed(() => this._pageIndex());
   readonly pageSize = computed(() => this._pageSize());
 
@@ -36,6 +38,7 @@ export class EquipmentStore {
         {
           type: this._filterType(),
           condition: this._filterConditions(),
+          pointSlug: this._filterPoint(),
         },
         {
           page: this._pageIndex(),
@@ -63,6 +66,12 @@ export class EquipmentStore {
 
   setFilterConditions(conditions: EquipmentConditionSlug[]): void {
     this._filterConditions.set(conditions);
+    this._pageIndex.set(0);
+    this.load().subscribe();
+  }
+
+  setFilterPoint(pointSlug: string | undefined): void {
+    this._filterPoint.set(pointSlug);
     this._pageIndex.set(0);
     this.load().subscribe();
   }

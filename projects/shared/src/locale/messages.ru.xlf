@@ -6134,6 +6134,14 @@
         <source>New point</source>
         <target>Новый пункт</target>
       </trans-unit>
+      <trans-unit id="2760834162759850002" datatype="html">
+        <source>Rental point <x id="pointSlug" equiv-text="pointSlug"/> is permanently closed. Its equipment cannot be rented.</source>
+        <target>Пункт проката <x id="pointSlug" equiv-text="pointSlug"/> закрыт навсегда. Его оборудование нельзя выдать в прокат.</target>
+      </trans-unit>
+      <trans-unit id="6511202023098030516" datatype="html">
+        <source>Your working point is permanently closed. Its equipment cannot be rented.</source>
+        <target>Ваш рабочий пункт закрыт навсегда. Его оборудование нельзя выдать в прокат.</target>
+      </trans-unit>
       <trans-unit id="7489297968526341319" datatype="html">
         <source>Your account has no working point to assign.</source>
         <target>У вашей учётной записи нет рабочего пункта для назначения.</target>

@@ -1088,6 +1088,8 @@ export interface EquipmentFilterParams {
   q?: string;
   /** Condition filter; repeat the parameter or pass a comma-separated list to match any of the given conditions */
   condition?: Array<'GOOD' | 'NEEDS_MAINTENANCE' | 'BROKEN' | 'DECOMMISSIONED'>;
+  /** Narrows the business-wide list to the equipment owned by this rental point */
+  pointSlug?: string;
 }
 
 export interface PageEquipmentResponse {
