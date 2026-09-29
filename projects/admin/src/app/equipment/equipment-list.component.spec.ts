@@ -18,11 +18,13 @@ describe('EquipmentListComponent', () => {
       loading: vi.fn(() => false),
       filterType: vi.fn(() => undefined as string | undefined),
       filterConditions: vi.fn(() => [] as EquipmentConditionSlug[]),
+      filterPoint: vi.fn(() => undefined as string | undefined),
       pageIndex: vi.fn(() => 0),
       pageSize: vi.fn(() => 20),
       load: vi.fn(() => of(undefined)),
       setFilterType: vi.fn(),
       setFilterConditions: vi.fn(),
+      setFilterPoint: vi.fn(),
       setPage: vi.fn(),
     }) as unknown as EquipmentStore;
 

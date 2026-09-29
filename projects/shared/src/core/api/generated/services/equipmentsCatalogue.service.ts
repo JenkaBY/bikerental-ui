@@ -148,7 +148,7 @@ export class EquipmentsCatalogueService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageEquipmentResponse>>;
-  /** Returns paginated equipment list filtered by type, one or more conditions and/or free-text search: exact match on uid, case-insensitive substring match on serial number and model */
+  /** Returns paginated equipment list filtered by type, one or more conditions and/or free-text search: exact match on uid, case-insensitive substring match on serial number and model. Administrators only: the list covers every point and may be narrowed with pointSlug */
   searchEquipments(
     filterParams: EquipmentFilterParams,
     pageable: Pageable,

@@ -42,7 +42,7 @@ export class EquipmentSearchStore {
     },
   });
 
-  readonly results = computed(() => this.resource.value() ?? []);
+  readonly results = computed(() => (this.resource.hasValue() ? this.resource.value() : []));
   readonly loading = this.resource.isLoading;
   readonly searchQuery = this._query.asReadonly();
   readonly appliedQuery = this._debouncedQuery;

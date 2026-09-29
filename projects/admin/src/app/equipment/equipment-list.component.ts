@@ -10,7 +10,6 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { CommonModule } from '@angular/common';
 import { EquipmentDialogComponent, EquipmentDialogData } from './equipment-dialog.component';
 import {
   EquipmentConditionFilterComponent,
@@ -27,7 +26,6 @@ import { Equipment, EquipmentConditionSlug } from '@ui-models';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [PointAdminStore],
   imports: [
-    CommonModule,
     TruncatePipe,
     MatCardModule,
     MatTableModule,
@@ -63,11 +61,6 @@ import { Equipment, EquipmentConditionSlug } from '@ui-models';
           <ng-container matColumnDef="uid">
             <th mat-header-cell *matHeaderCellDef>{{ Labels.Uid }}</th>
             <td mat-cell *matCellDef="let equipment">{{ equipment.uid }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="serialNumber">
-            <th mat-header-cell *matHeaderCellDef>{{ Labels.SerialNumber }}</th>
-            <td mat-cell *matCellDef="let equipment">{{ equipment.serialNumber }}</td>
           </ng-container>
 
           <ng-container matColumnDef="type">
@@ -109,7 +102,20 @@ import { Equipment, EquipmentConditionSlug } from '@ui-models';
           </ng-container>
 
           <ng-container matColumnDef="point">
-            <th mat-header-cell *matHeaderCellDef>{{ Labels.EquipmentPoint }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>{{ Labels.EquipmentPoint }}</mat-label>
+                <mat-select
+                  [value]="store.filterPoint()"
+                  (selectionChange)="onFilterPointChange($event.value)"
+                >
+                  <mat-option [value]="undefined">{{ Labels.All }}</mat-option>
+                  @for (p of pointStore.points(); track p.slug) {
+                    <mat-option [value]="p.slug">{{ p.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </th>
             <td mat-cell *matCellDef="let row">
               {{ pointStore.nameBySlug().get(row.pointSlug) ?? row.pointSlug ?? '' }}
               @if (row.locationState === 'IN_TRANSIT') {
@@ -134,11 +140,6 @@ import { Equipment, EquipmentConditionSlug } from '@ui-models';
                 {{ equipment.model | truncate: 20 }}
               </span>
             </td>
-          </ng-container>
-
-          <ng-container matColumnDef="commissionedAt">
-            <th mat-header-cell *matHeaderCellDef>{{ Labels.CommissionedAt }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.commissionedAt | date }}</td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
@@ -179,16 +180,7 @@ export class EquipmentListComponent implements OnInit {
 
   readonly Labels = Labels;
 
-  readonly displayedColumns = [
-    'uid',
-    'serialNumber',
-    'type',
-    'point',
-    'model',
-    'condition',
-    'commissionedAt',
-    'actions',
-  ];
+  readonly displayedColumns = ['uid', 'type', 'model', 'condition', 'point', 'actions'];
 
   ngOnInit(): void {
     this.loadEquipment();
@@ -205,6 +197,10 @@ export class EquipmentListComponent implements OnInit {
 
   onFilterConditionsChange(value: EquipmentConditionSlug[]): void {
     this.store.setFilterConditions(value);
+  }
+
+  onFilterPointChange(value: string | undefined): void {
+    this.store.setFilterPoint(value);
   }
 
   onPageChange(event: PageEvent): void {

@@ -591,7 +591,7 @@ export class RentalsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageAvailableEquipmentResponse>>;
-  /** Returns equipment that is in the condition available for rental and not currently occupied by an active or assigned rental. Pagination is best-effort: the returned page may contain fewer items than the requested size. */
+  /** Returns equipment that is in the condition available for rental and not currently occupied by an active or assigned rental, at the operator's working point. */
   getAvailableEquipments(
     pageable: Pageable,
     q?: string,

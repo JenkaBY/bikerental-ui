@@ -173,6 +173,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.SCOPE_CALLER_SUPPLIED]: $localize`The app sent an invalid request. Please report this issue.`,
   [ErrorCode.SCOPE_POINT_HEADER_INVALID]: $localize`The app sent an invalid working point. Please report this issue.`,
   [ErrorCode.SETTINGS_WORKING_POINT_NOT_APPLICABLE]: $localize`Your account has no working point to assign.`,
+  [ErrorCode.RENTAL_POINT_PERMANENTLY_CLOSED]: rentalPointPermanentlyClosedMessage,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -236,6 +237,14 @@ function rentalEquipmentNotAvailableMessage(params: Record<string, unknown>): st
     return $localize`Equipment ${ids.map(String).join(', ')}:ids: is already rented out.`;
   }
   return $localize`The selected equipment is already rented out.`;
+}
+
+function rentalPointPermanentlyClosedMessage(params: Record<string, unknown>): string {
+  const pointSlug = params['pointSlug'];
+  if (typeof pointSlug === 'string' && pointSlug.length > 0) {
+    return $localize`Rental point ${pointSlug}:pointSlug: is permanently closed. Its equipment cannot be rented.`;
+  }
+  return $localize`Your working point is permanently closed. Its equipment cannot be rented.`;
 }
 
 function rentalStatusInvalidMessage(params: Record<string, unknown>): string {

@@ -639,7 +639,7 @@ RESPONSIBILITIES:
   - Parse every failed response with `ApiErrorParser`.
   - Record it in `ErrorService`.
   - On `scope.not_established` (409): mark `OperatingScopeStore.notEstablished` and warn once — never a login redirect.
-  - Otherwise toast the resolved message unless the status is 401 or the request carries `SUPPRESS_ERROR_NOTIFICATION`; client-defect codes (e.g. `scope.caller_supplied`, `scope.point_header_invalid`) get the correlation id appended by `ErrorMessageResolver`. `identity.settings.working_point_not_applicable` (422, non-operator setting a working point) resolves to its own message the same way, with no special store handling.
+  - Otherwise toast the resolved message unless the status is 401 or the request carries `SUPPRESS_ERROR_NOTIFICATION`; client-defect codes (e.g. `scope.caller_supplied`, `scope.point_header_invalid`) get the correlation id appended by `ErrorMessageResolver`. `identity.settings.working_point_not_applicable` (422, non-operator setting a working point) and `rental.point.permanently_closed` (422 on availability, `params.pointSlug`) resolve to their own messages the same way, with no special store handling.
   - Rethrow so callers can still handle the error locally.
 SOURCE: `projects/shared/src/core/interceptors/error.interceptor.ts`
 CALLS:
@@ -1840,12 +1840,12 @@ COMPONENT_NAME: EquipmentListComponent
 TYPE: Gateway
 PURPOSE: Paged, filtered equipment catalogue table with create/edit dialogs.
 RESPONSIBILITIES:
-  - Drive page, type filter and condition filters on the store.
+  - Drive page, type, condition and owning-point filters on the store (`pointSlug` on `GET /api/equipments` is an admin-only filter; operators get 403 on this endpoint and find equipment through availability and single-item lookups).
   - Show each unit's owning rental point (name joined by `pointSlug` from `PointAdminStore`, provided at this component) and an "In transit" badge for `locationState = IN_TRANSIT`.
   - Open the equipment dialog and reload on a truthy result.
 SOURCE: `projects/admin/src/app/equipment/equipment-list.component.ts`
 CALLS:
-  - EquipmentStore — `load()`, `setFilterType()`, `setFilterConditions()`, `setPage()`, items/total/page signals.
+  - EquipmentStore — `load()`, `setFilterType()`, `setFilterConditions()`, `setFilterPoint()`, `setPage()`, items/total/page signals.
   - EquipmentTypeStore — `types()`, `typesForEquipment()`.
   - PointAdminStore — `load()`, `points()`, `nameBySlug()`.
   - EquipmentDialogComponent — create and edit.
