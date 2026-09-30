@@ -426,6 +426,22 @@
           <context context-type="linenumber">111</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="1003336653085429586" datatype="html">
+        <source>The agreement cannot be shown or signed: the value for &quot;<x id="placeholder" equiv-text="placeholder"/>&quot; is not filled in. Ask an administrator to fill it in or remove it from the agreement template.</source>
+        <target>Соглашение нельзя показать или подписать: значение «<x id="placeholder" equiv-text="placeholder"/>» не заполнено. Попросите администратора заполнить его или убрать из шаблона соглашения.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">304</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="399415366733708061" datatype="html">
+        <source>The agreement cannot be shown or signed: a value required by the agreement template is not filled in. Ask an administrator to fix it.</source>
+        <target>Соглашение нельзя показать или подписать: не заполнено значение, которое требуется в шаблоне соглашения. Попросите администратора это исправить.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">306</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="1417693714872528491" datatype="html">
         <source>This field is required.</source>
         <target>Это поле обязательно для заполнения.</target>

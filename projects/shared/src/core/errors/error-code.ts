@@ -72,6 +72,7 @@ export const ErrorCode = {
   AGREEMENT_SIGNING_RENTAL_NOT_AWAITING_SIGNATURE:
     'agreement.signing.rental_not_awaiting_signature',
   AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE: 'agreement.signing.invalid_signature_image',
+  AGREEMENT_PLACEHOLDER_UNRESOLVED: 'agreement.placeholder.unresolved',
 
   // maintenance.* — damage reports
   MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL: 'maintenance.equipment.not_in_rental',

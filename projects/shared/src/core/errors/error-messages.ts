@@ -113,6 +113,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.AGREEMENT_SIGNING_RENTAL_NOT_AWAITING_SIGNATURE]:
     agreementSigningRentalNotAwaitingSignatureMessage,
   [ErrorCode.AGREEMENT_SIGNING_INVALID_SIGNATURE_IMAGE]: $localize`The signature image is invalid. Please sign again.`,
+  [ErrorCode.AGREEMENT_PLACEHOLDER_UNRESOLVED]: agreementPlaceholderUnresolvedMessage,
 
   // Damage reports (maintenance)
   [ErrorCode.MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL]: maintenanceEquipmentNotInRentalMessage,
@@ -295,6 +296,14 @@ function agreementTemplateNotActiveMessage(params: Record<string, unknown>): str
     return $localize`The agreement text changed since this screen was loaded (was version ${String(requestedTemplateId)}:requestedTemplateId:, now ${String(activeTemplateId)}:activeTemplateId:). Please review the updated text and try again.`;
   }
   return $localize`The agreement text changed since this screen was loaded. Please review the updated text and try again.`;
+}
+
+function agreementPlaceholderUnresolvedMessage(params: Record<string, unknown>): string {
+  const placeholder = params['placeholder'];
+  if (typeof placeholder === 'string' && placeholder.length > 0) {
+    return $localize`The agreement cannot be shown or signed: the value for "${placeholder}:placeholder:" is not filled in. Ask an administrator to fill it in or remove it from the agreement template.`;
+  }
+  return $localize`The agreement cannot be shown or signed: a value required by the agreement template is not filled in. Ask an administrator to fix it.`;
 }
 
 function agreementSigningRentalNotAwaitingSignatureMessage(

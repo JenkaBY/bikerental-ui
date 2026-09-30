@@ -230,7 +230,10 @@ export class RentalAgreementComponent {
       this.signingStore
         .loadRentalAgreement(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ error: () => undefined });
+        .subscribe({
+          error: (err: unknown) =>
+            this.notifications.error(resolveErrorMessage(ApiErrorParser.parse(err))),
+        });
     });
   }
 
