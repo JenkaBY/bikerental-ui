@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
 import { RentalPointsService } from '../api/generated';
 import { PointMapper } from '../mappers';
@@ -37,14 +37,14 @@ export class CurrentPointStore {
     );
   }
 
-  select(slug: string): void {
+  select(slug: string): Observable<void> {
     if (slug === this.currentSlug() || !this._points().some((p) => p.slug === slug)) {
-      return;
+      return EMPTY;
     }
     this._switching.set(true);
-    this.profileStore
-      .saveWorkingPoint(slug)
-      .pipe(finalize(() => this._switching.set(false)))
-      .subscribe();
+    return this.profileStore.saveWorkingPoint(slug).pipe(
+      map(() => undefined as void),
+      finalize(() => this._switching.set(false)),
+    );
   }
 }
