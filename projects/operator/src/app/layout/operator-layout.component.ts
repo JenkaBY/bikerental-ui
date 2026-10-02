@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import {
@@ -14,6 +15,7 @@ import {
   PointSwitcherComponent,
   ProfileMenuComponent,
 } from '@bikerental/shared';
+import { PointSwitchReloadService } from '../core/point-switch-reload.service';
 
 const NAV_ITEMS: NavItem[] = [
   { label: $localize`Rentals`, route: 'rentals', icon: 'directions_bike' },
@@ -48,7 +50,7 @@ const NAV_ITEMS: NavItem[] = [
           [points]="pointStore.points()"
           [current]="pointStore.current()"
           [disabled]="!pointStore.canSwitch()"
-          (pointSelect)="pointStore.select($event)"
+          (pointSelect)="onPointSelect($event)"
         />
       }
       <app-health-indicator />
@@ -70,6 +72,15 @@ export class OperatorLayoutComponent {
   protected readonly pointStore = inject(CurrentPointStore);
   protected readonly scopeStore = inject(OperatingScopeStore);
   private readonly auth = inject(AuthService);
+  private readonly pointSwitchReload = inject(PointSwitchReloadService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  protected onPointSelect(slug: string) {
+    this.pointStore
+      .select(slug)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: () => this.pointSwitchReload.reload(), error: () => undefined });
+  }
 
   protected onLogout() {
     this.auth.logout();

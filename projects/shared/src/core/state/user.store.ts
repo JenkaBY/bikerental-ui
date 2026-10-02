@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { UserPreferences, UserProfile, UserSettings } from '@ui-models';
 import { UserSettingsMapper } from '../mappers/user-settings.mapper';
 import { LocaleRedirectService } from '../locale-redirect.service';
@@ -21,17 +21,6 @@ export class UserStore {
   readonly workingPointSlug = computed(() => UserSettingsMapper.workingPointSlug(this._settings()));
   readonly locale = computed(() => this.preferences().language);
 
-  constructor() {
-    effect(() => {
-      const settings = this._settings();
-      try {
-        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-      } catch {
-        // Cache is best-effort — the server stays the source of truth.
-      }
-    });
-  }
-
   setUser(profile: UserProfile): void {
     this._currentUser.set(profile);
   }
@@ -42,7 +31,16 @@ export class UserStore {
 
   applySettings(settings: UserSettings): void {
     this._settings.set(settings);
+    this.writeCache(settings);
     this.localeRedirect.redirect(this.locale());
+  }
+
+  private writeCache(settings: UserSettings): void {
+    try {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    } catch {
+      // Cache is best-effort — the server stays the source of truth.
+    }
   }
 
   private readCache(): UserSettings {
