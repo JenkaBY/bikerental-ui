@@ -1,24 +1,22 @@
-import { inject, Injectable } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { DeployedPath } from '@bikerental/shared';
 
 const RENTALS_ROUTE = 'rentals';
 const NEW_RENTAL_SEGMENT = 'new';
 
 @Injectable({ providedIn: 'root' })
-export class PointSwitchReloadService {
-  private readonly document = inject(DOCUMENT);
+export class PointSwitchRefreshService {
   private readonly router = inject(Router);
+  private readonly _epoch = signal(0);
 
-  reload(): void {
+  readonly epoch = computed(() => this._epoch());
+
+  refresh(): void {
     if (this.isOnSingleRental()) {
-      this.document.location.assign(
-        DeployedPath.fromBase(this.document.baseURI).withRoute(RENTALS_ROUTE).toString(),
-      );
+      void this.router.navigateByUrl(`/${RENTALS_ROUTE}`);
       return;
     }
-    this.document.location.reload();
+    this._epoch.update((epoch) => epoch + 1);
   }
 
   private isOnSingleRental(): boolean {
