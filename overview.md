@@ -354,7 +354,7 @@ CALLS:
   - HttpClient — transport.
 CALLED_BY:
   - PointAdminStore (admin `/admin/points` master-detail page; points are addressed by `slug` — `PointResponse` has no `id`)
-  - CurrentPointStore (operator toolbar switcher; non-permanently-closed points loaded at startup; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`)
+  - CurrentPointStore (operator toolbar switcher; non-permanently-closed points loaded at startup; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`; on success the operator `PointSwitchReloadService` does a full page reload — single-rental routes (`rentals/:id[/edit|/agreement]`) reload to `rentals` via `DeployedPath`, since that rental is a 404 under the new point)
 
 COMPONENT_NAME: UsersService
 TYPE: API
