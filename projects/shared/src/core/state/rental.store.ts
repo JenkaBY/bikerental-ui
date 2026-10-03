@@ -407,10 +407,14 @@ export class RentalStore {
   cancelRental(): Observable<void> {
     const id = this._state().id;
     if (id === null) throw new Error('No rental id in store');
-    return this.rentalsService.updateLifecycle(id, { status: 'CANCELLED' }).pipe(
-      tap((r) => this.patchState({ status: r.status, version: r.version })),
-      map(() => undefined as void),
-    );
+    return this.rentalsService
+      .updateLifecycle(id, { status: 'CANCELLED' }, undefined, {
+        context: suppressErrorNotification(),
+      })
+      .pipe(
+        tap((r) => this.patchState({ status: r.status, version: r.version })),
+        map(() => undefined as void),
+      );
   }
 
   writeOffDebt(): Observable<void> {

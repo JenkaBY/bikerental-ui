@@ -15,10 +15,9 @@ import { Router } from '@angular/router';
 import { catchError, EMPTY, exhaustMap, filter, tap } from 'rxjs';
 import type { DamageReport } from '@ui-models';
 import {
-  ApiErrorParser,
-  ErrorMessageResolver,
   Labels,
   NotificationService,
+  RentalActionErrorNotifier,
   RentalDetailRefreshFacade,
   RentalStore,
 } from '@bikerental/shared';
@@ -82,7 +81,7 @@ export class RentalActionButtonsComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly notifications = inject(NotificationService);
-  private readonly resolver = inject(ErrorMessageResolver);
+  private readonly errorNotifier = inject(RentalActionErrorNotifier);
   private readonly refresh = inject(RentalDetailRefreshFacade);
 
   readonly returnRequested = output<void>();
@@ -140,7 +139,7 @@ export class RentalActionButtonsComponent {
               this.router.navigate(['/rentals']);
             }),
             catchError((err: unknown) => {
-              this.notifications.error(this.resolver.resolve(ApiErrorParser.parse(err)));
+              this.errorNotifier.notify(err);
               return EMPTY;
             }),
           ),

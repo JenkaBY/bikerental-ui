@@ -60,7 +60,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
 
   // Resource lifecycle
   [ErrorCode.INTERNAL_SERVER_ERROR]: $localize`A server error occurred. Please try again later.`,
-  [ErrorCode.RESOURCE_NOT_FOUND]: $localize`The requested item was not found.`,
+  [ErrorCode.RESOURCE_NOT_FOUND]: resourceNotFoundMessage,
   [ErrorCode.REFERENCE_NOT_FOUND]: $localize`A referenced item no longer exists. Please refresh and try again.`,
   [ErrorCode.RESOURCE_CONFLICT]: resourceConflictMessage,
   [ErrorCode.RESOURCE_OPTIMISTIC_LOCK]: $localize`This record was changed by someone else. Reload and try again.`,
@@ -175,11 +175,23 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.SCOPE_POINT_HEADER_INVALID]: $localize`The app sent an invalid working point. Please report this issue.`,
   [ErrorCode.SETTINGS_WORKING_POINT_NOT_APPLICABLE]: $localize`Your account has no working point to assign.`,
   [ErrorCode.RENTAL_POINT_PERMANENTLY_CLOSED]: rentalPointPermanentlyClosedMessage,
+  [ErrorCode.RENTAL_POINT_INACTIVE]: rentalPointInactiveMessage,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper functions for parameterized messages (response-level codes)
 // ─────────────────────────────────────────────────────────────────────────────
+
+function resourceNotFoundMessage(params: Record<string, unknown>): string {
+  if (params['resourceName'] !== 'Rental') {
+    return $localize`The requested item was not found.`;
+  }
+  const identifier = params['identifier'];
+  if (identifier != null && String(identifier).length > 0) {
+    return $localize`Rental #${String(identifier)}:identifier: was not found at your current working point.`;
+  }
+  return $localize`This rental was not found at your current working point.`;
+}
 
 function resourceConflictMessage(params: Record<string, unknown>): string {
   const identifier = params['identifier'];
@@ -246,6 +258,14 @@ function rentalPointPermanentlyClosedMessage(params: Record<string, unknown>): s
     return $localize`Rental point ${pointSlug}:pointSlug: is permanently closed. Its equipment cannot be rented.`;
   }
   return $localize`Your working point is permanently closed. Its equipment cannot be rented.`;
+}
+
+function rentalPointInactiveMessage(params: Record<string, unknown>): string {
+  const pointSlug = params['pointSlug'];
+  if (typeof pointSlug === 'string' && pointSlug.length > 0) {
+    return $localize`Rental point ${pointSlug}:pointSlug: is suspended and does not accept new rentals or equipment. Switch to another point or contact an administrator.`;
+  }
+  return $localize`Your working point is suspended and does not accept new rentals or equipment. Switch to another point or contact an administrator.`;
 }
 
 function rentalStatusInvalidMessage(params: Record<string, unknown>): string {
