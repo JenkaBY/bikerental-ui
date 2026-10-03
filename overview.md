@@ -43,7 +43,7 @@
 
 - PATH: `projects/shared/src/core/errors/`
   PURPOSE: RFC 7807 `ProblemDetail` → typed `ApiError`, localized message catalog keyed by backend error code, snackbar facade, form server-error binding, suppression context token
-  ENTRY_FILES: `api-error.parser.ts`, `api-error.model.ts`, `error-code.ts`, `error-messages.ts`, `error-message.resolver.ts`, `notification.service.ts`, `server-errors.util.ts`, `http-error-context.ts`, `index.ts`
+  ENTRY_FILES: `api-error.parser.ts`, `api-error.model.ts`, `error-code.ts`, `error-messages.ts`, `error-message.resolver.ts`, `notification.service.ts`, `rental-action-error.notifier.ts`, `server-errors.util.ts`, `http-error-context.ts`, `index.ts`
 
 - PATH: `projects/shared/src/core/interceptors/`
   PURPOSE: Global error interception + last-error signal, `Accept-Language` header injection
@@ -588,6 +588,23 @@ CALLED_BY:
   - ReturnEquipmentScreenComponent
   - UsersListComponent
   - errorInterceptor
+
+COMPONENT_NAME: RentalActionErrorNotifier
+TYPE: Service
+PURPOSE: Shared toast for failed rental management actions (draft edit, lifecycle, repricing, add equipment, debt write-off).
+RESPONSIBILITIES:
+  - Parse the failure, resolve localized copy (e.g. `scope.not_established`, `rental.point.inactive`, `rental.point.permanently_closed`, rental `shared.resource.not_found` = not found at the working point) and toast it: warning for stale rentals (`isStaleRentalError`: `rental.status.invalid`, `shared.resource.not_found`), error otherwise.
+  - Return the parsed `ApiError` so callers can refresh stale views.
+SOURCE: `projects/shared/src/core/errors/rental-action-error.notifier.ts`
+CALLS:
+  - NotificationService — toast.
+CALLED_BY:
+  - AddEquipmentDialogComponent
+  - RentalActionButtonsComponent
+  - RentalAgreementComponent
+  - RentalStep2Component
+  - RentalHistoryCardListComponent
+  - RentalDetailPanelComponent (admin)
 
 COMPONENT_NAME: NotificationService
 TYPE: Service

@@ -4,5 +4,6 @@ export * from './api-error.parser';
 export * from './error-messages';
 export * from './error-message.resolver';
 export * from './notification.service';
+export * from './rental-action-error.notifier';
 export * from './server-errors.util';
 export * from './http-error-context';

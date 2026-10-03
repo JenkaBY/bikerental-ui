@@ -13,17 +13,16 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, exhaustMap, filter, of, tap } from 'rxjs';
 import {
-  ApiErrorParser,
   CardStackComponent,
   CustomerFinanceStore,
   type EquipmentSearchItem,
   Labels,
   MOBILE_FORM_DIALOG_CONFIG,
   NotificationService,
+  RentalActionErrorNotifier,
   RentalDetailRefreshFacade,
   RentalStore,
   RentalValidationStore,
-  resolveErrorMessage,
   TopUpDialogComponent,
   WithdrawDialogComponent,
 } from '@bikerental/shared';
@@ -87,6 +86,7 @@ export class RentalStep2Component {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly notifications = inject(NotificationService);
+  private readonly errorNotifier = inject(RentalActionErrorNotifier);
   protected readonly validationStore = inject(RentalValidationStore);
 
   protected readonly openPanel = signal<'customer' | 'reserved' | null>(null);
@@ -185,8 +185,7 @@ export class RentalStep2Component {
           return this.store.cancelRental().pipe(
             tap(() => this.notifications.success(Labels.RentalCancelSuccess)),
             catchError((err: unknown) => {
-              const apiError = ApiErrorParser.parse(err);
-              this.notifications.error(resolveErrorMessage(apiError));
+              this.errorNotifier.notify(err);
               return EMPTY;
             }),
           );
@@ -212,8 +211,7 @@ export class RentalStep2Component {
           void this.router.navigate(['/rentals', id, 'agreement'], { state: { version } });
         }),
         catchError((err: unknown) => {
-          const apiError = ApiErrorParser.parse(err);
-          this.notifications.error(resolveErrorMessage(apiError));
+          this.errorNotifier.notify(err);
           return of(undefined);
         }),
         takeUntilDestroyed(this.destroyRef),

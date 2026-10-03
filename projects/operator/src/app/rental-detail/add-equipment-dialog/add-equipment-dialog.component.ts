@@ -5,12 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
-  ApiErrorParser,
   ErrorCode,
-  ErrorMessageResolver,
   EquipmentSearchItem,
+  isStaleRentalError,
   Labels,
-  NotificationService,
+  RentalActionErrorNotifier,
   RentalDetailRefreshFacade,
   RentalStore,
 } from '@bikerental/shared';
@@ -65,8 +64,7 @@ import { RentalEquipmentSectionComponent } from '../../rental-create/step2/renta
 export class AddEquipmentDialogComponent {
   protected readonly rentalStore = inject(RentalStore);
   private readonly refresh = inject(RentalDetailRefreshFacade);
-  private readonly resolver = inject(ErrorMessageResolver);
-  private readonly notifications = inject(NotificationService);
+  private readonly errorNotifier = inject(RentalActionErrorNotifier);
   private readonly dialogRef = inject(MatDialogRef) as MatDialogRef<
     AddEquipmentDialogComponent,
     boolean
@@ -104,10 +102,9 @@ export class AddEquipmentDialogComponent {
   }
 
   private handleError(err: unknown): void {
-    const apiError = ApiErrorParser.parse(err);
-    this.notifications.error(this.resolver.resolve(apiError));
+    const apiError = this.errorNotifier.notify(err);
 
-    if (apiError.code === ErrorCode.STATUS_INVALID) {
+    if (isStaleRentalError(apiError)) {
       this.refresh.refreshAll();
       this.dialogRef.close(false);
       return;

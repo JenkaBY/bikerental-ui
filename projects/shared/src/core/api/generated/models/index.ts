@@ -216,6 +216,8 @@ export interface RentalResponse {
   writtenOffAt?: string;
   /** Rental creation time */
   createdAt: string;
+  /** Slug of the rental point the rental was picked up at */
+  pickUpPointSlug?: string;
 }
 
 /** Postal address of a rental point */
@@ -815,6 +817,8 @@ export interface RentalSummaryResponse {
   writtenOffAmount?: number;
   /** Rental creation time */
   createdAt: string;
+  /** Slug of the rental point the rental was picked up at */
+  pickUpPointSlug?: string;
 }
 
 export interface SignatureSummaryResponse {

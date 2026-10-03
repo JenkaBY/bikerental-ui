@@ -4,21 +4,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { catchError, EMPTY, exhaustMap, filter, Observable, Subject, switchMap, tap } from 'rxjs';
 import {
-  ApiErrorParser,
   ConfirmDialogComponent,
-  ErrorCode,
-  ErrorMessageResolver,
+  isStaleRentalError,
   Labels,
   NotificationService,
+  RentalActionErrorNotifier,
   RentalListStore,
 } from '@bikerental/shared';
 import type { ConfirmDialogData } from '@bikerental/shared';
 import { RentalCardComponent } from './rental-card.component';
-
-const STALE_RENTAL_CODES = new Set<string>([
-  ErrorCode.STATUS_INVALID,
-  ErrorCode.RESOURCE_NOT_FOUND,
-]);
 
 const WRITE_OFF_CONFIRM_DATA: ConfirmDialogData = {
   title: Labels.WriteOffDebtDialogTitle,
@@ -60,7 +54,7 @@ export class RentalHistoryCardListComponent {
   protected readonly store = inject(RentalListStore);
   private readonly dialog = inject(MatDialog);
   private readonly notifications = inject(NotificationService);
-  private readonly resolver = inject(ErrorMessageResolver);
+  private readonly errorNotifier = inject(RentalActionErrorNotifier);
   private readonly writeOffRequests = new Subject<number>();
 
   protected readonly isEmpty = computed(() => this.store.historyRentals().length === 0);
@@ -110,13 +104,9 @@ export class RentalHistoryCardListComponent {
   }
 
   private handleWriteOffError(err: unknown): void {
-    const apiError = ApiErrorParser.parse(err);
-    const message = this.resolver.resolve(apiError);
-    if (STALE_RENTAL_CODES.has(apiError.code)) {
-      this.notifications.warn(message);
+    const apiError = this.errorNotifier.notify(err);
+    if (isStaleRentalError(apiError)) {
       this.store.reloadHistory();
-      return;
     }
-    this.notifications.error(message);
   }
 }

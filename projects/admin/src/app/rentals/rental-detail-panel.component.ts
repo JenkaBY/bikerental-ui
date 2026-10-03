@@ -16,14 +16,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 import { catchError, EMPTY, exhaustMap, filter, Observable, tap } from 'rxjs';
 import {
-  ApiErrorParser,
   CardStackComponent,
   ConfirmDialogComponent,
   EquipmentUnitCardComponent,
   EquipmentUnitViewModelMapper,
-  ErrorCode,
-  ErrorMessageResolver,
+  isStaleRentalError,
   Labels,
+  RentalActionErrorNotifier,
   RentalCostCalculationStore,
   LocalTimestampPipe,
   NotificationService,
@@ -39,7 +38,6 @@ import { RentalDetailSummaryComponent } from './rental-detail-summary.component'
 import { RentalDamageReportsSectionComponent } from './rental-damage-reports-section.component';
 import { RentalTransactionsSectionComponent } from './rental-transactions-section.component';
 
-const STALE_CODES = new Set<string>([ErrorCode.STATUS_INVALID, ErrorCode.RESOURCE_NOT_FOUND]);
 const STATUSES_WITHOUT_AGREEMENT = new Set(['DRAFT']);
 
 @Component({
@@ -160,7 +158,7 @@ export class RentalDetailPanelComponent {
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
   private readonly notifications = inject(NotificationService);
-  private readonly resolver = inject(ErrorMessageResolver);
+  private readonly errorNotifier = inject(RentalActionErrorNotifier);
   private readonly timeStore = inject(TimeStore);
   private readonly costStore = inject(RentalCostCalculationStore);
 
@@ -257,14 +255,10 @@ export class RentalDetailPanelComponent {
   }
 
   private handleError(err: unknown): void {
-    const apiError = ApiErrorParser.parse(err);
-    const message = this.resolver.resolve(apiError);
-    if (STALE_CODES.has(apiError.code)) {
-      this.notifications.warn(message);
+    const apiError = this.errorNotifier.notify(err);
+    if (isStaleRentalError(apiError)) {
       this.reload();
       this.actionCompleted.emit();
-      return;
     }
-    this.notifications.error(message);
   }
 }

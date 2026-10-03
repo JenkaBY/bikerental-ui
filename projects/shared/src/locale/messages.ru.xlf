@@ -6158,6 +6158,22 @@
         <source>Your working point is permanently closed. Its equipment cannot be rented.</source>
         <target>Ваш рабочий пункт закрыт навсегда. Его оборудование нельзя выдать в прокат.</target>
       </trans-unit>
+      <trans-unit id="1686694820981668173" datatype="html">
+        <source>Rental #<x id="identifier" equiv-text="String(identifier)"/> was not found at your current working point.</source>
+        <target>Прокат №<x id="identifier" equiv-text="String(identifier)"/> не найден в вашем текущем рабочем пункте.</target>
+      </trans-unit>
+      <trans-unit id="5446698671731195694" datatype="html">
+        <source>This rental was not found at your current working point.</source>
+        <target>Этот прокат не найден в вашем текущем рабочем пункте.</target>
+      </trans-unit>
+      <trans-unit id="5020174466799753867" datatype="html">
+        <source>Rental point <x id="pointSlug" equiv-text="pointSlug"/> is suspended and does not accept new rentals or equipment. Switch to another point or contact an administrator.</source>
+        <target>Пункт проката <x id="pointSlug" equiv-text="pointSlug"/> приостановлен и не принимает новые прокаты и оборудование. Переключитесь на другой пункт или обратитесь к администратору.</target>
+      </trans-unit>
+      <trans-unit id="6231250062313513490" datatype="html">
+        <source>Your working point is suspended and does not accept new rentals or equipment. Switch to another point or contact an administrator.</source>
+        <target>Ваш рабочий пункт приостановлен и не принимает новые прокаты и оборудование. Переключитесь на другой пункт или обратитесь к администратору.</target>
+      </trans-unit>
       <trans-unit id="7489297968526341319" datatype="html">
         <source>Your account has no working point to assign.</source>
         <target>У вашей учётной записи нет рабочего пункта для назначения.</target>

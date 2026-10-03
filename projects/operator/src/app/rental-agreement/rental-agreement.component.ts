@@ -30,6 +30,7 @@ import {
   MoneyPipe,
   NotificationService,
   PageHeaderComponent,
+  RentalActionErrorNotifier,
   RentalStore,
   resolveErrorMessage,
   SignaturePadComponent,
@@ -188,6 +189,7 @@ export class RentalAgreementComponent {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly notifications = inject(NotificationService);
+  private readonly errorNotifier = inject(RentalActionErrorNotifier);
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
 
@@ -275,8 +277,7 @@ export class RentalAgreementComponent {
           this.store.cancelRental().pipe(
             tap(() => this.notifications.success(Labels.RentalCancelSuccess)),
             catchError((err: unknown) => {
-              const apiError = ApiErrorParser.parse(err);
-              this.notifications.error(resolveErrorMessage(apiError));
+              this.errorNotifier.notify(err);
               return EMPTY;
             }),
           ),
