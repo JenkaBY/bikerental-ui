@@ -36,6 +36,8 @@ import {
   RentalForSigningRequest,
   RentalPricingRequest,
   RentalLifecycleRequest,
+  ReturnLookupParams,
+  ReturnableRentalResponse,
   PageAvailableEquipmentResponse,
 } from '../models';
 
@@ -565,6 +567,53 @@ export class RentalsService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getReturnableRentals(
+    lookup: ReturnLookupParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<Array<ReturnableRentalResponse>>;
+  getReturnableRentals(
+    lookup: ReturnLookupParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<Array<ReturnableRentalResponse>>>;
+  getReturnableRentals(
+    lookup: ReturnLookupParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<Array<ReturnableRentalResponse>>>;
+  /** Looks up open rentals of any point by exactly one of a scanned equipment UID or a customer. Returns only rentals the operator's working point may take the return of. */
+  getReturnableRentals(
+    lookup: ReturnLookupParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/rentals/returnables`;
+
+    let params = new HttpParams();
+    if (lookup != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, lookup, 'lookup');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),

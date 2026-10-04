@@ -16,7 +16,7 @@ import type {
   RentalPricingDraft,
   ReturnEquipmentWrite,
 } from '@ui-models';
-import type { RentalDetailState } from '../state/rental.state';
+import type { RentalDetailSnapshot } from '../state/rental.state';
 import { makeMoney } from './money.mapper';
 
 export class RentalDashboardMapper {
@@ -127,7 +127,7 @@ export class RentalDashboardMapper {
     r: RentalResponse,
     customer: Customer | null,
     equipmentBatch: EquipmentSearchItem[],
-  ): Partial<RentalDetailState> {
+  ): RentalDetailSnapshot {
     const isActive = r.status === 'ACTIVE';
     const isDebt = r.status === 'DEBT';
     const startedAt = r.startedAt ? new Date(r.startedAt) : null;
@@ -166,6 +166,7 @@ export class RentalDashboardMapper {
       isReturning: false,
       isUpdatingPricing: false,
       estimatedCost: r.estimatedCost ? makeMoney(r.estimatedCost) : undefined,
+      pickUpPointSlug: r.pickUpPointSlug,
     };
   }
 

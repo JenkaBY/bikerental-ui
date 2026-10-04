@@ -6258,6 +6258,34 @@
         <source>Your working point is not accepting returns. Switch to another point.</source>
         <target>Ваш рабочий пункт не принимает возвраты. Переключитесь на другой пункт.</target>
       </trans-unit>
+      <trans-unit id="9122234512802183642" datatype="html">
+        <source>Home point</source>
+        <target>Свой пункт</target>
+      </trans-unit>
+      <trans-unit id="5654212248766617318" datatype="html">
+        <source>Other point</source>
+        <target>Другой пункт</target>
+      </trans-unit>
+      <trans-unit id="1964533029039129914" datatype="html">
+        <source>Find the customer by phone or scan an item they bring back</source>
+        <target>Найдите клиента по телефону или отсканируйте возвращаемое оборудование</target>
+      </trans-unit>
+      <trans-unit id="3059840339405311699" datatype="html">
+        <source>Picked up at another point:</source>
+        <target>Выдано в другом пункте:</target>
+      </trans-unit>
+      <trans-unit id="5778610982997708620" datatype="html">
+        <source>Picked up at this point</source>
+        <target>Выдано в этом пункте</target>
+      </trans-unit>
+      <trans-unit id="2072745469314637064" datatype="html">
+        <source>This customer has no open rentals</source>
+        <target>У этого клиента нет открытых аренд</target>
+      </trans-unit>
+      <trans-unit id="666755895275509354" datatype="html">
+        <source>No open rental holds this item</source>
+        <target>Это оборудование не числится ни в одной открытой аренде</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

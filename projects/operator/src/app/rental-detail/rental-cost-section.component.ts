@@ -43,7 +43,7 @@ import { ChangePriceSheetComponent } from './change-price-sheet.component';
           <app-rental-price-mode-badge
             [mode]="rentalStore.priceMode()"
             [discountPercent]="rentalStore.discountPercent()"
-            [interactive]="rentalStore.isActive()"
+            [interactive]="rentalStore.isActive() && !rentalStore.isOtherPointRental()"
             (pressed)="onChangePrice()"
           />
         </div>

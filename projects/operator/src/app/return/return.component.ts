@@ -1,95 +1,47 @@
-import {
-  afterNextRender,
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
-import { filter } from 'rxjs';
-import { Labels, QrScanDialogComponent, RentalLookupStore } from '@bikerental/shared';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import type { SegmentTab } from '@bikerental/shared';
+import { Labels, SegmentedTabsComponent } from '@bikerental/shared';
+import { HomeReturnTabComponent } from './home-return-tab.component';
+import { OtherPointReturnTabComponent } from './other-point-return-tab.component';
+
+type ReturnTab = 'home' | 'other';
 
 @Component({
   selector: 'app-return',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule],
-  providers: [RentalLookupStore],
+  imports: [HomeReturnTabComponent, OtherPointReturnTabComponent, SegmentedTabsComponent],
   template: `
-    <div class="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
-      <h1 class="text-2xl font-semibold text-slate-800">{{ Labels.EquipmentReturnPageTitle }}</h1>
-
-      <button
-        mat-flat-button
-        color="primary"
-        class="w-full"
-        [disabled]="store.loading()"
-        (click)="openScanner()"
-      >
-        <mat-icon>qr_code_scanner</mat-icon>
-        {{ Labels.ScanToReturn }}
-      </button>
-
-      @if (store.loading()) {
-        <mat-spinner diameter="24" />
-      }
-
-      @if (store.notFound()) {
-        <p class="text-sm text-amber-700 text-center">{{ Labels.NoActiveRentalForEquipment }}</p>
-        <button mat-stroked-button class="w-full" (click)="openActiveRentals()">
-          {{ Labels.OpenActiveRentals }}
-        </button>
-      }
+    <div class="flex flex-col h-[calc(100%+2rem)] -m-4">
+      <h1 class="px-4 pt-4 pb-2 text-xl font-semibold text-slate-800 text-center">
+        {{ Labels.EquipmentReturnPageTitle }}
+      </h1>
+      <div class="flex-1 min-h-0 overflow-y-auto">
+        @switch (activeTab()) {
+          @case ('home') {
+            <app-home-return-tab />
+          }
+          @case ('other') {
+            <app-other-point-return-tab />
+          }
+        }
+      </div>
+      <app-segmented-tabs
+        class="shrink-0 border-t border-slate-200"
+        [tabs]="tabs"
+        [activeId]="activeTab()"
+        (tabSelect)="activeTab.set($event === 'other' ? 'other' : 'home')"
+      />
     </div>
   `,
 })
 export class ReturnComponent {
   protected readonly Labels = Labels;
-  protected readonly store = inject(RentalLookupStore);
-  private readonly dialog = inject(MatDialog);
-  private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly scannedUid = signal<string | null>(null);
+  protected readonly tabs: SegmentTab[] = [
+    { id: 'home', label: Labels.ReturnTabHomePoint, icon: 'home' },
+    { id: 'other', label: Labels.ReturnTabOtherPoint, icon: 'storefront' },
+  ];
 
-  constructor() {
-    effect(() => {
-      const id = this.store.foundRentalId();
-      if (id !== null) {
-        void this.router.navigate(['/rentals', id], {
-          queryParams: { selectUid: this.scannedUid() },
-        });
-      }
-    });
-
-    afterNextRender(() => this.openScanner());
-  }
-
-  protected openScanner(): void {
-    this.dialog
-      .open(QrScanDialogComponent, {
-        data: { title: Labels.ScanEquipmentToReturnTitle },
-        width: '420px',
-      })
-      .afterClosed()
-      .pipe(
-        filter((uid): uid is string => typeof uid === 'string' && uid.length > 0),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((uid) => {
-        this.scannedUid.set(uid);
-        this.store.lookup(uid);
-      });
-  }
-
-  protected openActiveRentals(): void {
-    void this.router.navigate(['/rentals']);
-  }
+  protected readonly activeTab = signal<ReturnTab>('home');
 }

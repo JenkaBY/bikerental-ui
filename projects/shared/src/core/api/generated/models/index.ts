@@ -838,6 +838,21 @@ export interface RentalAgreementResponse {
   templateActivatedAt?: string;
 }
 
+export interface ReturnLookupParams {
+  /** UID of an item the customer brings back; exactly one of equipmentUid or customerId */
+  equipmentUid?: string;
+  /** Customer UUID; exactly one of equipmentUid or customerId */
+  customerId?: string;
+}
+
+/** An open rental the operator's working point may take the return of */
+export interface ReturnableRentalResponse {
+  /** Full rental details, including the pick-up point slug */
+  rental: RentalResponse;
+  /** Whether the rental was picked up at the operator's working point */
+  atThisPoint?: boolean;
+}
+
 /** Equipment available for a new rental */
 export interface AvailableEquipmentResponse {
   /** Equipment ID */
