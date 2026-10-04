@@ -170,6 +170,8 @@ export interface EquipmentItemResponse {
   actualReturnAt?: string;
   /** Final cost breakdown; populated only when equipment is returned */
   breakdown?: CostBreakdown;
+  /** Slug of the rental point where this item was returned; null until it is returned */
+  returnPointSlug?: string;
 }
 
 /** Full rental details */

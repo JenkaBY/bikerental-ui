@@ -591,9 +591,9 @@ CALLED_BY:
 
 COMPONENT_NAME: RentalActionErrorNotifier
 TYPE: Service
-PURPOSE: Shared toast for failed rental management actions (draft edit, lifecycle, repricing, add equipment, debt write-off).
+PURPOSE: Shared toast for failed rental management actions (draft edit, lifecycle, repricing, add equipment, return, debt write-off).
 RESPONSIBILITIES:
-  - Parse the failure, resolve localized copy (e.g. `scope.not_established`, `rental.point.inactive`, `rental.point.permanently_closed`, rental `shared.resource.not_found` = not found at the working point) and toast it: warning for stale rentals (`isStaleRentalError`: `rental.status.invalid`, `shared.resource.not_found`), error otherwise.
+  - Parse the failure, resolve localized copy (e.g. `scope.not_established`, `rental.point.inactive`, `rental.point.permanently_closed`, `rental.return.point_not_accepting`, rental `shared.resource.not_found` = not found at the working point) and toast it: warning for stale rentals (`isStaleRentalError`: `rental.status.invalid`, `shared.resource.not_found`), error otherwise.
   - Return the parsed `ApiError` so callers can refresh stale views.
 SOURCE: `projects/shared/src/core/errors/rental-action-error.notifier.ts`
 CALLS:
@@ -2936,6 +2936,7 @@ CALLED_BY:
   - RentalActionButtonsComponent
   - RentalAgreementComponent
   - RentalStep2Component
+  - ReturnEquipmentScreenComponent
 
 COMPONENT_NAME: ChangePriceSheetComponent
 TYPE: Utility
@@ -2987,6 +2988,7 @@ PURPOSE: Inline return screen settling the selected equipment against a server-s
 RESPONSIBILITIES:
   - Estimate live, then create a quote and display the settlement (refund or charge).
   - Confirm the return against the quote and handle expired, missing, mismatched and consumed quotes.
+  - Return at the working point (`X-Point-Slug` from `pointInterceptor`, never in the body); other failures (`rental.return.point_not_accepting`, `scope.not_established`, stale rental) go through `RentalActionErrorNotifier`, and stale ones refresh the detail and leave return mode.
   - Open top-up and withdraw dialogs when settlement requires money movement.
 SOURCE: `projects/operator/src/app/rental-detail/return-equipment-screen/return-equipment-screen.component.ts`
 CALLS:
@@ -2999,6 +3001,7 @@ CALLS:
   - ReturnSettlementSummaryComponent — settlement rendering.
   - RentalCustomerPanelComponent — customer panel.
   - NotificationService / ErrorMessageResolver — outcome reporting.
+  - RentalActionErrorNotifier — return failures.
 CALLED_BY:
   - RentalDetailComponent
 
@@ -3438,9 +3441,9 @@ CALLED_BY:
 
 COMPONENT_NAME: EquipmentUnitDetailsComponent
 TYPE: Utility
-PURPOSE: Planned cost and breakdown block of an equipment card.
+PURPOSE: Planned cost, return point and breakdown block of an equipment card.
 RESPONSIBILITIES:
-  - Render the planned cost and its breakdown.
+  - Render the planned cost, the return point (`returnPointSlug`, only once returned) and the breakdown.
 SOURCE: `projects/shared/src/shared/components/equipment-unit/equipment-unit-details.component.ts`
 CALLS:
   - CostBreakdownComponent — breakdown lines.

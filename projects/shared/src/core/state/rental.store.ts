@@ -345,10 +345,12 @@ export class RentalStore {
       equipmentItemIds: [...this.selectedEquipmentItemIds()],
     });
     this.patchState({ isReturning: true });
-    return this.rentalsService.returnEquipment(request).pipe(
-      map(() => undefined as void),
-      finalize(() => this.patchState({ isReturning: false })),
-    );
+    return this.rentalsService
+      .returnEquipment(request, 'body', { context: suppressErrorNotification() })
+      .pipe(
+        map(() => undefined as void),
+        finalize(() => this.patchState({ isReturning: false })),
+      );
   }
 
   confirmReturn(quoteId: string): Observable<void> {

@@ -114,6 +114,7 @@ export class RentalDashboardMapper {
               }
             : undefined,
           returnedAt: item.actualReturnAt ? new Date(item.actualReturnAt) : undefined,
+          returnPointSlug: item.returnPointSlug ?? undefined,
           startedAt: item.startedAt ? new Date(item.startedAt) : undefined,
         };
       },

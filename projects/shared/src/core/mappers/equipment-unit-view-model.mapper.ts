@@ -39,6 +39,7 @@ export class EquipmentUnitViewModelMapper {
       plannedDurationMinutes,
       startedAt,
       actualReturnedAt: item.returnedAt ?? null,
+      returnPointSlug: item.returnPointSlug ?? null,
       actualDurationMinutes: item.isReturned
         ? minutesBetween(startedAt, item.returnedAt ?? null)
         : null,

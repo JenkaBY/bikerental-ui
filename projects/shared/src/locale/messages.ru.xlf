@@ -6230,6 +6230,34 @@
         <source>Rental point is required</source>
         <target>Пункт проката обязателен</target>
       </trans-unit>
+      <trans-unit id="3605112655793100157" datatype="html">
+        <source>Returned at point</source>
+        <target>Возвращено в пункт</target>
+      </trans-unit>
+      <trans-unit id="8113991354664624446" datatype="html">
+        <source>Rental point <x id="pointSlug" equiv-text="pointSlug"/> is permanently closed and does not accept returns. Switch to another point.</source>
+        <target>Пункт проката <x id="pointSlug" equiv-text="pointSlug"/> закрыт навсегда и не принимает возвраты. Переключитесь на другой пункт.</target>
+      </trans-unit>
+      <trans-unit id="421487981152957479" datatype="html">
+        <source>Your working point is permanently closed and does not accept returns. Switch to another point.</source>
+        <target>Ваш рабочий пункт закрыт навсегда и не принимает возвраты. Переключитесь на другой пункт.</target>
+      </trans-unit>
+      <trans-unit id="974990409257303248" datatype="html">
+        <source>Rental point <x id="pointSlug" equiv-text="pointSlug"/> is suspended and accepts returns only for its own rentals. Switch to another point.</source>
+        <target>Пункт проката <x id="pointSlug" equiv-text="pointSlug"/> приостановлен и принимает возвраты только по своим прокатам. Переключитесь на другой пункт.</target>
+      </trans-unit>
+      <trans-unit id="5252290898604645649" datatype="html">
+        <source>Your working point is suspended and accepts returns only for its own rentals. Switch to another point.</source>
+        <target>Ваш рабочий пункт приостановлен и принимает возвраты только по своим прокатам. Переключитесь на другой пункт.</target>
+      </trans-unit>
+      <trans-unit id="6713042105020424997" datatype="html">
+        <source>Rental point <x id="pointSlug" equiv-text="pointSlug"/> is not accepting returns. Switch to another point.</source>
+        <target>Пункт проката <x id="pointSlug" equiv-text="pointSlug"/> не принимает возвраты. Переключитесь на другой пункт.</target>
+      </trans-unit>
+      <trans-unit id="7135983068626177935" datatype="html">
+        <source>Your working point is not accepting returns. Switch to another point.</source>
+        <target>Ваш рабочий пункт не принимает возвраты. Переключитесь на другой пункт.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

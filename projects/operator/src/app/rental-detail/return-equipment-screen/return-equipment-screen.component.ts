@@ -13,7 +13,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { interval } from 'rxjs';
 import type { RentalEquipmentItem } from '@bikerental/shared';
@@ -25,10 +24,12 @@ import {
   EquipmentUnitViewModelMapper,
   ErrorCode,
   ErrorMessageResolver,
+  isStaleRentalError,
   Labels,
   MOBILE_FORM_DIALOG_CONFIG,
   NotificationService,
   PageHeaderComponent,
+  RentalActionErrorNotifier,
   RentalDetailRefreshFacade,
   RentalStore,
   ReturnEquipmentCostStore,
@@ -126,12 +127,12 @@ export class ReturnEquipmentScreenComponent {
   private readonly financeStore = inject(CustomerFinanceStore);
   private readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
+  private readonly rentalErrorNotifier = inject(RentalActionErrorNotifier);
   private readonly timeStore = inject(TimeStore);
 
   readonly completed = output<void>();
@@ -206,9 +207,7 @@ export class ReturnEquipmentScreenComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.completed.emit(),
-        error: () => {
-          this.snackBar.open(Labels.RentalReturnError, Labels.Close, { duration: 5000 });
-        },
+        error: (err: unknown) => this.handleReturnError(err),
       });
   }
 
@@ -245,7 +244,15 @@ export class ReturnEquipmentScreenComponent {
         this.completed.emit();
         break;
       default:
-        this.notifications.error(this.resolver.resolve(apiError));
+        this.handleReturnError(err);
+    }
+  }
+
+  private handleReturnError(err: unknown): void {
+    const apiError = this.rentalErrorNotifier.notify(err);
+    if (isStaleRentalError(apiError)) {
+      this.refresh.refreshAll();
+      this.cancelled.emit();
     }
   }
 
