@@ -320,6 +320,7 @@ export class Labels {
   static readonly CurrentCost = $localize`Current cost`;
   static readonly FinalCost = $localize`Final cost`;
   static readonly PlannedCost = $localize`Planned cost`;
+  static readonly ReturnPoint = $localize`Returned at point`;
   static readonly NotAvailable = $localize`NA`;
   static readonly InRentalSuffix = $localize`in rental`;
   static readonly PlannedDurationLabel = $localize`planned`;

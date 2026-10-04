@@ -18,6 +18,7 @@ import { catchError, EMPTY, exhaustMap, filter, Observable, tap } from 'rxjs';
 import {
   CardStackComponent,
   ConfirmDialogComponent,
+  CurrentPointStore,
   EquipmentUnitCardComponent,
   EquipmentUnitViewModelMapper,
   isStaleRentalError,
@@ -161,6 +162,7 @@ export class RentalDetailPanelComponent {
   private readonly errorNotifier = inject(RentalActionErrorNotifier);
   private readonly timeStore = inject(TimeStore);
   private readonly costStore = inject(RentalCostCalculationStore);
+  private readonly pointStore = inject(CurrentPointStore);
 
   readonly showOpenLink = input(false);
 
@@ -171,6 +173,7 @@ export class RentalDetailPanelComponent {
     const startedAt = this.store.startedAt();
     const plannedDurationMinutes = this.store.durationMinutes();
     const breakdowns = this.costStore.breakdowns();
+    const pointNames = this.pointStore.nameBySlug();
     return this.store
       .rentalEquipmentItems()
       .map((item) =>
@@ -180,11 +183,13 @@ export class RentalDetailPanelComponent {
           startedAt,
           plannedDurationMinutes,
           now,
+          pointNames,
         ),
       );
   });
 
   constructor() {
+    this.pointStore.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     effect(() => {
       const id = this.store.id();
       const status = this.store.status();

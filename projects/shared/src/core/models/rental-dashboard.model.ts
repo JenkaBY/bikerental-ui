@@ -28,6 +28,7 @@ export interface RentalEquipmentItem extends EquipmentSearchItem {
   readonly finalCost?: Money;
   readonly breakdown?: RentalCostBreakdown;
   readonly returnedAt?: Date;
+  readonly returnPointSlug?: string;
   /** Set only when this item was added to the rental after the rental itself started. */
   readonly startedAt?: Date;
 }

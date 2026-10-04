@@ -176,6 +176,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.SETTINGS_WORKING_POINT_NOT_APPLICABLE]: $localize`Your account has no working point to assign.`,
   [ErrorCode.RENTAL_POINT_PERMANENTLY_CLOSED]: rentalPointPermanentlyClosedMessage,
   [ErrorCode.RENTAL_POINT_INACTIVE]: rentalPointInactiveMessage,
+  [ErrorCode.RENTAL_RETURN_POINT_NOT_ACCEPTING]: rentalReturnPointNotAcceptingMessage,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -266,6 +267,24 @@ function rentalPointInactiveMessage(params: Record<string, unknown>): string {
     return $localize`Rental point ${pointSlug}:pointSlug: is suspended and does not accept new rentals or equipment. Switch to another point or contact an administrator.`;
   }
   return $localize`Your working point is suspended and does not accept new rentals or equipment. Switch to another point or contact an administrator.`;
+}
+
+function rentalReturnPointNotAcceptingMessage(params: Record<string, unknown>): string {
+  const pointSlug = params['pointSlug'];
+  const hasSlug = typeof pointSlug === 'string' && pointSlug.length > 0;
+  if (params['pointStatus'] === 'PERMANENTLY_CLOSED') {
+    return hasSlug
+      ? $localize`Rental point ${pointSlug}:pointSlug: is permanently closed and does not accept returns. Switch to another point.`
+      : $localize`Your working point is permanently closed and does not accept returns. Switch to another point.`;
+  }
+  if (params['pointStatus'] === 'INACTIVE') {
+    return hasSlug
+      ? $localize`Rental point ${pointSlug}:pointSlug: is suspended and accepts returns only for its own rentals. Switch to another point.`
+      : $localize`Your working point is suspended and accepts returns only for its own rentals. Switch to another point.`;
+  }
+  return hasSlug
+    ? $localize`Rental point ${pointSlug}:pointSlug: is not accepting returns. Switch to another point.`
+    : $localize`Your working point is not accepting returns. Switch to another point.`;
 }
 
 function rentalStatusInvalidMessage(params: Record<string, unknown>): string {

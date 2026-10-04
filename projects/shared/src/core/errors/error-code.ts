@@ -40,6 +40,7 @@ export const ErrorCode = {
   DEBT_WRITE_OFF_NOT_ALLOWED: 'rental.debt_write_off.not_allowed',
   RENTAL_POINT_PERMANENTLY_CLOSED: 'rental.point.permanently_closed',
   RENTAL_POINT_INACTIVE: 'rental.point.inactive',
+  RENTAL_RETURN_POINT_NOT_ACCEPTING: 'rental.return.point_not_accepting',
 
   // tariff.* — return quote lifecycle
   TARIFF_QUOTE_NOT_FOUND: 'tariff.quote.not_found',
@@ -128,6 +129,7 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.DEBT_WRITE_OFF_NOT_ALLOWED,
   ErrorCode.RENTAL_POINT_PERMANENTLY_CLOSED,
   ErrorCode.RENTAL_POINT_INACTIVE,
+  ErrorCode.RENTAL_RETURN_POINT_NOT_ACCEPTING,
   ErrorCode.TARIFF_QUOTE_NOT_FOUND,
   ErrorCode.TARIFF_QUOTE_EXPIRED,
   ErrorCode.TARIFF_QUOTE_ALREADY_CONSUMED,

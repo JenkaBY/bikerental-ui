@@ -26,6 +26,7 @@ export class EquipmentUnitViewModelMapper {
     rentalStartedAt: Date | null,
     plannedDurationMinutes: number | null,
     now: Date,
+    pointNames: ReadonlyMap<string, string> = new Map(),
   ): EquipmentUnitViewModel {
     const startedAt = item.startedAt ?? rentalStartedAt;
     return {
@@ -39,6 +40,9 @@ export class EquipmentUnitViewModelMapper {
       plannedDurationMinutes,
       startedAt,
       actualReturnedAt: item.returnedAt ?? null,
+      returnPointName: item.returnPointSlug
+        ? (pointNames.get(item.returnPointSlug) ?? item.returnPointSlug)
+        : null,
       actualDurationMinutes: item.isReturned
         ? minutesBetween(startedAt, item.returnedAt ?? null)
         : null,
