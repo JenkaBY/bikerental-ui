@@ -307,7 +307,7 @@ CALLED_BY:
 
 COMPONENT_NAME: RentalsService
 TYPE: API
-PURPOSE: Generated client for the rental lifecycle — search, detail, create, equipment add/return, pricing update, cancel, debt write-off, available equipment.
+PURPOSE: Generated client for the rental lifecycle — search, detail, create, equipment add/return, return lookup at any point (`getReturnableRentals`), pricing update, cancel, debt write-off, available equipment.
 RESPONSIBILITIES:
   - Issue typed HTTP requests against rental endpoints.
 SOURCE: `projects/shared/src/core/api/generated/services/rentals.service.ts`
@@ -318,6 +318,7 @@ CALLED_BY:
   - RentalListStore
   - RentalSearchStore
   - RentalLookupStore
+  - ReturnableRentalLookupStore
   - EquipmentSearchStore
   - EquipmentScanResolverService
 
@@ -1427,6 +1428,7 @@ RESPONSIBILITIES:
   - Save the draft, send to signing, cancel signing, cancel the rental and write off debt.
   - Add equipment to an active rental, update pricing, return equipment and confirm the return against a quote.
   - Track the equipment selection used by the return flow.
+  - Return lookup mode (`useReturnLookup(customerId)`, `isOtherPointRental`): another point's rental is loaded through `getReturnableRentals({ customerId })` instead of `getRentalById` (404 there), so the detail screen and `refreshAll()` work unchanged.
 SOURCE: `projects/shared/src/core/state/rental.store.ts`
 CALLS:
   - RentalsService — rental lifecycle endpoints.
@@ -1649,7 +1651,21 @@ SOURCE: `projects/shared/src/core/state/rental-lookup.store.ts`
 CALLS:
   - RentalsService — active rental search by equipment UID.
 CALLED_BY:
-  - ReturnComponent
+  - HomeReturnTabComponent
+
+COMPONENT_NAME: ReturnableRentalLookupStore
+TYPE: Store
+PURPOSE: Return lookup across points — finds open rentals by scanned UID or customer.
+RESPONSIBILITIES:
+  - Call `GET /api/rentals/returnables` with exactly one key (`equipmentUid` or `customerId`); outcome `found` / `empty` / `notFound` (404).
+  - Toast other refusals (422 `rental.return.point_not_accepting`, 409 `scope.not_established`) via the resolver; request sent with `suppressErrorNotification()`.
+SOURCE: `projects/shared/src/core/state/returnable-rental-lookup.store.ts`
+CALLS:
+  - RentalsService — `getReturnableRentals`.
+  - ReturnableRentalMapper — response → `ReturnableRental`.
+  - NotificationService / ApiErrorParser / ErrorMessageResolver — refusal toasts.
+CALLED_BY:
+  - OtherPointReturnTabComponent
 
 COMPONENT_NAME: RentalSignatureStore
 TYPE: Store
@@ -2859,7 +2875,8 @@ RESPONSIBILITIES:
   - Load the rental, its transactions, damage reports and signature summary.
   - Redirect drafts to the wizard and awaiting-signature rentals to the agreement screen.
   - Toggle the inline return screen and open money dialogs.
-  - Preselect an equipment item from the `selectUid` query parameter.
+  - Preselect an equipment item from the `selectUid` query parameter, or every active item with `selectAll`.
+  - `returnFor=<customerId>` opens another point's rental via the return lookup: shows a "picked up at another point" banner and disables add equipment and price change (refused for another point's rental); cancel, damage report, agreement and signature work as usual; a full return navigates back to `/return`.
 SOURCE: `projects/operator/src/app/rental-detail/rental-detail.component.ts`
 CALLS:
   - RentalStore — `loadDetail()`, lifecycle signals, selection methods.
@@ -3018,17 +3035,44 @@ CALLED_BY:
 
 COMPONENT_NAME: ReturnComponent
 TYPE: Gateway
-PURPOSE: QR entry point that finds the active rental holding a scanned unit.
-RESPONSIBILITIES:
-  - Auto-open the scan dialog on entry.
-  - Look the UID up and navigate to the rental with the unit preselected.
+PURPOSE: Return entry point with two tabs — Home point and Other point — in a tab bar at the bottom of the page.
 SOURCE: `projects/operator/src/app/return/return.component.ts`
+CALLS:
+  - HomeReturnTabComponent / OtherPointReturnTabComponent / SegmentedTabsComponent (state mode).
+CALLED_BY:
+  - OperatorRoutes
+
+COMPONENT_NAME: HomeReturnTabComponent
+TYPE: Gateway
+PURPOSE: Home-point return — scan a unit and open its rental detail.
+RESPONSIBILITIES:
+  - Open the scan dialog on tap (no auto-open), look the UID up and navigate to the rental with the unit preselected.
+SOURCE: `projects/operator/src/app/return/home-return-tab.component.ts`
 CALLS:
   - RentalLookupStore — `lookup()`, `foundRentalId()`, `notFound()`.
   - QrScanDialogComponent — camera scan.
   - Router — navigate to the rental detail with `selectUid`.
 CALLED_BY:
-  - OperatorRoutes
+  - ReturnComponent
+
+COMPONENT_NAME: OtherPointReturnTabComponent
+TYPE: Gateway
+PURPOSE: Return lookup across points by customer phone or scanned unit.
+RESPONSIBILITIES:
+  - Customer search (`CustomerSearchInputComponent`, `allowCreate=false`) and QR scan → `ReturnableRentalLookupStore.lookup()`.
+  - A single result opens `/rentals/:id` immediately (scanned unit or all active items preselected; `returnFor` added for another point's rental); several results are listed as cards.
+SOURCE: `projects/operator/src/app/return/other-point-return-tab.component.ts`
+CALLS:
+  - ReturnableRentalLookupStore, CurrentPointStore (`nameBySlug`), QrScanDialogComponent, Router.
+CALLED_BY:
+  - ReturnComponent
+
+COMPONENT_NAME: ReturnableRentalCardComponent
+TYPE: UI (dumb)
+PURPOSE: One lookup result — rental number, expected return, items out, and an amber "picked up at another point" notice naming the pick-up point.
+SOURCE: `projects/operator/src/app/return/returnable-rental-card.component.ts`
+CALLED_BY:
+  - OtherPointReturnTabComponent
 
 COMPONENT_NAME: RentalAgreementComponent
 TYPE: Gateway
@@ -4005,7 +4049,8 @@ CALLS:
   - QrScannerComponent — camera scanning.
 CALLED_BY:
   - RentalEquipmentSectionComponent
-  - ReturnComponent
+  - HomeReturnTabComponent
+  - OtherPointReturnTabComponent
 
 COMPONENT_NAME: BarcodeScannerService
 TYPE: Service
@@ -4385,10 +4430,10 @@ STEP 1: OperatorRoutes → ReturnComponent
   PURPOSE: Open the return entry point from the bottom navigation.
   SOURCE: `projects/operator/src/app/app.routes.ts`
 
-STEP 2: ReturnComponent → QrScanDialogComponent
-  OPERATION: `MatDialog.open(...)` via `afterNextRender`
-  PURPOSE: Start the camera immediately so the operator can scan without an extra tap.
-  SOURCE: `projects/operator/src/app/return/return.component.ts`
+STEP 2: HomeReturnTabComponent → QrScanDialogComponent
+  OPERATION: `MatDialog.open(...)` on the scan button
+  PURPOSE: Start the camera when the operator taps "Scan equipment QR".
+  SOURCE: `projects/operator/src/app/return/home-return-tab.component.ts`
 
 STEP 3: QrScanDialogComponent → QrScannerComponent
   OPERATION: render and start detection
@@ -4400,20 +4445,20 @@ STEP 4: QrScannerComponent → BarcodeScannerService
   PURPOSE: Decode the equipment UID from the video frame.
   SOURCE: `projects/shared/src/shared/components/qr-scanner/qr-scanner.component.ts`
 
-STEP 5: ReturnComponent → RentalLookupStore
+STEP 5: HomeReturnTabComponent → RentalLookupStore
   OPERATION: `lookup(uid)`
   PURPOSE: Find the active rental that currently holds the scanned unit.
-  SOURCE: `projects/operator/src/app/return/return.component.ts`
+  SOURCE: `projects/operator/src/app/return/home-return-tab.component.ts`
 
 STEP 6: RentalLookupStore → RentalsService
   OPERATION: `getRentals({ status: ACTIVE, equipmentUid })`
   PURPOSE: Resolve the UID to a rental id, or report not found.
   SOURCE: `projects/shared/src/core/state/rental-lookup.store.ts`
 
-STEP 7: ReturnComponent → Router
+STEP 7: HomeReturnTabComponent → Router
   OPERATION: `navigate(['/rentals', id], { queryParams: { selectUid } })`
   PURPOSE: Open the rental with the scanned unit preselected.
-  SOURCE: `projects/operator/src/app/return/return.component.ts`
+  SOURCE: `projects/operator/src/app/return/home-return-tab.component.ts`
 
 STEP 8: RentalDetailComponent → RentalStore
   OPERATION: `loadDetail(id)`
@@ -4489,6 +4534,33 @@ STEP 22: RentalDetailRefreshFacade → RentalStore
   OPERATION: `loadDetail$(id, { silent: true })`
   PURPOSE: Refresh the aggregate without flashing the loading state.
   SOURCE: `projects/shared/src/core/state/rental-detail-refresh.facade.ts`
+
+### Use-Case 3: Operator returns another point's rental (Other point tab)
+
+STEP 1: OtherPointReturnTabComponent → ReturnableRentalLookupStore
+  OPERATION: `lookup({ customerId })` after a customer is picked, or `lookup({ equipmentUid })` after a scan
+  PURPOSE: Find open rentals of any point the working point may take back.
+  SOURCE: `projects/operator/src/app/return/other-point-return-tab.component.ts`
+
+STEP 2: ReturnableRentalLookupStore → RentalsService
+  OPERATION: `getReturnableRentals(key)` → `GET /api/rentals/returnables` (working point in `X-Point-Slug`)
+  PURPOSE: List `{ rental, atThisPoint }`; `[]` → empty, 404 → not found, 422/409 → toast.
+  SOURCE: `projects/shared/src/core/state/returnable-rental-lookup.store.ts`
+
+STEP 3: OtherPointReturnTabComponent → Router
+  OPERATION: `navigate(['/rentals', id], { queryParams: { selectUid | selectAll, returnFor: customerId (only when !atThisPoint) } })`
+  PURPOSE: Open the standard rental screen straight away with the items to return already checked.
+  SOURCE: `projects/operator/src/app/return/other-point-return-tab.component.ts`
+
+STEP 4: RentalDetailComponent → RentalStore
+  OPERATION: `useReturnLookup(returnFor)` then `loadDetail(id)` → `getReturnableRentals({ customerId })`
+  PURPOSE: Load another point's rental without `GET /api/rentals/{id}` (404); hydration (customer, `/api/equipments/batch`) is unchanged.
+  SOURCE: `projects/operator/src/app/rental-detail/rental-detail.component.ts`
+
+STEP 5: RentalDetailComponent → ReturnEquipmentScreenComponent
+  OPERATION: Calculate / Return → standard quote, partial return or completion (Use-Case 2)
+  PURPOSE: Same return flow as at the home point; after a full return the operator lands back on `/return`.
+  SOURCE: `projects/operator/src/app/rental-detail/rental-detail.component.ts`
 
 ---
 

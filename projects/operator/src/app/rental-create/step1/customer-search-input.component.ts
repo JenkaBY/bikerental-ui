@@ -62,9 +62,11 @@ const CREATE_SENTINEL = '__create__';
             <app-customer-search-option [customer]="customer" />
           </mat-option>
         }
-        <mat-option [value]="CREATE_SENTINEL"
-          ><mat-icon>add</mat-icon>{{ Labels.CreateCustomer }}</mat-option
-        >
+        @if (allowCreate()) {
+          <mat-option [value]="CREATE_SENTINEL"
+            ><mat-icon>add</mat-icon>{{ Labels.CreateCustomer }}</mat-option
+          >
+        }
       </mat-autocomplete>
     </mat-form-field>
 
@@ -80,6 +82,7 @@ export class CustomerSearchInputComponent {
   private readonly customerListStore = inject(CustomerListStore);
 
   readonly initialPhone = input<string>('');
+  readonly allowCreate = input(true);
   readonly customerSelected = output<Customer>();
 
   protected readonly CREATE_SENTINEL = CREATE_SENTINEL;

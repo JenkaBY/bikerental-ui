@@ -46,7 +46,7 @@ import { AddEquipmentDialogComponent } from './add-equipment-dialog/add-equipmen
             mat-flat-button
             color="primary"
             class="!min-w-0 !px-4 !text-white"
-            [disabled]="store.isOverdue()"
+            [disabled]="store.isOverdue() || store.isOtherPointRental()"
             (click)="onAddEquipment()"
           >
             {{ Labels.Add }}

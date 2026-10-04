@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import {
   BatchRentalPropertyStore,
   CardStackComponent,
+  CurrentPointStore,
   CustomerFinanceStore,
   DamageReportStore,
   Labels,
@@ -106,6 +107,17 @@ import { RentalEquipmentSectionComponent } from './rental-equipment-section.comp
           </div>
         </app-page-header>
 
+        @if (pickUpPointName(); as pointName) {
+          <div
+            class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-amber-800 text-sm shrink-0"
+          >
+            <mat-icon class="!text-base">storefront</mat-icon>
+            <span
+              >{{ Labels.PickedUpAtOtherPoint }} <strong>{{ pointName }}</strong></span
+            >
+          </div>
+        }
+
         @if (store.isDebt()) {
           <div
             class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center gap-2 text-amber-700 text-sm shrink-0"
@@ -175,9 +187,12 @@ export class RentalDetailComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly viewContainerRef = inject(ViewContainerRef);
   protected readonly signatureStore = inject(RentalSignatureStore);
+  private readonly pointStore = inject(CurrentPointStore);
 
   readonly id = input.required<string>();
   readonly selectUid = input<string>();
+  readonly selectAll = input<string>();
+  readonly returnFor = input<string>();
 
   readonly rentalId = computed(() => Number(this.id()));
 
@@ -197,9 +212,14 @@ export class RentalDetailComponent {
   }
 
   protected onReturnCompleted(): void {
+    const closesRental = this.store.isFullReturnSelected();
     this.returnMode.set(false);
     this.snackBar.open(Labels.RentalReturnSuccess, undefined, { duration: 3000 });
     this.store.clearSelection();
+    if (this.store.isOtherPointRental() && closesRental) {
+      void this.router.navigate(['/return']);
+      return;
+    }
     this.refresh.refreshAll();
   }
 
@@ -214,10 +234,17 @@ export class RentalDetailComponent {
 
   readonly statusLabel = computed(() => mapRentalStatus(this.store.status()).label);
 
+  protected readonly pickUpPointName = computed(() => {
+    const slug = this.store.pickUpPointSlug();
+    if (!this.store.isOtherPointRental() || !slug) return null;
+    return this.pointStore.nameBySlug().get(slug) ?? slug;
+  });
+
   constructor() {
     effect(() => {
       const id = this.rentalId();
       if (!isNaN(id) && id > 0) {
+        this.store.useReturnLookup(this.returnFor() ?? null);
         this.store.loadDetail(id);
         this.damageReportStore.search({ rentalId: id, pageIndex: 0, pageSize: 50 });
       }
@@ -244,9 +271,14 @@ export class RentalDetailComponent {
     });
 
     effect(() => {
+      if (this.preselectApplied || this.store.isLoading() || this.store.id() === null) return;
+      if (this.selectAll()) {
+        this.store.selectAllActiveItems(this.store.activeEquipmentItemIds());
+        this.preselectApplied = true;
+        return;
+      }
       const uid = this.selectUid();
-      if (!uid || this.preselectApplied) return;
-      if (this.store.isLoading() || this.store.id() === null) return;
+      if (!uid) return;
       const match = this.store.rentalEquipmentItems().find((item) => item.uid === uid);
       if (match) {
         this.store.selectEquipmentItem(match.id);

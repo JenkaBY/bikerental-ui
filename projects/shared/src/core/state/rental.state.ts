@@ -2,6 +2,7 @@ import type { Money } from '@ui-models';
 import type { Customer } from '@ui-models';
 import type { EquipmentSearchItem } from '@ui-models';
 import type { RentalPriceMode } from '@ui-models';
+import type { RentalEquipmentItem } from '@ui-models';
 
 export interface RentalState {
   id: number | null;
@@ -37,4 +38,10 @@ export interface RentalDetailState extends RentalState {
   isAddingEquipment: boolean;
   specialTariffId?: number;
   isUpdatingPricing: boolean;
+  pickUpPointSlug?: string;
 }
+
+export type RentalDetailSnapshot = Omit<Partial<RentalDetailState>, 'equipmentItems'> &
+  Pick<RentalDetailState, 'id' | 'customerId' | 'status'> & {
+    equipmentItems: RentalEquipmentItem[];
+  };

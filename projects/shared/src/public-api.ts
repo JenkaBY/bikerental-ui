@@ -61,6 +61,7 @@ export * from './core/state/rental-pricing.store';
 export * from './core/state/return-equipment-cost.store';
 export * from './core/state/rental-transactions.store';
 export * from './core/state/rental-detail-refresh.facade';
+export * from './core/state/returnable-rental-lookup.store';
 export * from './core/state/rental-validation.store';
 export * from './core/state/user.store';
 export * from './core/state/managed-user.store';

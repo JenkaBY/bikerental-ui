@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, of, throwError } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import type { AddRentalEquipmentRequest, RentalResponse } from '../api/generated';
 import { CustomersService, RentalsService } from '../api/generated';
@@ -141,6 +141,9 @@ export class RentalStore {
   readonly canCancel = computed(() => CANCELLABLE_RENTAL_STATUSES.has(this._state().status));
   readonly canWriteOffDebt = computed(() => this._state().status === DEBT_RENTAL_STATUS);
   readonly customerId = computed(() => this._state().customerId);
+  readonly pickUpPointSlug = computed(() => this._state().pickUpPointSlug ?? null);
+  private readonly _returnLookupCustomerId = signal<string | null>(null);
+  readonly isOtherPointRental = computed(() => this._returnLookupCustomerId() !== null);
   readonly paidDurationMinutes = computed(() => this._state().paidDurationMinutes);
 
   // Actual vs planned duration, only meaningful once the rental is settled: positive = kept longer
@@ -484,12 +487,36 @@ export class RentalStore {
     this.loadDetail$(id).subscribe();
   }
 
+  useReturnLookup(customerId: string | null): void {
+    this._returnLookupCustomerId.set(customerId);
+  }
+
   loadDetail$(id: number, options?: { silent?: boolean }): Observable<Partial<RentalDetailState>> {
+    const customerId = this._returnLookupCustomerId();
+    const rental$ = customerId
+      ? this.findReturnableRental$(id, customerId)
+      : this.rentalsService.getRentalById(id);
+    return this.hydrate$(rental$, options);
+  }
+
+  private findReturnableRental$(id: number, customerId: string): Observable<RentalResponse> {
+    return this.rentalsService.getReturnableRentals({ customerId }).pipe(
+      map((list) => list.find((r) => r.rental.id === id)?.rental),
+      switchMap((rental) =>
+        rental ? of(rental) : throwError(() => new Error(`Rental ${id} is not returnable`)),
+      ),
+    );
+  }
+
+  private hydrate$(
+    rental$: Observable<RentalResponse>,
+    options?: { silent?: boolean },
+  ): Observable<Partial<RentalDetailState>> {
     const silent = options?.silent ?? false;
     if (!silent) this.patchState({ isLoading: true });
     this.loadError.set(false);
 
-    return this.rentalsService.getRentalById(id).pipe(
+    return rental$.pipe(
       switchMap((rental) => {
         const equipmentIds = (rental.equipmentItems ?? []).map((item) => item.equipmentId);
         return this.batchRentalPropertyStore

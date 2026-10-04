@@ -284,6 +284,13 @@ export class Labels {
   static readonly ScanEquipmentToReturnTitle = $localize`Scan equipment to return`;
   static readonly NoActiveRentalForEquipment = $localize`No active or draft rental holds this equipment`;
   static readonly OpenActiveRentals = $localize`Open active rentals`;
+  static readonly ReturnTabHomePoint = $localize`Home point`;
+  static readonly ReturnTabOtherPoint = $localize`Other point`;
+  static readonly ReturnLookupHint = $localize`Find the customer by phone or scan an item they bring back`;
+  static readonly PickedUpAtOtherPoint = $localize`Picked up at another point:`;
+  static readonly PickedUpAtThisPoint = $localize`Picked up at this point`;
+  static readonly NoOpenRentalsForCustomer = $localize`This customer has no open rentals`;
+  static readonly NoOpenRentalForScannedItem = $localize`No open rental holds this item`;
   static readonly DiscountPercent = $localize`Discount (%)`;
   static readonly SpecialPrice = $localize`Special Price`;
   static readonly FullPrice = $localize`Full price`;
