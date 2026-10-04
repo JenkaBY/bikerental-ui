@@ -354,7 +354,7 @@ CALLS:
   - HttpClient — transport.
 CALLED_BY:
   - PointAdminStore (admin `/admin/points` master-detail page; points are addressed by `slug` — `PointResponse` has no `id`)
-  - CurrentPointStore (operator toolbar switcher; non-permanently-closed points loaded at startup; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`; on success the operator `PointSwitchRefreshService` re-creates only the layout `<router-outlet>` (epoch-keyed `@for`), so the routed page and its component-scoped rental stores refetch under the new point while the toolbar and bottom nav stay — single-rental routes (`rentals/:id[/edit|/agreement]`) navigate to `rentals` instead, since that rental is a 404 under the new point)
+  - CurrentPointStore (operator toolbar switcher; all points loaded at startup, the switcher lists only non-permanently-closed ones and `nameBySlug` resolves return-point names on equipment cards in operator and admin rental details; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`; on success the operator `PointSwitchRefreshService` re-creates only the layout `<router-outlet>` (epoch-keyed `@for`), so the routed page and its component-scoped rental stores refetch under the new point while the toolbar and bottom nav stay — single-rental routes (`rentals/:id[/edit|/agreement]`) navigate to `rentals` instead, since that rental is a 404 under the new point)
 
 COMPONENT_NAME: UsersService
 TYPE: API
@@ -3443,7 +3443,7 @@ COMPONENT_NAME: EquipmentUnitDetailsComponent
 TYPE: Utility
 PURPOSE: Planned cost, return point and breakdown block of an equipment card.
 RESPONSIBILITIES:
-  - Render the planned cost, the return point (`returnPointSlug`, only once returned) and the breakdown.
+  - Render the planned cost, the return point name (resolved from `returnPointSlug` via `CurrentPointStore.nameBySlug`, slug as fallback, truncated with an ellipsis and full name in the tooltip; only once returned) and the breakdown.
 SOURCE: `projects/shared/src/shared/components/equipment-unit/equipment-unit-details.component.ts`
 CALLS:
   - CostBreakdownComponent — breakdown lines.

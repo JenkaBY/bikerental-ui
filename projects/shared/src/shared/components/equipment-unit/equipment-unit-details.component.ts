@@ -17,10 +17,10 @@ import { CostBreakdownComponent } from '../cost-breakdown/cost-breakdown.compone
           plannedCost() ? (plannedCost() | money) : Labels.NotAvailable
         }}</span>
       </div>
-      @if (returnPointSlug()) {
+      @if (returnPointName(); as pointName) {
         <div class="flex justify-between gap-3 text-sm text-slate-600">
-          <span>{{ Labels.ReturnPoint }}</span>
-          <span class="font-medium">{{ returnPointSlug() }}</span>
+          <span class="shrink-0">{{ Labels.ReturnPoint }}</span>
+          <span class="min-w-0 truncate font-medium" [title]="pointName">{{ pointName }}</span>
         </div>
       }
       <app-cost-breakdown [breakdown]="breakdown()" />
@@ -30,6 +30,6 @@ import { CostBreakdownComponent } from '../cost-breakdown/cost-breakdown.compone
 export class EquipmentUnitDetailsComponent {
   readonly plannedCost = input<Money | null>(null);
   readonly breakdown = input<RentalCostBreakdown | null>(null);
-  readonly returnPointSlug = input<string | null>(null);
+  readonly returnPointName = input<string | null>(null);
   protected readonly Labels = Labels;
 }

@@ -15,6 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import type { RentalEquipmentItem } from '@bikerental/shared';
 import {
   CardStackComponent,
+  CurrentPointStore,
   EquipmentUnitCardComponent,
   EquipmentUnitViewModelMapper,
   Labels,
@@ -82,6 +83,7 @@ export class RentalEquipmentSectionComponent {
   private readonly costStore = inject(RentalCostCalculationStore);
   private readonly refresh = inject(RentalDetailRefreshFacade);
   private readonly timeStore = inject(TimeStore);
+  private readonly pointStore = inject(CurrentPointStore);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -145,6 +147,7 @@ export class RentalEquipmentSectionComponent {
       this.store.startedAt(),
       this.store.durationMinutes(),
       this.timeStore.getCurrentDate(),
+      this.pointStore.nameBySlug(),
     );
   }
 }

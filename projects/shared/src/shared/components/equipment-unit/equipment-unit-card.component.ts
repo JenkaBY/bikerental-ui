@@ -26,7 +26,7 @@ export interface EquipmentUnitViewModel extends EquipmentUnitIdentity {
   priceKind: EquipmentUnitPriceKind;
   plannedCost: Money | null;
   breakdown: RentalCostBreakdown | null;
-  returnPointSlug?: string | null;
+  returnPointName?: string | null;
 }
 
 @Component({
@@ -89,7 +89,7 @@ export interface EquipmentUnitViewModel extends EquipmentUnitIdentity {
       <app-equipment-unit-details
         [plannedCost]="unit().plannedCost"
         [breakdown]="unit().breakdown"
-        [returnPointSlug]="unit().returnPointSlug ?? null"
+        [returnPointName]="unit().returnPointName ?? null"
       />
     }
   `,

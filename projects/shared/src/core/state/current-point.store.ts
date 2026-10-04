@@ -18,27 +18,26 @@ export class CurrentPointStore {
   private readonly _points = signal<Point[]>([]);
   private readonly _switching = signal(false);
 
-  readonly points = computed(() => this._points());
+  readonly points = computed(() =>
+    this._points().filter((point) => point.status !== 'PERMANENTLY_CLOSED'),
+  );
+  readonly nameBySlug = computed(() => new Map(this._points().map((p) => [p.slug, p.name])));
   readonly currentSlug = computed(() => this.userStore.workingPointSlug());
   readonly current = computed(
     () => this._points().find((p) => p.slug === this.currentSlug()) ?? null,
   );
-  readonly canSwitch = computed(() => this._points().length > 1 && !this._switching());
+  readonly canSwitch = computed(() => this.points().length > 1 && !this._switching());
 
   load(): Observable<void> {
     return this.service.searchPoints({ page: 0, size: MAX_POINTS, sort: ['name'] }).pipe(
-      map((page) =>
-        (page.items ?? [])
-          .map(PointMapper.fromResponse)
-          .filter((point) => point.status !== 'PERMANENTLY_CLOSED'),
-      ),
+      map((page) => (page.items ?? []).map(PointMapper.fromResponse)),
       tap((points) => this._points.set(points)),
       map(() => undefined as void),
     );
   }
 
   select(slug: string): Observable<void> {
-    if (slug === this.currentSlug() || !this._points().some((p) => p.slug === slug)) {
+    if (slug === this.currentSlug() || !this.points().some((p) => p.slug === slug)) {
       return EMPTY;
     }
     this._switching.set(true);
