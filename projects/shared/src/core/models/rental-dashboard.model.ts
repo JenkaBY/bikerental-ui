@@ -5,6 +5,7 @@ import type { Money } from './transaction.model';
 export interface RentalListEquipment {
   readonly uid?: string;
   readonly name: string;
+  readonly returnPointSlug?: string;
 }
 
 export interface RentalListItem {
@@ -19,6 +20,7 @@ export interface RentalListItem {
   readonly isDebt: boolean;
   readonly isOverdue: boolean;
   readonly overdueMinutes?: number;
+  readonly pickUpPointSlug?: string;
 }
 
 export interface RentalEquipmentItem extends EquipmentSearchItem {

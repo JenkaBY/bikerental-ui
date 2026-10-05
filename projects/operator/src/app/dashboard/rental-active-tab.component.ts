@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { Labels, RentalListStore } from '@bikerental/shared';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { CurrentPointStore, Labels, RentalListStore } from '@bikerental/shared';
 import { RentalActiveCardListComponent } from './rental-active-card-list.component';
 import { REFRESHABLE_TAB, RefreshableTab } from './refreshable-tab';
 
@@ -24,6 +24,7 @@ import { REFRESHABLE_TAB, RefreshableTab } from './refreshable-tab';
 })
 export class RentalActiveTabComponent implements RefreshableTab {
   protected readonly store = inject(RentalListStore);
+  private readonly pointStore = inject(CurrentPointStore);
 
   protected readonly Labels = Labels;
 
@@ -31,8 +32,12 @@ export class RentalActiveTabComponent implements RefreshableTab {
 
   readonly totalActive = computed(() => this.sortedActiveRentals().length);
 
+  constructor() {
+    effect(() => this.store.loadActive(this.pointStore.currentSlug() ?? undefined));
+  }
+
   refresh(): void {
-    this.store.loadActive();
+    this.store.reloadActive();
   }
 
   readonly sortedActiveRentals = computed(() =>

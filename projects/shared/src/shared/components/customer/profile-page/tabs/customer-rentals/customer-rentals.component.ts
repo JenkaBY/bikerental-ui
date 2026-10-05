@@ -1,11 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RentalSearchStore } from '../../../../../../core/state/rental-search.store';
 import { CustomerLayoutStore } from '../../../../../../core/state/customer-layout.store';
+import { CurrentPointStore } from '../../../../../../core/state/current-point.store';
 import { Labels } from '../../../../../constant/labels';
 import { parseDate, toIsoDate } from '../../../../../utils/date.util';
 import { CustomerRentalListItemComponent } from './customer-rental-list-item.component';
@@ -74,6 +82,8 @@ export class CustomerRentalsComponent {
 
   protected readonly store = inject(RentalSearchStore);
   private readonly layoutStore = inject(CustomerLayoutStore);
+  private readonly pointStore = inject(CurrentPointStore);
+  private readonly destroyRef = inject(DestroyRef);
 
   private static readonly PAGE_SIZE = 10;
   private readonly router = inject(Router);
@@ -94,6 +104,9 @@ export class CustomerRentalsComponent {
   );
 
   constructor() {
+    if (this.pointStore.points().length === 0) {
+      this.pointStore.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    }
     effect(() => {
       const customerId = this.layoutStore.customerId();
       if (!customerId) return;

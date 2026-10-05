@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -12,6 +13,7 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
@@ -25,6 +27,7 @@ import {
   Labels,
   mapRentalStatus,
   PhoneCharactersOnlyDirective,
+  PointAdminStore,
 } from '@bikerental/shared';
 
 export interface RentalFilterValue {
@@ -33,6 +36,7 @@ export interface RentalFilterValue {
   customerPhone?: string;
   from?: Date;
   to?: Date;
+  pointSlug?: string;
 }
 
 const RENTAL_STATUSES = [
@@ -47,7 +51,7 @@ const RENTAL_STATUSES = [
 @Component({
   selector: 'app-rental-filter',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [provideNativeDateAdapter(), CustomerListStore],
+  providers: [provideNativeDateAdapter(), CustomerListStore, PointAdminStore],
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -85,6 +89,16 @@ const RENTAL_STATUSES = [
             <mat-select multiple [value]="statuses()" (selectionChange)="onStatuses($event.value)">
               @for (s of RENTAL_STATUSES; track s) {
                 <mat-option [value]="s">{{ statusLabel(s) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-48">
+            <mat-label>{{ Labels.EquipmentPoint }}</mat-label>
+            <mat-select [value]="pointSlug()" (selectionChange)="onPoint($event.value)">
+              <mat-option [value]="undefined">{{ Labels.All }}</mat-option>
+              @for (p of pointStore.points(); track p.slug) {
+                <mat-option [value]="p.slug">{{ p.name }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -151,6 +165,8 @@ const RENTAL_STATUSES = [
 })
 export class RentalFilterComponent {
   private readonly customerListStore = inject(CustomerListStore);
+  protected readonly pointStore = inject(PointAdminStore);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly value = input<RentalFilterValue>();
   readonly filterChange = output<RentalFilterValue>();
@@ -165,8 +181,10 @@ export class RentalFilterComponent {
   protected readonly to = signal<Date | undefined>(undefined);
   protected readonly customerId = signal<string | undefined>(undefined);
   protected readonly customerPhone = signal('');
+  protected readonly pointSlug = signal<string | undefined>(undefined);
 
   constructor() {
+    this.pointStore.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     effect(() => {
       const incoming = this.value();
       if (!incoming) return;
@@ -175,14 +193,26 @@ export class RentalFilterComponent {
       this.to.set(incoming.to);
       this.customerId.set(incoming.customerId);
       this.customerPhone.set(incoming.customerPhone ?? '');
-      if (incoming.statuses?.length || incoming.from || incoming.to || incoming.customerId) {
+      this.pointSlug.set(incoming.pointSlug);
+      if (
+        incoming.statuses?.length ||
+        incoming.from ||
+        incoming.to ||
+        incoming.customerId ||
+        incoming.pointSlug
+      ) {
         this.expanded.set(true);
       }
     });
   }
 
   protected readonly hasFilter = computed(
-    () => this.statuses().length > 0 || !!this.from() || !!this.to() || !!this.customerId(),
+    () =>
+      this.statuses().length > 0 ||
+      !!this.from() ||
+      !!this.to() ||
+      !!this.customerId() ||
+      !!this.pointSlug(),
   );
 
   protected readonly displayCustomer = (value: Customer | string | null): string => {
@@ -197,6 +227,11 @@ export class RentalFilterComponent {
 
   protected onStatuses(value: string[]): void {
     this.statuses.set(value);
+    this.emit();
+  }
+
+  protected onPoint(value: string | undefined): void {
+    this.pointSlug.set(value);
     this.emit();
   }
 
@@ -233,6 +268,7 @@ export class RentalFilterComponent {
     this.to.set(undefined);
     this.customerId.set(undefined);
     this.customerPhone.set('');
+    this.pointSlug.set(undefined);
     this.customerListStore.search(null);
     this.emit();
   }
@@ -244,6 +280,7 @@ export class RentalFilterComponent {
       customerPhone: this.customerPhone() || undefined,
       from: this.from(),
       to: this.to(),
+      pointSlug: this.pointSlug(),
     });
   }
 }

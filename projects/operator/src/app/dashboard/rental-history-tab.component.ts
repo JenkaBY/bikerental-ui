@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  CurrentPointStore,
   Labels,
   RentalFilter,
   RentalListStore,
@@ -46,6 +47,7 @@ const FILTER_OPTIONS: SegmentTab[] = [
 })
 export class RentalHistoryTabComponent implements RefreshableTab {
   protected readonly store = inject(RentalListStore);
+  private readonly pointStore = inject(CurrentPointStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -68,11 +70,12 @@ export class RentalHistoryTabComponent implements RefreshableTab {
 
   constructor() {
     effect(() => {
-      const currentFilter = this.activeFilter();
+      const currentFilter = this.activeFilter() as RentalFilter['filter'];
+      const pointSlug = this.pointStore.currentSlug() ?? undefined;
       if (currentFilter === 'DRAFT' || currentFilter === 'DEBT') {
-        this.store.loadByFilter(currentFilter as RentalFilter['filter']);
+        this.store.loadByFilter(currentFilter, pointSlug);
       } else {
-        this.store.loadHistory(this.today, this.today, currentFilter as RentalFilter['filter']);
+        this.store.loadHistory(this.today, this.today, currentFilter, pointSlug);
       }
     });
   }

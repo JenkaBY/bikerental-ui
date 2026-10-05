@@ -19,6 +19,7 @@ export interface RentalSearchQuery {
   pageSize: number;
   sort?: string;
   withCustomer?: boolean;
+  pointSlug?: string;
 }
 
 export interface RentalSearchRow {
@@ -67,6 +68,7 @@ export class RentalSearchStore {
           customerId: query.customerId,
           from: query.from ? toIsoDate(query.from) : undefined,
           to: query.to ? toIsoDate(query.to) : undefined,
+          pointSlug: query.pointSlug,
         },
         {
           page: query.pageIndex,

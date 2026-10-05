@@ -773,6 +773,8 @@ export interface RentalFilterParams {
   activeTo?: string;
   /** Filter by whether the rental had a debt write-off (true = writtenOffAmount > 0) */
   writtenOff?: boolean;
+  /** Narrows the list to the rentals picked up at this rental point or having an item returned there */
+  pointSlug?: string;
 }
 
 export interface PageRentalSummaryResponse {
@@ -789,6 +791,8 @@ export interface RentalSummaryEquipmentResponse {
   equipmentUid?: string;
   /** Rental equipment status */
   status: string;
+  /** Slug of the rental point where this item was returned; null until it is returned */
+  returnPointSlug?: string;
 }
 
 /** Compact rental summary for list views */

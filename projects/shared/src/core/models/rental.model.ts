@@ -4,6 +4,7 @@ export interface CustomerRentalEquipment {
   readonly id: number;
   readonly uid?: string;
   readonly name: string;
+  readonly returnPointSlug?: string;
 }
 
 export interface CustomerRentalSummary {
@@ -15,6 +16,7 @@ export interface CustomerRentalSummary {
   readonly estimatedCost?: Money;
   readonly finalCost?: Money;
   readonly equipment: CustomerRentalEquipment[];
+  readonly pickUpPointSlug?: string;
 }
 
 export interface RentalCustomerRef {

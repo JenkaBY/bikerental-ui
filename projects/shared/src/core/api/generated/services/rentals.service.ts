@@ -119,7 +119,7 @@ export class RentalsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PageRentalSummaryResponse>>;
-  /** Returns a paginated list of rentals filtered by one or more statuses, customer or equipment UID */
+  /** Returns a paginated list of rentals filtered by one or more statuses, customer or equipment UID. Pass pointSlug to see only the rentals picked up at that point or having an item returned there */
   getRentals(
     filterParams: RentalFilterParams,
     pageable: Pageable,
@@ -550,6 +550,7 @@ export class RentalsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<RentalResponse>>;
+  /** Returns a rental of any point */
   getRentalById(
     id: number,
     observe?: 'body' | 'events' | 'response',

@@ -16,7 +16,9 @@ export class RentalMapper {
         id: e.equipmentId,
         uid: e.equipmentUid,
         name: '',
+        returnPointSlug: e.returnPointSlug ?? undefined,
       })),
+      pickUpPointSlug: r.pickUpPointSlug ?? undefined,
     };
   }
 

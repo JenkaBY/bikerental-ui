@@ -187,6 +187,7 @@ export * from './shared/utils/date.util';
 export * from './shared/utils/deployed-path';
 export * from './shared/utils/user-initials.util';
 export * from './shared/utils/revenue-bucket-label.util';
+export * from './shared/utils/return-point.util';
 
 // Shared UI — validators
 export * from './shared/validators/form-error-messages';
