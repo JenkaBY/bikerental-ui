@@ -22,6 +22,7 @@ export class OperatorRevenueSource implements RevenueReportSource {
   readonly metricKeys = REVENUE_METRIC_KEYS;
   readonly requiresScope = false;
   readonly unattributedHint = Labels.AnalyticsUnattributedHint;
+  readonly hasUnattributed = true;
 
   readonly namesLoading = this.managedUserStore.loading;
 
@@ -38,6 +39,7 @@ export class OperatorRevenueSource implements RevenueReportSource {
       from: toIsoDate(query.from),
       to: toIsoDate(query.to),
       granularity: query.granularity,
+      pointSlug: query.pointSlug,
       operatorId: query.dimensionId,
     };
     return this.analyticsService

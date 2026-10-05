@@ -625,6 +625,11 @@ export class Labels {
   static readonly AnalyticsAllOperatorsOption = $localize`All operators`;
   static readonly AnalyticsDimensionColumnOperator = $localize`Operator`;
 
+  static readonly AnalyticsPointsTab = $localize`By Point`;
+  static readonly AnalyticsPointFilterLabel = $localize`Rental point`;
+  static readonly AnalyticsAllPointsOption = $localize`All points`;
+  static readonly AnalyticsDimensionColumnPoint = $localize`Rental point`;
+
   static readonly AnalyticsEquipmentTypesTab = $localize`By Equipment Type`;
   static readonly AnalyticsEquipmentUnitsTab = $localize`By Unit`;
   static readonly AnalyticsEquipmentTypeFilterLabel = $localize`Equipment type`;

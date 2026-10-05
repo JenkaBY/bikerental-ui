@@ -21,8 +21,10 @@ import { Observable } from 'rxjs';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 import {
-  OperatorRevenueFilterParams,
+  PointRevenueFilterParams,
   RequestOptions,
+  PointRevenueReportResponse,
+  OperatorRevenueFilterParams,
   OperatorRevenueReportResponse,
   EquipmentRevenueFilterParams,
   EquipmentRevenueReportResponse,
@@ -47,6 +49,53 @@ export class AnalyticsService {
     return context.set(this.clientContextToken, 'default');
   }
 
+  getPointRevenue(
+    filterParams: PointRevenueFilterParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PointRevenueReportResponse>;
+  getPointRevenue(
+    filterParams: PointRevenueFilterParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PointRevenueReportResponse>>;
+  getPointRevenue(
+    filterParams: PointRevenueFilterParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PointRevenueReportResponse>>;
+  /** Returns a continuous, zero-filled series of buckets plus a grand total, with four side-by-side metrics per point: accrued rental revenue, paid rental revenue, written-off amount and penalty revenue. Revenue belongs to the point recorded on each fact when it was recorded: a rental's revenue, overtime and write-off belong to its pick-up point however and wherever it was returned, with no split. Later equipment moves, operator switches and point suspensions or closures never change a past answer. Every point with attributed revenue is listed, including inactive and permanently closed ones; bucket totals and the grand total are the sum of the point rows. Wallet deposits and withdrawals are not attributed to a point and are absent. Penalties are not attributed to a point until damage reports record one, so they are absent as well. Figures are eventually consistent. Identifiers only — the caller resolves point names. */
+  getPointRevenue(
+    filterParams: PointRevenueFilterParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/analytics/revenue/points`;
+
+    let params = new HttpParams();
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
   getOperatorRevenue(
     filterParams: OperatorRevenueFilterParams,
     observe?: 'body',
@@ -62,7 +111,7 @@ export class AnalyticsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<OperatorRevenueReportResponse>>;
-  /** Returns a continuous, zero-filled series of buckets plus a grand total, with six side-by-side metrics: accrued rental revenue, paid rental revenue, written-off amount, penalty revenue, wallet deposits and wallet withdrawals. Rental revenue is credited to the operator who opened the rental; penalties, write-offs and wallet movement to the operator who performed that operation. Wallet movement is cash movement and is never added to any revenue figure. Bucket totals and the grand total include revenue whose opening operator is unknown, while the operator rows do not. Figures are eventually consistent. Identifiers only — the caller resolves names. */
+  /** Returns a continuous, zero-filled series of buckets plus a grand total, with six side-by-side metrics: accrued rental revenue, paid rental revenue, written-off amount, penalty revenue, wallet deposits and wallet withdrawals. Rental revenue is credited to the operator who opened the rental; penalties, write-offs and wallet movement to the operator who performed that operation. Wallet movement is cash movement and is never added to any revenue figure. Bucket totals and the grand total include revenue whose opening operator is unknown, while the operator rows do not. Figures are eventually consistent. Identifiers only — the caller resolves names. With pointSlug (administrators only) the report covers only revenue attributed to that point; wallet deposits and withdrawals are not point-attributed and are reported as zero. */
   getOperatorRevenue(
     filterParams: OperatorRevenueFilterParams,
     observe?: 'body' | 'events' | 'response',
@@ -109,7 +158,7 @@ export class AnalyticsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentRevenueReportResponse>>;
-  /** The drill-down from a type to the units that make it up. The equipment type is mandatory: it bounds the response to one type's fleet, so a drill-down never returns the entire fleet's history. Returns a continuous, zero-filled series of buckets plus a grand total, with accrued rental revenue, paid rental revenue and penalty revenue per unit. Summing the units of a type for a period reproduces that type's figures exactly. A unit that earned nothing in the period is absent rather than present with zeros. Figures are eventually consistent. Identifiers only — the caller resolves names. */
+  /** The drill-down from a type to the units that make it up. The equipment type is mandatory: it bounds the response to one type's fleet, so a drill-down never returns the entire fleet's history. Returns a continuous, zero-filled series of buckets plus a grand total, with accrued rental revenue, paid rental revenue and penalty revenue per unit. Summing the units of a type for a period reproduces that type's figures exactly. A unit that earned nothing in the period is absent rather than present with zeros. Figures are eventually consistent. Identifiers only — the caller resolves names. With pointSlug (administrators only) the report covers only revenue attributed to that point; wallet deposits and withdrawals are not point-attributed and are reported as zero. */
   getEquipmentRevenue(
     filterParams: EquipmentRevenueFilterParams,
     observe?: 'body' | 'events' | 'response',
@@ -156,7 +205,7 @@ export class AnalyticsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<EquipmentTypeRevenueReportResponse>>;
-  /** Returns a continuous, zero-filled series of buckets plus a grand total, with the three metrics that have an equipment dimension: accrued rental revenue, paid rental revenue and penalty revenue. A rental adjusted by a special price or a percentage discount is allocated across its equipment in proportion to each line's own cost; a penalty covering several items is split equally. The type credited is the one the item carried at the time of the rental, so reclassifying an item later does not rewrite history. A type's figures equal the sum of that type's units' figures, and these totals equal the corresponding totals of the operator report. Figures are eventually consistent. Identifiers only — the caller resolves names. */
+  /** Returns a continuous, zero-filled series of buckets plus a grand total, with the three metrics that have an equipment dimension: accrued rental revenue, paid rental revenue and penalty revenue. A rental adjusted by a special price or a percentage discount is allocated across its equipment in proportion to each line's own cost; a penalty covering several items is split equally. The type credited is the one the item carried at the time of the rental, so reclassifying an item later does not rewrite history. A type's figures equal the sum of that type's units' figures, and these totals equal the corresponding totals of the operator report. Figures are eventually consistent. Identifiers only — the caller resolves names. With pointSlug (administrators only) the report covers only revenue attributed to that point; wallet deposits and withdrawals are not point-attributed and are reported as zero. */
   getEquipmentTypeRevenue(
     filterParams: EquipmentTypeRevenueFilterParams,
     observe?: 'body' | 'events' | 'response',

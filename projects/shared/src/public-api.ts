@@ -82,6 +82,7 @@ export * from './core/state/operator-revenue.source';
 export * from './core/state/equipment-type-revenue.source';
 export * from './core/state/equipment-unit-label.store';
 export * from './core/state/equipment-unit-revenue.source';
+export * from './core/state/point-revenue.source';
 export * from './core/state/analytics-revenue.store';
 export * from './core/state/analytics-tab';
 export * from './core/state/customer-analytics.store';

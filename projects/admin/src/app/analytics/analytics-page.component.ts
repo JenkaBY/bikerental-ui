@@ -15,6 +15,7 @@ import {
   MAX_CUSTOMER_SPEND_PAGE_SIZE,
   MAX_REVENUE_RANGE_DAYS,
   OperatorRevenueSource,
+  PointRevenueSource,
   parseCustomerSpendSort,
   parseDate,
   REVENUE_GRANULARITIES,
@@ -35,6 +36,7 @@ import { CustomerAnalyticsPanelComponent } from './customer-analytics-panel.comp
 import { EquipmentTypeSelectComponent } from './equipment-type-select.component';
 import { EquipmentUnitSelectComponent } from './equipment-unit-select.component';
 import { OperatorSelectComponent } from './operator-select.component';
+import { PointSelectComponent } from './point-select.component';
 import { RevenueFilterComponent, type RevenueFilterValue } from './revenue-filter.component';
 import { RevenueReportPanelComponent } from './revenue-report-panel.component';
 
@@ -55,6 +57,7 @@ function defaultRange(): { from: Date; to: Date } {
         inject(OperatorRevenueSource),
         inject(EquipmentTypeRevenueSource),
         inject(EquipmentUnitRevenueSource),
+        inject(PointRevenueSource),
       ],
     },
   ],
@@ -65,6 +68,7 @@ function defaultRange(): { from: Date; to: Date } {
     SegmentedTabsComponent,
     RevenueFilterComponent,
     OperatorSelectComponent,
+    PointSelectComponent,
     EquipmentTypeSelectComponent,
     EquipmentUnitSelectComponent,
     RevenueReportPanelComponent,
@@ -90,6 +94,13 @@ function defaultRange(): { from: Date; to: Date } {
         <p class="text-xs text-slate-400 mb-3">{{ Labels.AnalyticsFreshnessNote }}</p>
 
         <app-revenue-filter [value]="filterValue()" (filterChange)="onFilterChange($event)">
+          @if (!isCustomers()) {
+            <app-point-select
+              dimension-filter
+              [value]="pointSlug()"
+              (valueChange)="onPointChange($event)"
+            />
+          }
           @if (reportId() === 'operators' || isCustomers()) {
             <app-operator-select
               dimension-filter
@@ -174,6 +185,7 @@ export class AnalyticsPageComponent {
   });
   protected readonly dimensionId = computed(() => this.params()['dimensionId'] || undefined);
   protected readonly scopeId = computed(() => this.params()['scopeId'] || undefined);
+  protected readonly pointSlug = computed(() => this.params()['pointSlug'] || undefined);
   protected readonly customerId = computed(() => this.params()['customerId'] || undefined);
 
   protected readonly pageIndex = computed(() => {
@@ -202,6 +214,7 @@ export class AnalyticsPageComponent {
     granularity: this.granularity(),
     dimensionId: this.dimensionId(),
     scopeId: this.scopeId(),
+    pointSlug: this.pointSlug(),
   }));
 
   protected readonly customerRange = computed<CustomerAnalyticsRange>(() => ({
@@ -244,6 +257,10 @@ export class AnalyticsPageComponent {
 
   protected onDimensionChange(id: string | undefined): void {
     this.updateUrl({ dimensionId: id ?? null, page: null }, true);
+  }
+
+  protected onPointChange(slug: string | undefined): void {
+    this.updateUrl({ pointSlug: slug ?? null }, true);
   }
 
   protected onScopeChange(slug: string | undefined): void {
