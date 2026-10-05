@@ -83,6 +83,7 @@ import { RevenueTotalsComponent } from './revenue-totals.component';
           [unattributedHint]="unattributedHint()"
           [nameFor]="nameForFn"
           [unattributedFor]="unattributedForFn"
+          [showUnattributed]="store.source()?.hasUnattributed ?? true"
           [rowSelectable]="reportId() === 'equipment-types'"
           (rowSelect)="onRowSelect($event)"
         />

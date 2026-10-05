@@ -1139,6 +1139,48 @@ export interface CustomerSearchResponse {
   lastName?: string;
 }
 
+export interface PointRevenueFilterParams {
+  /** Range start (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Range end (inclusive), format yyyy-MM-dd */
+  to: string;
+  /** Bucket granularity; weeks start on Monday, edge buckets are partial */
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  /** Optional point filter; a point with no attributed revenue yields an empty zero-filled series, not an error */
+  pointSlug?: string;
+}
+
+/** One time bucket; present even when there was no activity, with zeroed totals */
+export interface PointRevenueBucketResponse {
+  bucketStart?: string;
+  bucketEnd?: string;
+  points?: Array<PointRevenueRowResponse>;
+  bucketTotals?: PointRevenueMetricsResponse;
+}
+
+/** The point-attributed revenue metrics; wallet movement is not attributed to a point and is therefore absent */
+export interface PointRevenueMetricsResponse {
+  accruedRentalRevenue?: number;
+  paidRentalRevenue?: number;
+  writtenOffAmount?: number;
+  penaltyRevenue?: number;
+}
+
+/** Revenue by point. Bucket totals and grand totals are the sum of the point rows. */
+export interface PointRevenueReportResponse {
+  from?: string;
+  to?: string;
+  granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
+  buckets?: Array<PointRevenueBucketResponse>;
+  totals?: PointRevenueMetricsResponse;
+}
+
+/** One point's figures inside a bucket; the point is an opaque slug the caller resolves to a name, including points that have since been suspended or closed */
+export interface PointRevenueRowResponse {
+  pointSlug?: string;
+  metrics?: PointRevenueMetricsResponse;
+}
+
 export interface OperatorRevenueFilterParams {
   /** Range start (inclusive), format yyyy-MM-dd */
   from: string;
@@ -1148,6 +1190,8 @@ export interface OperatorRevenueFilterParams {
   granularity?: 'DAY' | 'WEEK' | 'MONTH' | 'TOTAL';
   /** Optional operator filter; an unknown operator yields an empty zero-filled series */
   operatorId?: string;
+  /** Optional point filter, administrators only: narrows the report to revenue attributed to that point (rental revenue to the pick-up point). Wallet deposits and withdrawals are not attributed to a point and are reported as zero when this filter is set. An operator sending it is refused with scope.caller_supplied */
+  pointSlug?: string;
 }
 
 /** One time bucket; present even when there was no activity, with zeroed totals */
@@ -1196,6 +1240,8 @@ export interface EquipmentRevenueFilterParams {
   operatorId?: string;
   /** Optional single unit filter */
   equipmentId?: number;
+  /** Optional point filter, administrators only: narrows the report to revenue attributed to that point (rental revenue to the pick-up point). Wallet deposits and withdrawals are not attributed to a point and are reported as zero when this filter is set. An operator sending it is refused with scope.caller_supplied */
+  pointSlug?: string;
 }
 
 /** One time bucket; present even when there was no activity, with zeroed totals */
@@ -1241,6 +1287,8 @@ export interface EquipmentTypeRevenueFilterParams {
   operatorId?: string;
   /** Optional equipment type filter; a type with no recorded revenue yields a zero-filled series, not an error */
   equipmentTypeSlug?: string;
+  /** Optional point filter, administrators only: narrows the report to revenue attributed to that point (rental revenue to the pick-up point). Wallet deposits and withdrawals are not attributed to a point and are reported as zero when this filter is set. An operator sending it is refused with scope.caller_supplied */
+  pointSlug?: string;
 }
 
 /** One time bucket; present even when there was no activity, with zeroed totals */

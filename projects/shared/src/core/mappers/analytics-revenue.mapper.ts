@@ -5,6 +5,8 @@ import type {
   EquipmentTypeRevenueReportResponse,
   OperatorRevenueBucketResponse,
   OperatorRevenueReportResponse,
+  PointRevenueBucketResponse,
+  PointRevenueReportResponse,
 } from '@api-models';
 import {
   REVENUE_METRIC_KEYS,
@@ -92,6 +94,15 @@ export class AnalyticsRevenueMapper {
     return AnalyticsRevenueMapper.fromResponse(r, (bucket: EquipmentRevenueBucketResponse) =>
       (bucket.units ?? []).map((row) => ({
         key: String(row.equipmentId ?? ''),
+        metrics: AnalyticsRevenueMapper.metricsFromResponse(row.metrics),
+      })),
+    );
+  }
+
+  static pointReportFromResponse(r: PointRevenueReportResponse): RevenueReport {
+    return AnalyticsRevenueMapper.fromResponse(r, (bucket: PointRevenueBucketResponse) =>
+      (bucket.points ?? []).map((row) => ({
+        key: row.pointSlug ?? '',
         metrics: AnalyticsRevenueMapper.metricsFromResponse(row.metrics),
       })),
     );

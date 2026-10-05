@@ -210,7 +210,7 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: AnalyticsService
 TYPE: API
-PURPOSE: Generated client for analytics endpoints — operator/equipment revenue, customer summary, ranked customers, equipment breakdown.
+PURPOSE: Generated client for analytics endpoints — operator/equipment/point revenue (optional `pointSlug` filter), customer summary, ranked customers, equipment breakdown.
 RESPONSIBILITIES:
 
 - Issue typed HTTP requests against analytics endpoints.
@@ -221,6 +221,7 @@ RESPONSIBILITIES:
 - OperatorRevenueSource
 - EquipmentTypeRevenueSource
 - EquipmentUnitRevenueSource
+- PointRevenueSource
 - CustomerAnalyticsStore
 - CustomerEquipmentBreakdownStore
 
@@ -847,6 +848,7 @@ RESPONSIBILITIES:
 - EquipmentTypeRevenueSource
 - EquipmentUnitRevenueSource
 - OperatorRevenueSource
+- PointRevenueSource
 
 COMPONENT_NAME: BalanceMapper
 TYPE: Utility
@@ -1375,6 +1377,20 @@ RESPONSIBILITIES:
 - AnalyticsService — operator revenue endpoint.
 - AnalyticsRevenueMapper — response conversion.
 - ManagedUserStore — operator names.
+  CALLED_BY:
+- AnalyticsPageComponent
+
+COMPONENT_NAME: PointRevenueSource
+TYPE: Service
+PURPOSE: Revenue report source keyed by rental point (pick-up point); admin only.
+RESPONSIBILITIES:
+
+- Load the point revenue report (accrued, paid, written-off) and resolve point names, closed points included.
+  SOURCE: `projects/shared/src/core/state/point-revenue.source.ts`
+  CALLS:
+- AnalyticsService — point revenue endpoint.
+- AnalyticsRevenueMapper — response conversion.
+- CurrentPointStore — point names.
   CALLED_BY:
 - AnalyticsPageComponent
 

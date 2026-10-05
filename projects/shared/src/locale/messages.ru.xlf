@@ -5166,7 +5166,23 @@
           <context context-type="linenumber">615</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5885256863142303987" datatype="html">
+      <trans-unit id="2668770964909820735" datatype="html">
+        <source>By Point</source>
+        <target>По пункту проката</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">628</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="834028225798042257" datatype="html">
+        <source>All points</source>
+        <target>Все пункты</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">630</context>
+        </context-group>
+      </trans-unit>
+<trans-unit id="5885256863142303987" datatype="html">
         <source>All operators</source>
         <target>Все операторы</target>
         <context-group purpose="location">

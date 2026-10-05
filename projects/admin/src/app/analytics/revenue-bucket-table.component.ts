@@ -73,16 +73,18 @@ import {
                   }
                 </tr>
               }
-              <tr
-                class="border-t border-slate-50 bg-slate-50/50 text-slate-400 italic"
-                [matTooltip]="unattributedHint()"
-              >
-                <td></td>
-                <td class="py-1 pl-4">{{ Labels.AnalyticsUnattributedRow }}</td>
-                @for (key of metricKeys(); track key) {
-                  <td class="py-1 text-right">{{ unattributedFor()(bucket)[key] | money }}</td>
-                }
-              </tr>
+              @if (showUnattributed()) {
+                <tr
+                  class="border-t border-slate-50 bg-slate-50/50 text-slate-400 italic"
+                  [matTooltip]="unattributedHint()"
+                >
+                  <td></td>
+                  <td class="py-1 pl-4">{{ Labels.AnalyticsUnattributedRow }}</td>
+                  @for (key of metricKeys(); track key) {
+                    <td class="py-1 text-right">{{ unattributedFor()(bucket)[key] | money }}</td>
+                  }
+                </tr>
+              }
             }
           }
           @if (buckets().length === 0) {
@@ -106,6 +108,7 @@ export class RevenueBucketTableComponent {
   readonly nameFor = input.required<(key: string) => string>();
   readonly unattributedFor = input.required<(bucket: RevenueBucket) => RevenueMetrics>();
   readonly rowSelectable = input(false);
+  readonly showUnattributed = input(true);
   readonly rowSelect = output<string>();
 
   protected readonly Labels = Labels;

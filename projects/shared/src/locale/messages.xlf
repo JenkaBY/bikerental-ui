@@ -1485,7 +1485,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">741</context>
+          <context context-type="linenumber">746</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5322473252816589112" datatype="html">
@@ -1504,7 +1504,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">742</context>
+          <context context-type="linenumber">747</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7087400662775547587" datatype="html">
@@ -1757,7 +1757,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">674</context>
+          <context context-type="linenumber">679</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5867766809250320132" datatype="html">
@@ -2051,7 +2051,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">695</context>
+          <context context-type="linenumber">700</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3955868613858648955" datatype="html">
@@ -2305,7 +2305,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">707</context>
+          <context context-type="linenumber">712</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2915112906637342975" datatype="html">
@@ -2342,7 +2342,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">738</context>
+          <context context-type="linenumber">743</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1161299114153631702" datatype="html">
@@ -2616,7 +2616,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">715</context>
+          <context context-type="linenumber">720</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8755295493430866446" datatype="html">
@@ -2749,7 +2749,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">647</context>
+          <context context-type="linenumber">652</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3122789997944139623" datatype="html">
@@ -3248,11 +3248,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">686</context>
+          <context context-type="linenumber">691</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">711</context>
+          <context context-type="linenumber">716</context>
         </context-group>
       </trans-unit>
       <trans-unit id="734934965373819800" datatype="html">
@@ -3389,7 +3389,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">645</context>
+          <context context-type="linenumber">650</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8349382277170120747" datatype="html">
@@ -3530,7 +3530,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">655</context>
+          <context context-type="linenumber">660</context>
         </context-group>
       </trans-unit>
       <trans-unit id="117970124145204170" datatype="html">
@@ -3836,7 +3836,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">701</context>
+          <context context-type="linenumber">706</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5703104901561581497" datatype="html">
@@ -3931,7 +3931,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">700</context>
+          <context context-type="linenumber">705</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3167384339147596450" datatype="html">
@@ -4821,692 +4821,714 @@
           <context context-type="linenumber">625</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1062945898210180797" datatype="html">
-        <source>By Equipment Type</source>
+      <trans-unit id="2668770964909820735" datatype="html">
+        <source>By Point</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">628</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3520265858137084533" datatype="html">
-        <source>By Unit</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">629</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7047794771477618374" datatype="html">
-        <source>Equipment type</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">630</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">632</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">633</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="270128522342900119" datatype="html">
-        <source>All equipment types</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">631</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8932917860978648376" datatype="html">
-        <source>Unit</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">634</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">636</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6809920526919763845" datatype="html">
-        <source>All units</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">635</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7340204618485411924" datatype="html">
-        <source>Select an equipment type to see revenue per unit.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">637</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6629096742945877928" datatype="html">
-        <source>Revenue whose equipment is unknown. Included in the totals but not in any row.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">638</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7771470026746473213" datatype="html">
-        <source>View revenue per unit for this type</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">639</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="207515246239441863" datatype="html">
-        <source>Granularity</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">641</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1286983255645370171" datatype="html">
-        <source>Day</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">642</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5141352019990967744" datatype="html">
-        <source>Week</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">643</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5403684285319082289" datatype="html">
-        <source>Month</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">644</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8677167846165224152" datatype="html">
-        <source>Forgone</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">648</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3890292106734963478" datatype="html">
-        <source>Cash movement</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">649</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2946553552275085650" datatype="html">
-        <source>Accrued rental revenue</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">651</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4611728424038390865" datatype="html">
-        <source>Revenue recognized as rentals run, regardless of payment status.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">652</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4452589920962796729" datatype="html">
-        <source>Paid rental revenue</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">653</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8278279288547870935" datatype="html">
-        <source>The portion of accrued revenue actually collected from customers.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">654</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2251799195586280297" datatype="html">
-        <source>Revenue forgone via debt write-off. Not subtracted from accrued revenue.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">656</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6760187344222184402" datatype="html">
-        <source>Penalty revenue</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">657</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6684728444272344717" datatype="html">
-        <source>Revenue from penalties charged to customers.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">658</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8994297952736811956" datatype="html">
-        <source>Wallet deposits</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">659</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4281636286216660290" datatype="html">
-        <source>Cash moved into customer wallets. Not revenue.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">660</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8890937855759694330" datatype="html">
-        <source>Wallet withdrawals</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">661</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3560270174348789987" datatype="html">
-        <source>Cash moved out of customer wallets. Not revenue.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">662</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2432418381127098379" datatype="html">
-        <source>Chart metric</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">664</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1507949699959470925" datatype="html">
-        <source>Period</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">665</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7505338340355851994" datatype="html">
-        <source>Show breakdown</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">666</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8176946558530535698" datatype="html">
-        <source>Unattributed</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">667</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1536667318890259650" datatype="html">
-        <source>Revenue whose opening operator is unknown. Included in the totals but not in any operator row.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">668</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3648483697979225012" datatype="html">
-        <source>By Customer</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">670</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5774287591108906142" datatype="html">
-        <source>Customer summary</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">671</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3308373112719421681" datatype="html">
-        <source>Top customers</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">672</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1957130249095128251" datatype="html">
-        <source>Active customers</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">675</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">683</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8224115436171384269" datatype="html">
-        <source>Distinct customers with at least one money movement in the selected range. Never the sum of the per-period figures.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">676</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3698357436792397387" datatype="html">
-        <source>New customers</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">677</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8050818684096562517" datatype="html">
-        <source>Customers registered within the selected range.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">678</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="751639463998502146" datatype="html">
-        <source>Registered customers</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">679</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2773074232252516959" datatype="html">
-        <source>All customers registered as of the end of the range. Anchored to the end date, so reopening a past report never changes it.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">680</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="808528473966942703" datatype="html">
-        <source>The operator filter narrows the money figures only — customer counts always cover the whole business.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">681</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1910872760688559066" datatype="html">
-        <source>Distinct customers active in this period. Not additive across periods.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">684</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4331454512202430892" datatype="html">
-        <source>No customer had any money movement in the selected range</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">687</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1338931129222882327" datatype="html">
-        <source>Only customers with money movement in the range are listed. Registered but inactive customers appear in the counts above.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">688</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7864255034619765420" datatype="html">
-        <source>Summed across all customers, each metric equals the grand total of the By Operator report for the same range.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">689</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8901045409781913633" datatype="html">
-        <source>Sort ascending</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">690</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1058365381390737447" datatype="html">
-        <source>Sort descending</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">691</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8325933149095695694" datatype="html">
-        <source>See what this customer&apos;s money went on</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">692</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3764100954703799381" datatype="html">
-        <source>Equipment breakdown</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">694</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6392675781175414499" datatype="html">
-        <source>This customer had no equipment activity in the selected range</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">696</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4834054339359157988" datatype="html">
-        <source>Written-off amounts and wallet movement have no equipment dimension and are not shown here.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">697</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4365539946737473581" datatype="html">
-        <source>Unknown customer</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">698</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5574271906938344440" datatype="html">
-        <source>Open transactions list</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">702</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4054010960957495474" datatype="html">
-        <source>Open damage reports list</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">703</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2578732368187466916" datatype="html">
-        <source>Cost</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">704</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5970674615439402941" datatype="html">
-        <source>Rental details</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">705</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8488838043216920851" datatype="html">
-        <source>Select a rental from the list to see its details</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">706</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8311797904709350639" datatype="html">
-        <source>Rental details panel</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">708</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8777396771116717368" datatype="html">
-        <source>Outstanding debt</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">709</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7286430803380181008" datatype="html">
-        <source>Id</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">710</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8404603447994865982" datatype="html">
-        <source>Open customer profile</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">712</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5364944825637269043" datatype="html">
-        <source>Rentals table</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">713</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7699622144571229146" datatype="html">
-        <source>Sort by</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">714</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6644179274260069148" datatype="html">
-        <source>No transactions for this rental</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">716</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8367819691406908045" datatype="html">
-        <source>Damage and penalties</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">717</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2650248559904720874" datatype="html">
-        <source>No damage reports for this rental</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">718</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8470311110519302542" datatype="html">
-        <source>No data</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">719</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2946624699882754313" datatype="html">
-        <source>Show all</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">720</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3517550046701184661" datatype="html">
-        <source>Show less</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">721</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3791004305936615322" datatype="html">
-        <source>Rental period</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">722</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8770044386641458870" datatype="html">
-        <source>Rental points</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">724</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6894541864959780828" datatype="html">
-        <source>New point</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">725</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2585810285043341585" datatype="html">
-        <source>Rental points list</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">726</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6753223316028737302" datatype="html">
-        <source>No rental points yet</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">727</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1584331036827923106" datatype="html">
-        <source>Select a rental point or create a new one</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">728</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1350105028443951724" datatype="html">
-        <source>Register rental point</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">729</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4222846916260318127" datatype="html">
-        <source>Cannot be changed after registration</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">730</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6304432362546770951" datatype="html">
-        <source>Address</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">731</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5555255729162006348" datatype="html">
-        <source>Street and building</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">732</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2314075913167237221" datatype="html">
-        <source>City</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">733</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="516176798986294299" datatype="html">
-        <source>Country</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">734</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5945986349492910662" datatype="html">
-        <source>Contacts</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">735</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4526714495197091449" datatype="html">
-        <source>Primary phone</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">736</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="12198356341081919" datatype="html">
-        <source>Additional phone</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">737</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1859131936150262113" datatype="html">
-        <source>Inactive</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">739</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5976645058078007459" datatype="html">
-        <source>Permanently closed</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">740</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2886516716691419507" datatype="html">
-        <source>Close permanently</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">743</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4372097958352169738" datatype="html">
-        <source>Close rental point permanently?</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">744</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4565426374722901057" datatype="html">
-        <source>A permanently closed point cannot be reopened or edited. This action cannot be undone.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">745</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7810909371088935073" datatype="html">
-        <source>This point is permanently closed and can no longer be edited.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">746</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3928304615425510889" datatype="html">
-        <source>Rental point closed permanently</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">747</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4360306987409712828" datatype="html">
-        <source>Rental point saved</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">748</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="9192252250573112754" datatype="html">
-        <source>Current rental point</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">749</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8446492569448480403" datatype="html">
-        <source>No working point assigned</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">750</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6275128351421181901" datatype="html">
         <source>Rental point</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">629</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">631</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">756</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="834028225798042257" datatype="html">
+        <source>All points</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">630</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1062945898210180797" datatype="html">
+        <source>By Equipment Type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">633</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3520265858137084533" datatype="html">
+        <source>By Unit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">634</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7047794771477618374" datatype="html">
+        <source>Equipment type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">635</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">637</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">638</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="270128522342900119" datatype="html">
+        <source>All equipment types</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">636</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8932917860978648376" datatype="html">
+        <source>Unit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">639</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">641</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6809920526919763845" datatype="html">
+        <source>All units</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">640</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7340204618485411924" datatype="html">
+        <source>Select an equipment type to see revenue per unit.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">642</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6629096742945877928" datatype="html">
+        <source>Revenue whose equipment is unknown. Included in the totals but not in any row.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">643</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7771470026746473213" datatype="html">
+        <source>View revenue per unit for this type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">644</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="207515246239441863" datatype="html">
+        <source>Granularity</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">646</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1286983255645370171" datatype="html">
+        <source>Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">647</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5141352019990967744" datatype="html">
+        <source>Week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">648</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5403684285319082289" datatype="html">
+        <source>Month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">649</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8677167846165224152" datatype="html">
+        <source>Forgone</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">653</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3890292106734963478" datatype="html">
+        <source>Cash movement</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">654</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2946553552275085650" datatype="html">
+        <source>Accrued rental revenue</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">656</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4611728424038390865" datatype="html">
+        <source>Revenue recognized as rentals run, regardless of payment status.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">657</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4452589920962796729" datatype="html">
+        <source>Paid rental revenue</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">658</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8278279288547870935" datatype="html">
+        <source>The portion of accrued revenue actually collected from customers.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">659</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2251799195586280297" datatype="html">
+        <source>Revenue forgone via debt write-off. Not subtracted from accrued revenue.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">661</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6760187344222184402" datatype="html">
+        <source>Penalty revenue</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">662</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6684728444272344717" datatype="html">
+        <source>Revenue from penalties charged to customers.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">663</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8994297952736811956" datatype="html">
+        <source>Wallet deposits</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">664</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4281636286216660290" datatype="html">
+        <source>Cash moved into customer wallets. Not revenue.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">665</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8890937855759694330" datatype="html">
+        <source>Wallet withdrawals</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">666</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3560270174348789987" datatype="html">
+        <source>Cash moved out of customer wallets. Not revenue.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">667</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2432418381127098379" datatype="html">
+        <source>Chart metric</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">669</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1507949699959470925" datatype="html">
+        <source>Period</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">670</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7505338340355851994" datatype="html">
+        <source>Show breakdown</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">671</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8176946558530535698" datatype="html">
+        <source>Unattributed</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">672</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1536667318890259650" datatype="html">
+        <source>Revenue whose opening operator is unknown. Included in the totals but not in any operator row.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">673</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3648483697979225012" datatype="html">
+        <source>By Customer</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">675</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5774287591108906142" datatype="html">
+        <source>Customer summary</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">676</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3308373112719421681" datatype="html">
+        <source>Top customers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">677</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1957130249095128251" datatype="html">
+        <source>Active customers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">680</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">688</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8224115436171384269" datatype="html">
+        <source>Distinct customers with at least one money movement in the selected range. Never the sum of the per-period figures.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">681</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3698357436792397387" datatype="html">
+        <source>New customers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">682</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8050818684096562517" datatype="html">
+        <source>Customers registered within the selected range.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">683</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="751639463998502146" datatype="html">
+        <source>Registered customers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">684</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2773074232252516959" datatype="html">
+        <source>All customers registered as of the end of the range. Anchored to the end date, so reopening a past report never changes it.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">685</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="808528473966942703" datatype="html">
+        <source>The operator filter narrows the money figures only — customer counts always cover the whole business.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">686</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1910872760688559066" datatype="html">
+        <source>Distinct customers active in this period. Not additive across periods.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">689</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4331454512202430892" datatype="html">
+        <source>No customer had any money movement in the selected range</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">692</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1338931129222882327" datatype="html">
+        <source>Only customers with money movement in the range are listed. Registered but inactive customers appear in the counts above.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">693</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7864255034619765420" datatype="html">
+        <source>Summed across all customers, each metric equals the grand total of the By Operator report for the same range.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">694</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8901045409781913633" datatype="html">
+        <source>Sort ascending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">695</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1058365381390737447" datatype="html">
+        <source>Sort descending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">696</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8325933149095695694" datatype="html">
+        <source>See what this customer&apos;s money went on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">697</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3764100954703799381" datatype="html">
+        <source>Equipment breakdown</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">699</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6392675781175414499" datatype="html">
+        <source>This customer had no equipment activity in the selected range</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">701</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4834054339359157988" datatype="html">
+        <source>Written-off amounts and wallet movement have no equipment dimension and are not shown here.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">702</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4365539946737473581" datatype="html">
+        <source>Unknown customer</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">703</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5574271906938344440" datatype="html">
+        <source>Open transactions list</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">707</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4054010960957495474" datatype="html">
+        <source>Open damage reports list</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">708</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2578732368187466916" datatype="html">
+        <source>Cost</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">709</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5970674615439402941" datatype="html">
+        <source>Rental details</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">710</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8488838043216920851" datatype="html">
+        <source>Select a rental from the list to see its details</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">711</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8311797904709350639" datatype="html">
+        <source>Rental details panel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">713</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8777396771116717368" datatype="html">
+        <source>Outstanding debt</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">714</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7286430803380181008" datatype="html">
+        <source>Id</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">715</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8404603447994865982" datatype="html">
+        <source>Open customer profile</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">717</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5364944825637269043" datatype="html">
+        <source>Rentals table</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">718</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7699622144571229146" datatype="html">
+        <source>Sort by</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">719</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6644179274260069148" datatype="html">
+        <source>No transactions for this rental</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">721</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8367819691406908045" datatype="html">
+        <source>Damage and penalties</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">722</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2650248559904720874" datatype="html">
+        <source>No damage reports for this rental</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">723</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8470311110519302542" datatype="html">
+        <source>No data</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">724</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2946624699882754313" datatype="html">
+        <source>Show all</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">725</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3517550046701184661" datatype="html">
+        <source>Show less</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">726</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3791004305936615322" datatype="html">
+        <source>Rental period</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">727</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8770044386641458870" datatype="html">
+        <source>Rental points</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">729</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6894541864959780828" datatype="html">
+        <source>New point</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">730</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2585810285043341585" datatype="html">
+        <source>Rental points list</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">731</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6753223316028737302" datatype="html">
+        <source>No rental points yet</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">732</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1584331036827923106" datatype="html">
+        <source>Select a rental point or create a new one</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">733</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1350105028443951724" datatype="html">
+        <source>Register rental point</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">734</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4222846916260318127" datatype="html">
+        <source>Cannot be changed after registration</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">735</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6304432362546770951" datatype="html">
+        <source>Address</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">736</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5555255729162006348" datatype="html">
+        <source>Street and building</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">737</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2314075913167237221" datatype="html">
+        <source>City</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">738</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="516176798986294299" datatype="html">
+        <source>Country</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">739</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5945986349492910662" datatype="html">
+        <source>Contacts</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">740</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4526714495197091449" datatype="html">
+        <source>Primary phone</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">741</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="12198356341081919" datatype="html">
+        <source>Additional phone</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">742</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1859131936150262113" datatype="html">
+        <source>Inactive</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">744</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5976645058078007459" datatype="html">
+        <source>Permanently closed</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">745</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2886516716691419507" datatype="html">
+        <source>Close permanently</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">748</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4372097958352169738" datatype="html">
+        <source>Close rental point permanently?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">749</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4565426374722901057" datatype="html">
+        <source>A permanently closed point cannot be reopened or edited. This action cannot be undone.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">750</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7810909371088935073" datatype="html">
+        <source>This point is permanently closed and can no longer be edited.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">751</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3928304615425510889" datatype="html">
+        <source>Rental point closed permanently</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">752</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4360306987409712828" datatype="html">
+        <source>Rental point saved</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">753</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9192252250573112754" datatype="html">
+        <source>Current rental point</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">754</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8446492569448480403" datatype="html">
+        <source>No working point assigned</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">755</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5628530245590912911" datatype="html">
         <source>In transit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">752</context>
+          <context context-type="linenumber">757</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">

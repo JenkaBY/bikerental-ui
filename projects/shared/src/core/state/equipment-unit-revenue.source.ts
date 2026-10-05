@@ -22,6 +22,7 @@ export class EquipmentUnitRevenueSource implements RevenueReportSource {
   readonly metricKeys = EQUIPMENT_REVENUE_METRIC_KEYS;
   readonly requiresScope = true;
   readonly unattributedHint = Labels.AnalyticsUnattributedHintEquipment;
+  readonly hasUnattributed = true;
 
   readonly namesLoading = this.unitLabels.loading;
 
@@ -30,6 +31,7 @@ export class EquipmentUnitRevenueSource implements RevenueReportSource {
       from: toIsoDate(query.from),
       to: toIsoDate(query.to),
       granularity: query.granularity,
+      pointSlug: query.pointSlug,
       operatorId: undefined,
       equipmentTypeSlug: query.scopeId ?? '',
       equipmentId: query.dimensionId ? Number(query.dimensionId) : undefined,
