@@ -642,6 +642,18 @@
           <context context-type="linenumber">192</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="6735860573061975026" datatype="html">
+        <source>The selected equipment belongs to several rental points (<x id="pointSlugs" equiv-text="pointSlugs.map(String).join(&apos;, &apos;)"/>). Name the rental, or file a separate report for each point&apos;s equipment.</source>
+        <target>Выбранное оборудование относится к нескольким пунктам проката (<x id="pointSlugs" equiv-text="pointSlugs.map(String).join(&apos;, &apos;)"/>). Укажите аренду или оформите отдельный отчёт для оборудования каждого пункта.</target>
+      </trans-unit>
+      <trans-unit id="4433885498721158237" datatype="html">
+        <source>The selected equipment belongs to several rental points. Name the rental, or file a separate report for each point&apos;s equipment.</source>
+        <target>Выбранное оборудование относится к нескольким пунктам проката. Укажите аренду или оформите отдельный отчёт для оборудования каждого пункта.</target>
+      </trans-unit>
+      <trans-unit id="1353298487927664176" datatype="html">
+        <source>Point</source>
+        <target>Пункт</target>
+      </trans-unit>
       <trans-unit id="1361636200239389496" datatype="html">
         <source>One or more items are not part of this rental. Nothing was changed.</source>
         <target>Один или несколько элементов не относятся к этой аренде. Изменения не внесены.</target>

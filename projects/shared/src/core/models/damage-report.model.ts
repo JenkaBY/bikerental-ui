@@ -30,6 +30,7 @@ export interface DamageReport {
   readonly reportedAt: Date;
   readonly operatorId: string;
   readonly penalty?: Penalty;
+  readonly pointSlug?: string;
 }
 
 export interface DamageReportListItem {
@@ -40,6 +41,7 @@ export interface DamageReportListItem {
   readonly reportedAt: Date;
   readonly operatorId: string;
   readonly penalty?: Penalty;
+  readonly pointSlug?: string;
 }
 
 export interface DamageReportWrite {

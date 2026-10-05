@@ -559,6 +559,8 @@ export interface DamageReportResponse {
   operatorId?: string;
   /** Penalty outcome; null when no penalty was requested */
   penalty?: PenaltyResponse;
+  /** Slug of the rental point where the report was raised; null only for reports filed before points were recorded */
+  pointSlug?: string;
 }
 
 /** Penalty attached to a damage report */
@@ -912,6 +914,8 @@ export interface DamageReportSummaryResponse {
   penaltyStatus?: 'PENDING' | 'SETTLED';
   /** Finance transaction id; null while the penalty is PENDING or absent */
   penaltyTransactionId?: string;
+  /** Slug of the rental point where the report was raised; null only for reports filed before points were recorded */
+  pointSlug?: string;
 }
 
 export interface PageDamageReportSummaryResponse {
