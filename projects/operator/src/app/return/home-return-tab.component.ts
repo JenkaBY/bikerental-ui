@@ -13,7 +13,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { Labels, QrScanDialogComponent, RentalLookupStore } from '@bikerental/shared';
+import {
+  CurrentPointStore,
+  Labels,
+  QrScanDialogComponent,
+  RentalLookupStore,
+} from '@bikerental/shared';
 
 @Component({
   selector: 'app-home-return-tab',
@@ -50,6 +55,7 @@ import { Labels, QrScanDialogComponent, RentalLookupStore } from '@bikerental/sh
 export class HomeReturnTabComponent {
   protected readonly Labels = Labels;
   protected readonly store = inject(RentalLookupStore);
+  private readonly pointStore = inject(CurrentPointStore);
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -80,7 +86,7 @@ export class HomeReturnTabComponent {
       )
       .subscribe((uid) => {
         this.scannedUid.set(uid);
-        this.store.lookup(uid);
+        this.store.lookup(uid, this.pointStore.currentSlug() ?? undefined);
       });
   }
 

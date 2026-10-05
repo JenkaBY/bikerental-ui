@@ -69,12 +69,14 @@ export class RentalDashboardMapper {
       equipment: (r.equipments ?? []).map((e) => ({
         uid: e.equipmentUid,
         name: equipmentNameMap.get(e.equipmentId) ?? '',
+        returnPointSlug: e.returnPointSlug ?? undefined,
       })),
       expectedReturnAt: r.expectedReturnAt ? new Date(r.expectedReturnAt) : undefined,
       isActive,
       isDebt,
       isOverdue,
       overdueMinutes,
+      pickUpPointSlug: r.pickUpPointSlug ?? undefined,
     };
   }
 

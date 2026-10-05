@@ -13,6 +13,11 @@ export interface RentalFilter {
   activeFrom?: Date;
   activeTo?: Date;
   filter: 'ALL' | 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DEBT' | undefined;
+  pointSlug?: string;
+}
+
+interface ActiveParams {
+  pointSlug?: string;
 }
 
 function toStatusApiParam(filter: RentalFilter['filter']): RentalFilterParams['status'] {
@@ -27,15 +32,21 @@ export class RentalListStore {
   private readonly customersService = inject(CustomersService);
   private readonly equipmentsCatalogueService = inject(EquipmentsCatalogueService);
 
+  private readonly activeParams = signal<ActiveParams | null>(null);
   private readonly historyParams = signal<RentalFilter | null>(null);
   private readonly writingOffIds = signal<ReadonlySet<number>>(new Set<number>());
 
-  private readonly activeResource = rxResource<RentalListItem[], void>({
-    stream: () =>
-      this.rentalsService.getRentals({ status: ['ACTIVE'] }, { page: 0, size: 100 }).pipe(
-        switchMap((page) => this.enrichItems(page.items ?? [])),
-        catchError(() => of<RentalListItem[]>([])),
-      ),
+  private readonly activeResource = rxResource<RentalListItem[], ActiveParams | null>({
+    params: () => this.activeParams(),
+    stream: ({ params }) => {
+      if (!params) return of([]);
+      return this.rentalsService
+        .getRentals({ status: ['ACTIVE'], pointSlug: params.pointSlug }, { page: 0, size: 100 })
+        .pipe(
+          switchMap((page) => this.enrichItems(page.items ?? [])),
+          catchError(() => of<RentalListItem[]>([])),
+        );
+    },
   });
 
   private readonly historyResource = rxResource<RentalListItem[], RentalFilter | null>({
@@ -46,6 +57,7 @@ export class RentalListStore {
         status: toStatusApiParam(params.filter),
         activeFrom: params.activeFrom ? toIsoDate(params.activeFrom) : undefined,
         activeTo: params.activeTo ? toIsoDate(params.activeTo) : undefined,
+        pointSlug: params.pointSlug,
       };
       return this.rentalsService.getRentals(filterParams, { page: 0, size: 100 }).pipe(
         switchMap((page) => this.enrichItems(page.items ?? [])),
@@ -60,7 +72,11 @@ export class RentalListStore {
   readonly isLoadingHistory = this.historyResource.isLoading;
   readonly writingOffRentalIds = this.writingOffIds.asReadonly();
 
-  loadActive(): void {
+  loadActive(pointSlug?: string): void {
+    this.activeParams.set({ pointSlug });
+  }
+
+  reloadActive(): void {
     this.activeResource.reload();
   }
 
@@ -68,16 +84,17 @@ export class RentalListStore {
     this.historyResource.reload();
   }
 
-  loadByFilter(filter: RentalFilter['filter'] = 'ALL'): void {
-    this.loadHistory(undefined, undefined, filter);
+  loadByFilter(filter: RentalFilter['filter'] = 'ALL', pointSlug?: string): void {
+    this.loadHistory(undefined, undefined, filter, pointSlug);
   }
 
   loadHistory(
     activeFrom: Date | undefined,
     activeTo: Date | undefined,
     filter: RentalFilter['filter'] = 'ALL',
+    pointSlug?: string,
   ): void {
-    this.historyParams.set({ activeFrom, activeTo, filter });
+    this.historyParams.set({ activeFrom, activeTo, filter, pointSlug });
   }
 
   writeOffDebt(rentalId: number): Observable<void> {

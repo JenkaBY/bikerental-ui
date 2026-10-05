@@ -16,13 +16,13 @@ export class RentalLookupStore {
   readonly notFound = this._notFound.asReadonly();
   readonly foundRentalId = this._foundRentalId.asReadonly();
 
-  lookup(uid: string): void {
+  lookup(uid: string, pointSlug?: string): void {
     this._loading.set(true);
     this._notFound.set(false);
     this._foundRentalId.set(null);
 
     this.rentalsService
-      .getRentals({ status: ['ACTIVE'], equipmentUid: uid }, { size: 50 })
+      .getRentals({ status: ['ACTIVE'], equipmentUid: uid, pointSlug }, { size: 50 })
       .pipe(
         map((page) => {
           const match = (page.items ?? []).find((rental) =>

@@ -3,7 +3,14 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { DurationPipe, EquipmentBadgeComponent, Labels, mapRentalStatus } from '@bikerental/shared';
+import {
+  crossPointReturnName,
+  CurrentPointStore,
+  DurationPipe,
+  EquipmentBadgeComponent,
+  Labels,
+  mapRentalStatus,
+} from '@bikerental/shared';
 import type { RentalListItem } from '@bikerental/shared';
 
 @Component({
@@ -93,10 +100,14 @@ import type { RentalListItem } from '@bikerental/shared';
       </div>
     }
 
-    @if (item().equipment.length > 0) {
+    @if (equipment().length > 0) {
       <div class="mt-2 flex flex-wrap gap-1">
-        @for (e of item().equipment; track $index) {
-          <app-equipment-badge [uid]="e.uid" [name]="e.name" />
+        @for (e of equipment(); track $index) {
+          <app-equipment-badge
+            [uid]="e.uid"
+            [name]="e.name"
+            [returnPointName]="e.returnPointName"
+          />
         }
       </div>
     }
@@ -104,8 +115,18 @@ import type { RentalListItem } from '@bikerental/shared';
 })
 export class RentalCardComponent {
   private readonly router = inject(Router);
+  private readonly pointStore = inject(CurrentPointStore);
 
   readonly item = input.required<RentalListItem>();
+
+  protected readonly equipment = computed(() => {
+    const { equipment, pickUpPointSlug } = this.item();
+    const names = this.pointStore.nameBySlug();
+    return equipment.map((e) => ({
+      ...e,
+      returnPointName: crossPointReturnName(e.returnPointSlug, pickUpPointSlug, names),
+    }));
+  });
   readonly variant = input<'active' | 'history'>('active');
   readonly isWritingOffDebt = input(false);
   readonly writeOffRequested = output<void>();

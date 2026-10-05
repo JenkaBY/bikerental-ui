@@ -131,6 +131,7 @@ export class RentalListComponent {
       customerPhone: p['customerPhone'] || undefined,
       from: parseDate(p['from']) ?? undefined,
       to: parseDate(p['to']) ?? undefined,
+      pointSlug: p['point'] || undefined,
     };
   });
 
@@ -163,6 +164,7 @@ export class RentalListComponent {
         customerId: filter.customerId,
         from: filter.from,
         to: filter.to,
+        pointSlug: filter.pointSlug,
         pageIndex: this.pageIndex(),
         pageSize: this.pageSize(),
         sort: this.sort(),
@@ -197,6 +199,7 @@ export class RentalListComponent {
       customerPhone: value.customerPhone ?? null,
       from: value.from ? toIsoDate(value.from) : null,
       to: value.to ? toIsoDate(value.to) : null,
+      point: value.pointSlug ?? null,
       page: null,
       rental: null,
     });

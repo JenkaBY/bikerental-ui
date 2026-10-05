@@ -12,6 +12,8 @@ import { Labels } from '../../../../../constant/labels';
 import { MoneyPipe } from '../../../../../pipes/money.pipe';
 import { DeployedPath } from '../../../../../utils/deployed-path';
 import { EquipmentBadgeComponent } from '../../../../equipment-badge/equipment-badge.component';
+import { CurrentPointStore } from '../../../../../../core/state/current-point.store';
+import { crossPointReturnName } from '../../../../../utils/return-point.util';
 
 @Component({
   selector: 'app-customer-rental-list-item',
@@ -50,8 +52,12 @@ import { EquipmentBadgeComponent } from '../../../../equipment-badge/equipment-b
 
         <div class="mt-2 flex items-end justify-between gap-3">
           <div class="flex flex-wrap gap-1 min-w-0">
-            @for (e of r.equipment; track $index) {
-              <app-equipment-badge [uid]="e.uid" [name]="e.name" />
+            @for (e of equipment(); track $index) {
+              <app-equipment-badge
+                [uid]="e.uid"
+                [name]="e.name"
+                [returnPointName]="e.returnPointName"
+              />
             }
           </div>
 
@@ -83,9 +89,19 @@ import { EquipmentBadgeComponent } from '../../../../equipment-badge/equipment-b
 })
 export class CustomerRentalListItemComponent {
   private readonly document = inject(DOCUMENT);
+  private readonly pointStore = inject(CurrentPointStore);
 
   readonly rental = input.required<CustomerRentalSummary>();
   readonly customer = input<RentalCustomerRef | undefined>();
+
+  protected readonly equipment = computed(() => {
+    const { equipment, pickUpPointSlug } = this.rental();
+    const names = this.pointStore.nameBySlug();
+    return equipment.map((e) => ({
+      ...e,
+      returnPointName: crossPointReturnName(e.returnPointSlug, pickUpPointSlug, names),
+    }));
+  });
 
   protected readonly Labels = Labels;
 
