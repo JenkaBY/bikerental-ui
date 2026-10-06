@@ -117,6 +117,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
 
   // Damage reports (maintenance)
   [ErrorCode.MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL]: maintenanceEquipmentNotInRentalMessage,
+  [ErrorCode.MAINTENANCE_DAMAGE_REPORT_POINTS_MIXED]: maintenanceDamageReportPointsMixedMessage,
 
   // ── Field-level validation codes (matched against FieldError.code) ────────
   // Derived from Bean Validation annotations as validation.<snake_case_annotation_name>
@@ -225,6 +226,14 @@ function maintenanceEquipmentNotInRentalMessage(params: Record<string, unknown>)
     return $localize`Equipment ${ids.map(String).join(', ')}:ids: is not part of rental #${String(rentalId)}:rentalId:. Nothing was changed.`;
   }
   return $localize`One or more items are not part of this rental. Nothing was changed.`;
+}
+
+function maintenanceDamageReportPointsMixedMessage(params: Record<string, unknown>): string {
+  const pointSlugs = params['pointSlugs'];
+  if (Array.isArray(pointSlugs) && pointSlugs.length > 0) {
+    return $localize`The selected equipment belongs to several rental points (${pointSlugs.map(String).join(', ')}:pointSlugs:). Name the rental, or file a separate report for each point's equipment.`;
+  }
+  return $localize`The selected equipment belongs to several rental points. Name the rental, or file a separate report for each point's equipment.`;
 }
 
 function insufficientBalanceMessage(params: Record<string, unknown>): string {

@@ -410,6 +410,7 @@ export class Labels {
   static readonly DamageReportItemsTitle = $localize`Reported items`;
   static readonly DamageReportConditionChange = $localize`condition change`;
   static readonly DamageReportOperatorLabel = $localize`Reported by`;
+  static readonly DamageReportPointLabel = $localize`Rental point`;
   static readonly DamageReportReportedAtLabel = $localize`Reported at`;
   static readonly DamageReportRentalLink = $localize`Open rental`;
   static readonly DamageReportCustomerLink = $localize`Open customer`;
@@ -432,6 +433,7 @@ export class Labels {
   static readonly DamageReportColumnId = $localize`ID`;
   static readonly DamageReportColumnReportedAt = $localize`Reported at`;
   static readonly DamageReportColumnRental = $localize`Rental`;
+  static readonly DamageReportColumnPoint = $localize`Point`;
   static readonly DamageReportColumnCustomer = $localize`Customer`;
   static readonly DamageReportColumnDescription = $localize`Description`;
   static readonly DamageReportColumnPenalty = $localize`Penalty`;

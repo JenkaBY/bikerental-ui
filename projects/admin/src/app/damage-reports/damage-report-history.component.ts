@@ -91,6 +91,13 @@ const PAGE_SIZE = 20;
               </td>
             </ng-container>
 
+            <ng-container matColumnDef="point">
+              <th mat-header-cell *matHeaderCellDef>{{ Labels.DamageReportColumnPoint }}</th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.pointSlug ?? '—' }}
+              </td>
+            </ng-container>
+
             <ng-container matColumnDef="customer">
               <th mat-header-cell *matHeaderCellDef>{{ Labels.DamageReportColumnCustomer }}</th>
               <td mat-cell *matCellDef="let row">
@@ -168,6 +175,7 @@ export class DamageReportHistoryComponent {
     'id',
     'reportedAt',
     'rental',
+    'point',
     'customer',
     'description',
     'penaltyAmount',

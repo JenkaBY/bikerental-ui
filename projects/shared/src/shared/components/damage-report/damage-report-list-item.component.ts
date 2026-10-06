@@ -25,6 +25,10 @@ import { PenaltyStatusBadgeComponent } from '../penalty-status-badge/penalty-sta
           >
           <span class="text-xs text-slate-400 flex items-center gap-1 flex-wrap">
             <span>{{ r.reportedAt | localTimestamp }}</span>
+            @if (r.pointSlug; as point) {
+              <span>·</span>
+              <span [title]="Labels.DamageReportPointLabel">{{ point }}</span>
+            }
             <span>·</span>
             <span class="truncate">{{ r.description }}</span>
           </span>

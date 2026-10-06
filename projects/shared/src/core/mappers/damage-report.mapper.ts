@@ -26,6 +26,7 @@ export class DamageReportMapper {
       reportedAt: r.reportedAt ? new Date(r.reportedAt) : new Date(0),
       operatorId: r.operatorId ?? '',
       penalty: DamageReportMapper.fromPenaltyResponse(r.penalty),
+      pointSlug: r.pointSlug,
     };
   }
 
@@ -46,6 +47,7 @@ export class DamageReportMapper {
               isSettled: r.penaltyStatus === 'SETTLED',
             }
           : undefined,
+      pointSlug: r.pointSlug,
     };
   }
 

@@ -78,6 +78,7 @@ export const ErrorCode = {
 
   // maintenance.* — damage reports
   MAINTENANCE_EQUIPMENT_NOT_IN_RENTAL: 'maintenance.equipment.not_in_rental',
+  MAINTENANCE_DAMAGE_REPORT_POINTS_MIXED: 'maintenance.damage_report.points_mixed',
 
   // point.* — rental point registry
   POINT_SLUG_DUPLICATE: 'point.slug.duplicate',

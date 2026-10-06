@@ -118,6 +118,9 @@ import { PenaltyStatusBadgeComponent } from '../penalty-status-badge/penalty-sta
             }
           </div>
 
+          @if (r.pointSlug; as point) {
+            <p class="text-xs text-slate-400">{{ Labels.DamageReportPointLabel }}: {{ point }}</p>
+          }
           <p class="text-xs text-slate-400">
             {{ Labels.DamageReportOperatorLabel }}: {{ r.operatorId }}
           </p>
