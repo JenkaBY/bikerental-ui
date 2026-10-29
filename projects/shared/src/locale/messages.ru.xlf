@@ -2694,28 +2694,12 @@
           <context context-type="linenumber">209</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3554106253155209144" datatype="html">
-        <source>Top up failed. Please try again.</source>
-        <target>Не удалось пополнить баланс. Попробуйте снова.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">203</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="8769263339440113346" datatype="html">
         <source>Payout method</source>
         <target>Способ выплаты</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">207</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4645640100748085750" datatype="html">
-        <source>Withdrawal failed. Please try again.</source>
-        <target>Не удалось снять средства. Попробуйте снова.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">210</context>
         </context-group>
       </trans-unit>
       <trans-unit id="787798817533231355" datatype="html">
@@ -6313,6 +6297,26 @@
       <trans-unit id="666755895275509354" datatype="html">
         <source>No open rental holds this item</source>
         <target>Это оборудование не числится ни в одной открытой аренде</target>
+      </trans-unit>
+      <trans-unit id="619721349696800520" datatype="html">
+        <source>Rental point <x id="pointSlug" equiv-text="pointSlug"/> is suspended and cannot receive or pay out money. Choose another point or contact an administrator.</source>
+        <target>Пункт проката <x id="pointSlug" equiv-text="pointSlug"/> приостановлен и не может принимать или выдавать деньги. Выберите другой пункт или обратитесь к администратору.</target>
+      </trans-unit>
+      <trans-unit id="7420114594367496127" datatype="html">
+        <source>This rental point is suspended and cannot receive or pay out money. Choose another point or contact an administrator.</source>
+        <target>Этот пункт проката приостановлен и не может принимать или выдавать деньги. Выберите другой пункт или обратитесь к администратору.</target>
+      </trans-unit>
+      <trans-unit id="1919685701575137737" datatype="html">
+        <source>Rental point <x id="pointSlug" equiv-text="pointSlug"/> is permanently closed and cannot receive or pay out money. Choose another point.</source>
+        <target>Пункт проката <x id="pointSlug" equiv-text="pointSlug"/> закрыт навсегда и не может принимать или выдавать деньги. Выберите другой пункт.</target>
+      </trans-unit>
+      <trans-unit id="3195496281573426511" datatype="html">
+        <source>This rental point is permanently closed and cannot receive or pay out money. Choose another point.</source>
+        <target>Этот пункт проката закрыт навсегда и не может принимать или выдавать деньги. Выберите другой пункт.</target>
+      </trans-unit>
+      <trans-unit id="5625387252055273052" datatype="html">
+        <source>The point where the money is received or paid out</source>
+        <target>Пункт, где деньги принимаются или выдаются</target>
       </trans-unit>
     </body>
   </file>

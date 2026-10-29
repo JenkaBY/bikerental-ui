@@ -118,7 +118,7 @@ CONSUMES:
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: every endpoint under `AgreementsService`, `AnalyticsService`, `CustomersService`, `EquipmentsCatalogueService`, `EquipmentTypesService`, `FinanceService`, `MaintenanceService`, `RentalsService`, `RentalPointsService`, `TariffsService`, `UsersService`
     FROM_SERVICE: bikerental-backend
-    DESCRIPTION: All domain CRUD, search and analytics operations, via the shared generated client
+    DESCRIPTION: All domain CRUD, search and analytics operations, via the shared generated client. The admin app registers no `pointInterceptor`; only `POST /api/finance/deposits` and `POST /api/finance/withdrawals` carry `X-Point-Slug`, naming the point the administrator picks in the top-up/withdraw dialog (`ALWAYS_CHOOSE_MONEY_POINT` = true), pre-filled from the saved working point
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: OIDC authorization/token/end-session endpoints (client id `bike-rental-admin`)
     FROM_SERVICE: bikerental-backend

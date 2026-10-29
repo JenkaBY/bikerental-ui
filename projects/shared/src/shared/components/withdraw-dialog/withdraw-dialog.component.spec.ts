@@ -6,11 +6,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WithdrawDialogComponent } from './withdraw-dialog.component';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
 import { AuthService } from '../../../core/auth/auth.service';
+import { CurrentPointStore } from '../../../core/state/current-point.store';
 
 const availableBalance = { amount: 100, currency: 'BYN' };
 
 const makeFinanceService = () => ({
   recordWithdrawal: vi.fn().mockReturnValue(of({ transactionId: 't1', recordedAt: new Date() })),
+});
+
+const makePointStore = () => ({
+  currentSlug: () => 'CNTR',
+  points: () => [],
+  load: () => of(undefined),
 });
 
 const makeAuthService = () => ({
@@ -31,6 +38,7 @@ describe('WithdrawDialogComponent', () => {
       providers: [
         { provide: CustomerFinanceStore, useValue: financeService },
         { provide: AuthService, useValue: makeAuthService() },
+        { provide: CurrentPointStore, useValue: makePointStore() },
         { provide: MatDialogRef, useValue: { close: dialogClose } },
         { provide: MAT_DIALOG_DATA, useValue: { customerId: 'c1', availableBalance } },
         { provide: MatSnackBar, useValue: { open: snackOpen } },
@@ -43,7 +51,11 @@ describe('WithdrawDialogComponent', () => {
   it('should create', () => expect(fixture.componentInstance).toBeTruthy());
 
   it('should close with true on successful withdrawal', () => {
-    fixture.componentInstance.form.setValue({ amount: 50, paymentMethod: 'CASH' });
+    fixture.componentInstance.form.setValue({
+      amount: 50,
+      paymentMethod: 'CASH',
+      pointSlug: 'CNTR',
+    });
     fixture.componentInstance.confirm();
     expect(dialogClose).toHaveBeenCalledWith(true);
   });
@@ -60,7 +72,11 @@ describe('WithdrawDialogComponent', () => {
   });
 
   it('should reuse the same idempotencyKey on retry', () => {
-    fixture.componentInstance.form.setValue({ amount: 50, paymentMethod: 'CASH' });
+    fixture.componentInstance.form.setValue({
+      amount: 50,
+      paymentMethod: 'CASH',
+      pointSlug: 'CNTR',
+    });
     financeService.recordWithdrawal.mockReturnValueOnce(throwError(() => new Error('500')));
     fixture.componentInstance.confirm();
     fixture.componentInstance.confirm();

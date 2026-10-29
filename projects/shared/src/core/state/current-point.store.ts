@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, InjectionToken, signal } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
 import { RentalPointsService } from '../api/generated';
@@ -8,6 +8,11 @@ import { ProfileStore } from './profile.store';
 import { UserStore } from './user.store';
 
 const MAX_POINTS = 100;
+
+export const ALWAYS_CHOOSE_MONEY_POINT = new InjectionToken<boolean>('ALWAYS_CHOOSE_MONEY_POINT', {
+  providedIn: 'root',
+  factory: () => false,
+});
 
 @Injectable({ providedIn: 'root' })
 export class CurrentPointStore {

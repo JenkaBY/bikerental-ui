@@ -1,16 +1,19 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { v4 as uuid } from 'uuid';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
+import {
+  ALWAYS_CHOOSE_MONEY_POINT,
+  CurrentPointStore,
+} from '../../../core/state/current-point.store';
 import type { PaymentMethod, TransactionSource } from '../../../core/models/transaction.model';
+import { MoneyPointErrorHandler } from '../money-point-field/money-point-error.handler';
+import { MoneyPointFieldComponent } from '../money-point-field/money-point-field.component';
 import { Labels } from '../../constant/labels';
 import { CancelButtonComponent } from '../cancel-button/cancel-button.component';
 import { PaymentMethodSelectComponent } from '../payment-method/payment-method.component';
@@ -34,7 +37,7 @@ interface TopUpDialogData {
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSnackBarModule,
+    MoneyPointFieldComponent,
     PaymentMethodSelectComponent,
     CancelButtonComponent,
     MaxDecimalsDirective,
@@ -57,6 +60,10 @@ interface TopUpDialogData {
         </mat-form-field>
 
         <app-payment-method-select formControlName="paymentMethod"></app-payment-method-select>
+
+        @if (choosePoint()) {
+          <app-money-point-field [control]="form.controls.pointSlug" />
+        }
       </form>
     </mat-dialog-content>
 
@@ -74,11 +81,14 @@ export class TopUpDialogComponent {
   private readonly data = inject<TopUpDialogData>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject<MatDialogRef<TopUpDialogComponent>>(MatDialogRef);
   private readonly financeStore = inject(CustomerFinanceStore);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly errorHandler = inject(MoneyPointErrorHandler);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly workingPoint = inject(CurrentPointStore).currentSlug();
 
   protected readonly submitting = signal(false);
-  protected errorShown = false;
+  protected readonly choosePoint = signal(
+    inject(ALWAYS_CHOOSE_MONEY_POINT) || this.workingPoint === null,
+  );
 
   public readonly form = new FormGroup({
     amount: new FormControl<number | null>(this.data.initialAmount ?? null, [
@@ -87,37 +97,39 @@ export class TopUpDialogComponent {
       maxDecimalPlacesValidator(2),
     ]),
     paymentMethod: new FormControl<PaymentMethod>('CASH', [Validators.required]),
+    pointSlug: new FormControl<string | null>(this.workingPoint, [Validators.required]),
   });
 
   private readonly idempotencyKey = uuid();
 
   public confirm(): void {
     if (this.form.invalid || this.submitting()) return;
-    const { amount, paymentMethod } = this.form.getRawValue();
+    const { amount, paymentMethod, pointSlug } = this.form.getRawValue();
     this.submitting.set(true);
 
     this.financeStore
-      .recordDeposit({
-        idempotencyKey: this.idempotencyKey,
-        customerId: this.data.customerId,
-        amount: amount!,
-        paymentMethod: paymentMethod as PaymentMethod,
-        source: this.data.source,
-        sourceId: this.data.sourceId,
-      })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError(() => {
-          this.submitting.set(false);
-          this.errorShown = true;
-          this.snackBar.open(Labels.TopUpError, undefined, { duration: 4000 });
-          return EMPTY;
-        }),
+      .recordDeposit(
+        {
+          idempotencyKey: this.idempotencyKey,
+          customerId: this.data.customerId,
+          amount: amount!,
+          paymentMethod: paymentMethod as PaymentMethod,
+          source: this.data.source,
+          sourceId: this.data.sourceId,
+        },
+        pointSlug!,
       )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.submitting.set(false);
           this.dialogRef.close(true);
+        },
+        error: (err: unknown) => {
+          this.submitting.set(false);
+          if (this.errorHandler.handle(err, this.form.controls.pointSlug)) {
+            this.choosePoint.set(true);
+          }
         },
       });
   }

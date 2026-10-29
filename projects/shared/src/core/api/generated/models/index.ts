@@ -589,7 +589,7 @@ export interface RecordWithdrawalRequest {
   sourceId?: string;
 }
 
-/** Unified transaction response for deposits and adjustments */
+/** Unified transaction response for deposits, withdrawals and adjustments */
 export interface TransactionResponse {
   /** Transaction UUID */
   transactionId: string;
@@ -984,6 +984,8 @@ export interface TransactionSummaryResponse {
   sourceType?: string;
   /** Source identifier, e.g. the rental id when sourceType is RENTAL */
   sourceId?: string;
+  /** Rental point whose positions the money landed in; absent for holds, releases and movements recorded before money was held per point */
+  pointSlug?: string | null;
   /** Operator that recorded the transaction */
   operatorId: string;
   /** All double-entry legs of this transaction */
@@ -1051,6 +1053,8 @@ export interface TransactionDetailsResponse {
   sourceType?: string;
   /** Source identifier, e.g. the rental id when sourceType is RENTAL */
   sourceId?: string;
+  /** Rental point whose positions the money landed in; absent for holds, releases and movements recorded before money was held per point */
+  pointSlug?: string | null;
   /** Operator that recorded the transaction */
   operatorId: string;
   /** Signed per-bucket change caused by this transaction */
@@ -1088,6 +1092,8 @@ export interface CustomerTransactionResponse {
   sourceType?: string;
   /** Source identifier, e.g. the rental id when sourceType is RENTAL */
   sourceId?: string;
+  /** Rental point whose positions the money landed in; absent for holds, releases and movements recorded before money was held per point */
+  pointSlug?: string | null;
   /** Signed change per bucket caused by this transaction */
   deltas: TransactionDeltasResponse;
   /** Customer bucket balances after this transaction was applied */

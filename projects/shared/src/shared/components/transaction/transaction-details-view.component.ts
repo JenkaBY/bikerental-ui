@@ -35,6 +35,11 @@ import { TransactionListItemComponent } from './transaction-list-item.component'
           <dt class="text-slate-400">{{ Labels.PaymentMethod }}</dt>
           <dd>{{ paymentMethodLabel() }}</dd>
 
+          @if (d.pointSlug; as point) {
+            <dt class="text-slate-400">{{ Labels.TransactionPointLabel }}</dt>
+            <dd>{{ point }}</dd>
+          }
+
           <dt class="text-slate-400">{{ Labels.Operator }}</dt>
           <dd>{{ operatorName() ?? d.operatorId }}</dd>
 
