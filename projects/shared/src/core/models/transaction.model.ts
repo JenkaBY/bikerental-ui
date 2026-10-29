@@ -44,6 +44,7 @@ export interface CustomerTransaction {
   readonly reason?: string;
   readonly sourceType?: string;
   readonly sourceId?: string;
+  readonly pointSlug?: string;
 
   readonly direction?: TransactionDirection;
   readonly deltas?: TransactionDeltas;

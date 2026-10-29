@@ -200,14 +200,16 @@ export class Labels {
   static readonly TopUpAmountLabel = $localize`Amount`;
   static readonly TopUpPaymentMethodLabel = $localize`Payment method`;
   static readonly TopUpConfirmButton = $localize`Confirm`;
-  static readonly TopUpError = $localize`Top up failed. Please try again.`;
 
   static readonly WithdrawDialogTitle = $localize`Withdraw`;
   static readonly WithdrawAmountLabel = $localize`Amount`;
   static readonly WithdrawPaymentMethodLabel = $localize`Payout method`;
   static readonly WithdrawAvailableHint = $localize`Available`;
   static readonly WithdrawConfirmButton = $localize`Confirm`;
-  static readonly WithdrawError = $localize`Withdrawal failed. Please try again.`;
+
+  static readonly MoneyPointLabel = $localize`Rental point`;
+  static readonly MoneyPointHint = $localize`The point where the money is received or paid out`;
+  static readonly TransactionPointLabel = $localize`Rental point`;
 
   static readonly PaymentMethodCash = $localize`Cash`;
   static readonly PaymentMethodBankTransfer = $localize`Bank transfer`;

@@ -4136,12 +4136,14 @@ TYPE: Utility
 PURPOSE: Records a customer deposit.
 RESPONSIBILITIES:
 
-- Capture amount, payment method and source; submit the deposit and close with the result.
+- Capture amount, payment method, source and the rental point the money lands at; submit the deposit and close with the result.
+- Show the point field when `ALWAYS_CHOOSE_MONEY_POINT` is set (admin) or no working point is set; `scope.not_established` reveals and clears it so the user picks a point.
   SOURCE: `projects/shared/src/shared/components/top-up-dialog/top-up-dialog.component.ts`
   CALLS:
-- CustomerFinanceStore — `recordDeposit()`.
+- CustomerFinanceStore — `recordDeposit(write, pointSlug)` (sent as `X-Point-Slug`, global error toast suppressed).
 - PaymentMethodSelectComponent — method selection.
-- MatSnackBar — outcome message.
+- MoneyPointFieldComponent — point selection from `CurrentPointStore.points()`.
+- MoneyPointErrorHandler — `scope.not_established` → point choice; `finance.point.inactive` / `finance.point.permanently_closed` and others → localized `NotificationService` error.
   CALLED_BY:
 - CustomerAccountComponent
 - RentalDetailComponent
@@ -4153,13 +4155,15 @@ TYPE: Utility
 PURPOSE: Records a customer withdrawal, bounded by the available balance.
 RESPONSIBILITIES:
 
-- Capture amount and method, validate against the available balance, submit and close.
+- Capture amount, method and the rental point the payout leaves from, validate against the available balance, submit and close.
+- Same point-field rules as TopUpDialogComponent.
   SOURCE: `projects/shared/src/shared/components/withdraw-dialog/withdraw-dialog.component.ts`
   CALLS:
-- CustomerFinanceStore — `recordWithdrawal()`.
+- CustomerFinanceStore — `recordWithdrawal(write, pointSlug)` (sent as `X-Point-Slug`, global error toast suppressed).
 - maxWithdrawAmountValidator — amount ceiling.
 - PaymentMethodSelectComponent — method selection.
-- MatSnackBar — outcome message.
+- MoneyPointFieldComponent — point selection.
+- MoneyPointErrorHandler — error routing as in TopUpDialogComponent.
   CALLED_BY:
 - CustomerAccountComponent
 - RentalDetailComponent
@@ -4695,7 +4699,7 @@ PURPOSE: Record a deposit so the rental can proceed.
 SOURCE: `projects/operator/src/app/rental-create/step2/rental-step2.component.ts`
 
 STEP 20: TopUpDialogComponent → CustomerFinanceStore
-OPERATION: `recordDeposit(write)`
+OPERATION: `recordDeposit(write, pointSlug)`
 PURPOSE: Credit the customer account through the finance API.
 SOURCE: `projects/shared/src/shared/components/top-up-dialog/top-up-dialog.component.ts`
 

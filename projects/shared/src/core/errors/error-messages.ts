@@ -71,6 +71,8 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.INSUFFICIENT_BALANCE]: insufficientBalanceMessage,
   [ErrorCode.OVER_BUDGET_SETTLEMENT]: $localize`The settlement amount exceeds the available balance.`,
   [ErrorCode.INSUFFICIENT_HOLD]: $localize`The reserved amount is insufficient for this operation.`,
+  [ErrorCode.FINANCE_POINT_INACTIVE]: financePointInactiveMessage,
+  [ErrorCode.FINANCE_POINT_PERMANENTLY_CLOSED]: financePointPermanentlyClosedMessage,
 
   // Rental
   [ErrorCode.INSUFFICIENT_FUNDS]: insufficientFundsMessage,
@@ -243,6 +245,22 @@ function insufficientBalanceMessage(params: Record<string, unknown>): string {
     return $localize`Insufficient balance. Available: ${available.toFixed(2)}:available:, requested: ${requested.toFixed(2)}:requested:.`;
   }
   return $localize`The account balance is insufficient for this operation.`;
+}
+
+function financePointInactiveMessage(params: Record<string, unknown>): string {
+  const pointSlug = params['pointSlug'];
+  if (typeof pointSlug === 'string' && pointSlug.length > 0) {
+    return $localize`Rental point ${pointSlug}:pointSlug: is suspended and cannot receive or pay out money. Choose another point or contact an administrator.`;
+  }
+  return $localize`This rental point is suspended and cannot receive or pay out money. Choose another point or contact an administrator.`;
+}
+
+function financePointPermanentlyClosedMessage(params: Record<string, unknown>): string {
+  const pointSlug = params['pointSlug'];
+  if (typeof pointSlug === 'string' && pointSlug.length > 0) {
+    return $localize`Rental point ${pointSlug}:pointSlug: is permanently closed and cannot receive or pay out money. Choose another point.`;
+  }
+  return $localize`This rental point is permanently closed and cannot receive or pay out money. Choose another point.`;
 }
 
 function insufficientFundsMessage(params: Record<string, unknown>): string {

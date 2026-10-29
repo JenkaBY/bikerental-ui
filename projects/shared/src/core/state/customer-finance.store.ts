@@ -1,10 +1,13 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { catchError, EMPTY, finalize, Observable, tap } from 'rxjs';
 import { FinanceService, TransactionResponse } from '../api/generated';
 import type { CustomerBalance } from '@ui-models';
 import { CustomerDepositWrite, CustomerWithdrawalWrite } from '@ui-models';
 import { CustomerFinanceMapper } from '../mappers';
 import { BalanceMapper } from '../mappers/balance.mapper';
+import { suppressErrorNotification } from '../errors/http-error-context';
+import { POINT_SLUG_HEADER } from '../interceptors/point.interceptor';
 
 @Injectable()
 export class CustomerFinanceStore {
@@ -45,13 +48,23 @@ export class CustomerFinanceStore {
       .subscribe();
   }
 
-  recordWithdrawal(request: CustomerWithdrawalWrite): Observable<TransactionResponse> {
+  recordWithdrawal(
+    request: CustomerWithdrawalWrite,
+    pointSlug: string,
+  ): Observable<TransactionResponse> {
     const req = CustomerFinanceMapper.toRecordWithdrawalRequest(request);
-    return this.service.recordWithdrawal(req);
+    return this.service.recordWithdrawal(req, 'body', this.atPoint(pointSlug));
   }
 
-  recordDeposit(request: CustomerDepositWrite): Observable<TransactionResponse> {
+  recordDeposit(request: CustomerDepositWrite, pointSlug: string): Observable<TransactionResponse> {
     const req = CustomerFinanceMapper.toRecordDepositRequest(request);
-    return this.service.recordDeposit(req);
+    return this.service.recordDeposit(req, 'body', this.atPoint(pointSlug));
+  }
+
+  private atPoint(pointSlug: string) {
+    return {
+      headers: new HttpHeaders({ [POINT_SLUG_HEADER]: pointSlug }),
+      context: suppressErrorNotification(),
+    };
   }
 }

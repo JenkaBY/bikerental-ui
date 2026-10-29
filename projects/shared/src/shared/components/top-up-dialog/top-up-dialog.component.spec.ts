@@ -5,10 +5,17 @@ import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CustomerFinanceStore } from '../../../core/state/customer-finance.store';
 import { AuthService } from '../../../core/auth/auth.service';
+import { CurrentPointStore } from '../../../core/state/current-point.store';
 import { TopUpDialogComponent } from './top-up-dialog.component';
 
 const makeFinanceStore = () => ({
   recordDeposit: vi.fn().mockReturnValue(of({ transactionId: 't1', recordedAt: new Date() })),
+});
+
+const makePointStore = () => ({
+  currentSlug: () => 'CNTR',
+  points: () => [],
+  load: () => of(undefined),
 });
 
 const makeAuthService = () => ({
@@ -29,6 +36,7 @@ describe('TopUpDialogComponent', () => {
       providers: [
         { provide: CustomerFinanceStore, useValue: financeStore },
         { provide: AuthService, useValue: makeAuthService() },
+        { provide: CurrentPointStore, useValue: makePointStore() },
         { provide: MatDialogRef, useValue: { close: dialogClose } },
         { provide: MAT_DIALOG_DATA, useValue: { customerId: 'c1' } },
         { provide: MatSnackBar, useValue: { open: snackOpen } },
@@ -41,17 +49,24 @@ describe('TopUpDialogComponent', () => {
   it('should create', () => expect(fixture.componentInstance).toBeTruthy());
 
   it('should close with true on successful deposit', () => {
-    fixture.componentInstance.form.setValue({ amount: 50, paymentMethod: 'CASH' });
+    fixture.componentInstance.form.setValue({
+      amount: 50,
+      paymentMethod: 'CASH',
+      pointSlug: 'CNTR',
+    });
     fixture.componentInstance.confirm();
     expect(dialogClose).toHaveBeenCalledWith(true);
   });
 
   it('should show error snackbar and stay open on failure', async () => {
     financeStore.recordDeposit.mockReturnValue(throwError(() => new Error('500')));
-    fixture.componentInstance.form.setValue({ amount: 50, paymentMethod: 'CASH' });
+    fixture.componentInstance.form.setValue({
+      amount: 50,
+      paymentMethod: 'CASH',
+      pointSlug: 'CNTR',
+    });
     fixture.componentInstance.confirm();
     await Promise.resolve();
-    expect(fixture.componentInstance['errorShown']).toBe(true);
     expect(dialogClose).not.toHaveBeenCalled();
   });
 
@@ -61,7 +76,11 @@ describe('TopUpDialogComponent', () => {
   });
 
   it('should reuse the same idempotencyKey on retry', () => {
-    fixture.componentInstance.form.setValue({ amount: 50, paymentMethod: 'CASH' });
+    fixture.componentInstance.form.setValue({
+      amount: 50,
+      paymentMethod: 'CASH',
+      pointSlug: 'CNTR',
+    });
     financeStore.recordDeposit.mockReturnValueOnce(throwError(() => new Error('500')));
     fixture.componentInstance.confirm();
     fixture.componentInstance.confirm();

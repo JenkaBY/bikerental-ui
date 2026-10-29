@@ -44,6 +44,10 @@ import { DeployedPath } from '../../utils/deployed-path';
             @if (paymentMethodLabel(); as pm) {
               <span>· {{ pm }}</span>
             }
+            @if (t.pointSlug; as point) {
+              <span>·</span>
+              <span [title]="Labels.TransactionPointLabel">{{ point }}</span>
+            }
             @if (rentalLink(); as link) {
               <span>·</span>
               <a

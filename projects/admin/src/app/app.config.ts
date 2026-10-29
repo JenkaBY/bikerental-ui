@@ -15,6 +15,7 @@ import { firstValueFrom, tap } from 'rxjs';
 import { routes } from './app.routes';
 import {
   acceptLanguageInterceptor,
+  ALWAYS_CHOOSE_MONEY_POINT,
   apiAuthInterceptor,
   APP_BRAND,
   AuthService,
@@ -63,6 +64,7 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: LOCALE_ID, useValue: environment.defaultLocale },
     { provide: APP_BRAND, useValue: envBrand },
+    { provide: ALWAYS_CHOOSE_MONEY_POINT, useValue: true },
     provideDefaultClient({ basePath: environment.apiUrl }),
     {
       provide: TIME_TRAVEL_STORE_TOKEN,

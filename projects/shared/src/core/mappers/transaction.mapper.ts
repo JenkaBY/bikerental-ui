@@ -51,6 +51,7 @@ interface TransactionCore {
   reason?: string;
   sourceType?: string;
   sourceId?: string;
+  pointSlug?: string | null;
   direction?: TransactionDirection;
   deltas?: TransactionDeltas;
   balances?: TransactionBalances;
@@ -131,6 +132,7 @@ export class TransactionMapper {
       reason: core.reason,
       sourceType: core.sourceType,
       sourceId: core.sourceId,
+      pointSlug: core.pointSlug ?? undefined,
 
       direction: core.direction,
       deltas: core.deltas,
