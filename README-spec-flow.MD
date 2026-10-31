@@ -131,6 +131,14 @@ Provide the FR folder path. The agent scans the actual source code and produces 
 Provide the `checklist.md` path. The agent works through the checklist sequentially, delegating each task file to the
 `dev` sub-agent (via the Task tool) and updating task status. Stops immediately on any failure and reports the error.
 
+**Delegated delivery (steps 3–4 in one command)**
+`/spec-delegate requirements/[id]/[fr]` delivers one FR in the current checkout and commits.
+`/spec-orchestrate requirements/[id]` delivers every FR of a requirement that has a `design.md` — each FR in its own
+git worktree, gated by the `fr-verifier` (lint, build, i18n) and `code-reviewer` (conventions review) sub-agents — then
+pushes one branch and opens one PR per FR (stacked when FRs depend on each other) and reports. The owner reviews and
+merges every PR. Run status lives in the git-ignored `.claude/orchestration/<REQ_ID>.md`. Run it in a separate
+session: it is long-running.
+
 ### Output structure
 
 ```

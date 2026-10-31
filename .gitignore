@@ -55,3 +55,7 @@ docker/Caddyfile.generated
 
 # handoff: local session state, not for committing
 .handoff/state.env
+
+# /spec-orchestrate: per-FR worktrees and run state
+.claude/worktrees/
+.claude/orchestration/
