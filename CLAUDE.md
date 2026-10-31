@@ -33,8 +33,12 @@ are technology-agnostic; do not edit them per-feature.
 - **Subagents** (`.claude/agents/`): `business-analyst`, `architect`, `team-lead`, `dev-manager`,
   `dev`. Invoke with the Task tool (`subagent_type: <name>`) or `@<name>`. `dev-manager` delegates
   to `dev` via the Task tool; `dev` is a leaf executor and never spawns subagents.
+  `fr-verifier` (sonnet; lint, build, i18n gate and fixer) and `code-reviewer` (opus, read-only)
+  are the gates used by `/spec-orchestrate`.
 - **Slash commands** (`.claude/commands/`): `/project-architecture`, `/component-overview`,
-  `/create-store`, `/dev-manager-delegator`, `/todo`, `/update-task`, `/caveman`.
+  `/create-store`, `/dev-manager-delegator`, `/spec-delegate` (one FR, current checkout, commits),
+  `/spec-orchestrate` (every FR of a requirement, one worktree + PR per FR), `/todo`,
+  `/update-task`, `/caveman`.
 - **Skills** (`.claude/skills/`): auto-discovered, loaded on demand by description. Angular skills
   (component, signals, forms, http, routing, di, directives, testing, ssr, tooling,
   data-flow-orchestrator) plus `typescript-es2022`, `playwright-testing`, `github-actions`, and
