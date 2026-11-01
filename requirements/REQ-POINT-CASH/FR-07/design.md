@@ -1,156 +1,138 @@
-# System Design: FR-07 - Operator Transfer Flow: Form, Confirmation and Success Screen
+# System Design: FR-07 - Operator Cash Collection Flow: Form, Confirmation and Success Screen
+
+> **Rewritten 2026-10-31** against `../backend_contract.md`. Operators can only **collect cash**
+> (no source tabs, no terminal), only at an **active** working point; the confirmation note says
+> the entry cannot be cancelled. Conventions: FR-01 §0. Write-side toolkit from FR-05.
 
 ## 1. Architectural Overview
 
-The operator transfer flow is two full-screen routes under `cash`:
+The operator collection flow is two full-screen routes under `cash`:
 
-* `cash/transfer?source=CASH|CARD_TERMINAL` is the **form** screen.
-* `cash/transfer/done` is the **success** (receipt) screen.
+* `cash/collect` — the **form** screen (source fixed to Cash drawer).
+* `cash/collect/done` — the **success** (receipt) screen.
 
-Both are flagged in route metadata as "full-screen", so `OperatorLayoutComponent` hides the bottom nav
-for them. The flow reuses the shared pieces defined for the admin: the create-transfer command
-`POST /api/finance/bank-transfers` via `BankTransferCommandStore` (FR-05), the
-`BankTransferConfirmDialogComponent` (FR-05, operator variant with the "instant, admin-only cancel"
-note and a "Cancel" button), the `BankTransferErrorHandler` (FR-04/FR-05), the shared amount
-validators (FR-05), and `PointCashStore` (FR-02) for the per-source balances. As in FR-06, the operator
-never names the point: the point interceptor adds `X-Point-Slug` for the working point.
+Both carry a `fullScreen` route flag, so `OperatorLayoutComponent` hides the bottom nav. The flow
+reuses the shared pieces from FR-03/FR-05: `RunningShiftStore` for the available amount (the
+running shift's expected cash — operators cannot read positions), `FinanceConfirmDialogComponent`
+(operator variant), `IdempotentAttempt`, `PointMoneyErrorClassifier`, the amount validators, and
+`PointFinanceService.recordCollection(write, null)` over `POST /api/finance/collections` ([MAIN]).
+As everywhere in the operator app, the interceptor adds `X-Point-Slug`; the operator never names
+the point.
 
-Two navigation guarantees are designed in:
+The collection response carries everything the receipt needs (`amount`, `recordedAt`,
+`cashPosition`), so the success screen shows backend figures, not UI arithmetic. Three navigation
+guarantees are designed in, and FR-08 reuses them for shift closure:
 
-1. **Back from the success screen must not resubmit or restore the form.** The success screen is
-   entered with *history replacement*, so the form entry is removed from history. Its data comes from
-   a transient root-scoped `BankTransferReceiptStore` that is consumed once. A reload, or a direct
-   visit without a receipt, redirects to `cash`.
-2. **A point switch while the form is open returns the operator to `cash`.** `PointSwitchRefreshService`
-   is extended to treat `cash/transfer/**` like single-rental routes: it navigates instead of
-   re-creating the outlet.
+1. **Back from the success screen never resubmits or restores the form** — the success route is
+   entered with history replacement, and its data comes from a transient root-scoped
+   `FinanceReceiptStore` that is consumed once; a reload or direct visit without a receipt
+   redirects to `cash`.
+2. **A point switch on any `cash/**` sub-route returns to `cash`** — `PointSwitchRefreshService`
+   navigates instead of re-creating the outlet.
+3. **The flow cannot start for a non-active point or without a running shift** — the form screen
+   re-checks on entry and sends the operator back to `cash`.
 
 ## 2. Impacted Components
 
-* **Operator routing (modified):** Adds children under `cash`: `transfer` (`OperatorBankTransferComponent`)
-  and `transfer/done` (`OperatorTransferSuccessComponent`), both with route data
-  `{ fullScreen: true }`. The `done` route has an activation guard that redirects to `cash` when
-  `BankTransferReceiptStore` holds no receipt.
-* **`OperatorLayoutComponent` (Operator, modified):** Derives `hideBottomNav` from the deepest
-  activated route's `fullScreen` flag, re-evaluated on each navigation end, and does not render the
-  bottom nav when the flag is set. The toolbar stays visible, including the point switcher, so a
-  switch is still possible and is handled by the next item.
-* **`PointSwitchRefreshService` (Operator, modified):** Its "navigate instead of refresh" rule is
-  extended so that when the current URL is `cash/transfer` or `cash/transfer/done`, it navigates to
-  `/cash`. The form targeted the previous point, and the Cash screen then loads for the new point.
-* **`OperatorBankTransferComponent` (Operator, new, smart):** Provides a component-scoped
-  `PointCashStore` and loads the snapshot (null slug, interceptor-scoped). It reads the preselected
-  source from the `source` query parameter, defaulting to CASH and rejecting invalid values. It
-  renders:
-  * a back arrow that navigates to `cash` without transferring;
-  * source tabs "Cash X" / "Terminal Y" (shared segmented tabs, state mode). Switching tabs **clears
-    the amount** and re-binds the max validator to the new source balance;
-  * a large amount input (decimal keypad, two-decimal restriction, required, > 0, ≤ selected
-    balance);
-  * an "All" shortcut;
-  * "Remaining: X" and the destination "Bank account" under the input;
-  * the primary button "Transfer X BYN" (formatted live from the amount, disabled while invalid).
-
-  If the snapshot reports `pointStatus ≠ ACTIVE`, the screen does not allow the flow. It shows the
-  existing operator point-error copy and navigates back to `cash`. This covers deep links and stale
-  entry; FR-06 already disables the buttons. On submit it opens `BankTransferConfirmDialogComponent`
-  with `{ showInstantNote: true, backLabel: 'cancel', execute: () => BankTransferCommandStore.create(write, null) }`.
-* **`OperatorTransferSuccessComponent` (Operator, new):** Reads and then clears the receipt from
-  `BankTransferReceiptStore`. It shows the title "Transferred to bank", the amount, the source, the
-  destination "Bank account", the transfer time (local time of `transferredAt`) and the remaining
-  balance (`sourceBalanceAfter`). "Done" navigates to `cash` with history replacement. The device or
-  browser back action also lands on `cash`, because the form entry was replaced.
-* **`BankTransferReceiptStore` (Shared, new, root, transient):** Holds `BankTransfer | null` plus the
-  point name. API: `set(receipt)`, `take()` (returns the receipt and clears it), `has()`. It is
-  in-memory only and never persisted.
-* **`BankTransferConfirmDialogComponent`, `BankTransferCommandStore`, `BankTransferErrorHandler`,
-  amount validators (Shared, from FR-04/FR-05):** Reused unchanged. Operator invocations pass a null
-  slug.
-* **`Labels` / i18n:** "Transfer to bank" (screen title), "Transfer {amount} BYN" (button template),
-  the instant/admin-only-cancel note, "Cancel", "Transferred to bank", "Time", "Done". The source,
-  destination, remaining and validation messages are shared with FR-03/FR-05.
+* **Operator routing (modified):** Children under `cash`: `collect` (`OperatorCashCollectionComponent`)
+  and `collect/done` (`OperatorFinanceReceiptComponent`), both `{ fullScreen: true }`; `done` has
+  an activation guard that redirects to `cash` when `FinanceReceiptStore` holds no receipt.
+* **`OperatorLayoutComponent` (Operator, modified):** `hideBottomNav` derived from the deepest
+  activated route's `fullScreen` flag after each navigation; the toolbar (with the point switcher)
+  stays.
+* **`PointSwitchRefreshService` (Operator, modified):** When the current URL is under `cash/` with
+  a further segment (`collect`, `collect/done`, `close-shift`, `close-shift/done`), navigate to
+  `/cash` instead of bumping the epoch; any held receipt is discarded.
+* **`OperatorCashCollectionComponent` (Operator, new, smart):** Provides a component-scoped
+  `RunningShiftStore` and an `IdempotentAttempt`; loads the shift (null slug). Entry guard: shift
+  `none` or `CurrentPointStore.current().status ≠ ACTIVE` → existing operator point-error copy
+  (inactive case) and navigate to `cash`. Renders back arrow (→ `cash`, nothing sent), "Cash
+  drawer" with available = `expectedCash`, a large amount input (decimal keypad, two-decimal
+  restriction, required, > 0, ≤ available), "All", "Remaining: X" and the destination "Bank
+  account" (**A13**), primary "Hand in X BYN" (live amount; disabled while invalid). Submit opens
+  `FinanceConfirmDialogComponent` with rows Amount / From ("{point} · Cash drawer") / To / Remaining,
+  note "Instant and cannot be cancelled — if it was a mistake, an administrator corrects it",
+  Back / "Hand in", and `execute = recordCollection({ key, amount }, null)`.
+* **`OperatorFinanceReceiptComponent` (Operator, new; also FR-08):** Takes the receipt from
+  `FinanceReceiptStore` and renders by kind. COLLECTION: title "Cash handed in", amount, source
+  Cash drawer, destination "Bank account", time (local time of `recordedAt`), remaining in the
+  drawer (`cashPosition`). "Done" → `cash` with history replacement.
+* **`FinanceReceiptStore` (Shared, new, root, transient; also FR-08):** Holds one
+  `FinanceReceipt | null`. API `set(receipt)`, `take()` (returns and clears), `has()`. Memory only,
+  never persisted, cleared on point switch.
+* **Reused unchanged (Shared, FR-03/FR-05):** `RunningShiftStore`, `FinanceConfirmDialogComponent`,
+  `IdempotentAttempt`, `PointMoneyErrorClassifier`, amount validators, `PointFinanceService`.
+* **`Labels` / i18n:** "Hand in cash" (title), "Hand in {amount} BYN", "Hand in cash?",
+  the operator note, "Hand in", "Cash handed in", "Time", "Remaining in drawer", "Done". Source,
+  destination, remaining and validation copy shared with FR-05.
 
 ## 3. Abstract Data Schema Changes
 
-* **No new persisted entities.** The command uses `BankTransferWrite` (FR-05) and the response is
-  `BankTransfer` (FR-04). This FR depends on `transferredAt` and `sourceBalanceAfter` being present in
-  the create response.
-* **Entity: `BankTransferReceipt`** *(UI-only transient value)*
-  * **Attributes:** `transfer: BankTransfer`, `pointName`. It lives only between a successful create
-    and the success screen being read.
-* **Entity: `OperatorTransferFormState`** *(UI-only)*
-  * **Attributes:** `source: PointAccountType`, `amount: Money | null`, `submitting: boolean`.
-    Changing the source resets `amount`.
+* **No new persisted entities.** Command `CashCollectionWrite`, result `CashCollection` (FR-05).
+* **Entity: `FinanceReceipt`** *(UI-only transient, discriminated)*
+  * `COLLECTION`: `{ pointName, collection: CashCollection }`.
+  * `SHIFT_CLOSURE`: defined in FR-08.
+* **Entity: `OperatorCollectionFormState`** *(UI-only)* — `amount: Money | null`, `available:
+  Money`, `submitting`.
 * **Relations:** No changes.
 
 ## 4. Component Contracts & Payloads
 
-* **Interaction: `OperatorBankTransferComponent` -> `PointCashStore` -> `bikerental-backend`**
-  * **Protocol:** REST, `GET /api/finance/point-accounts/snapshot?date={businessDate}` (FR-02).
-    `X-Point-Slug` comes from the interceptor.
-  * **Payload Changes:** None. `cash.balance`, `terminal.balance` and `pointStatus` are used.
-* **Interaction: `BankTransferConfirmDialogComponent` -> `BankTransferCommandStore` -> `bikerental-backend`**
-  * **Protocol:** REST, `POST /api/finance/bank-transfers` (FR-05 contract), with `X-Point-Slug` from
-    the interceptor and `SUPPRESS_ERROR_NOTIFICATION`.
-  * **Payload Changes:** Request `{ sourceAccount, amount }`. Response 201 `BankTransfer`. Errors as in
-    FR-05: `finance.insufficient_balance` (+ `params.available`), `finance.point.inactive`,
-    `finance.point.permanently_closed`, 409 `scope.not_established`, 400 validation. The backend must
-    accept the operator role for its own working point.
-* **Interaction: `OperatorBankTransferComponent` -> Router -> `OperatorTransferSuccessComponent`**
-  * **Protocol:** In-app navigation with history replacement
-  * **Payload Changes:** No URL payload. The receipt is passed through `BankTransferReceiptStore`, so
-    amounts never appear in the URL or history state.
+* **Interaction: `RunningShiftStore` -> backend**
+  * **Protocol:** REST, `GET /api/finance/shifts/current` — **[MAIN]** (FR-03/FR-06 contract),
+    header from the interceptor.
+* **Interaction: `FinanceConfirmDialogComponent` -> `PointFinanceService` -> backend (collection)**
+  * **Protocol:** REST, `POST /api/finance/collections` — **[MAIN]**, header from the interceptor,
+    `SUPPRESS_ERROR_NOTIFICATION`.
+  * **Payload Changes:** Request `{ idempotencyKey, amount }`; response 201 `{ transactionId,
+    pointSlug, amount, cashPosition, recordedAt }`. Errors (FR-05 §4): 422
+    `finance.point.insufficient_cash` (`params.cashPosition`), 422 `finance.point.inactive`
+    (**[GAP]** assumed, see FR-05) / `finance.point.permanently_closed`, 409
+    `scope.not_established`, 400 validation.
+* **Interaction: `OperatorCashCollectionComponent` -> Router -> `OperatorFinanceReceiptComponent`**
+  * **Protocol:** In-app navigation with history replacement; no URL payload — the receipt travels
+    through `FinanceReceiptStore`, so amounts never appear in the URL or history state.
 * **Interaction: `OperatorLayoutComponent` <- route metadata**
-  * **Protocol:** In-process route data
-  * **Payload Changes:** New flag `fullScreen: boolean` (default false).
+  * **Protocol:** In-process route data; flag `fullScreen` (default false).
 
 ## 5. Updated Interaction Sequence
 
-1. On the Cash screen (FR-06) the operator taps the cash card's "Transfer to bank" and navigates to
-   `cash/transfer?source=CASH`. The bottom nav is hidden.
-2. `OperatorBankTransferComponent` loads the snapshot. The tabs show "Cash 850.00" (selected) and
-   "Terminal 120.00". The amount is empty, with "Remaining: 850.00" and "Bank account".
-3. The operator types 300, then switches to Terminal. The amount clears and the screen shows
-   "Remaining: 120.00". Entering 150 shows "exceeds available balance" and disables the button.
-4. The operator returns to Cash and taps "All". The amount is 850.00, "Remaining: 0.00" is shown and
-   the button reads "Transfer 850.00 BYN".
-5. The operator enters 400.00 and taps "Transfer 400.00 BYN". The confirm dialog shows 400.00, From
-   "Центр · Cash", To "Bank account", Remaining 450.00 and the instant/admin-only note.
-6. **Cancel in dialog:** the dialog closes, 400.00 is still entered and nothing was sent.
-7. **Transfer:** the dialog's button shows progress and the request is sent once. The backend
-   validates and writes atomically, then returns `BankTransfer` (`transferredAt`,
-   `sourceBalanceAfter = 450.00`).
-8. The dialog closes with `ok`. The component calls `BankTransferReceiptStore.set(...)` and navigates
-   to `cash/transfer/done` with history replacement.
-9. The success screen shows 400.00, Cash, "Bank account", time and remaining 450.00. "Done" (or the
-   back action) goes to `cash`, which is re-created and loads fresh data: 450.00 and the new
-   `BANK_TRANSFER` movement.
-10. **Back arrow on the form:** navigates to `cash`. No request was made.
-11. **Unhappy, insufficient balance:** the handler returns `INSUFFICIENT_BALANCE`. The component calls
-    `PointCashStore.refresh()` (or uses `params.available`), so the Cash tab shows 250.00. The amount
-    is re-validated and the server error is shown under the input. The operator stays on the form.
-12. **Unhappy, point not active:** `finance.point.inactive` or `permanently_closed`. The existing
-    localized operator point-error copy is shown via `NotificationService`, and the screen navigates
-    to `cash`, which shows the disabled buttons.
-13. **Unhappy, `scope.not_established`:** the global interceptor has already warned once and marked
-    `OperatingScopeStore` (it does so regardless of suppression). The handler does **not** toast again
-    and only navigates to `cash`, which shows the "No working point" guidance.
-14. **Unhappy, other errors:** localized notification via the ProblemDetail toolkit. The form stays,
-    with the amount kept.
-15. **Point switched while on the form or success screen:** `PointSwitchRefreshService` navigates to
-    `/cash` for the new point and the receipt is discarded.
-16. **Direct load or reload of `cash/transfer/done`:** there is no receipt, so the guard redirects to
-    `cash`.
+1. On the Cash screen (FR-06) the operator taps "Hand in cash" → `cash/collect`; bottom nav hidden.
+2. The shift loads: "Cash drawer 850.00", empty amount, "Remaining: 850.00", "Bank account", no
+   Terminal option (Scenario 1).
+3. "All" → 850.00, "Remaining: 0.00", button "Hand in 850.00 BYN" (Scenario 2); 900 → exceeds
+   message, button disabled (Scenario 3).
+4. 400.00 → "Hand in 400.00 BYN" → confirmation with 400.00, from "Центр · Cash drawer", to "Bank
+   account", remaining 450.00 and the note (Scenario 4).
+5. **Back:** dialog closes, amount kept, nothing sent (Scenario 5).
+6. **Hand in:** single-shot `execute` with `IdempotentAttempt.keyFor({400.00})`; progress shown.
+7. 201 → `FinanceReceiptStore.set({ COLLECTION, ... })` → replace-navigate to `cash/collect/done`:
+   400.00, Cash drawer, Bank account, recorded time, 450.00 remaining (Scenario 4).
+8. "Done" (or device back) → `cash` (re-created, fresh shift: expected 450.00 and a "Cash
+   collection −400.00" line, Scenario 6).
+9. **Back arrow on the form:** → `cash`, nothing sent (Scenario 7).
+10. **Lost answer:** network error → notification, form stays; the retried Confirm reuses the key →
+    exactly one collection, success screen (Scenario 8).
+11. **Insufficient cash:** `available = params.cashPosition` (250.00), validator re-bound, server
+    error under the amount; operator stays (Scenario 9).
+12. **Point not active / permanently closed:** existing operator point-error copy via
+    `NotificationService` → navigate to `cash` (button disabled after the status refresh,
+    Scenario 10).
+13. **`scope.not_established`:** already warned and marked globally; no second toast → navigate to
+    `cash` (guidance).
+14. **Other errors:** localized notification; form stays with the amount.
+15. **Point switch on the form or success screen:** `PointSwitchRefreshService` → `/cash` for the
+    new point; receipt discarded.
+16. **Direct load / reload of `cash/collect/done`:** no receipt → guard redirects to `cash`.
 
 ## 6. Non-Functional Architecture Decisions
 
-* **Security & Auth:** The backend enforces the working-point scope, the ACTIVE rule and the balance
-  limit. The performer is taken from the token, and every transfer is audited with operator, point,
-  source, amount and time. The amount never appears in the URL or browser history. The receipt is
-  memory-only and cleared on read. There is no cancel action anywhere in the operator app.
-* **Scale & Performance:** The target is a transfer within 2 s on mobile, with a progress indicator on
-  the confirm button. One request per transfer, and no offline queuing: if the network is down, the
-  request fails visibly and is never deferred by the service worker. Finance POSTs bypass any
-  service-worker caching. Double submission is prevented by the single-shot confirm command. Backend
-  per-account serialization and the optional idempotency key (FR-05) cover retries on unreliable
-  mobile connections.
+* **Security & Auth:** The backend enforces the working-point scope, the point-status rule and the
+  cash limit; the performer comes from the token, and each collection is audited with operator,
+  point, amount and time. Amounts never enter the URL or history; the receipt is memory-only and
+  cleared on read. No cancellation and no settlement exist in operator code.
+* **Scale & Performance:** Target < 2 s on mobile with a progress indicator; one request per
+  confirmed attempt; no offline queuing — a network failure is visible and never deferred by the
+  service worker; finance POSTs bypass any service-worker caching. Retries on flaky networks are
+  safe through the body `idempotencyKey` (FR-05 reuse rule).
+* **Delivery split:** Fully unblocked after regeneration ([MAIN]).

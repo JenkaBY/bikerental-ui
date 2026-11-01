@@ -1,130 +1,103 @@
-# System Design: FR-04 - Admin Инкассации Tab: Transfer History and Cancellation
+# System Design: FR-04 - Admin Инкассации Tab: Collection and Settlement History
+
+> **Rewritten 2026-10-31** against `../backend_contract.md`. Cancellation is withdrawn; the tab is
+> a **read-only** history. The previous `BankTransfer` entity, `BankTransferHistoryStore`, status
+> filter, row menu and cancellation endpoint are removed. Conventions: FR-01 §0.
 
 ## 1. Architectural Overview
 
-The Bank transfers tab (`/points/:slug/transfers`) shows a server-paged, filterable history of one
-point's transfers to the bank. It also adds the only **write action that returns money to a point**:
-an immediate, irreversible, admin-only cancellation. This FR defines the persisted **`BankTransfer`**
-entity, which FR-05 and FR-07 create. It also defines two admin-only backend contracts: a history query
-and a cancel command.
+There is no transfer resource in the backend: cash collections and terminal settlements are ledger
+movements of kinds `COLLECTION` and `TERMINAL_SETTLEMENT`. The tab (`/points/:slug/transfers`) is
+therefore a **preset of the FR-02 building blocks**: a tab-scoped `PointMovementsStore` on the
+point's **BANK** position (**A9**, **A13** — the movements view has no kind filter, and both
+operations credit the point's bank position), with the shared period filter and newest/oldest
+order, rendered by `PointMovementTableComponent` in its `history` preset. Any other kind found on
+that position (e.g. an adjustment correcting a collection) is shown with its own type name.
 
-Tab state lives in `BankTransferHistoryStore`, provided on the FR-02 host (`PointDetailPageComponent`),
-so the active filters survive switching away and back. Loading is lazy and starts on the first entry
-to the tab. Whenever point money changes, whether from a cancellation here or a transfer created
-through the FR-05 dialog opened from this tab's header button, the tab calls
-`PointMoneyRefreshFacade.notifyChanged()` (FR-02). That refreshes the header pills and the Cash tab
-data, and the history store reloads its current page with filters kept. Errors from the cancel command
-are handled locally (global toast suppressed) and mapped through the ProblemDetail toolkit. One new
-error code is registered.
+Above the list, a new shared `PointPeriodResultsStore` shows the period totals from
+`GET /api/finance/point-results?pointSlug` (**A11**). Both reads are [B-FR08]. The header actions
+reuse `PointMoneyActionAvailability` (FR-03) and open the FR-05 dialogs; success triggers
+`PointMoneyRefreshFacade.notifyChanged()`, which reloads list, totals and header pills, and the
+Cash tab picks up fresh data when it is next mounted.
 
 ## 2. Impacted Components
 
-* **`PointTransfersTabComponent` (Admin, new, smart):** Tab route `transfers`. It renders the status
-  filter chips (All / Completed / Cancelled, single-select), the shared date-range filter, the history
-  table with a paginator, and a header "Transfer to bank" button (source fixed to CASH). It evaluates
-  the button with `BankTransferAvailability` (FR-03) from the point status and
-  `PointCashStore.cashBalance`, and opens `BankTransferDialogComponent` (FR-05) with the same handling
-  of the close result as FR-03. It reloads when `PointMoneyRefreshFacade.revision` changes.
-* **`BankTransferTableComponent` (Admin, new, dumb):** Columns: Date (date-time with performer name
-  beneath), Amount, Source ("Cash drawer" / "Terminal account"), Status pill (Completed / Cancelled;
-  a cancelled row adds "canceller · cancelled-at" as secondary text) and a row actions menu. The
-  "Cancel transfer" item is rendered only when `status = COMPLETED`, and is disabled for the row whose
-  id equals `cancellingId`. Output: `cancel(transferId)`. Empty state: "No transfers match the
-  filters".
-* **`BankTransferStatusPillComponent` (Admin, new, dumb):** Localized status pill. Completed uses the
-  positive styling and Cancelled uses the muted/warn styling.
-* **`BankTransferHistoryStore` (Shared, new, feature-scoped on the FR-02 host):** State: `pointSlug`,
-  `status: ALL | COMPLETED | CANCELLED`, `fromDate`, `toDate`, `pageIndex`, `pageSize`,
-  `items: BankTransfer[]`, `total`, `loading`, `cancellingId: string | null`. API: `init(slug)`,
-  `setStatus()` / `setRange()` (each resets `pageIndex` to 0 and reloads), `loadPage(i)`, `reload()`
-  (keeps filters and page), and `cancel(transferId)`, which returns an observable that completes
-  with the updated transfer and always clears `cancellingId`.
-* **`BankTransferMapper` (Shared, new):** Converts generated transfer responses into `BankTransfer` and
-  `BankTransferFilter` into query params. FR-05 extends it with `toRequest`.
-* **`BankTransferErrorHandler` (Shared, new, root):** Classifies a parsed `ApiError` from any transfer
-  command into `ALREADY_CANCELLED | INSUFFICIENT_BALANCE | POINT_NOT_ACTIVE | NOT_FOUND | OTHER` and
-  resolves the localized copy. This FR uses `ALREADY_CANCELLED`, `NOT_FOUND` and `OTHER`, and FR-05 /
-  FR-07 add their branches to the same handler.
-* **`ErrorCode` / `ErrorMessages` catalogue (Shared):** Registers `finance.bank_transfer.already_cancelled`
-  as "This transfer has already been cancelled." with a Russian translation.
-* **`Labels` / i18n:** Chips, column headers, "Completed", "Cancelled", "Cancelled by {name} ·
-  {date-time}", "Cancel transfer", "Transfer cancelled: {amount}" (success), and the empty state.
+* **`PointTransfersTabComponent` (Admin, new, smart):** Route `transfers`. Provides tab-scoped
+  `PointMovementsStore` (`{ slug, BANK, current month to date, newest, size 50 }`) and
+  `PointPeriodResultsStore`. Renders the header actions "Collect cash" / "Record settlement" with
+  availability from `PointMoneyActionAvailability` (collection: point active and cash > 0, using
+  the FR-03 interim cash rule; settlement: not permanently closed and terminal > 0), the period
+  filter (shared with the totals — one period drives both), the order toggle, the totals strip, the
+  "mistakes are corrected by an adjustment" note, the table and the paginator. Reloads both stores
+  on period change (page 0) and on the facade revision (period and order kept).
+* **`PointPeriodResultsStore` (Shared, new, feature-scoped):** State `pointSlug`, `period`,
+  `results: PointPeriodResults | null`, `loading`, `failed`. API `load(pointSlug, period)`,
+  `reload()`. Uses `PointFinanceService.getResults(period, pointSlug)` (FR-01).
+* **`PointResultsStripComponent` (Admin, new, dumb):** "Collected X" and "Terminal settlements Y";
+  em-dash on failure.
+* **`PointMovementTableComponent` (Admin, FR-02):** preset `history` — date-time with recorded-by
+  name beneath (`StaffNameResolver`), localized type ("Cash collection" / "Terminal settlement" /
+  any other kind name), amount as magnitude; no actions column; empty state "No collections or
+  settlements in this period".
+* **`PointPeriodFilterComponent` / `PointPeriodRule` (FR-02):** reused unchanged; invalid period →
+  message, no request (Scenario 4).
+* **`PointMoneyActionAvailability` (FR-03):** reused unchanged.
+* **Removed from the previous design:** `BankTransfer`, `BankTransferStatus`,
+  `BankTransferHistoryStore`, the status chips, the row actions menu, the cancellation command and
+  its error branch.
+* **`Labels` / i18n:** Tab content labels, "Collected", "Terminal settlements", the adjustment note,
+  empty state. Kind names are shared with FR-02.
 
 ## 3. Abstract Data Schema Changes
 
-* **Entity: `BankTransfer`** *(new persisted entity, owned by the backend)*
-  * **Attributes:** `id`, `pointSlug`, `sourceAccount: PointAccountType` (CASH | CARD_TERMINAL),
-    `amount: Money` (> 0, 2 decimals), `status: BankTransferStatus`, `transferredAt: DateTime`,
-    `performedBy: { userId, displayName }`, `cancelledAt: DateTime | null`,
-    `cancelledBy: { userId, displayName } | null`, and `sourceBalanceAfter: Money` (source account
-    balance right after the transfer, set at creation and used by FR-07). There is no destination
-    attribute, because the destination is always the single business bank ledger (`BANK_TRANSFER`).
-* **Entity: `BankTransferStatus`** *(new enumeration)*
-  * **Values:** `COMPLETED`, `CANCELLED`. There is no pending or in-transit state. The only allowed
-    transition is `COMPLETED` to `CANCELLED`, it is terminal, and it happens at most once.
-* **Entity: `BankTransferFilter`** *(UI query model)*
-  * **Attributes:** `pointSlug`, `status | null` (null = All), `fromDate | null`, `toDate | null`
-    (inclusive business dates), `page`, `size`, sort fixed to `transferredAt desc`.
-* **Relations:** `Point (1) — (n) BankTransfer`. Each `BankTransfer` produces one `BANK_TRANSFER`
-  `PointMovement` (FR-02) on its source account, and a cancellation adds one
-  `BANK_TRANSFER_CANCELLED` movement that credits the same account. In the ledger, the cancellation
-  is a compensating double-entry (bank ledger credit, point account debit). The original entry is
-  never mutated.
+* **No new persisted entities.** History rows are `PointMovement` (FR-02) on the BANK position;
+  totals are `PointPeriodResults` (FR-01) with `pointSlug` set.
+* **Entity: `PointMovement` usage:** `kind` ∈ {`COLLECTION`, `TERMINAL_SETTLEMENT`} expected, any
+  other kind displayed as-is; `signedAmount` shown as magnitude; `recordedAt` is the only date
+  shown — the bank-statement settlement date is not in the movement row (**A14**).
+* **Relations:** `Point (1) — (n) PointMovement[BANK]`. A correction is a separate `ADJUSTMENT`
+  movement; nothing is ever edited or removed.
 
 ## 4. Component Contracts & Payloads
 
-* **Interaction: `BankTransferHistoryStore` -> `bikerental-backend` (history)**
-  * **Protocol:** REST, `GET /api/finance/bank-transfers?pointSlug={slug}&status={COMPLETED|CANCELLED}&fromDate=&toDate=&page=&size=&sort=transferredAt,desc` *(proposed, admin-only)*
-  * **Payload Changes:** Response `{ items: [ { id, pointSlug, sourceAccount, amount, status, transferredAt, performedBy: { userId, displayName }, cancelledAt, cancelledBy: { userId, displayName } | null, sourceBalanceAfter } ], totalItems, pageRequest }`.
-    `status` is omitted for "All", and the date params are omitted when empty.
-* **Interaction: `BankTransferHistoryStore` -> `bikerental-backend` (cancel)**
-  * **Protocol:** REST, `POST /api/finance/bank-transfers/{transferId}/cancellation` *(proposed,
-    admin-only)*, with no request body. Sent with `SUPPRESS_ERROR_NOTIFICATION`.
-  * **Payload Changes:** Success 200 returns the updated `BankTransfer` (`status = CANCELLED`,
-    `cancelledAt`, `cancelledBy` = calling admin). Errors (ProblemDetail): 409
-    `finance.bank_transfer.already_cancelled`, 404 `shared.resource.not_found`, 403 for non-admins.
-    Cancellation is **not** refused for non-active points.
-* **Interaction: `PointTransfersTabComponent` -> `BankTransferDialogComponent` (FR-05)**
-  * **Protocol:** In-process dialog
-  * **Payload Changes:** Same open/close contract as in FR-03, with `source = CASH`.
-* **Interaction: `PointTransfersTabComponent` -> `PointMoneyRefreshFacade`**
-  * **Protocol:** In-process notification
-  * **Payload Changes:** `notifyChanged()` after a successful cancel or transfer.
+* **Interaction: `PointMovementsStore` (history) -> backend**
+  * **Protocol:** REST, `GET /api/finance/point-movements?pointSlug={slug}&position=BANK&from&to&page&size&sort=recordedAt,{desc|asc}`
+    — **[B-FR08]** (FR-02 contract).
+  * **Payload Changes:** None beyond FR-02. **A9/A13:** if collections turn out not to credit the
+    point's BANK position, or BANK carries other kinds in volume, this preset must change to a kind
+    filter **[GAP: a `kind` filter on point-movements would remove the assumption]**.
+* **Interaction: `PointPeriodResultsStore` -> backend (period totals)**
+  * **Protocol:** REST, `GET /api/finance/point-results?from={date}&to={date}&pointSlug={slug}` —
+    **[B-FR08]**, admin only.
+  * **Payload Changes:** Expected: collected cash and terminal settlements as separate totals for
+    the point and period (**A11**). Failure → standard notification, `failed`, list unaffected.
+* **Interaction: `PointTransfersTabComponent` -> FR-05 dialogs**
+  * **Protocol:** In-process dialog; open/close contract as in FR-03 §4.
 
 ## 5. Updated Interaction Sequence
 
-1. Admin opens the Bank transfers tab. `BankTransferHistoryStore.init(slug)` runs (no-op if already
-   initialized for this slug) and loads page 0 with status All and no dates.
-2. The table renders the rows newest first.
-3. Admin selects "Cancelled" (or sets a date range). The store resets to page 0 and reloads with the
-   new filter.
-4. **Cancel, happy path:** the admin chooses "Cancel transfer" on a Completed row. The store sets
-   `cancellingId`, which disables that row's item and guards against double clicks, and calls the
-   cancel endpoint. On 200 the store reloads the current page with filters kept, the tab shows a
-   localized success toast and calls `PointMoneyRefreshFacade.notifyChanged()`. The header Cash pill
-   goes 100.00 → 500.00 and the Cash tab data refreshes. `cancellingId` is cleared.
-5. **Cancel, already cancelled elsewhere:** 409 `finance.bank_transfer.already_cancelled`.
-   `BankTransferErrorHandler` resolves the localized error, which is toasted via
-   `NotificationService.error`. The store reloads and the row shows Cancelled with the other admin's
-   name/time. A `notifyChanged()` is issued as well, because the balances changed due to the other
-   admin's cancellation.
-6. **Cancel, not found / other error:** localized error toast and the list reloads.
-7. **Transfer from this tab:** the header button is enabled (active point, cash > 0). The FR-05
-   dialog closes with `completed`, `notifyChanged()` runs, and the history reloads the current page
-   with filters kept. The new Completed row appears on top if it matches the filters.
-8. **Non-active point:** the header button is disabled with the "only from an active point" hint.
-   History, filters and the cancel actions still work.
-9. **Unhappy, history load fails:** global toast and an error/empty state in the table.
+1. Admin opens the Collections tab on 28.10. Period 01.10–28.10 is preselected; list and totals
+   load in parallel; names resolve once per visit.
+2. Three rows render newest first with date + recorded-by, type and amount, no actions (Scenario 1);
+   totals show "Collected 700.00" and "Terminal settlements 830.50" (Scenario 2).
+3. Admin sets 10.10–20.10 → `PointPeriodRule` passes → both stores reload; list on page 1
+   (Scenario 3). A span over 366 days → localized message, nothing sent (Scenario 4).
+4. No cancel action exists; the note explains corrections by adjustment (Scenario 5).
+5. "Collect cash" (active point) → FR-05 dialog → `done` → `notifyChanged()` → header pill
+   decreases, list reloads with the new row on top, "Collected" increases (Scenario 6).
+6. Temporarily closed point → collection disabled with hint, settlement enabled; history and totals
+   still load (Scenario 7). Permanently closed → both disabled with hints (Scenario 8).
+7. **Unhappy — list fails / endpoint not deployed:** notification and list error state; totals and
+   actions stay usable.
+8. **Unhappy — totals fail:** em-dashes in the strip; list unaffected.
+9. **Empty period:** empty state; totals as reported (0.00).
 
 ## 6. Non-Functional Architecture Decisions
 
-* **Security & Auth:** History and cancel are admin-only on the backend (403 for operators), and the
-  operator app never calls them. Cancellation is an audited state transition. The backend records
-  `cancelledBy` and `cancelledAt` from the authenticated principal and server clock, never from the
-  request. The UI logs only the transfer id and error code, never names.
-* **Scale & Performance:** History is paged server-side and filtered by `pointSlug`, status and date.
-  The backend should index on (point, transferredAt). Cancel is idempotency-safe because a repeat
-  attempt yields 409 `already_cancelled` and never moves money twice. The backend must run the status
-  check and the compensating ledger entry atomically, as one transaction with a row lock or optimistic
-  version, so two concurrent cancels cannot both succeed. The UI blocks a second click on the same row
-  through `cancellingId`.
+* **Security & Auth:** Admin-only views server-side; read-only tab apart from opening the FR-05
+  dialogs. Names displayed, never logged.
+* **Scale & Performance:** Server-side paging (≤ 100, default 50), one list + one totals request
+  per period change; totals come from the backend, never summed from the visible page.
+* **Delivery split:** Entirely dependent on [B-FR08] for data; header actions depend on FR-05
+  (collection [MAIN], settlement [B-FR06]). The tab shell, period filter wiring and availability
+  can be built now and show failure states until the backend lands.

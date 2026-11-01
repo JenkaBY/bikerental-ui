@@ -1,145 +1,167 @@
-# System Design: FR-05 - Admin Transfer-to-Bank Dialog with Confirmation
+# System Design: FR-05 - Admin Cash Collection and Terminal Settlement Dialogs
+
+> **Rewritten 2026-10-31** against `../backend_contract.md`. The single "transfer to bank" command
+> is replaced by two backend operations: **cash collection** ([MAIN]) and **terminal settlement**
+> ([B-FR06]). Idempotency is a body field, not a header. Conventions: FR-01 §0.
 
 ## 1. Architectural Overview
 
-This FR adds the **create-transfer command**, the single write path that moves money out of a point.
-It is exposed as a backend operation callable by both admins and operators (FR-07 reuses it). In the
-admin app it is reached through a two-stage dialog flow opened from the Cash tab (FR-03) or the Bank
-transfers tab (FR-04):
+This FR adds the two write paths that move money out of a point, plus the shared write-side
+toolkit reused by the operator flow (FR-07) and shift closure (FR-08):
 
-1. **`BankTransferDialogComponent`** (admin) collects one input, the amount. The source is fixed by
-   the opener and the destination is the generic "Bank account".
-2. **`BankTransferConfirmDialogComponent`** (shared, also used by FR-07) is stacked over the first
-   dialog. It summarizes amount / From / To / Remaining and **executes** the command, owning the
-   in-progress state on its "Transfer" button. "Back" closes only the confirmation, so the amount
-   stays in the transfer dialog underneath.
+* **`PointMoneyMoveDialogComponent`** (admin) — one dialog shell opened in one of two fixed modes,
+  **COLLECTION** (source Cash drawer, available = CASH position) or **SETTLEMENT** (source Terminal
+  account, available = CARD_TERMINAL position, plus a required settlement date). FR-03/FR-04 refer
+  to these modes as the cash collection dialog and the terminal settlement dialog.
+* **`FinanceConfirmDialogComponent`** (shared) — generic stacked confirmation: a list of
+  label/value rows, a note, Back and a confirm button, and a deferred single-shot `execute`
+  command that owns the in-progress state. Used for collection and settlement (here), operator
+  collection (FR-07) and shift closure (FR-08).
+* **`IdempotentAttempt`** (shared) — the key lifecycle for the mandatory body `idempotencyKey`.
+* **`PointMoneyErrorClassifier`** (shared) — maps parsed ProblemDetails to UI outcomes and reads
+  the current position from the error `params`.
 
-The point is sent in `X-Point-Slug`, following the FR-01 addressing convention and matching the admin
-deposit dialog, which also passes the point explicitly. The request is sent with the global toast
-suppressed. The outcome is classified by the shared `BankTransferErrorHandler` (introduced in FR-04)
-into insufficient balance (inline field error plus refreshed available balance), point not active
-(notify, close both dialogs, caller refreshes status) or other (notify). The dialog is opened inside
-the point detail scope, so it shares the host's `PointCashStore`. On success the caller triggers
-`PointMoneyRefreshFacade.notifyChanged()` (FR-02).
+Writes go through `PointFinanceService` (FR-01) with the point in `X-Point-Slug` set explicitly by
+the admin, always with the global notification suppressed (errors are handled in the dialog). On
+success the caller tab calls `PointMoneyRefreshFacade.notifyChanged()` (FR-02); the collection
+response already carries the new `cashPosition`, which is patched into `PointPositionsStore`
+immediately so the header updates even while positions ([B-FR08]) are not yet available.
 
 ## 2. Impacted Components
 
-* **`BankTransferDialogComponent` (Admin, new):** Input data
-  `{ pointSlug, pointName, source: PointAccountType, available: Money }`. It renders the point name,
-  the source label (read-only), the destination "Bank account" (read-only), the available balance, an
-  amount field, an "All" shortcut (sets the amount to available) and a live "Remaining: X" hint
-  (`available − amount`, or `available` while the amount is empty or invalid). Submit is disabled
-  while the form is invalid. On submit it opens the confirm dialog with an `execute` command bound to
-  the current amount. Close result:
-  `{ outcome: 'completed', transfer: BankTransfer } | { outcome: 'pointNotActive' } | undefined`.
-* **`BankTransferConfirmDialogComponent` (Shared, new, used by FR-05 and FR-07):** Data:
-  `{ amount, pointName, source, remaining, showInstantNote: boolean, backLabel: 'back' | 'cancel', execute: () => Observable<BankTransfer> }`.
-  It renders the title "Transfer to bank?", amount, From ("{point} · {source}"), To ("Bank account"),
-  Remaining, and optionally the note "The transfer is instant; only an administrator can cancel it"
-  (operator). Buttons: Back/Cancel (closes with `undefined`) and Transfer. Transfer runs `execute`
-  exactly once: the button is disabled with a progress indicator and the dialog cannot be dismissed
-  while the request runs. It closes with `{ ok: true, transfer }` or `{ ok: false, error: ApiError }`.
-* **`BankTransferCommandStore` (Shared, new, root):** `create(write: BankTransferWrite, pointSlug | null)`
-  sends `POST /api/finance/bank-transfers` with `X-Point-Slug` when a slug is given (admin), or
-  relies on the operator point interceptor when the slug is null (FR-07). It always applies
-  `SUPPRESS_ERROR_NOTIFICATION`.
-* **`BankTransferMapper` (Shared, extended from FR-04):** Adds `toRequest(write)`.
-* **`BankTransferErrorHandler` (Shared, from FR-04, extended):** Adds the branches
-  `INSUFFICIENT_BALANCE` (code `finance.insufficient_balance`, optional `params.available`) and
-  `POINT_NOT_ACTIVE` (codes `finance.point.inactive`, `finance.point.permanently_closed`,
-  `scope.not_established`). All other codes become `OTHER`, resolved via `ErrorMessageResolver`.
-* **Transfer amount validation (Shared):** It reuses the existing two-decimal input restriction and
-  generalizes the existing withdraw "amount ceiling" validator into a reusable
-  `maxAmountValidator(available)`. Together with required and greater-than-zero, this produces the
-  `FormErrorMessages` entries `amountRequired`, `amountPositive`, `amountExceedsAvailable` (with the
-  available amount) and `amountMaxTwoDecimals`.
-* **`PointCashStore` (Shared, from FR-02):** Used by the dialog on `INSUFFICIENT_BALANCE` to
-  `refresh()` and re-read the source balance. This also refreshes the header pills.
-* **Callers `PointCashTabComponent` (FR-03) and `PointTransfersTabComponent` (FR-04):** Open the
-  dialog within the point detail scope and handle the close result. `completed` triggers a localized
-  success toast with the amount plus `notifyChanged()`. `pointNotActive` triggers `notifyChanged()`
-  plus `PointAdminStore.loadOne(slug)`.
-* **`ErrorCode` / `ErrorMessages` (Shared):** The existing `finance.insufficient_balance`,
-  `finance.point.inactive` and `finance.point.permanently_closed` are reused. The point-inactive copy
-  is reviewed so it reads correctly for transfers, for example "Transfers are only possible from an
-  active point." If the backend introduces dedicated codes instead (see §4), they are registered with
-  localized messages.
-* **`Labels` / i18n:** Dialog title, "From", "To", "Bank account", "Available", "All", "Remaining: X",
-  "Back", "Transfer", the confirmation title, and "Transferred to bank: X".
+* **`PointMoneyMoveDialogComponent` (Admin, new):** Data `{ operation: COLLECTION | SETTLEMENT,
+  pointSlug, pointName, available: Money }`. Renders point name, read-only source and destination
+  ("Bank account", **A13**), available amount, amount field, "All", live "Remaining: X"
+  (`available − amount`, or `available` while invalid), and — SETTLEMENT only — a settlement-date
+  picker (required, max = today from `TimeStore`, no minimum, **A12**). Submit disabled while
+  invalid; submit opens `FinanceConfirmDialogComponent`. Close result `{ outcome: done, operation,
+  amount, newPosition | null } | { outcome: statusChanged } | undefined`.
+* **`FinanceConfirmDialogComponent` (Shared, new):** Data `{ title, rows: [{ label, value }],
+  note, backLabel, confirmLabel, execute }`. Confirm runs `execute` once; while running the button
+  shows progress, is disabled, and backdrop/escape close is blocked. Closes with `{ ok: true,
+  result } | { ok: false, error: ApiError }`; Back closes with `undefined`. Collection/settlement
+  rows: Amount, From ("{point} · {source}"), To ("Bank account"), [Settlement date], Remaining;
+  note: "This entry cannot be cancelled; a mistake is corrected by an adjustment."
+* **`IdempotentAttempt` (Shared, new, per-dialog/per-screen instance):** `keyFor(payload)` returns
+  the current key when the payload is unchanged and the previous outcome was **indeterminate**
+  (network failure, timeout, 5xx); otherwise generates a new UUID. `settle(outcome)` records
+  whether the last answer was definitive (2xx or 4xx). Rationale: a retry of a lost request reuses
+  the key (backend returns the first result, Scenario 7); a changed amount after an
+  insufficient-funds refusal is a new attempt. The existing deposit/withdraw dialogs keep one key
+  per dialog; this refinement is local to point-money writes.
+* **`PointMoneyErrorClassifier` (Shared, new):** Outcomes:
+  * `INSUFFICIENT_CASH` — `finance.point.insufficient_cash`; `currentPosition =
+    params.cashPosition`.
+  * `INSUFFICIENT_TERMINAL` — `finance.point.insufficient_terminal` ([B-FR06]); `currentPosition =
+    params.cardTerminalPosition`.
+  * `POINT_NOT_ACTIVE` — `finance.point.inactive` (collection; **[GAP]** see §4).
+  * `POINT_PERMANENTLY_CLOSED` — `finance.point.permanently_closed`.
+  * `SCOPE` — `scope.not_established` (operator; FR-07).
+  * `SHIFT_NOT_RUNNING` — added by FR-08.
+  * `VALIDATION` — field errors, bound with `applyServerErrors` (amount, settlement date).
+  * `OTHER` — copy via `ErrorMessageResolver`.
+* **`PointFinanceService` (Shared, extended):** `recordCollection(write, pointSlug | null)` →
+  `CashCollection`; `recordSettlement(write, pointSlug)` → `TerminalSettlement`. Header per §0.2;
+  `SUPPRESS_ERROR_NOTIFICATION` always.
+* **`PointFinanceMapper` (Shared, extended):** request/response mapping for both commands.
+* **Amount and date validation (Shared):** reuse the two-decimal restriction; generalize the
+  existing withdraw ceiling into `maxAmountValidator(available)` (re-bindable when `available`
+  changes); add `notFutureDateValidator(today)`. `FormErrorMessages`: `amountRequired`,
+  `amountPositive`, `amountExceedsAvailable`, `amountMaxTwoDecimals`, `settlementDateRequired`,
+  `settlementDateFuture`.
+* **`ErrorCode` / `ErrorMessages` (Shared):** register `finance.point.insufficient_cash` ([MAIN])
+  and `finance.point.insufficient_terminal` ([B-FR06]) as domain codes with localized copy; review
+  the copy of `finance.point.inactive` ("Cash can be collected only at an active point") and
+  `finance.point.permanently_closed` ("The point is permanently closed") so it reads for these
+  operations.
+* **Callers `PointCashTabComponent` (FR-03), `PointTransfersTabComponent` (FR-04):** open the
+  dialog with `available` from `PointPositionsStore` (CASH falls back to the running shift's
+  expected cash, FR-03 interim rule). `done` → success toast with amount + `applyPosition` (if
+  `newPosition`) + `notifyChanged()`. `statusChanged` → `notifyChanged()` +
+  `PointAdminStore.loadOne(slug)`.
+* **`Labels` / i18n:** dialog titles "Collect cash" / "Record settlement", "From", "To", "Bank
+  account", "Available", "All", "Remaining: X", "Settlement date", confirmation titles, the
+  cannot-be-cancelled note, "Back", "Confirm", success copy "Collected: X" / "Settlement recorded:
+  X".
 
 ## 3. Abstract Data Schema Changes
 
-* **Entity: `BankTransferWrite`** *(new command model)*
-  * **Attributes:** `sourceAccount: PointAccountType`, `amount: Money` (> 0, ≤ 2 decimals). The point
-    is not in the body: it is carried by `X-Point-Slug`. The performer is not in the body either: the
-    backend takes it from the authenticated principal.
-* **Entity: `BankTransfer`** (defined in FR-04). The create response returns a complete instance with
-  `status = COMPLETED`, `transferredAt` and `sourceBalanceAfter`.
-* **Relations:** Creating a transfer writes, atomically, one `BankTransfer`, one double-entry ledger
-  transaction (credit the point's source account, debit the business `BANK_TRANSFER` ledger) and one
-  `BANK_TRANSFER` `PointMovement` (FR-02).
+* **Entity: `CashCollectionWrite`** *(new command model)* — `idempotencyKey` (UUID), `amount`
+  (> 0, ≤ 2 decimals). Point via header; performer from the token.
+* **Entity: `CashCollection`** *(new result model)* — `transactionId`, `pointSlug`, `amount`,
+  `cashPosition` (after the collection), `recordedAt`.
+* **Entity: `TerminalSettlementWrite`** *(new command model, [B-FR06])* — `idempotencyKey`,
+  `amount`, `settlementDate` (business date from the bank statement, **A12**).
+* **Entity: `TerminalSettlement`** *(new result model, [B-FR06], assumed by analogy)* —
+  `transactionId`, `pointSlug`, `amount`, `settlementDate`, `cardTerminalPosition | null`,
+  `recordedAt`.
+* **Entity: `PointMoneyOperation`** *(UI enum)* — `COLLECTION`, `SETTLEMENT`.
+* **Relations:** a collection is one ledger transaction CASH → BANK of the same point (**A13**) and
+  appears as a `COLLECTION` movement; a settlement is CARD_TERMINAL → BANK, a
+  `TERMINAL_SETTLEMENT` movement. Both are final.
 
 ## 4. Component Contracts & Payloads
 
-* **Interaction: `BankTransferCommandStore` -> `bikerental-backend` (create transfer)**
-  * **Protocol:** REST, `POST /api/finance/bank-transfers` *(proposed; admin and operator)*, header
-    `X-Point-Slug: {slug}`, sent with `SUPPRESS_ERROR_NOTIFICATION`.
-  * **Payload Changes:** Request `{ sourceAccount: 'CASH' | 'CARD_TERMINAL', amount }`. Response
-    201 `BankTransfer` (FR-04 shape). Errors (ProblemDetail):
-    * 422 `finance.insufficient_balance`: amount > current source balance, with `params.available`
-      (current balance) **requested from backend**.
-    * 422 `finance.point.inactive` / `finance.point.permanently_closed`: the point is not ACTIVE.
-    * 400 validation (`fieldErrors` on `amount`): amount ≤ 0 or more than 2 decimals.
-    * 409 `scope.not_established`, or 403 point outside the caller's scope (operator only).
-* **Interaction: `BankTransferDialogComponent` -> `BankTransferConfirmDialogComponent`**
-  * **Protocol:** In-process stacked dialog
-  * **Payload Changes:** As listed in §2. `execute` is a deferred command, so nothing is sent until
-    Transfer is clicked.
-* **Interaction: Caller tab -> `BankTransferDialogComponent`**
-  * **Protocol:** In-process dialog
-  * **Payload Changes:** Open/close contract as in FR-03 §4.
+* **Interaction: `PointFinanceService` -> backend (cash collection)**
+  * **Protocol:** REST, `POST /api/finance/collections` — **[MAIN]** (regenerate the client),
+    OPERATOR + ADMIN, header `X-Point-Slug`.
+  * **Payload Changes:** Request `{ idempotencyKey, amount }`. Response 201 `{ transactionId,
+    pointSlug, amount, cashPosition, recordedAt }`; a repeated key returns the first result.
+    Errors: 422 `finance.point.insufficient_cash` `params { pointSlug, cashPosition, amount }`;
+    400 validation (amount); 422 `finance.point.permanently_closed`. **[GAP]** the contract does
+    not state that a collection at a temporarily closed point is refused (`finance.point.inactive`
+    is assumed); if the backend accepts it, the "active only" rule is UI-only and the
+    `POINT_NOT_ACTIVE` branch stays as a safety net.
+* **Interaction: `PointFinanceService` -> backend (terminal settlement)**
+  * **Protocol:** REST, `POST /api/finance/terminal-settlements` — **[B-FR06]**, ADMIN only,
+    header `X-Point-Slug`.
+  * **Payload Changes:** Request `{ idempotencyKey, amount, settlementDate }` (field names
+    assumed). Response 201 (shape assumed above). Errors: 422 `finance.point.insufficient_terminal`
+    `params { pointSlug, cardTerminalPosition, amount }`; 422 `finance.point.permanently_closed`;
+    400 validation (amount, settlement date — shown under the field, **A12**); 403 for non-admins.
+* **Interaction: `PointMoneyMoveDialogComponent` -> `FinanceConfirmDialogComponent`**
+  * **Protocol:** In-process stacked dialog; `execute` is deferred, nothing is sent before Confirm.
 
 ## 5. Updated Interaction Sequence
 
-1. Admin clicks "Transfer to bank" on the cash card (button enabled per FR-03 availability). The tab
-   opens `BankTransferDialogComponent` with `{ center, "Центр", CASH, 850.00 }`.
-2. The dialog shows "Центр", "Cash drawer", "Bank account", available 850.00, an empty amount and
-   "Remaining: 850.00".
-3. Admin clicks "All", so the amount becomes 850.00 and the hint reads "Remaining: 0.00". If the admin
-   types 900, the `amountExceedsAvailable` error appears and submit is disabled.
-4. Admin enters 400.00 and submits. The confirm dialog opens: 400.00, From "Центр · Cash drawer",
-   To "Bank account", Remaining 450.00.
-5. **Back:** the confirm dialog closes with `undefined`. The transfer dialog is still open with
-   400.00 and nothing was sent.
-6. **Transfer:** the confirm dialog runs `execute`. Its button shows progress and is disabled, and the
-   backdrop/escape close is blocked.
-7. The backend validates scope, point ACTIVE, amount and balance, then atomically writes the transfer
-   and ledger entries and returns 201 `BankTransfer`.
-8. The confirm dialog closes with `ok`, the transfer dialog closes with `{ completed, transfer }`, and
-   the tab shows the toast "Transferred to bank: 400.00" and calls
-   `PointMoneyRefreshFacade.notifyChanged()`. The cash balance becomes 450.00 on the card and the
-   header pill.
-9. **Unhappy, insufficient balance (Scenario 7):** the confirm dialog closes with `{ ok: false, error }`.
-   The handler returns `INSUFFICIENT_BALANCE`. The transfer dialog calls `PointCashStore.refresh()`
-   (or uses `params.available` if present), updates `available` to 250.00, re-validates the amount and
-   sets the server error under the field. No transfer happened.
-10. **Unhappy, point not active (Scenario 9):** the handler returns `POINT_NOT_ACTIVE`, the localized
-    "Transfers are only possible from an active point" error is shown via `NotificationService`, the
-    transfer dialog closes with `{ pointNotActive }`, and the tab refreshes the point and the snapshot,
-    so the buttons become disabled.
-11. **Unhappy, other (network, 5xx, validation not bound):** localized notification, and the transfer
-    dialog stays open with the amount kept so the admin can retry.
+1. Admin clicks "Collect cash" (enabled per FR-03). Dialog COLLECTION opens with "Центр", Cash
+   drawer, Bank account, available 850.00, empty amount, "Remaining: 850.00" (Scenario 1).
+2. "All" → 850.00, "Remaining: 0.00" (Scenario 2); 900 → `amountExceedsAvailable`, submit disabled
+   (Scenario 3); empty/0 → required/positive once touched (Scenario 4).
+3. Admin enters 400.00 and submits → confirmation: 400.00, From "Центр · Cash drawer", To "Bank
+   account", Remaining 450.00, cannot-be-cancelled note.
+4. **Back:** confirmation closes with `undefined`; the form keeps 400.00; nothing sent (Scenario 6).
+5. **Confirm:** `execute` → `IdempotentAttempt.keyFor({400.00})` → `recordCollection` with header
+   `X-Point-Slug: center`; button shows progress; close blocked.
+6. 201 → both dialogs close with `done`, `newPosition = 450.00`; tab toasts, patches the CASH
+   position, calls `notifyChanged()` (Scenario 5).
+7. **Lost answer (Scenario 7):** network error → `OTHER`, notification, form stays; the next
+   Confirm with the same amount reuses the key → the backend returns the first result → one
+   collection, one success.
+8. **Insufficient cash (Scenario 8):** confirmation closes `{ ok: false }` → `INSUFFICIENT_CASH` →
+   `available = params.cashPosition` (250.00), position patched, max validator re-bound, server
+   error under amount; key rotated (definitive answer).
+9. **Point not active / permanently closed (Scenarios 9, 14):** localized notification, both
+   dialogs close with `statusChanged`; tab reloads the point and positions → disabled buttons.
+10. **Settlement (Scenario 10):** dialog SETTLEMENT; amount 830.50 + date 27.10.2026 →
+    confirmation includes the date → `recordSettlement` → `done`, position patched (if returned),
+    `notifyChanged()`. Missing date → required (Scenario 11); future date not selectable / typed
+    → `settlementDateFuture` (Scenario 12); temporarily closed point → succeeds (Scenario 13);
+    insufficient terminal → `params.cardTerminalPosition` (Scenario 15).
+11. **Validation (400):** field errors bound to amount / settlement date; unmatched messages shown
+    as a summary.
+12. **Other errors:** localized notification; the form stays with values kept.
 
 ## 6. Non-Functional Architecture Decisions
 
-* **Security & Auth:** The backend is authoritative for the balance limit and the ACTIVE rule. UI
-  checks are a convenience only. Performer and time are taken from the token and server clock. The
-  audit record holds performer, point, source, amount and time. Admin requests always name the point
-  explicitly, and there is no implicit default point in admin. Error logs carry only the code, point
-  slug and trace id.
-* **Scale & Performance:** One request per transfer, targeting under 2 s. Double submission is
-  prevented in the UI by the single-shot `execute` and the blocked dialog close. **The backend must
-  serialize check-and-debit per point account** (an atomic conditional update or a row lock) so that
-  two concurrent transfers cannot overdraw a point. An optional client-generated `Idempotency-Key`
-  header is recommended as a backend enhancement against retried requests on flaky networks. It is
-  listed as a gap and not required by this UI.
+* **Security & Auth:** The backend is authoritative for available amounts, point status and the
+  ADMIN-only settlement; UI checks are a convenience. The admin always names the point explicitly;
+  there is no implicit default point. Performer and time come from the token and server clock.
+  Logs carry code, slug and trace id only.
+* **Scale & Performance:** One request per confirmed attempt; double submission blocked by the
+  single-shot `execute`; retries are made safe by the body `idempotencyKey` and the
+  `IdempotentAttempt` reuse rule. The backend serializes check-and-debit per point position.
+* **Delivery split:** Collection mode, the confirm dialog, the idempotency helper, the classifier
+  and the validators are unblocked after regeneration ([MAIN]); settlement mode and the
+  `insufficient_terminal` branch wait for [B-FR06] (build the mode behind the same dialog, enable
+  the "Record settlement" button only once the endpoint exists).
