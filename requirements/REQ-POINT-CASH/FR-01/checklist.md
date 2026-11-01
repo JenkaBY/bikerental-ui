@@ -17,11 +17,11 @@ Ships together with FR-02: task-012 links rows to `/points/:slug`, which FR-02 a
 - [x] `task-013-point-admin-store-drop-master-detail.md`
 - [x] `task-014-i18n-extract-and-russian-translations.md`
 - [x] `task-015-update-overview-docs.md`
-- [ ] `task-016-blocked-backend-generate-api-point-positions-results.md` — BLOCKED: backend FIN-002 FR-08 (`point-positions`, `point-results`) not published
-- [ ] `task-017-blocked-backend-point-finance-mapper-positions-results.md` — BLOCKED: needs task-016
-- [ ] `task-018-blocked-backend-http-point-ledger-reader-positions-results.md` — BLOCKED: needs task-016, task-017
+- [x] `task-016-blocked-backend-generate-api-point-positions-results.md` — regenerated from bike-rental PR 325 + PR 327 (`filterParams`), additive only
+- [x] `task-017-blocked-backend-point-finance-mapper-positions-results.md` — list-shaped positions; results from figures
+- [x] `task-018-blocked-backend-http-point-ledger-reader-positions-results.md` — `HttpPointLedgerReader` for positions and results, `SKIP_POINT_SCOPE` keeps `X-Point-Slug` off
 
-**Next Task:** `task-016-blocked-backend-generate-api-point-positions-results.md` (BLOCKED: backend FIN-002 FR-08)
+**Next Task:** DONE
 
 ## Ad-hoc fixes discovered during the verification stage
 

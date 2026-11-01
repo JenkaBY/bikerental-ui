@@ -33,8 +33,13 @@ export interface PointPeriodResults {
   readonly from: Date;
   readonly to: Date;
   readonly pointSlug: string | null;
+  readonly revenue: Money;
+  readonly corrections: Money;
+  readonly result: Money;
   readonly collected: Money;
+  readonly collectedCount: number | null;
   readonly terminalSettled: Money;
+  readonly terminalSettledCount: number | null;
   readonly total: Money;
 }
 

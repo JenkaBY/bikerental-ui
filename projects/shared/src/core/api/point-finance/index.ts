@@ -2,4 +2,5 @@ export * from './point-ledger-unavailable.error';
 export * from './point-ledger-unavailable.notifier';
 export * from './point-ledger.reader';
 export * from './unavailable-point-ledger.reader';
+export * from './http-point-ledger.reader';
 export * from './point-finance.service';

@@ -597,6 +597,46 @@ export interface TransactionResponse {
   recordedAt: string;
 }
 
+/** Request body for closing the running cash shift of the working point */
+export interface CloseShiftRequest {
+  /** Client-generated UUID sent with every request to ensure exactly-once submission */
+  idempotencyKey: string;
+  /** The shift the operator saw; it only confirms the point's running shift */
+  shiftId: string;
+  /** Cash counted in the till; zero or more */
+  countedAmount: number;
+}
+
+/** The shift that was closed */
+export interface ClosedShift {
+  shiftId: string;
+  pointSlug: string;
+  sequence: number;
+  openedAt: string;
+  closedAt: string;
+  closedBy: string;
+  openingAmount: number;
+  expectedAmount: number;
+  countedAmount: number;
+  /** Counted minus expected: negative for a shortfall, positive for a surplus */
+  discrepancy: number;
+  /** The correction recorded for the difference; absent when the count matched */
+  discrepancyTransactionId?: string;
+}
+
+/** The shift that started when the previous one closed */
+export interface NextShift {
+  shiftId: string;
+  /** The counted amount of the closed shift */
+  openingAmount: number;
+}
+
+/** Result of closing a cash shift: the closed shift and the shift now running */
+export interface ShiftClosureResponse {
+  shift: ClosedShift;
+  nextShift: NextShift;
+}
+
 /** Request body for recording a fund deposit */
 export interface RecordDepositRequest {
   /** Client-generated UUID sent with every request to ensure exactly-once submission */
@@ -611,6 +651,30 @@ export interface RecordDepositRequest {
   source?: 'RENTAL';
   /** Identifier within the source (e.g. rental id when source is RENTAL) */
   sourceId?: string;
+}
+
+/** Request body for recording a cash collection run from the working point's till into its bank */
+export interface CollectionRequest {
+  /** Client-generated UUID sent with every request to ensure exactly-once submission */
+  idempotencyKey: string;
+  /** Cash handed over to the collector; must not exceed the point's cash position */
+  amount: number;
+}
+
+/** Result of recording a cash collection run */
+export interface CollectionResponse {
+  /** Transaction UUID */
+  transactionId: string;
+  /** Slug of the point whose till and bank moved */
+  pointSlug: string;
+  /** Shift the run belongs to */
+  shiftId: string;
+  /** Collected amount */
+  amount: number;
+  /** The point's cash position after the run, i.e. what stays in the till */
+  cashPosition: number;
+  /** Timestamp when the run was recorded */
+  recordedAt: string;
 }
 
 export interface AdjustmentRequest {
@@ -1063,6 +1127,167 @@ export interface TransactionDetailsResponse {
   balances: TransactionBalancesResponse;
   /** All double-entry legs of this transaction with their movement and running balance */
   entries: Array<TransactionDetailEntryResponse>;
+}
+
+export interface PageClosedShift {
+  items?: Array<ClosedShift>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
+}
+
+/** Cash moved through the till by one kind of movement; payouts and collection runs are negative, OTHER is any cash movement recorded without a shift */
+export interface Movement {
+  type: 'DEPOSIT' | 'PAYOUT' | 'COLLECTION' | 'OTHER';
+  amount: number;
+}
+
+/** The running cash shift of the working point and the cash its till should hold */
+export interface RunningShiftResponse {
+  /** Shift UUID; sent back when the shift is closed */
+  shiftId: string;
+  /** Slug of the point the shift belongs to */
+  pointSlug: string;
+  /** Ordinal of the shift within its point */
+  sequence: number;
+  /** When the shift started */
+  openedAt: string;
+  /** Cash counted at the close of the previous shift */
+  openingAmount: number;
+  /** Cash movements of the shift, one entry per movement type, signed by their effect on the till */
+  movements: Array<Movement>;
+  /** Cash the till should hold now: the point's cash position */
+  expectedCash: number;
+}
+
+export interface PointResultsParams {
+  /** First day of the period (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Last day of the period (inclusive), format yyyy-MM-dd; at most 366 days after from */
+  to: string;
+}
+
+/** One figure of a point's result over a period */
+export interface PointFigureResponse {
+  /** REVENUE, CORRECTIONS (signed, a cost is negative), RESULT = REVENUE + CORRECTIONS, COLLECTIONS and TERMINAL_SETTLEMENTS (money moved into the bank; transfers, not part of RESULT) */
+  type: 'REVENUE' | 'CORRECTIONS' | 'RESULT' | 'COLLECTIONS' | 'TERMINAL_SETTLEMENTS';
+  /** Amount of the figure over the period */
+  amount: number;
+  /** Number of transfers; present only for COLLECTIONS and TERMINAL_SETTLEMENTS */
+  count?: number;
+}
+
+/** Result of one point over a period */
+export interface PointResultResponse {
+  /** Point the figures belong to; the caller resolves its name */
+  pointSlug: string;
+  /** One entry per figure type */
+  figures: Array<PointFigureResponse>;
+}
+
+/** Current positions of one point */
+export interface PointLedgerResponse {
+  /** Point the positions belong to; the caller resolves its name and status */
+  pointSlug: string;
+  /** One entry per position the point holds */
+  positions: Array<Position>;
+  /** Latest collection run of the point; absent when it has none. Details: GET /api/finance/transactions/{transactionId} */
+  lastCollectionId?: string;
+}
+
+/** Balance of one position of a point */
+export interface Position {
+  /** Position of the point */
+  position: 'CASH' | 'CARD_TERMINAL' | 'BANK' | 'REVENUE' | 'CORRECTIONS';
+  /** Current balance; corrections are signed, a cost to the point is negative */
+  balance: number;
+  /** Latest change of this position */
+  updatedAt: string;
+}
+
+export interface PointMovementsParams {
+  /** First day of the period (inclusive), format yyyy-MM-dd */
+  from: string;
+  /** Last day of the period (inclusive), format yyyy-MM-dd; at most 366 days after from */
+  to: string;
+  /** Movement kinds to keep (repeatable); every kind when omitted */
+  kind?: Array<
+    | 'DEPOSIT'
+    | 'ADJUSTMENT'
+    | 'WITHDRAWAL'
+    | 'HOLD'
+    | 'CAPTURE'
+    | 'RELEASE'
+    | 'PENALTY'
+    | 'COLLECTION'
+    | 'TERMINAL_SETTLEMENT'
+    | 'SHIFT_DISCREPANCY'
+  >;
+}
+
+export interface PagePointMovementResponse {
+  items?: Array<PointMovementResponse>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
+}
+
+/** One movement of a point position */
+export interface PointMovementResponse {
+  /** Transaction that moved the position */
+  transactionId: string;
+  /** Moment the transaction was recorded */
+  recordedAt: string;
+  /** Transaction type of the movement */
+  kind:
+    | 'DEPOSIT'
+    | 'ADJUSTMENT'
+    | 'WITHDRAWAL'
+    | 'HOLD'
+    | 'CAPTURE'
+    | 'RELEASE'
+    | 'PENALTY'
+    | 'COLLECTION'
+    | 'TERMINAL_SETTLEMENT'
+    | 'SHIFT_DISCREPANCY';
+  /** Signed effect on the position: negative when the position decreases */
+  amount: number;
+  /** Balance of the position after this movement, also when kind narrows the page */
+  runningBalance?: number;
+  /** Id of the recording user; the caller resolves names */
+  recordedBy: string;
+  /** Customer the movement belongs to; absent for point-only movements */
+  customerId?: string;
+  /** Rental the movement settles; absent when it settles none */
+  rentalId?: number;
+  /** Cash shift the movement belongs to; absent outside a shift */
+  shiftId?: string;
+}
+
+/** Result of every point over a period and the business total */
+export interface PointResultsResponse {
+  /** First day of the period (inclusive) */
+  from: string;
+  /** Last day of the period (inclusive) */
+  to: string;
+  /** Points ordered by slug; closed points are included */
+  points: Array<PointResultResponse>;
+  /** One entry per figure type, summed over every point */
+  totals: Array<PointFigureResponse>;
+}
+
+/** Every point's current positions and the business total of each position */
+export interface PointPositionsResponse {
+  /** Points ordered by slug; inactive and permanently closed points are included */
+  points: Array<PointLedgerResponse>;
+  /** One entry per position: its balance summed over every point */
+  totals: Array<PositionTotal>;
+}
+
+/** Balance of one position summed over every point */
+export interface PositionTotal {
+  /** Position */
+  position: 'CASH' | 'CARD_TERMINAL' | 'BANK' | 'REVENUE' | 'CORRECTIONS';
+  /** Sum of the position over every point */
+  balance: number;
 }
 
 export interface TransactionHistoryFilterParams {

@@ -30,9 +30,9 @@ Backend "FR-06/FR-08" are FIN-002 numbers, not the UI FR numbers of this require
 | `GET /api/finance/shifts/current` | operator (+ admin, **A1**) | `X-Point-Slug` header | [MAIN] | 03, 06, 07, 08 |
 | `POST /api/finance/shifts/current/closures` | operator (+ admin, **A1**) | `X-Point-Slug` header | [MAIN] | 08 |
 | `POST /api/finance/terminal-settlements` | admin only | `X-Point-Slug` header | [B-FR06] | 05 |
-| `GET /api/finance/point-positions` | admin only | none (all points) | [B-FR08] | 01, 02, 03, 04, 05 |
-| `GET /api/finance/point-movements` | admin only | `pointSlug` query | [B-FR08] | 02, 03, 04 |
-| `GET /api/finance/point-results` | admin only | optional `pointSlug` query | [B-FR08] | 01, 04 |
+| `GET /api/finance/points/positions`, `GET /api/finance/points/{pointSlug}/positions` | admin only | none / `pointSlug` path | [B-FR08] PR 325 | 01, 02, 03, 04, 05 |
+| `GET /api/finance/points/{pointSlug}/positions/{position}/movements` | admin only | `pointSlug`, `position` path | [B-FR08] PR 325 | 02, 03, 04 |
+| `GET /api/finance/points/results`, `GET /api/finance/points/{pointSlug}/results` | admin only | none / `pointSlug` path | [B-FR08] PR 325 | 01, 04 |
 
 Verified in the source on 2026-10-31: the generated finance client contains only deposits,
 withdrawals, adjustments, transactions and customer balances. **Collections and shifts are missing
@@ -45,8 +45,9 @@ withdrawals, adjustments, transactions and customer balances. **Collections and 
   exactly like the existing deposits/withdrawals. Operator: added by the existing point
   interceptor from `CurrentPointStore`. Admin: set explicitly per request by the wrapper (the admin
   app registers no point interceptor), the same way `CustomerFinanceStore` already does.
-* **Admin-only read views** (`point-movements`, `point-results`) name the point in the `pointSlug`
-  query parameter; `point-positions` takes no point.
+* **Admin-only read views** (`/api/finance/points/**`) name the point in the path and answer
+  `400 scope.caller_supplied` when the request carries `X-Point-Slug`; `HttpPointLedgerReader` sets
+  the `SKIP_POINT_SCOPE` context token so the point interceptor leaves the header off.
 * No payload ever carries a point in the body, and no payload carries a performer — the backend
   takes the performer from the token.
 
@@ -159,20 +160,22 @@ All entities are owned and persisted by the backend; the UI holds read-only proj
 ## 4. Component Contracts & Payloads
 
 * **Interaction: `PointMoneyOverviewStore` -> `PointFinanceService` -> backend (positions overview)**
-  * **Protocol:** REST, `GET /api/finance/point-positions` — **[B-FR08]**, admin only, no
-    parameters.
-  * **Payload Changes:** Expected response (assumed shape, final once published): one entry per
-    point with its positions per kind (CASH, CARD_TERMINAL, BANK, REVENUE, CORRECTIONS) and, later,
-    the point status; plus business-wide totals per kind. Errors: 401/403 and any other failure
+  * **Protocol:** REST, `GET /api/finance/points/positions` — **[B-FR08]** (bike-rental PR 325),
+    admin only, no parameters.
+  * **Payload Changes:** `{points: [{pointSlug, positions: [{position, balance, updatedAt}],
+    lastCollectionId?}], totals: [{position, balance}]}`; positions are CASH, CARD_TERMINAL, BANK,
+    REVENUE, CORRECTIONS; no point status (it comes from the point registry). Errors: 401/403 and any other failure
     take the standard path (global notification) and set `positionsFailed`. Until the endpoint
     exists, the placeholder reader fails with `PointLedgerUnavailableError`; the stores route it to
     `PointLedgerUnavailableNotifier`, which shows one warning toast ("Point balances are not
     available yet", repeats within 4 s suppressed) instead of an error (Scenario 8 behaviour).
 * **Interaction: `PointMoneyOverviewStore` -> `PointFinanceService` -> backend (month results)**
-  * **Protocol:** REST, `GET /api/finance/point-results?from={date}&to={date}` — **[B-FR08]**,
-    admin only, no `pointSlug` (business-wide).
-  * **Payload Changes:** Expected response: period totals of cash collections and terminal
-    settlements (**A11**); no count is assumed. Errors as above, setting `resultsFailed` only.
+  * **Protocol:** REST, `GET /api/finance/points/results?from={date}&to={date}` — **[B-FR08]**
+    (bike-rental PR 325), admin only, business-wide.
+  * **Payload Changes:** `{from, to, points: [{pointSlug, figures}], totals: [{type, amount,
+    count?}]}`, figure types REVENUE, CORRECTIONS, RESULT, COLLECTIONS, TERMINAL_SETTLEMENTS
+    (`count` only on the two transfers); the list uses `totals`, a single point (`/points/{pointSlug}/results`)
+    its `figures`. The query object is `filterParams` (bike-rental PR 327). Errors as above, setting `resultsFailed` only.
 * **Interaction: `PointsPageComponent` -> `PointAdminStore` -> `RentalPointsService`**
   * **Protocol:** REST, `GET /api/points` (size 100, sorted by name) — **[GEN]**.
   * **Payload Changes:** None.

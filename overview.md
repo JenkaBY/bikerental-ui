@@ -382,7 +382,7 @@ PURPOSE: Single domain-typed entry point to point-finance reads (positions overv
 RESPONSIBILITIES:
 
 - Expose `getPositions()` and `getResults(period, pointSlug | null)` with domain models only.
-- Delegate the not-yet-published FIN-002 FR-08 reads to the `POINT_LEDGER_READER` token, whose default `UnavailablePointLedgerReader` fails with `PointLedgerUnavailableError` without an HTTP call, so consumers show their em-dash / failure state until the backend ships.
+- Delegate the FIN-002 FR-08 reads to the `POINT_LEDGER_READER` token (`HttpPointLedgerReader`); the `UnavailablePointLedgerReader` placeholder (fails with `PointLedgerUnavailableError`, one warning toast via `PointLedgerUnavailableNotifier`) stays available for environments without the endpoints.
   SOURCE: `projects/shared/src/core/api/point-finance/point-finance.service.ts`
   CALLS:
 - PointLedgerReader (`POINT_LEDGER_READER`) — `positions()`, `results()`.
@@ -391,12 +391,12 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: PointLedgerReader
 TYPE: API
-PURPOSE: Swappable reader for `GET /api/finance/point-positions` and `GET /api/finance/point-results` (FIN-002 FR-08, admin only).
+PURPOSE: Swappable reader for `GET /api/finance/points/positions` and `GET /api/finance/points/results` (FIN-002 FR-08, bike-rental PR 325, admin only).
 RESPONSIBILITIES:
 
 - Provide the domain-typed read contract behind the `POINT_LEDGER_READER` injection token (root factory).
-- Ship as `UnavailablePointLedgerReader` until the endpoints appear in `/v3/api-docs/all`; the HTTP implementation replaces only the token factory.
-  SOURCE: `projects/shared/src/core/api/point-finance/point-ledger.reader.ts`, `projects/shared/src/core/api/point-finance/unavailable-point-ledger.reader.ts`
+- `HttpPointLedgerReader` calls the generated `FinanceService` with the `SKIP_POINT_SCOPE` context token (no `X-Point-Slug`) and maps via `PointFinanceMapper`; `results(period, null)` reads the business totals, `results(period, slug)` one point's figures.
+  SOURCE: `projects/shared/src/core/api/point-finance/point-ledger.reader.ts`, `projects/shared/src/core/api/point-finance/http-point-ledger.reader.ts`, `projects/shared/src/core/api/point-finance/unavailable-point-ledger.reader.ts`
   CALLS:
 - NONE
   CALLED_BY:

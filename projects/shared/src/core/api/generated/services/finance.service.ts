@@ -24,12 +24,25 @@ import {
   RecordWithdrawalRequest,
   RequestOptions,
   TransactionResponse,
+  CloseShiftRequest,
+  ShiftClosureResponse,
   RecordDepositRequest,
+  CollectionRequest,
+  CollectionResponse,
   AdjustmentRequest,
   TransactionFilterParams,
   Pageable,
   PageTransactionSummaryResponse,
   TransactionDetailsResponse,
+  PageClosedShift,
+  RunningShiftResponse,
+  PointResultsParams,
+  PointResultResponse,
+  PointLedgerResponse,
+  PointMovementsParams,
+  PagePointMovementResponse,
+  PointResultsResponse,
+  PointPositionsResponse,
   TransactionHistoryFilterParams,
   PageCustomerTransactionResponse,
   CustomerAccountBalancesResponse,
@@ -90,6 +103,50 @@ export class FinanceService {
     return this.httpClient.post(url, recordWithdrawalRequest, requestOptions);
   }
 
+  closeShift(
+    closeShiftRequest: CloseShiftRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<ShiftClosureResponse>;
+  closeShift(
+    closeShiftRequest: CloseShiftRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<ShiftClosureResponse>>;
+  closeShift(
+    closeShiftRequest: CloseShiftRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<ShiftClosureResponse>>;
+  closeShift(
+    closeShiftRequest: CloseShiftRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/shifts/current/closures`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, closeShiftRequest, requestOptions);
+  }
+
   recordDeposit(
     recordDepositRequest: RecordDepositRequest,
     observe?: 'body',
@@ -132,6 +189,50 @@ export class FinanceService {
     };
 
     return this.httpClient.post(url, recordDepositRequest, requestOptions);
+  }
+
+  recordCollection(
+    collectionRequest: CollectionRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<CollectionResponse>;
+  recordCollection(
+    collectionRequest: CollectionRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<CollectionResponse>>;
+  recordCollection(
+    collectionRequest: CollectionRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<CollectionResponse>>;
+  recordCollection(
+    collectionRequest: CollectionRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/collections`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, collectionRequest, requestOptions);
   }
 
   applyAdjustment(
@@ -254,6 +355,331 @@ export class FinanceService {
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/finance/transactions/${transactionId}`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getShiftHistory(
+    page?: number,
+    size?: number,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PageClosedShift>;
+  getShiftHistory(
+    page?: number,
+    size?: number,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PageClosedShift>>;
+  getShiftHistory(
+    page?: number,
+    size?: number,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PageClosedShift>>;
+  getShiftHistory(
+    page?: number,
+    size?: number,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/shifts`;
+
+    let params = new HttpParams();
+    if (page != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, page, 'page');
+    }
+    if (size != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, size, 'size');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getRunningShift(
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<RunningShiftResponse>;
+  getRunningShift(
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<RunningShiftResponse>>;
+  getRunningShift(
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<RunningShiftResponse>>;
+  getRunningShift(
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/shifts/current`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getPointResult(
+    pointSlug: string,
+    filterParams: PointResultsParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PointResultResponse>;
+  getPointResult(
+    pointSlug: string,
+    filterParams: PointResultsParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PointResultResponse>>;
+  getPointResult(
+    pointSlug: string,
+    filterParams: PointResultsParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PointResultResponse>>;
+  getPointResult(
+    pointSlug: string,
+    filterParams: PointResultsParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/points/${pointSlug}/results`;
+
+    let params = new HttpParams();
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getPointLedger(
+    pointSlug: string,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PointLedgerResponse>;
+  getPointLedger(
+    pointSlug: string,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PointLedgerResponse>>;
+  getPointLedger(
+    pointSlug: string,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PointLedgerResponse>>;
+  getPointLedger(
+    pointSlug: string,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/points/${pointSlug}/positions`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getPointMovements(
+    pointSlug: string,
+    position: 'CASH' | 'CARD_TERMINAL' | 'BANK' | 'REVENUE' | 'CORRECTIONS',
+    filterParams: PointMovementsParams,
+    pageable: Pageable,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PagePointMovementResponse>;
+  getPointMovements(
+    pointSlug: string,
+    position: 'CASH' | 'CARD_TERMINAL' | 'BANK' | 'REVENUE' | 'CORRECTIONS',
+    filterParams: PointMovementsParams,
+    pageable: Pageable,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PagePointMovementResponse>>;
+  getPointMovements(
+    pointSlug: string,
+    position: 'CASH' | 'CARD_TERMINAL' | 'BANK' | 'REVENUE' | 'CORRECTIONS',
+    filterParams: PointMovementsParams,
+    pageable: Pageable,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PagePointMovementResponse>>;
+  /** A page of the records behind a position, each with its date, signed effect, the position's balance after it, the recording user and, where present, the customer, rental and shift. The movements of the BANK position over a period are what a point reconciles against its own bank statement. Sortable by recordedAt, amount or type; oldest first by default. */
+  getPointMovements(
+    pointSlug: string,
+    position: 'CASH' | 'CARD_TERMINAL' | 'BANK' | 'REVENUE' | 'CORRECTIONS',
+    filterParams: PointMovementsParams,
+    pageable: Pageable,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/points/${pointSlug}/positions/${position}/movements`;
+
+    let params = new HttpParams();
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
+    }
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getPointResults(
+    filterParams: PointResultsParams,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PointResultsResponse>;
+  getPointResults(
+    filterParams: PointResultsParams,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PointResultsResponse>>;
+  getPointResults(
+    filterParams: PointResultsParams,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PointResultsResponse>>;
+  /** Per point: revenue, signed corrections, their sum, and the money moved into the bank by collection runs and terminal settlements (transfers, not part of the result). Totals are the sum over every point. */
+  getPointResults(
+    filterParams: PointResultsParams,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/points/results`;
+
+    let params = new HttpParams();
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  getPointPositions(
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<PointPositionsResponse>;
+  getPointPositions(
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<PointPositionsResponse>>;
+  getPointPositions(
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<PointPositionsResponse>>;
+  /** Cash, card terminal, bank, revenue and corrections of every point, including inactive and permanently closed ones. Point names and statuses come from GET /api/points. */
+  getPointPositions(
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/points/positions`;
 
     let headers: HttpHeaders;
     if (options?.headers instanceof HttpHeaders) {

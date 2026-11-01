@@ -1,7 +1,7 @@
-import { InjectionToken } from '@angular/core';
+import { inject, InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 import type { PointPeriod, PointPeriodResults, PointPositionsOverview } from '../../models';
-import { UnavailablePointLedgerReader } from './unavailable-point-ledger.reader';
+import { HttpPointLedgerReader } from './http-point-ledger.reader';
 
 export interface PointLedgerReader {
   positions(): Observable<PointPositionsOverview>;
@@ -10,5 +10,5 @@ export interface PointLedgerReader {
 
 export const POINT_LEDGER_READER = new InjectionToken<PointLedgerReader>('PointLedgerReader', {
   providedIn: 'root',
-  factory: () => new UnavailablePointLedgerReader(),
+  factory: () => inject(HttpPointLedgerReader),
 });
