@@ -732,9 +732,7 @@ export class Labels {
 
   static readonly Points = $localize`Rental points`;
   static readonly PointNew = $localize`New point`;
-  static readonly PointListLabel = $localize`Rental points list`;
   static readonly PointsEmpty = $localize`No rental points yet`;
-  static readonly PointSelectHint = $localize`Select a rental point or create a new one`;
   static readonly PointRegisterTitle = $localize`Register rental point`;
   static readonly PointSlugHint = $localize`Cannot be changed after registration`;
   static readonly PointAddressTitle = $localize`Address`;
@@ -755,6 +753,15 @@ export class Labels {
   static readonly PointClosedReadOnly = $localize`This point is permanently closed and can no longer be edited.`;
   static readonly PointClosedSuccess = $localize`Rental point closed permanently`;
   static readonly PointSaved = $localize`Rental point saved`;
+  static readonly PointColumnPoint = $localize`:points-table|Points table column header:Point`;
+  static readonly PointColumnStatus = $localize`Status`;
+  static readonly PointColumnCash = $localize`Cash in drawer`;
+  static readonly PointColumnTerminal = $localize`Terminal`;
+  static readonly PointSummaryCash = $localize`Cash across all drawers`;
+  static readonly PointSummaryTerminal = $localize`On terminal accounts`;
+  static readonly PointShowClosed = $localize`Show closed points`;
+  static readonly PointsLoadFailed = $localize`Rental points could not be loaded`;
+  static readonly PointMoneyUnavailable = $localize`Point balances are not available yet`;
   static readonly CurrentPoint = $localize`Current rental point`;
   static readonly NoWorkingPoint = $localize`No working point assigned`;
   static readonly EquipmentPoint = $localize`Rental point`;

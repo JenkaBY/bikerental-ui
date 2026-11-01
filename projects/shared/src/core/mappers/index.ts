@@ -23,4 +23,5 @@ export * from './analytics-revenue.mapper';
 export * from './analytics-customer.mapper';
 export * from './user-settings.mapper';
 export * from './point.mapper';
+export * from './point-finance.mapper';
 export * from './returnable-rental.mapper';

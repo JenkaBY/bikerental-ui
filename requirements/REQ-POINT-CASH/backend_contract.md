@@ -13,9 +13,9 @@ operator's own data.
 | `POST /bank-transfers {CASH}` | `POST /api/finance/collections` `{idempotencyKey, amount}` → 201 `{transactionId, pointSlug, amount, cashPosition, recordedAt}`, OPERATOR + ADMIN, `X-Point-Slug` | **in main** (FR-05) |
 | `POST /bank-transfers {CARD_TERMINAL}` | `POST /api/finance/terminal-settlements`, **ADMIN only**, `X-Point-Slug`, with the settlement date from the bank statement | FR-06, to be built |
 | `snapshot?date` | `GET /api/finance/shifts/current` → `{shiftId, pointSlug, sequence, openedAt, openingAmount, movements[{type, amount}], expectedCash}`; close: `POST /api/finance/shifts/current/closures` `{idempotencyKey, shiftId, countedAmount}` | **in main** (FR-07) |
-| `point-accounts/balances` | `GET /api/finance/point-positions` (ADMIN): every point incl. closed, positions CASH / CARD_TERMINAL / BANK / REVENUE / CORRECTIONS, totals per kind | FR-08, to be built |
-| `point-accounts/movements` | `GET /api/finance/point-movements?pointSlug&position&from&to&page&size` (ADMIN): `{transactionId, recordedAt, kind, amount (signed), runningBalance, recordedBy (user id), customerId?, rentalId?, shiftId?}` | FR-08, to be built |
-| `bank-transfers` list / `summary` | collections and settlements are `point-movements` rows of kind `COLLECTION` / `TERMINAL_SETTLEMENT`; period totals come with `GET /api/finance/point-results?from&to[&pointSlug]` | FR-08, to be built |
+| `point-accounts/balances` | `GET /api/finance/points/positions` and `GET /api/finance/points/{pointSlug}/positions` (ADMIN): every point incl. closed, `positions: [{position, balance, updatedAt}]`, `lastCollectionId?`, `totals: [{position, balance}]` | bike-rental PR 325 |
+| `point-accounts/movements` | `GET /api/finance/points/{pointSlug}/positions/{position}/movements?from&to&kind*&page&size&sort` (ADMIN): `Page<{transactionId, recordedAt, kind, amount (signed), runningBalance?, recordedBy (user id), customerId?, rentalId?, shiftId?}>` | bike-rental PR 325 |
+| `bank-transfers` list / `summary` | collections and settlements are `point-movements` rows of kind `COLLECTION` / `TERMINAL_SETTLEMENT`; period figures (REVENUE, CORRECTIONS, RESULT, COLLECTIONS, TERMINAL_SETTLEMENTS) come with `GET /api/finance/points/results?from&to` and `GET /api/finance/points/{pointSlug}/results?from&to` | bike-rental PR 325 (query object `filterParams`, PR 327) |
 | `bank-transfers/{id}/cancellation` | **not provided** — a wrong collection is corrected with an adjustment | — |
 
 1. **No, not as proposed.** Paths and fields as in the table. Also:

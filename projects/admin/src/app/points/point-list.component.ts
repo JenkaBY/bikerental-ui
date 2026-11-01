@@ -1,57 +1,72 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { Labels } from '@bikerental/shared';
-import type { Point } from '@ui-models';
+import { MatTableModule } from '@angular/material/table';
+import { FixedMoneyPipe, Labels, type PointMoneyRow } from '@bikerental/shared';
+import type { PointStatus } from '@ui-models';
 import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
 
 @Component({
   selector: 'app-point-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatIconModule, MatListModule],
+  imports: [MatTableModule, FixedMoneyPipe],
   template: `
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="text-lg font-medium m-0">{{ labels.Points }}</h2>
-      <button mat-flat-button color="primary" (click)="create.emit()">
-        <mat-icon>add</mat-icon>
-        {{ labels.PointNew }}
-      </button>
-    </div>
-    @if (points().length === 0) {
-      <p class="text-slate-500">{{ labels.PointsEmpty }}</p>
-    } @else {
-      <mat-action-list [attr.aria-label]="labels.PointListLabel">
-        @for (point of points(); track point.slug) {
-          <button
-            mat-list-item
-            type="button"
-            [activated]="point.slug === selectedSlug()"
-            [attr.aria-current]="point.slug === selectedSlug()"
-            [class.!bg-blue-100]="point.slug === selectedSlug()"
-            (click)="pointSelect.emit(point.slug)"
+    <table mat-table [dataSource]="rows()" class="w-full">
+      <ng-container matColumnDef="point">
+        <th mat-header-cell *matHeaderCellDef>{{ labels.PointColumnPoint }}</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="font-medium text-slate-800">{{ row.name }}</div>
+          <div class="text-xs text-slate-500 font-mono">{{ row.slug }}</div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>{{ labels.PointColumnStatus }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span
+            class="px-2 py-0.5 rounded-full text-xs whitespace-nowrap"
+            [class]="statusClass(row.status)"
           >
-            <span matListItemTitle>{{ point.name }}</span>
-            <span matListItemLine class="flex items-center gap-2">
-              <span class="font-mono">{{ point.slug }}</span>
-              <span class="px-2 rounded-full text-xs" [class]="statusClasses[point.status]">
-                {{ statusLabels[point.status] }}
-              </span>
-            </span>
-          </button>
-        }
-      </mat-action-list>
-    }
+            {{ statusLabel(row.status) }}
+          </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cash">
+        <th mat-header-cell *matHeaderCellDef class="!text-right">{{ labels.PointColumnCash }}</th>
+        <td mat-cell *matCellDef="let row" class="!text-right tabular-nums whitespace-nowrap">
+          {{ row.cash | fixedMoney }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="terminal">
+        <th mat-header-cell *matHeaderCellDef class="!text-right">
+          {{ labels.PointColumnTerminal }}
+        </th>
+        <td mat-cell *matCellDef="let row" class="!text-right tabular-nums whitespace-nowrap">
+          {{ row.terminal | fixedMoney }}
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: columns"
+        class="cursor-pointer hover:bg-slate-50"
+        tabindex="0"
+        (click)="rowOpen.emit(row.slug)"
+        (keydown.enter)="rowOpen.emit(row.slug)"
+      ></tr>
+    </table>
   `,
 })
 export class PointListComponent {
   protected readonly labels = Labels;
-  protected readonly statusLabels = POINT_STATUS_LABELS;
-  protected readonly statusClasses = POINT_STATUS_CLASSES;
+  protected readonly columns = ['point', 'status', 'cash', 'terminal'];
 
-  readonly points = input.required<Point[]>();
-  readonly selectedSlug = input<string | null>(null);
+  readonly rows = input.required<readonly PointMoneyRow[]>();
 
-  readonly pointSelect = output<string>();
-  readonly create = output<void>();
+  readonly rowOpen = output<string>();
+
+  protected statusLabel(status: PointStatus): string {
+    return POINT_STATUS_LABELS[status];
+  }
+
+  protected statusClass(status: PointStatus): string {
+    return POINT_STATUS_CLASSES[status];
+  }
 }

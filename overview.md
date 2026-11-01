@@ -373,8 +373,34 @@ RESPONSIBILITIES:
   CALLS:
 - HttpClient — transport.
   CALLED_BY:
-- PointAdminStore (admin `/admin/points` master-detail page; points are addressed by `slug` — `PointResponse` has no `id`)
+- PointAdminStore (admin `/points` list page, the `/points/:slug` detail host and the create dialog; points are addressed by `slug` — `PointResponse` has no `id`)
 - CurrentPointStore (operator toolbar switcher; all points loaded at startup, the switcher lists only non-permanently-closed ones and `nameBySlug` resolves return-point names on equipment cards in operator and admin rental details; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`; on success the operator `PointSwitchRefreshService` re-creates only the layout `<router-outlet>` (epoch-keyed `@for`), so the routed page and its component-scoped rental stores refetch under the new point while the toolbar and bottom nav stay — single-rental routes (`rentals/:id[/edit|/agreement]`) navigate to `rentals` instead, since that rental is a 404 under the new point)
+
+COMPONENT_NAME: PointFinanceService
+TYPE: API
+PURPOSE: Single domain-typed entry point to point-finance reads (positions overview, period results); later FRs add movements, the running shift and the money commands.
+RESPONSIBILITIES:
+
+- Expose `getPositions()` and `getResults(period, pointSlug | null)` with domain models only.
+- Delegate the FIN-002 FR-08 reads to the `POINT_LEDGER_READER` token (`HttpPointLedgerReader`); the `UnavailablePointLedgerReader` placeholder (fails with `PointLedgerUnavailableError`, one warning toast via `PointLedgerUnavailableNotifier`) stays available for environments without the endpoints.
+  SOURCE: `projects/shared/src/core/api/point-finance/point-finance.service.ts`
+  CALLS:
+- PointLedgerReader (`POINT_LEDGER_READER`) — `positions()`, `results()`.
+  CALLED_BY:
+- PointMoneyOverviewStore
+
+COMPONENT_NAME: PointLedgerReader
+TYPE: API
+PURPOSE: Swappable reader for `GET /api/finance/points/positions` and `GET /api/finance/points/results` (FIN-002 FR-08, bike-rental PR 325, admin only).
+RESPONSIBILITIES:
+
+- Provide the domain-typed read contract behind the `POINT_LEDGER_READER` injection token (root factory).
+- `HttpPointLedgerReader` calls the generated `FinanceService` with the `SKIP_POINT_SCOPE` context token (no `X-Point-Slug`) and maps via `PointFinanceMapper`; `results(period, null)` reads the business totals, `results(period, slug)` one point's figures.
+  SOURCE: `projects/shared/src/core/api/point-finance/point-ledger.reader.ts`, `projects/shared/src/core/api/point-finance/http-point-ledger.reader.ts`, `projects/shared/src/core/api/point-finance/unavailable-point-ledger.reader.ts`
+  CALLS:
+- NONE
+  CALLED_BY:
+- PointFinanceService
 
 COMPONENT_NAME: UsersService
 TYPE: API
@@ -1135,6 +1161,19 @@ RESPONSIBILITIES:
 - AuthService
 - ProfileStore
 - UserStore
+
+COMPONENT_NAME: PointFinanceMapper
+TYPE: Utility
+PURPOSE: Converts point-finance payloads into point-finance domain models.
+RESPONSIBILITIES:
+
+- Normalize position kinds (`CASH`, `CARD_TERMINAL`, `BANK`, `REVENUE`, `CORRECTIONS`); unknown kinds are ignored, missing kinds become 0.
+- Provide two-decimal money helpers (`money`, `sum`) used for period totals.
+  SOURCE: `projects/shared/src/core/mappers/point-finance.mapper.ts`
+  CALLS:
+- NONE
+  CALLED_BY:
+- PointLedgerReader implementations
 
 ### Global stores (providedIn: 'root')
 
@@ -1995,6 +2034,34 @@ RESPONSIBILITIES:
   CALLED_BY:
 - CustomerEquipmentBreakdownComponent
 
+COMPONENT_NAME: PointMoneyOverviewStore
+TYPE: Store
+PURPOSE: Business-wide point positions and the current business month's period results for the admin points list.
+RESPONSIBILITIES:
+
+- Load positions and month results in parallel with independent loading/failure flags (latest request wins).
+- Index positions by slug and expose backend totals per kind (never summed in the UI).
+  SOURCE: `projects/shared/src/core/state/point-money-overview.store.ts`
+  CALLS:
+- PointFinanceService — `getPositions()`, `getResults(period)`.
+  CALLED_BY:
+- PointListViewStore
+
+COMPONENT_NAME: PointListViewStore
+TYPE: Store
+PURPOSE: View state of the admin `/points` list page.
+RESPONSIBILITIES:
+
+- Orchestrate the three page requests (registry, positions, month results) from one `load(now)`.
+- Join registry points with positions into `PointMoneyRow[]` (em-dash for unknown money), hide `PERMANENTLY_CLOSED` rows unless "Show closed points" is on, count hidden rows, and build the summary-card view model with the localized month name.
+  SOURCE: `projects/shared/src/core/state/point-list-view.store.ts`
+  CALLS:
+- PointAdminStore — `load()`, `points()`, `loading()`.
+- PointMoneyOverviewStore — `load()`, positions and results signals.
+- BusinessPeriod — current month to date, month name.
+  CALLED_BY:
+- PointsPageComponent
+
 ### Admin feature components
 
 COMPONENT_NAME: EquipmentListComponent
@@ -2694,6 +2761,72 @@ RESPONSIBILITIES:
   CALLED_BY:
 - RevenueChartComponent
 - CustomerSummaryChartComponent
+
+COMPONENT_NAME: PointsPageComponent
+TYPE: Gateway
+PURPOSE: Admin `/points` list page — summary cards, closed-points filter and the money table.
+RESPONSIBILITIES:
+
+- Provide `PointAdminStore`, `PointMoneyOverviewStore` and `PointListViewStore`; trigger `load()` with the business clock.
+- Navigate a row to `/points/:slug`; open `PointCreateDialogComponent` and navigate to `/points/:slug/profile` on success.
+  SOURCE: `projects/admin/src/app/points/points-page.component.ts`
+  CALLS:
+- PointListViewStore — rows, filter, counter, summary.
+- PointListComponent, PointMoneySummaryCardsComponent, PointCreateDialogComponent.
+- TimeStore — `getCurrentDate()`.
+  CALLED_BY:
+- AdminRoutes
+
+COMPONENT_NAME: PointListComponent
+TYPE: Gateway
+PURPOSE: Dumb money table of rental points (Point, Status, Cash in drawer, Terminal).
+RESPONSIBILITIES:
+
+- Render `PointMoneyRow[]` with the existing status pill and right-aligned two-decimal money (`—` when unknown).
+- Emit `rowOpen(slug)` on row click or Enter.
+  SOURCE: `projects/admin/src/app/points/point-list.component.ts`
+  CALLS:
+- FixedMoneyPipe
+  CALLED_BY:
+- PointsPageComponent
+
+COMPONENT_NAME: PointMoneySummaryCardsComponent
+TYPE: Gateway
+PURPOSE: Dumb summary cards — cash across all drawers, on terminal accounts, deposited to bank this month (collections · terminal settlements).
+RESPONSIBILITIES:
+
+- Render a `PointMoneySummary` view model; `—` for any unknown figure.
+  SOURCE: `projects/admin/src/app/points/point-money-summary-cards.component.ts`
+  CALLS:
+- FixedMoneyPipe, formatFixedMoney, point-money-messages
+  CALLED_BY:
+- PointsPageComponent
+
+COMPONENT_NAME: PointCreateDialogComponent
+TYPE: Gateway
+PURPOSE: "New point" dialog hosting the point profile form in create mode.
+RESPONSIBILITIES:
+
+- Provide its own `PointAdminStore`; close with `{ slug }` on success, `undefined` on cancel.
+  SOURCE: `projects/admin/src/app/points/point-create-dialog.component.ts`
+  CALLS:
+- PointProfileFormComponent
+  CALLED_BY:
+- PointsPageComponent
+
+COMPONENT_NAME: PointProfileFormComponent
+TYPE: Gateway
+PURPOSE: Point profile form (slug, name, address, contacts) in `create` or `edit` (view/edit toggle) mode.
+RESPONSIBILITIES:
+
+- Create or update through `PointAdminStore` with the global toast suppressed; bind `point.slug.duplicate` to the slug field and other field errors via `applyServerErrors`; toast "Rental point saved".
+- Emit `saved(point)` / `cancelled()`.
+  SOURCE: `projects/admin/src/app/points/point-profile-form.component.ts`
+  CALLS:
+- PointAdminStore — `create()`, `update()`, `startEdit()`, `cancelEdit()`, `editing`, `saving`.
+- ApiErrorParser / ErrorMessageResolver / applyServerErrors / NotificationService.
+  CALLED_BY:
+- PointCreateDialogComponent
 
 ### Operator feature components
 
@@ -4596,6 +4729,31 @@ RESPONSIBILITIES:
 - UserCreateDialogComponent
 - UserEditDialogComponent
 - UsersListComponent
+
+COMPONENT_NAME: FixedMoneyPipe
+TYPE: Utility
+PURPOSE: Formats `Money | null` with two decimals and locale grouping; `—` for unknown; signed mode uses `+` / `−`.
+RESPONSIBILITIES:
+
+- `fixedMoney` pipe and the pure `formatFixedMoney(value, locale, signed)` function.
+  SOURCE: `projects/shared/src/shared/pipes/fixed-money.pipe.ts`
+  CALLS:
+- NONE
+  CALLED_BY:
+- PointListComponent
+- PointMoneySummaryCardsComponent
+
+COMPONENT_NAME: BusinessPeriod
+TYPE: Utility
+PURPOSE: Business-clock period helpers for point finance.
+RESPONSIBILITIES:
+
+- `currentMonthToDate(now)` → inclusive `{ from: first of month, to: today }`; `monthName(date, locale)` → stand-alone localized month name.
+  SOURCE: `projects/shared/src/shared/utils/business-period.util.ts`
+  CALLS:
+- NONE
+  CALLED_BY:
+- PointListViewStore
 
 ---
 

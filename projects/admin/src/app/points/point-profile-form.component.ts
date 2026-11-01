@@ -5,6 +5,8 @@ import {
   DestroyRef,
   effect,
   inject,
+  input,
+  output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -21,30 +23,23 @@ import {
   Labels,
   NotificationService,
   phonePatternValidator,
+  type Point,
   PointAdminStore,
+  type PointWrite,
   suppressErrorNotification,
 } from '@bikerental/shared';
-import type { Point, PointWrite } from '@ui-models';
-import { PointStatusActionsComponent } from './point-status-actions.component';
-import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
+
+export type PointProfileFormMode = 'create' | 'edit';
 
 @Component({
-  selector: 'app-point-detail',
+  selector: 'app-point-profile-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    PointStatusActionsComponent,
-  ],
-  templateUrl: './point-detail.component.html',
+  imports: [ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatInputModule],
+  templateUrl: './point-profile-form.component.html',
 })
-export class PointDetailComponent {
+export class PointProfileFormComponent {
   protected readonly labels = Labels;
   protected readonly errors = FormErrorMessages;
-  protected readonly statusLabels = POINT_STATUS_LABELS;
-  protected readonly statusClasses = POINT_STATUS_CLASSES;
   protected readonly addressFields = [
     { key: 'street', label: Labels.PointStreet },
     { key: 'city', label: Labels.PointCity },
@@ -56,14 +51,19 @@ export class PointDetailComponent {
     { key: 'email', label: Labels.Email, type: 'email' },
   ] as const;
 
+  readonly mode = input<PointProfileFormMode>('edit');
+  readonly point = input<Point | null>(null);
+
+  readonly saved = output<Point>();
+  readonly cancelled = output<void>();
+
   private readonly store = inject(PointAdminStore);
   private readonly notifications = inject(NotificationService);
-  private readonly resolver = new ErrorMessageResolver();
+  private readonly resolver = inject(ErrorMessageResolver);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly point = this.store.selected;
-  protected readonly creating = this.store.creating;
-  protected readonly editing = this.store.editing;
+  protected readonly creating = computed(() => this.mode() === 'create');
+  protected readonly editing = computed(() => this.creating() || this.store.editing());
   protected readonly saving = this.store.saving;
   protected readonly closed = computed(() => this.point()?.status === 'PERMANENTLY_CLOSED');
 
@@ -98,11 +98,15 @@ export class PointDetailComponent {
     const write: PointWrite = this.form.getRawValue();
     const options = { context: suppressErrorNotification() };
     const current = this.point();
-    const request$ = current
-      ? this.store.update(current.slug, write, options)
-      : this.store.create(write, options);
+    const request$ =
+      this.creating() || !current
+        ? this.store.create(write, options)
+        : this.store.update(current.slug, write, options);
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => this.notifications.success(Labels.PointSaved),
+      next: (point) => {
+        this.notifications.success(Labels.PointSaved);
+        this.saved.emit(point);
+      },
       error: (err) => this.handleSaveError(err),
     });
   }
@@ -112,6 +116,10 @@ export class PointDetailComponent {
   }
 
   protected cancel(): void {
+    if (this.creating()) {
+      this.cancelled.emit();
+      return;
+    }
     this.store.cancelEdit();
   }
 
