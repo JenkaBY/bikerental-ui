@@ -6558,6 +6558,90 @@
         <source>Shift <x id="sequence" equiv-text="sequence"/> · opened <x id="time" equiv-text="time"/></source>
         <target>Смена <x id="sequence" equiv-text="sequence"/> · открыта в <x id="time" equiv-text="time"/></target>
       </trans-unit>
+      <trans-unit id="7934048260235926080" datatype="html">
+        <source>Not enough cash in the drawer. Available: <x id="available" equiv-text="available.toFixed(2)"/>.</source>
+        <target>Недостаточно наличных в кассе. Доступно: <x id="available" equiv-text="available.toFixed(2)"/>.</target>
+      </trans-unit>
+      <trans-unit id="4468270341817826449" datatype="html">
+        <source>There is not enough cash in the drawer for this amount.</source>
+        <target>В кассе недостаточно наличных для этой суммы.</target>
+      </trans-unit>
+      <trans-unit id="7259637817331310304" datatype="html">
+        <source>Not enough funds on the terminal account. Available: <x id="available" equiv-text="available.toFixed(2)"/>.</source>
+        <target>Недостаточно средств на счёте терминала. Доступно: <x id="available" equiv-text="available.toFixed(2)"/>.</target>
+      </trans-unit>
+      <trans-unit id="3877428384301977297" datatype="html">
+        <source>There is not enough money on the terminal account for this amount.</source>
+        <target>На счёте терминала недостаточно средств для этой суммы.</target>
+      </trans-unit>
+      <trans-unit id="7559251581678052208" datatype="html">
+        <source>From</source>
+        <target>Откуда</target>
+      </trans-unit>
+      <trans-unit id="433911248114466263" datatype="html">
+        <source>To</source>
+        <target>Куда</target>
+      </trans-unit>
+      <trans-unit id="8332425769461089908" datatype="html">
+        <source>Bank account</source>
+        <target>Банковский счёт</target>
+      </trans-unit>
+      <trans-unit id="384898073886449225" datatype="html">
+        <source>All</source>
+        <target>Всё</target>
+      </trans-unit>
+      <trans-unit id="991066160113599649" datatype="html">
+        <source>Remaining</source>
+        <target>Останется</target>
+      </trans-unit>
+      <trans-unit id="8991092608830561642" datatype="html">
+        <source>Settlement date</source>
+        <target>Дата зачисления</target>
+      </trans-unit>
+      <trans-unit id="6962699013778688473" datatype="html">
+        <source>Continue</source>
+        <target>Продолжить</target>
+      </trans-unit>
+      <trans-unit id="8879739931409514784" datatype="html">
+        <source>Confirm cash collection</source>
+        <target>Подтверждение сдачи в банк</target>
+      </trans-unit>
+      <trans-unit id="2384696010575610481" datatype="html">
+        <source>Confirm settlement</source>
+        <target>Подтверждение зачисления в банк</target>
+      </trans-unit>
+      <trans-unit id="1023736145287250279" datatype="html">
+        <source>This entry cannot be cancelled; a mistake is corrected by an adjustment.</source>
+        <target>Запись нельзя отменить; ошибка исправляется корректировкой.</target>
+      </trans-unit>
+      <trans-unit id="7726673361294642871" datatype="html">
+        <source>Amount is required</source>
+        <target>Укажите сумму</target>
+      </trans-unit>
+      <trans-unit id="5622438805856831950" datatype="html">
+        <source>Amount must be greater than zero</source>
+        <target>Сумма должна быть больше нуля</target>
+      </trans-unit>
+      <trans-unit id="6052555891169099337" datatype="html">
+        <source>Amount exceeds the available amount</source>
+        <target>Сумма превышает доступную</target>
+      </trans-unit>
+      <trans-unit id="886576114353004245" datatype="html">
+        <source>Settlement date is required</source>
+        <target>Укажите дату зачисления</target>
+      </trans-unit>
+      <trans-unit id="7237117395171516917" datatype="html">
+        <source>Settlement date cannot be in the future</source>
+        <target>Дата зачисления не может быть в будущем</target>
+      </trans-unit>
+      <trans-unit id="8863118624275197931" datatype="html">
+        <source>Remaining: <x id="amount" equiv-text="amount"/></source>
+        <target>Останется: <x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
+      <trans-unit id="1181583299548620655" datatype="html">
+        <source>Collected: <x id="amount" equiv-text="amount"/></source>
+        <target>Сдано в банк: <x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

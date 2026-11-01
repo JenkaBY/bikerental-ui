@@ -5,6 +5,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  Injector,
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -27,6 +28,9 @@ import {
 import { PointCashCardComponent } from './point-cash-card.component';
 import { PointMovementTableComponent } from './point-movement-table.component';
 import { PointTerminalCardComponent } from './point-terminal-card.component';
+import { PointMoneyMoveLauncher } from './point-money-move.launcher';
+import { POINT_MOVE_POSITIONS } from './point-money-move.meta';
+import type { PointMoneyMoveResult } from './point-money-move.model';
 
 const PAGE_SIZE = 100;
 
@@ -108,6 +112,8 @@ export class PointCashTabComponent {
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly moves = inject(PointMoneyMoveLauncher);
+  private readonly injector = inject(Injector);
   private seenRevision = this.facade.revision();
 
   protected readonly cashAmount = computed(
@@ -152,7 +158,26 @@ export class PointCashTabComponent {
   }
 
   protected onCollect(): void {
-    this.notifications.info(Labels.PointActionNotAvailableYet);
+    const point = this.points.selected();
+    const available = this.cashAmount();
+    if (!point || !available) return;
+    this.moves
+      .open(this.injector, {
+        operation: 'COLLECTION',
+        pointSlug: point.slug,
+        pointName: point.name,
+        available,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => this.onMoveClosed(result));
+  }
+
+  private onMoveClosed(result: PointMoneyMoveResult | undefined): void {
+    if (!result) return;
+    if (result.outcome === 'done' && result.newPosition) {
+      this.positions.applyPosition(POINT_MOVE_POSITIONS[result.operation], result.newPosition);
+    }
+    this.applyOutcome(result.outcome);
   }
 
   protected onCloseShift(): void {
