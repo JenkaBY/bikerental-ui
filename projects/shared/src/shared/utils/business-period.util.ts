@@ -9,6 +9,13 @@ export class BusinessPeriod {
     };
   }
 
+  static sinceDayOf(start: Date, now: Date): PointPeriod {
+    return {
+      from: new Date(start.getFullYear(), start.getMonth(), start.getDate()),
+      to: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+    };
+  }
+
   static monthName(date: Date, locale: string): string {
     return formatDate(date, 'LLLL', locale);
   }
