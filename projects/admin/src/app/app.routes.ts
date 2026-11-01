@@ -100,6 +100,11 @@ export const routes: Routes = [
           import('./points/points-page.component').then((m) => m.PointsPageComponent),
       },
       {
+        path: 'points/:slug',
+        loadChildren: () =>
+          import('./points/point-detail.routes').then((m) => m.POINT_DETAIL_ROUTES),
+      },
+      {
         path: 'analytics',
         loadComponent: () =>
           import('./analytics/analytics-page.component').then((m) => m.AnalyticsPageComponent),

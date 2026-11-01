@@ -1,12 +1,17 @@
 import type {
+  PagePointMovementResponse,
   PointFigureResponse,
   PointLedgerResponse,
+  PointMovementResponse,
   PointPositionsResponse,
   PositionTotal,
 } from '@api-models';
-import { POINT_POSITION_KINDS } from '../models';
+import { POINT_MOVEMENT_KINDS, POINT_POSITION_KINDS } from '../models';
 import type {
   Money,
+  PointMovement,
+  PointMovementKind,
+  PointMovementPage,
   PointPeriod,
   PointPeriodResults,
   PointPositionAmounts,
@@ -63,8 +68,42 @@ export class PointFinanceMapper {
     };
   }
 
+  static movementPageFromResponse(
+    r: PagePointMovementResponse,
+    pageIndex: number,
+    pageSize: number,
+  ): PointMovementPage {
+    return {
+      items: (r.items ?? []).map((m) => PointFinanceMapper.movementFromResponse(m)),
+      totalItems: r.totalItems ?? 0,
+      pageIndex,
+      pageSize,
+    };
+  }
+
+  static movementFromResponse(r: PointMovementResponse): PointMovement {
+    return {
+      transactionId: r.transactionId,
+      recordedAt: new Date(r.recordedAt),
+      kind: PointFinanceMapper.toMovementKind(r.kind),
+      signedAmount: PointFinanceMapper.money(r.amount),
+      runningBalance:
+        r.runningBalance === undefined || r.runningBalance === null
+          ? null
+          : PointFinanceMapper.money(r.runningBalance),
+      recordedById: r.recordedBy,
+      customerId: r.customerId ?? null,
+      rentalId: r.rentalId ?? null,
+      shiftId: r.shiftId ?? null,
+    };
+  }
+
   static toPositionKind(raw: string | null | undefined): PointPositionKind | null {
     return POINT_POSITION_KINDS.find((kind) => kind === raw) ?? null;
+  }
+
+  static toMovementKind(raw: string | null | undefined): PointMovementKind {
+    return POINT_MOVEMENT_KINDS.find((kind) => kind === raw) ?? 'OTHER';
   }
 
   static toAmounts(entries: readonly PointPositionEntry[]): PointPositionAmounts {

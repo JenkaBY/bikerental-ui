@@ -19,7 +19,8 @@ This FR defines the shared building blocks reused by FR-03 to FR-05 and FR-08:
    from command responses (a collection returns the new `cashPosition`), so the header updates
    even before a refetch.
 2. **`PointMovementsStore`** — one paged, period-bounded, single-position movement query over
-   `GET /api/finance/point-movements` ([B-FR08], **A8**). One instance per consumer (Operations
+   `GET /api/finance/points/{pointSlug}/positions/{position}/movements` ([B-FR08], **A8**), optionally
+   filtered by movement kinds. One instance per consumer (Operations
    tab, FR-03 shift list, FR-04 history).
 3. **`PointPeriodRule`** + **`PointPeriodFilterComponent`** — required period, `from ≤ to`, at most
    366 days; invalid input blocks the request (FR-02, FR-04).
@@ -124,17 +125,25 @@ The existing point edit form and status actions move unchanged in behaviour into
   * **Payload Changes:** None. Not-found (`shared.resource.not_found`) requested with
     notifications suppressed; the host shows "Point not found" and navigates to `/points`.
 * **Interaction: `PointPositionsStore` -> `PointFinanceService` (positions)**
-  * **Protocol:** REST, `GET /api/finance/point-positions` — **[B-FR08]** (FR-01 contract).
+  * **Protocol:** REST, `GET /api/finance/points/positions` — **[B-FR08]** (FR-01 contract).
   * **Payload Changes:** None beyond FR-01; the store keeps only the viewed slug's entry.
     **[GAP]** a single-point variant (e.g. a `pointSlug` filter) would avoid fetching all points.
 * **Interaction: `PointMovementsStore` -> `PointFinanceService` (movements)**
-  * **Protocol:** REST, `GET /api/finance/point-movements?pointSlug&position&from&to&page&size&sort=recordedAt,{asc|desc}`
-    — **[B-FR08]**, admin only.
+  * **Protocol:** REST, `GET /api/finance/points/{pointSlug}/positions/{position}/movements?from&to&kind*&page&size&sort=recordedAt,{asc|desc}`
+    — **[B-FR08]** (bike-rental PR 325, query object `filterParams` PR 327), admin only, sent
+    without `X-Point-Slug` (`SKIP_POINT_SCOPE`); `kind` is repeated per selected movement type, none
+    selected = all types.
   * **Payload Changes:** Response page of `{ transactionId, recordedAt, kind, amount (signed),
-    runningBalance, recordedBy (user id), customerId?, rentalId?, shiftId? }` with the paging
+    runningBalance?, recordedBy (user id), customerId?, rentalId?, shiftId? }` with the paging
     envelope used by other paged endpoints. The UI never sends `size > 100`, never omits the
     period and never sends a span > 366 days; a backend validation refusal (400) is shown via the
     standard notification. Single position per request (**A8**).
+* **Interaction: `PointResultsStore` -> `PointFinanceService` (period results, Results tab)**
+  * **Protocol:** REST, `GET /api/finance/points/{pointSlug}/results?from&to` — **[B-FR08]**
+    (bike-rental PR 325/327), admin only, without `X-Point-Slug`.
+  * **Payload Changes:** `{pointSlug, figures: [{type, amount, count?}]}`; the tab shows revenue,
+    corrections, result (= revenue + corrections) and the two bank transfers (collections, terminal
+    settlements, with counts) for a required period (`PointPeriodRule`), default month to date.
 * **Interaction: `StaffNameResolver` -> `ManagedUserStore` -> `UsersService`**
   * **Protocol:** REST, `GET /api/auth/users` — **[GEN]**, admin only.
   * **Payload Changes:** None; `id`, `displayName`, `username` are used.

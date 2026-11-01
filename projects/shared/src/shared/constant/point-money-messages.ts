@@ -9,3 +9,7 @@ export function pointDepositedSplit(collected: string, terminalSettled: string):
 export function pointsClosedHidden(count: number): string {
   return $localize`Closed hidden: ${count}:count:`;
 }
+
+export function pointResultTransferCount(count: number): string {
+  return $localize`Transfers: ${count}:count:`;
+}
