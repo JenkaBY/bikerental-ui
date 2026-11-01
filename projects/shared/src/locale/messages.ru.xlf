@@ -6642,6 +6642,14 @@
         <source>Collected: <x id="amount" equiv-text="amount"/></source>
         <target>Сдано в банк: <x id="amount" equiv-text="amount"/></target>
       </trans-unit>
+      <trans-unit id="2001807643854053542" datatype="html">
+        <source>Cash</source>
+        <target>Касса</target>
+      </trans-unit>
+      <trans-unit id="755352709090687402" datatype="html">
+        <source>Hand in cash</source>
+        <target>Сдать наличные</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
