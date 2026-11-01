@@ -6,6 +6,8 @@ import { POINT_SLUG_HEADER, SKIP_POINT_SCOPE } from '../../interceptors/point.in
 import { PointFinanceMapper } from '../../mappers/point-finance.mapper';
 import { POINT_MOVEMENTS_MAX_PAGE_SIZE } from '../../models';
 import type {
+  CashCollection,
+  CashCollectionWrite,
   PointMovementPage,
   PointMovementQuery,
   PointPeriod,
@@ -39,7 +41,7 @@ export class PointFinanceService {
   }
 
   getCurrentShift(pointSlug: string | null): Observable<RunningShift | null> {
-    return this.finance.getRunningShift('body', PointFinanceService.shiftOptions(pointSlug)).pipe(
+    return this.finance.getRunningShift('body', PointFinanceService.scopedOptions(pointSlug)).pipe(
       map((response): RunningShift | null => PointFinanceMapper.runningShiftFromResponse(response)),
       catchError((err: unknown) =>
         err instanceof HttpErrorResponse && err.status === NO_RUNNING_SHIFT_STATUS
@@ -49,7 +51,20 @@ export class PointFinanceService {
     );
   }
 
-  private static shiftOptions(pointSlug: string | null): RequestOptions<'json'> {
+  recordCollection(
+    write: CashCollectionWrite,
+    pointSlug: string | null,
+  ): Observable<CashCollection> {
+    return this.finance
+      .recordCollection(
+        PointFinanceMapper.collectionToRequest(write),
+        'body',
+        PointFinanceService.scopedOptions(pointSlug),
+      )
+      .pipe(map((response) => PointFinanceMapper.collectionFromResponse(response)));
+  }
+
+  private static scopedOptions(pointSlug: string | null): RequestOptions<'json'> {
     if (pointSlug === null) {
       return { context: suppressErrorNotification() };
     }

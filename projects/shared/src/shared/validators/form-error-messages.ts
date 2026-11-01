@@ -24,6 +24,12 @@ export class FormErrorMessages {
   static readonly birthDateFuture = $localize`Birth date must be in the past`;
   static readonly withdrawAmountExceedsAvailable = $localize`Amount exceeds available balance`;
   static readonly maxDecimalPlaces = $localize`Maximum 2 decimal places allowed`;
+  static readonly amountRequired = $localize`Amount is required`;
+  static readonly amountPositive = $localize`Amount must be greater than zero`;
+  static readonly amountExceedsAvailable = $localize`Amount exceeds the available amount`;
+  static readonly amountMaxTwoDecimals = $localize`Maximum 2 decimal places allowed`;
+  static readonly settlementDateRequired = $localize`Settlement date is required`;
+  static readonly settlementDateFuture = $localize`Settlement date cannot be in the future`;
   static readonly periodRequired = $localize`Select both the start and the end of the period`;
   static readonly periodOrder = $localize`The end of the period cannot be before its start`;
   static readonly periodTooLong = $localize`The period may not exceed 366 days`;

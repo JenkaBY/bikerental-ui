@@ -1,4 +1,6 @@
 import type {
+  CollectionRequest,
+  CollectionResponse,
   Movement,
   PagePointMovementResponse,
   PointFigureResponse,
@@ -10,6 +12,8 @@ import type {
 } from '@api-models';
 import { POINT_MOVEMENT_KINDS, POINT_POSITION_KINDS } from '../models';
 import type {
+  CashCollection,
+  CashCollectionWrite,
   Money,
   PointMovement,
   PointMovementKind,
@@ -117,6 +121,20 @@ export class PointFinanceMapper {
         .filter(([, amount]) => PointFinanceMapper.round(amount) !== 0)
         .map(([kind, amount]) => ({ kind, signedAmount: PointFinanceMapper.money(amount) })),
       expectedCash: PointFinanceMapper.money(r.expectedCash),
+    };
+  }
+
+  static collectionToRequest(write: CashCollectionWrite): CollectionRequest {
+    return { idempotencyKey: write.idempotencyKey, amount: write.amount };
+  }
+
+  static collectionFromResponse(r: CollectionResponse): CashCollection {
+    return {
+      transactionId: r.transactionId,
+      pointSlug: r.pointSlug,
+      amount: PointFinanceMapper.money(r.amount),
+      cashPosition: PointFinanceMapper.money(r.cashPosition),
+      recordedAt: new Date(r.recordedAt),
     };
   }
 

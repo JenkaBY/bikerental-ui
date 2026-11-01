@@ -73,6 +73,8 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.INSUFFICIENT_HOLD]: $localize`The reserved amount is insufficient for this operation.`,
   [ErrorCode.FINANCE_POINT_INACTIVE]: financePointInactiveMessage,
   [ErrorCode.FINANCE_POINT_PERMANENTLY_CLOSED]: financePointPermanentlyClosedMessage,
+  [ErrorCode.FINANCE_POINT_INSUFFICIENT_CASH]: financePointInsufficientCashMessage,
+  [ErrorCode.FINANCE_POINT_INSUFFICIENT_TERMINAL]: financePointInsufficientTerminalMessage,
 
   // Rental
   [ErrorCode.INSUFFICIENT_FUNDS]: insufficientFundsMessage,
@@ -261,6 +263,22 @@ function financePointPermanentlyClosedMessage(params: Record<string, unknown>): 
     return $localize`Rental point ${pointSlug}:pointSlug: is permanently closed and cannot receive or pay out money. Choose another point.`;
   }
   return $localize`This rental point is permanently closed and cannot receive or pay out money. Choose another point.`;
+}
+
+function financePointInsufficientCashMessage(params: Record<string, unknown>): string {
+  const available = params['cashPosition'];
+  if (typeof available === 'number') {
+    return $localize`Not enough cash in the drawer. Available: ${available.toFixed(2)}:available:.`;
+  }
+  return $localize`There is not enough cash in the drawer for this amount.`;
+}
+
+function financePointInsufficientTerminalMessage(params: Record<string, unknown>): string {
+  const available = params['cardTerminalPosition'];
+  if (typeof available === 'number') {
+    return $localize`Not enough funds on the terminal account. Available: ${available.toFixed(2)}:available:.`;
+  }
+  return $localize`There is not enough money on the terminal account for this amount.`;
 }
 
 function insufficientFundsMessage(params: Record<string, unknown>): string {

@@ -30,6 +30,8 @@ export const ErrorCode = {
   INSUFFICIENT_HOLD: 'finance.insufficient_hold',
   FINANCE_POINT_INACTIVE: 'finance.point.inactive',
   FINANCE_POINT_PERMANENTLY_CLOSED: 'finance.point.permanently_closed',
+  FINANCE_POINT_INSUFFICIENT_CASH: 'finance.point.insufficient_cash',
+  FINANCE_POINT_INSUFFICIENT_TERMINAL: 'finance.point.insufficient_terminal',
 
   // rental.*
   INSUFFICIENT_FUNDS: 'rental.insufficient_funds',
@@ -124,6 +126,8 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.INSUFFICIENT_HOLD,
   ErrorCode.FINANCE_POINT_INACTIVE,
   ErrorCode.FINANCE_POINT_PERMANENTLY_CLOSED,
+  ErrorCode.FINANCE_POINT_INSUFFICIENT_CASH,
+  ErrorCode.FINANCE_POINT_INSUFFICIENT_TERMINAL,
   ErrorCode.INSUFFICIENT_FUNDS,
   ErrorCode.HOLD_REQUIRED,
   ErrorCode.EQUIPMENT_NOT_AVAILABLE,
