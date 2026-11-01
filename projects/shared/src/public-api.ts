@@ -49,6 +49,7 @@ export * from './core/state/staff-name.resolver';
 export * from './core/state/point-movements.store';
 export * from './core/state/point-results.store';
 export * from './core/state/running-shift.store';
+export * from './core/state/finance-receipt.store';
 export * from './core/state/current-point.store';
 export * from './core/state/operating-scope.store';
 export * from './core/state/lookup-initializer.facade';

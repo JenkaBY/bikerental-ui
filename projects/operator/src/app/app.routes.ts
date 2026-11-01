@@ -8,6 +8,7 @@ import {
   operatorGuard,
 } from '@bikerental/shared';
 import { OperatorLayoutComponent } from './layout/operator-layout.component';
+import { financeReceiptGuard } from './cash/finance-receipt.guard';
 
 export const routes: Routes = [
   { path: 'forbidden', component: ForbiddenComponent },
@@ -51,8 +52,30 @@ export const routes: Routes = [
       },
       {
         path: 'cash',
-        loadComponent: () =>
-          import('./cash/operator-cash.component').then((m) => m.OperatorCashComponent),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./cash/operator-cash.component').then((m) => m.OperatorCashComponent),
+          },
+          {
+            path: 'collect/done',
+            data: { fullScreen: true },
+            canActivate: [financeReceiptGuard],
+            loadComponent: () =>
+              import('./cash/operator-finance-receipt.component').then(
+                (m) => m.OperatorFinanceReceiptComponent,
+              ),
+          },
+          {
+            path: 'collect',
+            data: { fullScreen: true },
+            loadComponent: () =>
+              import('./cash/operator-cash-collection.component').then(
+                (m) => m.OperatorCashCollectionComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'damage-reports',

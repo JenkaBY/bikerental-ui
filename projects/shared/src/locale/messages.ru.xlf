@@ -6650,6 +6650,34 @@
         <source>Hand in cash</source>
         <target>Сдать наличные</target>
       </trans-unit>
+      <trans-unit id="2746213518617104480" datatype="html">
+        <source>Hand in cash?</source>
+        <target>Сдать наличные?</target>
+      </trans-unit>
+      <trans-unit id="2585243606250635267" datatype="html">
+        <source>Instant and cannot be cancelled — if it was a mistake, an administrator corrects it</source>
+        <target>Операция проводится сразу и не может быть отменена — если это ошибка, администратор её исправит</target>
+      </trans-unit>
+      <trans-unit id="1402720269009440899" datatype="html">
+        <source>Hand in</source>
+        <target>Сдать</target>
+      </trans-unit>
+      <trans-unit id="6283422360831444655" datatype="html">
+        <source>Cash handed in</source>
+        <target>Наличные сданы</target>
+      </trans-unit>
+      <trans-unit id="8497528947328199741" datatype="html">
+        <source>Time</source>
+        <target>Время</target>
+      </trans-unit>
+      <trans-unit id="156983938817494093" datatype="html">
+        <source>Remaining in drawer</source>
+        <target>Осталось в кассе</target>
+      </trans-unit>
+      <trans-unit id="6094967069775219115" datatype="html">
+        <source>Hand in <x id="amount" equiv-text="amount"/></source>
+        <target>Сдать <x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
