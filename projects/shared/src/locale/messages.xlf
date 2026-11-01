@@ -1425,6 +1425,10 @@
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">553</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">757</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="1141886420788473147" datatype="html">
         <source>Model</source>
@@ -1527,7 +1531,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">750</context>
+          <context context-type="linenumber">748</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5322473252816589112" datatype="html">
@@ -1546,7 +1550,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">751</context>
+          <context context-type="linenumber">749</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7087400662775547587" datatype="html">
@@ -2384,7 +2388,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">747</context>
+          <context context-type="linenumber">745</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1161299114153631702" datatype="html">
@@ -2616,7 +2620,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">760</context>
+          <context context-type="linenumber">766</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5625387252055273052" datatype="html">
@@ -5424,165 +5428,202 @@
           <context context-type="linenumber">734</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2585810285043341585" datatype="html">
-        <source>Rental points list</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">735</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="6753223316028737302" datatype="html">
         <source>No rental points yet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">736</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1584331036827923106" datatype="html">
-        <source>Select a rental point or create a new one</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">737</context>
+          <context context-type="linenumber">735</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1350105028443951724" datatype="html">
         <source>Register rental point</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">738</context>
+          <context context-type="linenumber">736</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4222846916260318127" datatype="html">
         <source>Cannot be changed after registration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">739</context>
+          <context context-type="linenumber">737</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6304432362546770951" datatype="html">
         <source>Address</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">740</context>
+          <context context-type="linenumber">738</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5555255729162006348" datatype="html">
         <source>Street and building</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">741</context>
+          <context context-type="linenumber">739</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2314075913167237221" datatype="html">
         <source>City</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">742</context>
+          <context context-type="linenumber">740</context>
         </context-group>
       </trans-unit>
       <trans-unit id="516176798986294299" datatype="html">
         <source>Country</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">743</context>
+          <context context-type="linenumber">741</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5945986349492910662" datatype="html">
         <source>Contacts</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">744</context>
+          <context context-type="linenumber">742</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4526714495197091449" datatype="html">
         <source>Primary phone</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">745</context>
+          <context context-type="linenumber">743</context>
         </context-group>
       </trans-unit>
       <trans-unit id="12198356341081919" datatype="html">
         <source>Additional phone</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">746</context>
+          <context context-type="linenumber">744</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1859131936150262113" datatype="html">
         <source>Inactive</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">748</context>
+          <context context-type="linenumber">746</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5976645058078007459" datatype="html">
         <source>Permanently closed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">749</context>
+          <context context-type="linenumber">747</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2886516716691419507" datatype="html">
         <source>Close permanently</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">752</context>
+          <context context-type="linenumber">750</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4372097958352169738" datatype="html">
         <source>Close rental point permanently?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">753</context>
+          <context context-type="linenumber">751</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4565426374722901057" datatype="html">
         <source>A permanently closed point cannot be reopened or edited. This action cannot be undone.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">754</context>
+          <context context-type="linenumber">752</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7810909371088935073" datatype="html">
         <source>This point is permanently closed and can no longer be edited.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">755</context>
+          <context context-type="linenumber">753</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3928304615425510889" datatype="html">
         <source>Rental point closed permanently</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">756</context>
+          <context context-type="linenumber">754</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4360306987409712828" datatype="html">
         <source>Rental point saved</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">757</context>
+          <context context-type="linenumber">755</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="92811049220739013" datatype="html">
+        <source>Point</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">756</context>
+        </context-group>
+        <note priority="1" from="description">Points table column header</note>
+        <note priority="1" from="meaning">points-table</note>
+      </trans-unit>
+      <trans-unit id="7625915789396854205" datatype="html">
+        <source>Cash in drawer</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">758</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9038904767292270358" datatype="html">
+        <source>Terminal</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">759</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5856909836302092589" datatype="html">
+        <source>Cash across all drawers</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">760</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="941982614594977700" datatype="html">
+        <source>On terminal accounts</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">761</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6688169753920753729" datatype="html">
+        <source>Show closed points</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">762</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1698061242986569516" datatype="html">
+        <source>Rental points could not be loaded</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">763</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9192252250573112754" datatype="html">
         <source>Current rental point</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">758</context>
+          <context context-type="linenumber">764</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8446492569448480403" datatype="html">
         <source>No working point assigned</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">759</context>
+          <context context-type="linenumber">765</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5628530245590912911" datatype="html">
         <source>In transit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">761</context>
+          <context context-type="linenumber">767</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">
@@ -5850,6 +5891,27 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/admin/src/app/tariffs/tariff-dialog.component.ts</context>
           <context context-type="linenumber">346</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1994193859935181528" datatype="html">
+        <source>Deposited to bank in <x id="month" equiv-text="month"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/point-money-messages.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4533444988992617743" datatype="html">
+        <source>Collections <x id="collected" equiv-text="collected"/> · Terminal settlements <x id="terminalSettled" equiv-text="terminalSettled"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/point-money-messages.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1427097341338548333" datatype="html">
+        <source>Closed hidden: <x id="count" equiv-text="count"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/point-money-messages.ts</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8189329832258181101" datatype="html">

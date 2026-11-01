@@ -654,6 +654,10 @@
         <source>Point</source>
         <target>Пункт</target>
       </trans-unit>
+      <trans-unit id="92811049220739013" datatype="html">
+        <source>Point</source>
+        <target>Точка</target>
+      </trans-unit>
       <trans-unit id="1361636200239389496" datatype="html">
         <source>One or more items are not part of this rental. Nothing was changed.</source>
         <target>Один или несколько элементов не относятся к этой аренде. Изменения не внесены.</target>
@@ -6082,10 +6086,6 @@
         <source>Register rental point</source>
         <target>Регистрация пункта проката</target>
       </trans-unit>
-      <trans-unit id="1584331036827923106" datatype="html">
-        <source>Select a rental point or create a new one</source>
-        <target>Выберите пункт проката или создайте новый</target>
-      </trans-unit>
       <trans-unit id="1859131936150262113" datatype="html">
         <source>Inactive</source>
         <target>Неактивен</target>
@@ -6093,10 +6093,6 @@
       <trans-unit id="2314075913167237221" datatype="html">
         <source>City</source>
         <target>Город</target>
-      </trans-unit>
-      <trans-unit id="2585810285043341585" datatype="html">
-        <source>Rental points list</source>
-        <target>Список пунктов проката</target>
       </trans-unit>
       <trans-unit id="2886516716691419507" datatype="html">
         <source>Close permanently</source>
@@ -6317,6 +6313,42 @@
       <trans-unit id="5625387252055273052" datatype="html">
         <source>The point where the money is received or paid out</source>
         <target>Пункт, где деньги принимаются или выдаются</target>
+      </trans-unit>
+      <trans-unit id="7625915789396854205" datatype="html">
+        <source>Cash in drawer</source>
+        <target>Наличные в кассе</target>
+      </trans-unit>
+      <trans-unit id="9038904767292270358" datatype="html">
+        <source>Terminal</source>
+        <target>Терминал</target>
+      </trans-unit>
+      <trans-unit id="5856909836302092589" datatype="html">
+        <source>Cash across all drawers</source>
+        <target>Наличные во всех кассах</target>
+      </trans-unit>
+      <trans-unit id="941982614594977700" datatype="html">
+        <source>On terminal accounts</source>
+        <target>На счетах терминалов</target>
+      </trans-unit>
+      <trans-unit id="6688169753920753729" datatype="html">
+        <source>Show closed points</source>
+        <target>Показывать закрытые точки</target>
+      </trans-unit>
+      <trans-unit id="1698061242986569516" datatype="html">
+        <source>Rental points could not be loaded</source>
+        <target>Не удалось загрузить пункты проката</target>
+      </trans-unit>
+      <trans-unit id="1994193859935181528" datatype="html">
+        <source>Deposited to bank in <x id="month" equiv-text="month"/></source>
+        <target>Зачислено в банк за <x id="month" equiv-text="month"/></target>
+      </trans-unit>
+      <trans-unit id="4533444988992617743" datatype="html">
+        <source>Collections <x id="collected" equiv-text="collected"/> · Terminal settlements <x id="terminalSettled" equiv-text="terminalSettled"/></source>
+        <target>Инкассации <x id="collected" equiv-text="collected"/> · Расчёты по терминалам <x id="terminalSettled" equiv-text="terminalSettled"/></target>
+      </trans-unit>
+      <trans-unit id="1427097341338548333" datatype="html">
+        <source>Closed hidden: <x id="count" equiv-text="count"/></source>
+        <target>Скрыто закрытых: <x id="count" equiv-text="count"/></target>
       </trans-unit>
     </body>
   </file>

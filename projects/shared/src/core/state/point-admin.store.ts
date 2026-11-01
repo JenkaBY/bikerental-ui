@@ -13,7 +13,6 @@ export class PointAdminStore {
 
   private readonly _points = signal<Point[]>([]);
   private readonly _selectedSlug = signal<string | null>(null);
-  private readonly _creating = signal(false);
   private readonly _editing = signal(false);
   private readonly _loading = signal(false);
   private readonly _saving = signal(false);
@@ -24,8 +23,7 @@ export class PointAdminStore {
     () => this._points().find((p) => p.slug === this._selectedSlug()) ?? null,
   );
   readonly nameBySlug = computed(() => new Map(this._points().map((p) => [p.slug, p.name])));
-  readonly creating = computed(() => this._creating());
-  readonly editing = computed(() => this._editing() || this._creating());
+  readonly editing = computed(() => this._editing());
   readonly loading = computed(() => this._loading());
   readonly saving = computed(() => this._saving());
 
@@ -33,19 +31,13 @@ export class PointAdminStore {
     this._loading.set(true);
     return this.service.searchPoints({ page: 0, size: MAX_POINTS, sort: ['name'] }).pipe(
       map((page) => (page.items ?? []).map(PointMapper.fromResponse)),
-      tap((points) => {
-        this._points.set(points);
-        if (!this._creating() && !points.some((p) => p.slug === this._selectedSlug())) {
-          this._selectedSlug.set(points[0]?.slug ?? null);
-        }
-      }),
+      tap((points) => this._points.set(points)),
       map(() => undefined as void),
       finalize(() => this._loading.set(false)),
     );
   }
 
   select(slug: string): void {
-    this._creating.set(false);
     this._editing.set(false);
     this._selectedSlug.set(slug);
   }
@@ -55,27 +47,14 @@ export class PointAdminStore {
   }
 
   cancelEdit(): void {
-    this._creating.set(false);
     this._editing.set(false);
-    if (this._selectedSlug() === null) {
-      this._selectedSlug.set(this._points()[0]?.slug ?? null);
-    }
-  }
-
-  startCreate(): void {
-    this._creating.set(true);
-    this._editing.set(true);
-    this._selectedSlug.set(null);
   }
 
   create(write: PointWrite, options?: RequestOptions<'json'>): Observable<Point> {
     this._saving.set(true);
     return this.service.registerPoint(PointMapper.toCreateRequest(write), undefined, options).pipe(
       map(PointMapper.fromResponse),
-      tap((created) => {
-        this._points.set([...this._points(), created]);
-        this.select(created.slug);
-      }),
+      tap((created) => this._points.set([...this._points(), created])),
       finalize(() => this._saving.set(false)),
     );
   }
