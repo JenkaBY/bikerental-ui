@@ -6338,6 +6338,10 @@
         <source>Rental points could not be loaded</source>
         <target>Не удалось загрузить пункты проката</target>
       </trans-unit>
+      <trans-unit id="8649563818224577102" datatype="html">
+        <source>Point balances are not available yet</source>
+        <target>Остатки по пунктам пока недоступны</target>
+      </trans-unit>
       <trans-unit id="1994193859935181528" datatype="html">
         <source>Deposited to bank in <x id="month" equiv-text="month"/></source>
         <target>Зачислено в банк за <x id="month" equiv-text="month"/></target>

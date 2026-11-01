@@ -165,7 +165,9 @@ All entities are owned and persisted by the backend; the UI holds read-only proj
     point with its positions per kind (CASH, CARD_TERMINAL, BANK, REVENUE, CORRECTIONS) and, later,
     the point status; plus business-wide totals per kind. Errors: 401/403 and any other failure
     take the standard path (global notification) and set `positionsFailed`. Until the endpoint
-    exists, the 404 lands in the same failure path (Scenario 8 behaviour).
+    exists, the placeholder reader fails with `PointLedgerUnavailableError`; the stores route it to
+    `PointLedgerUnavailableNotifier`, which shows one warning toast ("Point balances are not
+    available yet", repeats within 4 s suppressed) instead of an error (Scenario 8 behaviour).
 * **Interaction: `PointMoneyOverviewStore` -> `PointFinanceService` -> backend (month results)**
   * **Protocol:** REST, `GET /api/finance/point-results?from={date}&to={date}` — **[B-FR08]**,
     admin only, no `pointSlug` (business-wide).
@@ -197,7 +199,8 @@ All entities are owned and persisted by the backend; the UI holds read-only proj
 6. A row click navigates to `/points/{slug}` (FR-02).
 7. "New point" opens `PointCreateDialogComponent`; on success a toast is shown and the page
    navigates to `/points/{slug}/profile`; cancel changes nothing.
-8. **Unhappy — positions fail (or endpoint not yet deployed):** global notification;
+8. **Unhappy — positions fail (or endpoint not yet deployed):** global notification (a single
+   warning toast while the endpoint is not deployed);
    `positionsFailed`; money cells and the two position cards show em-dashes; rows still render.
 9. **Unhappy — results fail:** only the third card shows an em-dash, plus the notification.
 10. **Unhappy — registry fails:** standard notification and error state; money is not shown

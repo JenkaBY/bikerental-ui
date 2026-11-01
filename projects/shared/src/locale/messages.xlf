@@ -2620,7 +2620,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">766</context>
+          <context context-type="linenumber">767</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5625387252055273052" datatype="html">
@@ -5605,25 +5605,32 @@
           <context context-type="linenumber">763</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="8649563818224577102" datatype="html">
+        <source>Point balances are not available yet</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">764</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="9192252250573112754" datatype="html">
         <source>Current rental point</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">764</context>
+          <context context-type="linenumber">765</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8446492569448480403" datatype="html">
         <source>No working point assigned</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">765</context>
+          <context context-type="linenumber">766</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5628530245590912911" datatype="html">
         <source>In transit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">767</context>
+          <context context-type="linenumber">768</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">

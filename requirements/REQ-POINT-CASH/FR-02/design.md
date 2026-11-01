@@ -159,7 +159,8 @@ The existing point edit form and status actions move unchanged in behaviour into
 7. A collection, settlement or shift closure elsewhere calls `notifyChanged()` → positions refresh
    (header pills) and the mounted list reloads with its current settings.
 8. **Unhappy — unknown slug:** "Point not found" warning, navigate to `/points`.
-9. **Unhappy — positions fail / endpoint not yet deployed:** notification, pills show em-dashes;
+9. **Unhappy — positions fail / endpoint not yet deployed:** notification (one shared warning
+   toast via `PointLedgerUnavailableNotifier` while the endpoints are not deployed), pills show em-dashes;
    Profile stays fully usable.
 10. **Unhappy — movements fail:** notification and an error state in the list; selector and period
     stay usable.

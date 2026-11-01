@@ -761,6 +761,7 @@ export class Labels {
   static readonly PointSummaryTerminal = $localize`On terminal accounts`;
   static readonly PointShowClosed = $localize`Show closed points`;
   static readonly PointsLoadFailed = $localize`Rental points could not be loaded`;
+  static readonly PointMoneyUnavailable = $localize`Point balances are not available yet`;
   static readonly CurrentPoint = $localize`Current rental point`;
   static readonly NoWorkingPoint = $localize`No working point assigned`;
   static readonly EquipmentPoint = $localize`Rental point`;

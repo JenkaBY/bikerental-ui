@@ -1,7 +1,7 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, Subscription } from 'rxjs';
-import { PointFinanceService } from '../api/point-finance';
+import { PointFinanceService, PointLedgerUnavailableNotifier } from '../api/point-finance';
 import type {
   Money,
   PointPeriod,
@@ -14,6 +14,7 @@ import type {
 @Injectable()
 export class PointMoneyOverviewStore {
   private readonly finance = inject(PointFinanceService);
+  private readonly ledgerNotifier = inject(PointLedgerUnavailableNotifier);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly _overview = signal<PointPositionsOverview | null>(null);
@@ -60,7 +61,8 @@ export class PointMoneyOverviewStore {
       )
       .subscribe({
         next: (overview) => this._overview.set(overview),
-        error: () => {
+        error: (err: unknown) => {
+          this.ledgerNotifier.notify(err);
           this._overview.set(null);
           this._positionsFailed.set(true);
         },
@@ -79,7 +81,8 @@ export class PointMoneyOverviewStore {
       )
       .subscribe({
         next: (results) => this._results.set(results),
-        error: () => {
+        error: (err: unknown) => {
+          this.ledgerNotifier.notify(err);
           this._results.set(null);
           this._resultsFailed.set(true);
         },
