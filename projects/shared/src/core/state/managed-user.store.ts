@@ -22,9 +22,9 @@ export class ManagedUserStore {
   readonly loading = computed(() => this._loading());
   readonly saving = computed(() => this._saving());
 
-  load(): Observable<void> {
+  load(options?: RequestOptions<'json'>): Observable<void> {
     this._loading.set(true);
-    return this.service.list().pipe(
+    return this.service.list(undefined, options).pipe(
       map((responses) => responses.map(ManagedUserMapper.fromResponse)),
       tap((users) => this._users.set(users)),
       map(() => undefined as void),

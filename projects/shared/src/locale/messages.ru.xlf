@@ -6354,6 +6354,146 @@
         <source>Closed hidden: <x id="count" equiv-text="count"/></source>
         <target>Скрыто закрытых: <x id="count" equiv-text="count"/></target>
       </trans-unit>
+      <trans-unit id="3653434590347777054" datatype="html">
+        <source>Back to rental points</source>
+        <target>Назад к пунктам проката</target>
+      </trans-unit>
+      <trans-unit id="1901957739748342578" datatype="html">
+        <source>Rental point not found</source>
+        <target>Пункт проката не найден</target>
+      </trans-unit>
+      <trans-unit id="8664867493368539071" datatype="html">
+        <source>Cash</source>
+        <target>Касса</target>
+      </trans-unit>
+      <trans-unit id="5968366500418000730" datatype="html">
+        <source>Collections</source>
+        <target>Инкассации</target>
+      </trans-unit>
+      <trans-unit id="7457179823984196306" datatype="html">
+        <source>Operations</source>
+        <target>Операции</target>
+      </trans-unit>
+      <trans-unit id="8441845694562751608" datatype="html">
+        <source>Cash</source>
+        <target>Касса</target>
+      </trans-unit>
+      <trans-unit id="1087101825642084669" datatype="html">
+        <source>Bank</source>
+        <target>Банк</target>
+      </trans-unit>
+      <trans-unit id="5976260364006655011" datatype="html">
+        <source>Rental payment</source>
+        <target>Оплата аренды</target>
+      </trans-unit>
+      <trans-unit id="5152232822989636705" datatype="html">
+        <source>Cash collection</source>
+        <target>Инкассация</target>
+      </trans-unit>
+      <trans-unit id="7274021487650683960" datatype="html">
+        <source>Terminal settlement</source>
+        <target>Расчёт по терминалу</target>
+      </trans-unit>
+      <trans-unit id="4394266174066517933" datatype="html">
+        <source>Shift discrepancy</source>
+        <target>Расхождение смены</target>
+      </trans-unit>
+      <trans-unit id="3153802600204818440" datatype="html">
+        <source>Date and time</source>
+        <target>Дата и время</target>
+      </trans-unit>
+      <trans-unit id="6188877421216964135" datatype="html">
+        <source>Recorded by</source>
+        <target>Кто провёл</target>
+      </trans-unit>
+      <trans-unit id="1172866303261737245" datatype="html">
+        <source>Position</source>
+        <target>Позиция</target>
+      </trans-unit>
+      <trans-unit id="220550782947016929" datatype="html">
+        <source>Order</source>
+        <target>Порядок</target>
+      </trans-unit>
+      <trans-unit id="2317673285989169654" datatype="html">
+        <source>Newest first</source>
+        <target>Сначала новые</target>
+      </trans-unit>
+      <trans-unit id="7788789394151316565" datatype="html">
+        <source>Oldest first</source>
+        <target>Сначала старые</target>
+      </trans-unit>
+      <trans-unit id="1292960504957421782" datatype="html">
+        <source>No movements in this period</source>
+        <target>Нет движений за этот период</target>
+      </trans-unit>
+      <trans-unit id="8126680237135954059" datatype="html">
+        <source>Movements could not be loaded</source>
+        <target>Не удалось загрузить движения</target>
+      </trans-unit>
+      <trans-unit id="2161871078253886554" datatype="html">
+        <source>Unknown user</source>
+        <target>Неизвестный пользователь</target>
+      </trans-unit>
+      <trans-unit id="4376776695963224818" datatype="html">
+        <source>Select both the start and the end of the period</source>
+        <target>Укажите начало и конец периода</target>
+      </trans-unit>
+      <trans-unit id="9108321070723993484" datatype="html">
+        <source>The end of the period cannot be before its start</source>
+        <target>Конец периода не может быть раньше начала</target>
+      </trans-unit>
+      <trans-unit id="3063293482156769632" datatype="html">
+        <source>The period may not exceed 366 days</source>
+        <target>Период не может превышать 366 дней</target>
+      </trans-unit>
+      <trans-unit id="578791047477182430" datatype="html">
+        <source>Results</source>
+        <target>Итоги</target>
+      </trans-unit>
+      <trans-unit id="165140290374418105" datatype="html">
+        <source>Revenue</source>
+        <target>Выручка</target>
+      </trans-unit>
+      <trans-unit id="2454928152428699855" datatype="html">
+        <source>Corrections</source>
+        <target>Корректировки</target>
+      </trans-unit>
+      <trans-unit id="1542950960231830748" datatype="html">
+        <source>Result</source>
+        <target>Результат</target>
+      </trans-unit>
+      <trans-unit id="5750509619340505550" datatype="html">
+        <source>Revenue plus corrections</source>
+        <target>Выручка с учётом корректировок</target>
+      </trans-unit>
+      <trans-unit id="522505288188713668" datatype="html">
+        <source>Cash collections</source>
+        <target>Инкассации</target>
+      </trans-unit>
+      <trans-unit id="1767427986738528005" datatype="html">
+        <source>Terminal settlements</source>
+        <target>Зачисления по терминалу</target>
+      </trans-unit>
+      <trans-unit id="6765786935416488262" datatype="html">
+        <source>Money moved to the bank; not part of the result</source>
+        <target>Деньги, переведённые в банк; в результат не входят</target>
+      </trans-unit>
+      <trans-unit id="7386526405071680101" datatype="html">
+        <source>Results could not be loaded</source>
+        <target>Не удалось загрузить итоги</target>
+      </trans-unit>
+      <trans-unit id="54542531971532117" datatype="html">
+        <source>Movement types</source>
+        <target>Типы операций</target>
+      </trans-unit>
+      <trans-unit id="424356320420294719" datatype="html">
+        <source>All types</source>
+        <target>Все типы</target>
+      </trans-unit>
+      <trans-unit id="8433263439578205214" datatype="html">
+        <source>Transfers: <x id="count" equiv-text="count"/></source>
+        <target>Переводов: <x id="count" equiv-text="count"/></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

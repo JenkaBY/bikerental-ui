@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
 import { RentalPointsService, RequestOptions } from '../api/generated';
 import { PointMapper } from '../mappers';
+import { suppressErrorNotification } from '../errors/http-error-context';
 import type { Point, PointStatus, PointWrite } from '../models';
 
 const MAX_POINTS = 100;
@@ -33,6 +34,16 @@ export class PointAdminStore {
       map((page) => (page.items ?? []).map(PointMapper.fromResponse)),
       tap((points) => this._points.set(points)),
       map(() => undefined as void),
+      finalize(() => this._loading.set(false)),
+    );
+  }
+
+  loadOne(slug: string): Observable<Point> {
+    this.select(slug);
+    this._loading.set(true);
+    return this.service.getPoint(slug, undefined, { context: suppressErrorNotification() }).pipe(
+      map(PointMapper.fromResponse),
+      tap((point) => this.upsert(point)),
       finalize(() => this._loading.set(false)),
     );
   }
@@ -84,5 +95,14 @@ export class PointAdminStore {
 
   private replace(point: Point): void {
     this._points.set(this._points().map((p) => (p.slug === point.slug ? point : p)));
+  }
+
+  private upsert(point: Point): void {
+    const exists = this._points().some((p) => p.slug === point.slug);
+    this._points.set(
+      exists
+        ? this._points().map((p) => (p.slug === point.slug ? point : p))
+        : [...this._points(), point],
+    );
   }
 }

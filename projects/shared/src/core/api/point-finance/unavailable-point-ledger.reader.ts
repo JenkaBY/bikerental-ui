@@ -1,5 +1,5 @@
 import { Observable, throwError } from 'rxjs';
-import type { PointPeriodResults, PointPositionsOverview } from '../../models';
+import type { PointMovementPage, PointPeriodResults, PointPositionsOverview } from '../../models';
 import { PointLedgerUnavailableError } from './point-ledger-unavailable.error';
 import type { PointLedgerReader } from './point-ledger.reader';
 
@@ -10,5 +10,9 @@ export class UnavailablePointLedgerReader implements PointLedgerReader {
 
   results(): Observable<PointPeriodResults> {
     return throwError(() => new PointLedgerUnavailableError('point-results'));
+  }
+
+  movements(): Observable<PointMovementPage> {
+    return throwError(() => new PointLedgerUnavailableError('point-movements'));
   }
 }

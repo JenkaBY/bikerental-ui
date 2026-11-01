@@ -2,10 +2,16 @@ import { HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import type { PointResultsParams } from '@api-models';
+import type { PointMovementsParams, PointResultsParams } from '@api-models';
 import { FinanceService } from '../generated';
 import { PointFinanceMapper } from '../../mappers/point-finance.mapper';
-import type { PointPeriod, PointPeriodResults, PointPositionsOverview } from '../../models';
+import type {
+  PointMovementPage,
+  PointMovementQuery,
+  PointPeriod,
+  PointPeriodResults,
+  PointPositionsOverview,
+} from '../../models';
 import { SKIP_POINT_SCOPE } from '../../interceptors/point.interceptor';
 import { toIsoDate } from '../../../shared/utils/date.util';
 import type { PointLedgerReader } from './point-ledger.reader';
@@ -34,6 +40,27 @@ export class HttpPointLedgerReader implements PointLedgerReader {
       .pipe(
         map((r) => PointFinanceMapper.periodResultsFromFigures(r.figures ?? [], period, pointSlug)),
       );
+  }
+
+  movements(query: PointMovementQuery): Observable<PointMovementPage> {
+    const filter: PointMovementsParams = {
+      ...HttpPointLedgerReader.periodFilter(query.period),
+      kind: query.kinds.length ? [...query.kinds] : undefined,
+    };
+    return this.finance
+      .getPointMovements(
+        query.pointSlug,
+        query.position,
+        filter,
+        {
+          page: query.page,
+          size: query.size,
+          sort: [query.order === 'newest' ? 'recordedAt,desc' : 'recordedAt,asc'],
+        },
+        'body',
+        HttpPointLedgerReader.businessScope(),
+      )
+      .pipe(map((r) => PointFinanceMapper.movementPageFromResponse(r, query.page, query.size)));
   }
 
   private static periodFilter(period: PointPeriod): PointResultsParams {

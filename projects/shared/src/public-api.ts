@@ -43,6 +43,11 @@ export * from './core/state/tariff.store';
 export * from './core/state/point-admin.store';
 export * from './core/state/point-money-overview.store';
 export * from './core/state/point-list-view.store';
+export * from './core/state/point-positions.store';
+export * from './core/state/point-money-refresh.facade';
+export * from './core/state/staff-name.resolver';
+export * from './core/state/point-movements.store';
+export * from './core/state/point-results.store';
 export * from './core/state/current-point.store';
 export * from './core/state/operating-scope.store';
 export * from './core/state/lookup-initializer.facade';
@@ -173,6 +178,7 @@ export * from './shared/components/collapsible-section/collapsible-section.compo
 export * from './shared/components/customer/customer-ref/customer-ref.component';
 export * from './shared/rental-status.meta';
 export * from './shared/transaction.meta';
+export * from './shared/point-money.meta';
 export * from './shared/revenue.meta';
 export * from './shared/penalty-status.meta';
 
@@ -191,6 +197,7 @@ export * from './shared/directives/max-decimals.directive';
 // Shared UI — utilities
 export * from './shared/utils/date.util';
 export * from './shared/utils/business-period.util';
+export * from './shared/utils/point-period.rule';
 export * from './shared/utils/deployed-path';
 export * from './shared/utils/user-initials.util';
 export * from './shared/utils/revenue-bucket-label.util';

@@ -381,17 +381,19 @@ TYPE: API
 PURPOSE: Single domain-typed entry point to point-finance reads (positions overview, period results); later FRs add movements, the running shift and the money commands.
 RESPONSIBILITIES:
 
-- Expose `getPositions()` and `getResults(period, pointSlug | null)` with domain models only.
+- Expose `getPositions()`, `getResults(period, pointSlug | null)` and `getMovements(query)` (page size clamped to 100) with domain models only.
 - Delegate the FIN-002 FR-08 reads to the `POINT_LEDGER_READER` token (`HttpPointLedgerReader`); the `UnavailablePointLedgerReader` placeholder (fails with `PointLedgerUnavailableError`, one warning toast via `PointLedgerUnavailableNotifier`) stays available for environments without the endpoints.
   SOURCE: `projects/shared/src/core/api/point-finance/point-finance.service.ts`
   CALLS:
-- PointLedgerReader (`POINT_LEDGER_READER`) — `positions()`, `results()`.
+- PointLedgerReader (`POINT_LEDGER_READER`) — `positions()`, `results()`, `movements()`.
   CALLED_BY:
 - PointMoneyOverviewStore
+- PointPositionsStore
+- PointMovementsStore
 
 COMPONENT_NAME: PointLedgerReader
 TYPE: API
-PURPOSE: Swappable reader for `GET /api/finance/points/positions` and `GET /api/finance/points/results` (FIN-002 FR-08, bike-rental PR 325, admin only).
+PURPOSE: Swappable reader for `GET /api/finance/points/positions`, `/points/results` and `/points/{pointSlug}/positions/{position}/movements` (FIN-002 FR-08, bike-rental PR 325/327, admin only).
 RESPONSIBILITIES:
 
 - Provide the domain-typed read contract behind the `POINT_LEDGER_READER` injection token (root factory).
@@ -1169,6 +1171,7 @@ RESPONSIBILITIES:
 
 - Normalize position kinds (`CASH`, `CARD_TERMINAL`, `BANK`, `REVENUE`, `CORRECTIONS`); unknown kinds are ignored, missing kinds become 0.
 - Provide two-decimal money helpers (`money`, `sum`) used for period totals.
+- Normalize movement kinds (`DEPOSIT`, `WITHDRAWAL`, `CAPTURE`, `PENALTY`, `ADJUSTMENT`, `COLLECTION`, `TERMINAL_SETTLEMENT`, `SHIFT_DISCREPANCY`); unknown kinds become `OTHER`.
   SOURCE: `projects/shared/src/core/mappers/point-finance.mapper.ts`
   CALLS:
 - NONE
@@ -1343,6 +1346,7 @@ RESPONSIBILITIES:
 - OperatorRevenueSource
 - OperatorSelectComponent
 - UserCreateDialogComponent
+- StaffNameResolver
 - UserEditDialogComponent
 - UsersListComponent
 
@@ -2061,6 +2065,70 @@ RESPONSIBILITIES:
 - BusinessPeriod — current month to date, month name.
   CALLED_BY:
 - PointsPageComponent
+
+COMPONENT_NAME: PointPositionsStore
+TYPE: Store
+PURPOSE: Positions (CASH, CARD_TERMINAL, BANK) of the point viewed on `/points/:slug/**`.
+RESPONSIBILITIES:
+
+- `load(slug)` / `refresh()` from the business-wide positions overview filtered to one slug (no single-point read exists); `null` = unknown (em-dash).
+- `applyPosition(kind, amount)` patches a position from a command response until the next successful fetch.
+  SOURCE: `projects/shared/src/core/state/point-positions.store.ts`
+  CALLS:
+- PointFinanceService — `getPositions()`.
+  CALLED_BY:
+- PointDetailPageComponent
+- PointMoneyRefreshFacade
+
+COMPONENT_NAME: PointMoneyRefreshFacade
+TYPE: Store
+PURPOSE: Host-scoped "point money changed" notifier.
+RESPONSIBILITIES:
+
+- `notifyChanged()` refreshes `PointPositionsStore` and bumps `revision`; mounted tab lists reload on a new revision.
+  SOURCE: `projects/shared/src/core/state/point-money-refresh.facade.ts`
+  CALLS:
+- PointPositionsStore — `refresh()`.
+  CALLED_BY:
+- PointOperationsTabComponent
+
+COMPONENT_NAME: StaffNameResolver
+TYPE: Store
+PURPOSE: Resolves finance `recordedBy` user ids to staff names (admin only).
+RESPONSIBILITIES:
+
+- `ensureLoaded()` loads `GET /api/auth/users` once (suppressed, silent on failure); `nameFor(id)` → display name, else username, else "Unknown user" — never the raw id.
+  SOURCE: `projects/shared/src/core/state/staff-name.resolver.ts`
+  CALLS:
+- ManagedUserStore — `users()`, `loading()`, `load(options)`.
+  CALLED_BY:
+- PointMovementsStore
+
+COMPONENT_NAME: PointMovementsStore
+TYPE: Store
+PURPOSE: One paged, period-bounded, single-position point-movement query (one instance per consumer tab).
+RESPONSIBILITIES:
+
+- `configure()`, `setPosition()` / `setPeriod()` / `setOrder()` / `setKinds()` (reset to page 0), `loadPage()`, `reload()`; latest load wins; never sends a period rejected by `PointPeriodRule`; size ≤ 100; sort only by `recordedAt`.
+- Expose rows with resolved `recordedByName`; optional client-side `notBefore` filter.
+  SOURCE: `projects/shared/src/core/state/point-movements.store.ts`
+  CALLS:
+- PointFinanceService — `getMovements(query)`.
+- StaffNameResolver — `ensureLoaded()`, `nameFor()`.
+  CALLED_BY:
+- PointOperationsTabComponent
+
+COMPONENT_NAME: PointResultsStore
+TYPE: Store
+PURPOSE: Period results of one point (single `_state` signal) and the derived figure list for the Results tab.
+RESPONSIBILITIES:
+
+- `configure(slug, period)`, `setPeriod()`, `reload()`; latest load wins; never sends a period rejected by `PointPeriodRule`; `PointLedgerUnavailableError` → one warning toast.
+  SOURCE: `projects/shared/src/core/state/point-results.store.ts`
+  CALLS:
+- PointFinanceService — `getResults(period, slug)`.
+  CALLED_BY:
+- PointResultsTabComponent
 
 ### Admin feature components
 
@@ -2827,6 +2895,96 @@ RESPONSIBILITIES:
 - ApiErrorParser / ErrorMessageResolver / applyServerErrors / NotificationService.
   CALLED_BY:
 - PointCreateDialogComponent
+- PointProfileTabComponent
+
+COMPONENT_NAME: PointDetailPageComponent
+TYPE: Gateway
+PURPOSE: Host of `/points/:slug/{profile|cash|transfers|operations|results}` — header with identity, status and position pills, segmented tabs.
+RESPONSIBILITIES:
+
+- Provide `PointAdminStore`, `PointPositionsStore`, `PointMoneyRefreshFacade`, `StaffNameResolver` for all tabs; drop them on leaving.
+- On slug change: `loadOne(slug)` and `PointPositionsStore.load(slug)` in parallel; unknown slug → "Rental point not found" warning and back to `/points`.
+  SOURCE: `projects/admin/src/app/points/point-detail-page.component.ts`, `projects/admin/src/app/points/point-detail.routes.ts`
+  CALLS:
+- PointAdminStore — `loadOne()`, `selected()`.
+- PointPositionsStore — `load()`, `cash()`, `cardTerminal()`.
+- PageHeaderComponent, SegmentedTabsComponent, PointBalancePillComponent.
+  CALLED_BY:
+- AdminRoutes
+
+COMPONENT_NAME: PointProfileTabComponent
+TYPE: Gateway
+PURPOSE: Profile tab — point profile form (view/edit) and status actions.
+RESPONSIBILITIES:
+
+- Host `PointProfileFormComponent` (`edit` mode) and `PointStatusActionsComponent` for the host's selected point.
+  SOURCE: `projects/admin/src/app/points/point-profile-tab.component.ts`
+  CALLS:
+- PointAdminStore — `selected()`.
+  CALLED_BY:
+- PointDetailPageComponent (child route)
+
+COMPONENT_NAME: PointOperationsTabComponent
+TYPE: Gateway
+PURPOSE: Operations tab — movements of one position (Cash / Terminal / Bank) for a required period, filterable by movement types, newest or oldest first, paged.
+RESPONSIBILITIES:
+
+- Provide its own `PointMovementsStore`, configured `{ slug, CASH, current month to date, newest, size 50 }`; reload on a new facade revision.
+  SOURCE: `projects/admin/src/app/points/point-operations-tab.component.ts`
+  CALLS:
+- PointMovementsStore, PointMoneyRefreshFacade, TimeStore, BusinessPeriod.
+- PointPeriodFilterComponent, PointMovementTableComponent.
+  CALLED_BY:
+- PointDetailPageComponent (child route)
+
+COMPONENT_NAME: PointResultsTabComponent
+TYPE: Gateway
+PURPOSE: Results tab — revenue, corrections, result and the two bank transfers (with counts) of one point for a required period.
+RESPONSIBILITIES:
+
+- Provide its own `PointResultsStore`, configured `{ slug, current month to date }`; reload on a new facade revision.
+  SOURCE: `projects/admin/src/app/points/point-results-tab.component.ts`
+  CALLS:
+- PointResultsStore, PointMoneyRefreshFacade, TimeStore, BusinessPeriod.
+- PointPeriodFilterComponent.
+  CALLED_BY:
+- PointDetailPageComponent (child route)
+
+COMPONENT_NAME: PointMovementTableComponent
+TYPE: Gateway
+PURPOSE: The one point-movement table, column presets `operations` | `shift` | `history`.
+RESPONSIBILITIES:
+
+- Date-time, localized type, customer link (`/customers/:id`, em-dash when none), recorded-by name, signed amount (+ green / − red), running balance; `history` shows magnitude and recorded-by under the date.
+  SOURCE: `projects/admin/src/app/points/point-movement-table.component.ts`
+  CALLS:
+- FixedMoneyPipe, ShortIdPipe, POINT_MOVEMENT_KIND_LABELS
+  CALLED_BY:
+- PointOperationsTabComponent
+
+COMPONENT_NAME: PointPeriodFilterComponent
+TYPE: Gateway
+PURPOSE: Required from/to date pair that emits only periods accepted by `PointPeriodRule`.
+RESPONSIBILITIES:
+
+- Show the localized violation message (required / order / more than 366 days) and emit nothing while invalid.
+  SOURCE: `projects/admin/src/app/points/point-period-filter.component.ts`
+  CALLS:
+- PointPeriodRule, POINT_PERIOD_VIOLATION_MESSAGES
+  CALLED_BY:
+- PointOperationsTabComponent
+
+COMPONENT_NAME: PointBalancePillComponent
+TYPE: Gateway
+PURPOSE: Header pill "<position> <amount>" (em-dash when unknown).
+RESPONSIBILITIES:
+
+- Render a label and `Money | null` with `FixedMoneyPipe`.
+  SOURCE: `projects/admin/src/app/points/point-balance-pill.component.ts`
+  CALLS:
+- FixedMoneyPipe
+  CALLED_BY:
+- PointDetailPageComponent
 
 ### Operator feature components
 
@@ -4742,6 +4900,8 @@ RESPONSIBILITIES:
   CALLED_BY:
 - PointListComponent
 - PointMoneySummaryCardsComponent
+- PointMovementTableComponent
+- PointBalancePillComponent
 
 COMPONENT_NAME: BusinessPeriod
 TYPE: Utility
@@ -4754,6 +4914,20 @@ RESPONSIBILITIES:
 - NONE
   CALLED_BY:
 - PointListViewStore
+- PointOperationsTabComponent
+
+COMPONENT_NAME: PointPeriodRule
+TYPE: Utility
+PURPOSE: Validates a point-finance period: required, end not before start, at most 366 days inclusive.
+RESPONSIBILITIES:
+
+- `validate(from, to)` → `null | 'REQUIRED' | 'ORDER' | 'TOO_LONG'`.
+  SOURCE: `projects/shared/src/shared/utils/point-period.rule.ts`
+  CALLS:
+- daysInclusive
+  CALLED_BY:
+- PointMovementsStore
+- PointPeriodFilterComponent
 
 ---
 
