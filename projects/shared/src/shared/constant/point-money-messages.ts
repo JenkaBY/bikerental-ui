@@ -13,3 +13,7 @@ export function pointsClosedHidden(count: number): string {
 export function pointResultTransferCount(count: number): string {
   return $localize`Transfers: ${count}:count:`;
 }
+
+export function pointShiftCaption(sequence: number, time: string): string {
+  return $localize`Shift ${sequence}:sequence: · opened ${time}:time:`;
+}

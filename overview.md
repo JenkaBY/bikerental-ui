@@ -383,13 +383,16 @@ RESPONSIBILITIES:
 
 - Expose `getPositions()`, `getResults(period, pointSlug | null)` and `getMovements(query)` (page size clamped to 100) with domain models only.
 - Delegate the FIN-002 FR-08 reads to the `POINT_LEDGER_READER` token (`HttpPointLedgerReader`); the `UnavailablePointLedgerReader` placeholder (fails with `PointLedgerUnavailableError`, one warning toast via `PointLedgerUnavailableNotifier`) stays available for environments without the endpoints.
+- Expose `getCurrentShift(pointSlug | null)` over `GET /api/finance/shifts/current` (admin names the point via `X-Point-Slug`, `null` = operator via the point interceptor); HTTP 404 = no running shift → `null`, request sent with `suppressErrorNotification`.
   SOURCE: `projects/shared/src/core/api/point-finance/point-finance.service.ts`
   CALLS:
 - PointLedgerReader (`POINT_LEDGER_READER`) — `positions()`, `results()`, `movements()`.
+- FinanceService (generated) — `getRunningShift()`.
   CALLED_BY:
 - PointMoneyOverviewStore
 - PointPositionsStore
 - PointMovementsStore
+- RunningShiftStore
 
 COMPONENT_NAME: PointLedgerReader
 TYPE: API
@@ -1172,6 +1175,7 @@ RESPONSIBILITIES:
 - Normalize position kinds (`CASH`, `CARD_TERMINAL`, `BANK`, `REVENUE`, `CORRECTIONS`); unknown kinds are ignored, missing kinds become 0.
 - Provide two-decimal money helpers (`money`, `sum`) used for period totals.
 - Normalize movement kinds (`DEPOSIT`, `WITHDRAWAL`, `CAPTURE`, `PENALTY`, `ADJUSTMENT`, `COLLECTION`, `TERMINAL_SETTLEMENT`, `SHIFT_DISCREPANCY`); unknown kinds become `OTHER`.
+- `runningShiftFromResponse`: group `movements[{type, amount}]` by kind and sum (backend order kept, `PAYOUT` → `WITHDRAWAL`, zero totals dropped); `expectedCash` is the backend value.
   SOURCE: `projects/shared/src/core/mappers/point-finance.mapper.ts`
   CALLS:
 - NONE
@@ -2079,6 +2083,7 @@ RESPONSIBILITIES:
   CALLED_BY:
 - PointDetailPageComponent
 - PointMoneyRefreshFacade
+- PointCashTabComponent
 
 COMPONENT_NAME: PointMoneyRefreshFacade
 TYPE: Store
@@ -2091,6 +2096,7 @@ RESPONSIBILITIES:
 - PointPositionsStore — `refresh()`.
   CALLED_BY:
 - PointOperationsTabComponent
+- PointCashTabComponent
 
 COMPONENT_NAME: StaffNameResolver
 TYPE: Store
@@ -2111,12 +2117,14 @@ RESPONSIBILITIES:
 
 - `configure()`, `setPosition()` / `setPeriod()` / `setOrder()` / `setKinds()` (reset to page 0), `loadPage()`, `reload()`; latest load wins; never sends a period rejected by `PointPeriodRule`; size ≤ 100; sort only by `recordedAt`.
 - Expose rows with resolved `recordedByName`; optional client-side `notBefore` filter.
+- Optional `accumulate` mode: `loadMore()` appends the next page, `hasMore` stops once a row older than `notBefore` is loaded (newest-first), `reload()` restarts at page 0.
   SOURCE: `projects/shared/src/core/state/point-movements.store.ts`
   CALLS:
 - PointFinanceService — `getMovements(query)`.
 - StaffNameResolver — `ensureLoaded()`, `nameFor()`.
   CALLED_BY:
 - PointOperationsTabComponent
+- PointCashTabComponent
 
 COMPONENT_NAME: PointResultsStore
 TYPE: Store
@@ -2129,6 +2137,46 @@ RESPONSIBILITIES:
 - PointFinanceService — `getResults(period, slug)`.
   CALLED_BY:
 - PointResultsTabComponent
+
+COMPONENT_NAME: RunningShiftStore
+TYPE: Store
+PURPOSE: The point's running cash shift (feature-scoped; admin Cash tab now, operator screens and shift closure later).
+RESPONSIBILITIES:
+
+- State `{ pointSlug, shift: RunningShift | null, state: loading | running | none | failed }`; `load(pointSlug | null)` (`null` = operator) and `refresh()` (no loading flash).
+- "No running shift" → `none`; any other failure → standard error notification and `failed`.
+  SOURCE: `projects/shared/src/core/state/running-shift.store.ts`
+  CALLS:
+- PointFinanceService — `getCurrentShift()`.
+- ApiErrorParser, ErrorMessageResolver, NotificationService.
+  CALLED_BY:
+- PointCashTabComponent
+
+COMPONENT_NAME: PointMoneyActionAvailability
+TYPE: Utility
+PURPOSE: Pure "may this money button be used" rules (convenience only; the backend decides).
+RESPONSIBILITIES:
+
+- `collection(status, cash, shiftState)`: no running shift → `HIDDEN`; point not ACTIVE → `POINT_NOT_ACTIVE`; unknown → `UNKNOWN`; ≤ 0 → `NOTHING_TO_MOVE`.
+- `settlement(status, terminal)`: refused only at PERMANENTLY_CLOSED → `POINT_PERMANENTLY_CLOSED`; unknown / ≤ 0 as above.
+- `closeShift(shiftState)`: enabled while a shift runs, else `HIDDEN`.
+  SOURCE: `projects/shared/src/shared/utils/point-money-action-availability.ts`
+  CALLS:
+- (none)
+  CALLED_BY:
+- PointCashTabComponent
+
+COMPONENT_NAME: ShiftBreakdownComponent
+TYPE: Gateway
+PURPOSE: Dumb breakdown of a running shift: opening, one line per movement kind, expected cash.
+RESPONSIBILITIES:
+
+- Render `RunningShift` as delivered (no arithmetic); signed kind totals green / red; `prominentExpected` enlarges the expected line.
+  SOURCE: `projects/shared/src/shared/components/shift-breakdown/shift-breakdown.component.ts`
+  CALLS:
+- FixedMoneyPipe, POINT_MOVEMENT_KIND_LABELS
+  CALLED_BY:
+- PointCashCardComponent
 
 ### Admin feature components
 
@@ -2961,6 +3009,7 @@ RESPONSIBILITIES:
 - FixedMoneyPipe, ShortIdPipe, POINT_MOVEMENT_KIND_LABELS
   CALLED_BY:
 - PointOperationsTabComponent
+- PointCashTabComponent
 
 COMPONENT_NAME: PointPeriodFilterComponent
 TYPE: Gateway
@@ -2985,6 +3034,45 @@ RESPONSIBILITIES:
 - FixedMoneyPipe
   CALLED_BY:
 - PointDetailPageComponent
+
+COMPONENT_NAME: PointCashTabComponent
+TYPE: Gateway
+PURPOSE: Cash tab (`/points/:slug/cash`) — CASH and terminal cards, running-shift breakdown, shift cash movements.
+RESPONSIBILITIES:
+
+- Provide its own `RunningShiftStore` and `PointMovementsStore`; load the shift on entry, configure the list `{ slug, CASH, day of openedAt … today, newest, size 100, notBefore: openedAt, accumulate }`, reload shift and list on a new facade revision.
+- Compute button availability; collection amount = CASH position, falling back to the shift's expected cash while positions are unavailable.
+- `applyOutcome()` after a money dialog: `notifyChanged()`, plus `PointAdminStore.loadOne` on a status change. Dialog openers arrive with FR-05 / FR-08.
+  SOURCE: `projects/admin/src/app/points/point-cash-tab.component.ts`
+  CALLS:
+- RunningShiftStore, PointMovementsStore, PointPositionsStore, PointAdminStore, PointMoneyRefreshFacade, TimeStore, BusinessPeriod, PointMoneyActionAvailability.
+- PointCashCardComponent, PointTerminalCardComponent, PointMovementTableComponent.
+  CALLED_BY:
+- PointDetailPageComponent (child route)
+
+COMPONENT_NAME: PointCashCardComponent
+TYPE: Gateway
+PURPOSE: Dumb cash-drawer card: CASH position, shift caption, breakdown, "Collect cash" / "Close shift".
+RESPONSIBILITIES:
+
+- Render per shift state (loading / running / none / failed); hide buttons whose availability is `HIDDEN`; show the active-point hint when collection is refused for status. Outputs `collect`, `closeShiftRequested`.
+  SOURCE: `projects/admin/src/app/points/point-cash-card.component.ts`
+  CALLS:
+- ShiftBreakdownComponent, FixedMoneyPipe
+  CALLED_BY:
+- PointCashTabComponent
+
+COMPONENT_NAME: PointTerminalCardComponent
+TYPE: Gateway
+PURPOSE: Dumb terminal-account card: CARD_TERMINAL position and "Record settlement".
+RESPONSIBILITIES:
+
+- Render the position and the button per availability; show the permanently-closed hint. Output `settle`.
+  SOURCE: `projects/admin/src/app/points/point-terminal-card.component.ts`
+  CALLS:
+- FixedMoneyPipe
+  CALLED_BY:
+- PointCashTabComponent
 
 ### Operator feature components
 
@@ -4909,12 +4997,14 @@ PURPOSE: Business-clock period helpers for point finance.
 RESPONSIBILITIES:
 
 - `currentMonthToDate(now)` → inclusive `{ from: first of month, to: today }`; `monthName(date, locale)` → stand-alone localized month name.
+- `sinceDayOf(start, now)` → period from the calendar day of `start` to `now`.
   SOURCE: `projects/shared/src/shared/utils/business-period.util.ts`
   CALLS:
 - NONE
   CALLED_BY:
 - PointListViewStore
 - PointOperationsTabComponent
+- PointCashTabComponent
 
 COMPONENT_NAME: PointPeriodRule
 TYPE: Utility

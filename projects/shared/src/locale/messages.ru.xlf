@@ -6388,7 +6388,7 @@
       </trans-unit>
       <trans-unit id="5152232822989636705" datatype="html">
         <source>Cash collection</source>
-        <target>Инкассация</target>
+        <target>Сдать в банк</target>
       </trans-unit>
       <trans-unit id="7274021487650683960" datatype="html">
         <source>Terminal settlement</source>
@@ -6493,6 +6493,70 @@
       <trans-unit id="8433263439578205214" datatype="html">
         <source>Transfers: <x id="count" equiv-text="count"/></source>
         <target>Переводов: <x id="count" equiv-text="count"/></target>
+      </trans-unit>
+      <trans-unit id="3256662710286030399" datatype="html">
+        <source>Cash drawer</source>
+        <target>Касса</target>
+      </trans-unit>
+      <trans-unit id="3401742369236075694" datatype="html">
+        <source>Terminal account</source>
+        <target>Счёт терминала</target>
+      </trans-unit>
+      <trans-unit id="8966891360857735751" datatype="html">
+        <source>Shift opening</source>
+        <target>На начало смены</target>
+      </trans-unit>
+      <trans-unit id="3439264342083521644" datatype="html">
+        <source>Expected cash</source>
+        <target>Ожидается в кассе</target>
+      </trans-unit>
+      <trans-unit id="6389183864738908989" datatype="html">
+        <source>No shift is running</source>
+        <target>Смена не открыта</target>
+      </trans-unit>
+      <trans-unit id="7612644497247124504" datatype="html">
+        <source>The running shift could not be loaded</source>
+        <target>Не удалось загрузить текущую смену</target>
+      </trans-unit>
+      <trans-unit id="7321522226960755791" datatype="html">
+        <source>Shift cash movements</source>
+        <target>Кассовые движения смены</target>
+      </trans-unit>
+      <trans-unit id="4435079910010537926" datatype="html">
+        <source>No cash movements in this shift</source>
+        <target>Нет кассовых движений за эту смену</target>
+      </trans-unit>
+      <trans-unit id="1537733982060615329" datatype="html">
+        <source>Collect cash</source>
+        <target>Сдать в банк</target>
+      </trans-unit>
+      <trans-unit id="3886752826063422938" datatype="html">
+        <source>Close shift</source>
+        <target>Закрыть смену</target>
+      </trans-unit>
+      <trans-unit id="7904382256493335613" datatype="html">
+        <source>Record settlement</source>
+        <target>Зачислить в банк</target>
+      </trans-unit>
+      <trans-unit id="7559272079945618318" datatype="html">
+        <source>Cash can be collected only at an active point</source>
+        <target>Инкассация возможна только в действующем пункте</target>
+      </trans-unit>
+      <trans-unit id="9068974005085433178" datatype="html">
+        <source>Settlements cannot be recorded at a permanently closed point</source>
+        <target>Нельзя записать зачисление в навсегда закрытом пункте</target>
+      </trans-unit>
+      <trans-unit id="1495407472428019919" datatype="html">
+        <source>This action is not available yet</source>
+        <target>Это действие пока недоступно</target>
+      </trans-unit>
+      <trans-unit id="7215101881367554791" datatype="html">
+        <source>Show more</source>
+        <target>Показать ещё</target>
+      </trans-unit>
+      <trans-unit id="1814169625590683548" datatype="html">
+        <source>Shift <x id="sequence" equiv-text="sequence"/> · opened <x id="time" equiv-text="time"/></source>
+        <target>Смена <x id="sequence" equiv-text="sequence"/> · открыта в <x id="time" equiv-text="time"/></target>
       </trans-unit>
     </body>
   </file>

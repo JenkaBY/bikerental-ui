@@ -1,10 +1,12 @@
 import type {
+  Movement,
   PagePointMovementResponse,
   PointFigureResponse,
   PointLedgerResponse,
   PointMovementResponse,
   PointPositionsResponse,
   PositionTotal,
+  RunningShiftResponse,
 } from '@api-models';
 import { POINT_MOVEMENT_KINDS, POINT_POSITION_KINDS } from '../models';
 import type {
@@ -18,6 +20,7 @@ import type {
   PointPositionKind,
   PointPositions,
   PointPositionsOverview,
+  RunningShift,
 } from '../models';
 import { makeMoney } from './money.mapper';
 
@@ -98,6 +101,25 @@ export class PointFinanceMapper {
     };
   }
 
+  static runningShiftFromResponse(r: RunningShiftResponse): RunningShift {
+    const totals = new Map<PointMovementKind, number>();
+    for (const movement of r.movements ?? []) {
+      const kind = PointFinanceMapper.shiftMovementKind(movement.type);
+      totals.set(kind, (totals.get(kind) ?? 0) + movement.amount);
+    }
+    return {
+      shiftId: r.shiftId,
+      pointSlug: r.pointSlug,
+      sequence: r.sequence,
+      openedAt: new Date(r.openedAt),
+      openingAmount: PointFinanceMapper.money(r.openingAmount),
+      kindTotals: [...totals]
+        .filter(([, amount]) => PointFinanceMapper.round(amount) !== 0)
+        .map(([kind, amount]) => ({ kind, signedAmount: PointFinanceMapper.money(amount) })),
+      expectedCash: PointFinanceMapper.money(r.expectedCash),
+    };
+  }
+
   static toPositionKind(raw: string | null | undefined): PointPositionKind | null {
     return POINT_POSITION_KINDS.find((kind) => kind === raw) ?? null;
   }
@@ -127,6 +149,10 @@ export class PointFinanceMapper {
 
   static sum(a: Money, b: Money): Money {
     return makeMoney(PointFinanceMapper.round(a.amount + b.amount), a.currency);
+  }
+
+  private static shiftMovementKind(type: Movement['type']): PointMovementKind {
+    return type === 'PAYOUT' ? 'WITHDRAWAL' : PointFinanceMapper.toMovementKind(type);
   }
 
   private static entriesOf(positions: readonly PositionTotal[]): PointPositionEntry[] {

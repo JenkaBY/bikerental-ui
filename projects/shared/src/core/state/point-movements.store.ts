@@ -22,6 +22,7 @@ export interface PointMovementsConfig {
   readonly kinds?: readonly PointMovementFilterKind[];
   readonly pageSize: number;
   readonly notBefore?: Date | null;
+  readonly accumulate?: boolean;
 }
 
 @Injectable()
@@ -49,6 +50,14 @@ export class PointMovementsStore {
   readonly total = computed(() => this._total());
   readonly loading = computed(() => this._loading());
   readonly failed = computed(() => this._failed());
+  readonly hasMore = computed(() => {
+    const config = this._config();
+    if (!config?.accumulate || this._failed()) return false;
+    if (this._items().length >= this._total()) return false;
+    const notBefore = config.notBefore ?? null;
+    if (!notBefore || config.order !== 'newest') return true;
+    return !this._items().some((movement) => movement.recordedAt.getTime() < notBefore.getTime());
+  });
   readonly rows = computed<readonly PointMovementRow[]>(() => {
     const notBefore = this._config()?.notBefore ?? null;
     return this._items()
@@ -88,8 +97,12 @@ export class PointMovementsStore {
     this.fetch(pageIndex);
   }
 
+  loadMore(): void {
+    if (this.hasMore() && !this._loading()) this.fetch(this._pageIndex() + 1, true);
+  }
+
   reload(): void {
-    this.fetch(this._pageIndex());
+    this.fetch(this._config()?.accumulate ? 0 : this._pageIndex());
   }
 
   private patch(change: Partial<PointMovementsConfig>): void {
@@ -99,10 +112,11 @@ export class PointMovementsStore {
     this.fetch(0);
   }
 
-  private fetch(pageIndex: number): void {
+  private fetch(pageIndex: number, append = false): void {
     const config = this._config();
     if (!config || PointPeriodRule.validate(config.period.from, config.period.to) !== null) return;
     this.subscription?.unsubscribe();
+    const previousPageIndex = this._pageIndex();
     this._pageIndex.set(pageIndex);
     this._loading.set(true);
     this._failed.set(false);
@@ -122,11 +136,15 @@ export class PointMovementsStore {
       )
       .subscribe({
         next: (page) => {
-          this._items.set(page.items);
+          this._items.set(append ? [...this._items(), ...page.items] : page.items);
           this._total.set(page.totalItems);
         },
         error: (err: unknown) => {
           this.ledgerNotifier.notify(err);
+          if (append) {
+            this._pageIndex.set(previousPageIndex);
+            return;
+          }
           this._items.set([]);
           this._total.set(0);
           this._failed.set(true);
