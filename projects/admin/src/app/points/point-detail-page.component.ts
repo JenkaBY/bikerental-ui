@@ -64,6 +64,7 @@ import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
             [label]="labels.PointPositionTerminal"
             [amount]="positions.cardTerminal()"
           />
+          <app-point-balance-pill [label]="labels.PointPositionBank" [amount]="positions.bank()" />
         </div>
       </app-page-header>
 

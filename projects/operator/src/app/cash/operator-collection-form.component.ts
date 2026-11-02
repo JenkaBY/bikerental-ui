@@ -57,13 +57,14 @@ import {
           />
           <mat-error>{{ amountError() }}</mat-error>
         </mat-form-field>
-        <button mat-stroked-button type="button" class="!h-14 mt-1" (click)="fillAll()">
+        <button mat-flat-button type="button" class="btn-utility !h-14 mt-1" (click)="fillAll()">
           {{ labels.PointMoveAll }}
         </button>
       </div>
       <p class="m-0 text-sm text-slate-500">{{ remainingText() }}</p>
       <button
         mat-flat-button
+        color="primary"
         type="submit"
         class="!h-12 w-full"
         [disabled]="form.invalid || busy()"

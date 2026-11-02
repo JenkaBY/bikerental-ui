@@ -101,7 +101,7 @@ import { PointSettlementDateFieldComponent } from './point-settlement-date-field
             />
             <mat-error>{{ amountError() }}</mat-error>
           </mat-form-field>
-          <button mat-stroked-button type="button" class="mt-2" (click)="fillAll()">
+          <button mat-flat-button type="button" class="btn-utility mt-2" (click)="fillAll()">
             {{ labels.PointMoveAll }}
           </button>
         </div>
@@ -112,7 +112,7 @@ import { PointSettlementDateFieldComponent } from './point-settlement-date-field
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <app-form-cancel-button />
-        <button mat-flat-button type="submit" [disabled]="form.invalid">
+        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
           {{ labels.PointMoveContinue }}
         </button>
       </mat-dialog-actions>

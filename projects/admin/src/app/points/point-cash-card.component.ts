@@ -54,6 +54,7 @@ const OPENED_TIME_FORMAT = 'HH:mm';
         @if (collection().reason !== 'HIDDEN') {
           <button
             mat-flat-button
+            color="primary"
             type="button"
             [disabled]="!collection().enabled"
             (click)="collect.emit()"
@@ -63,8 +64,9 @@ const OPENED_TIME_FORMAT = 'HH:mm';
         }
         @if (closeShift().reason !== 'HIDDEN') {
           <button
-            mat-stroked-button
+            mat-flat-button
             type="button"
+            class="btn-utility"
             [disabled]="!closeShift().enabled"
             (click)="closeShiftRequested.emit()"
           >

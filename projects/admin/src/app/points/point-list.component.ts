@@ -42,6 +42,12 @@ import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
           {{ row.terminal | fixedMoney }}
         </td>
       </ng-container>
+      <ng-container matColumnDef="bank">
+        <th mat-header-cell *matHeaderCellDef class="!text-right">{{ labels.PointColumnBank }}</th>
+        <td mat-cell *matCellDef="let row" class="!text-right tabular-nums whitespace-nowrap">
+          {{ row.bank | fixedMoney }}
+        </td>
+      </ng-container>
       <tr mat-header-row *matHeaderRowDef="columns"></tr>
       <tr
         mat-row
@@ -56,7 +62,7 @@ import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
 })
 export class PointListComponent {
   protected readonly labels = Labels;
-  protected readonly columns = ['point', 'status', 'cash', 'terminal'];
+  protected readonly columns = ['point', 'status', 'cash', 'terminal', 'bank'];
 
   readonly rows = input.required<readonly PointMoneyRow[]>();
 

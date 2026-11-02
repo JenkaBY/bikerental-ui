@@ -12,6 +12,7 @@ import type {
   PointPeriod,
 } from '../models';
 import { PointPeriodRule } from '../../shared/utils/point-period.rule';
+import { CustomerNameResolver } from './customer-name.resolver';
 import { StaffNameResolver } from './staff-name.resolver';
 
 export interface PointMovementsConfig {
@@ -30,6 +31,7 @@ export class PointMovementsStore {
   private readonly finance = inject(PointFinanceService);
   private readonly ledgerNotifier = inject(PointLedgerUnavailableNotifier);
   private readonly names = inject(StaffNameResolver);
+  private readonly customerNames = inject(CustomerNameResolver);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly _config = signal<PointMovementsConfig | null>(null);
@@ -65,6 +67,7 @@ export class PointMovementsStore {
       .map((movement) => ({
         ...movement,
         recordedByName: this.names.nameFor(movement.recordedById),
+        customerName: this.customerNames.nameFor(movement.customerId),
       }));
   });
 
@@ -138,6 +141,7 @@ export class PointMovementsStore {
         next: (page) => {
           this._items.set(append ? [...this._items(), ...page.items] : page.items);
           this._total.set(page.totalItems);
+          this.customerNames.ensureLoaded(page.items.map((item) => item.customerId));
         },
         error: (err: unknown) => {
           this.ledgerNotifier.notify(err);

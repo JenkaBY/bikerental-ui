@@ -25,6 +25,7 @@ import {
   RunningShiftStore,
   TimeStore,
 } from '@bikerental/shared';
+import { PointBankCardComponent } from './point-bank-card.component';
 import { PointCashCardComponent } from './point-cash-card.component';
 import { PointMovementTableComponent } from './point-movement-table.component';
 import { PointTerminalCardComponent } from './point-terminal-card.component';
@@ -46,11 +47,12 @@ type MoneyDialogOutcome = 'done' | 'statusChanged' | 'shiftChanged';
     MatProgressBarModule,
     PointCashCardComponent,
     PointTerminalCardComponent,
+    PointBankCardComponent,
     PointMovementTableComponent,
   ],
   template: `
     <div class="p-4 md:p-6 flex flex-col gap-4">
-      <div class="grid gap-4 md:grid-cols-2">
+      <div class="grid gap-4 md:grid-cols-3">
         <app-point-cash-card
           [cash]="positions.cash()"
           [shift]="shiftStore.shift()"
@@ -65,6 +67,7 @@ type MoneyDialogOutcome = 'done' | 'statusChanged' | 'shiftChanged';
           [settlement]="settlement()"
           (settle)="onSettle()"
         />
+        <app-point-bank-card [bank]="positions.bank()" />
       </div>
 
       @if (shiftStore.state() === 'running') {
@@ -86,8 +89,9 @@ type MoneyDialogOutcome = 'done' | 'statusChanged' | 'shiftChanged';
             @if (movements.hasMore()) {
               <div class="flex justify-center">
                 <button
-                  mat-stroked-button
+                  mat-flat-button
                   type="button"
+                  class="btn-utility"
                   [disabled]="movements.loading()"
                   (click)="movements.loadMore()"
                 >

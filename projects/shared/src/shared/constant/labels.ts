@@ -757,6 +757,7 @@ export class Labels {
   static readonly PointColumnStatus = $localize`Status`;
   static readonly PointColumnCash = $localize`Cash in drawer`;
   static readonly PointColumnTerminal = $localize`Terminal`;
+  static readonly PointColumnBank = $localize`Bank`;
   static readonly PointSummaryCash = $localize`Cash across all drawers`;
   static readonly PointSummaryTerminal = $localize`On terminal accounts`;
   static readonly PointShowClosed = $localize`Show closed points`;
@@ -801,6 +802,7 @@ export class Labels {
   static readonly PointTransfersEmpty = $localize`No collections or settlements in this period`;
   static readonly PointCashCardTitle = $localize`Cash drawer`;
   static readonly PointTerminalCardTitle = $localize`Terminal account`;
+  static readonly PointBankCardTitle = $localize`Bank account`;
   static readonly PointShiftOpening = $localize`Shift opening`;
   static readonly PointShiftExpectedCash = $localize`Expected cash`;
   static readonly PointShiftNone = $localize`No shift is running`;

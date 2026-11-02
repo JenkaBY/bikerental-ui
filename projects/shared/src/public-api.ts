@@ -46,6 +46,7 @@ export * from './core/state/point-list-view.store';
 export * from './core/state/point-positions.store';
 export * from './core/state/point-money-refresh.facade';
 export * from './core/state/staff-name.resolver';
+export * from './core/state/customer-name.resolver';
 export * from './core/state/point-movements.store';
 export * from './core/state/point-results.store';
 export * from './core/state/running-shift.store';

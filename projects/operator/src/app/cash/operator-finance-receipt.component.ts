@@ -23,7 +23,13 @@ import { buildReceiptView, type FinanceReceiptView } from './finance-receipt.vie
             <dd class="m-0 text-right font-medium tabular-nums">{{ row.value }}</dd>
           }
         </dl>
-        <button mat-flat-button type="button" class="!h-12 w-full" (click)="onDone()">
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          class="!h-12 w-full"
+          (click)="onDone()"
+        >
           {{ labels.Done }}
         </button>
       </div>

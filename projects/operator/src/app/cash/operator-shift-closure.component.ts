@@ -54,7 +54,7 @@ import {
         @case ('failed') {
           <div class="flex flex-col items-center gap-4 py-12 text-center">
             <p class="m-0 text-slate-400">{{ labels.PointShiftLoadFailed }}</p>
-            <button mat-stroked-button type="button" class="!h-12" (click)="onRetry()">
+            <button mat-flat-button type="button" class="btn-utility !h-12" (click)="onRetry()">
               {{ labels.Retry }}
             </button>
           </div>
@@ -71,6 +71,7 @@ import {
             />
             <button
               mat-flat-button
+              color="primary"
               type="button"
               class="!h-12 w-full"
               [disabled]="closure.counted() === null || closure.submitting()"
