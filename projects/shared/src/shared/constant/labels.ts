@@ -822,6 +822,14 @@ export class Labels {
   static readonly OperatorReceiptTime = $localize`Time`;
   static readonly OperatorReceiptRemaining = $localize`Remaining in drawer`;
   static readonly Done = $localize`Done`;
+  static readonly ShiftClosureShiftRow = $localize`Shift`;
+  static readonly ShiftClosureConfirmTitle = $localize`Close shift?`;
+  static readonly ShiftClosureCounted = $localize`Counted amount`;
+  static readonly ShiftClosureDifference = $localize`Difference`;
+  static readonly ShiftClosureMatches = $localize`Matches`;
+  static readonly ShiftClosureNote = $localize`A closed shift cannot be reopened`;
+  static readonly ShiftClosureClosedAt = $localize`Closed at`;
+  static readonly ShiftClosureAlreadyClosed = $localize`This shift is already closed`;
   static readonly ShowMore = $localize`Show more`;
   static readonly PointMoveSourceLabel = $localize`:point money move|Where the money leaves from:From`;
   static readonly PointMoveDestinationLabel = $localize`:point money move|Where the money goes to:To`;

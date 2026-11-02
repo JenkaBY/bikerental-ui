@@ -75,6 +75,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.FINANCE_POINT_PERMANENTLY_CLOSED]: financePointPermanentlyClosedMessage,
   [ErrorCode.FINANCE_POINT_INSUFFICIENT_CASH]: financePointInsufficientCashMessage,
   [ErrorCode.FINANCE_POINT_INSUFFICIENT_TERMINAL]: financePointInsufficientTerminalMessage,
+  [ErrorCode.FINANCE_SHIFT_NOT_RUNNING]: $localize`This shift is already closed`,
 
   // Rental
   [ErrorCode.INSUFFICIENT_FUNDS]: insufficientFundsMessage,

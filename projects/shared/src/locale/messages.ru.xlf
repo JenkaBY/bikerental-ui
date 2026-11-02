@@ -6678,6 +6678,58 @@
         <source>Hand in <x id="amount" equiv-text="amount"/></source>
         <target>Сдать <x id="amount" equiv-text="amount"/></target>
       </trans-unit>
+      <trans-unit id="8240571897505003751" datatype="html">
+        <source>Shift</source>
+        <target>Смена</target>
+      </trans-unit>
+      <trans-unit id="1099180152352536056" datatype="html">
+        <source>Close shift?</source>
+        <target>Закрыть смену?</target>
+      </trans-unit>
+      <trans-unit id="8193866907255500610" datatype="html">
+        <source>Counted amount</source>
+        <target>Пересчитано</target>
+      </trans-unit>
+      <trans-unit id="5613733318610282610" datatype="html">
+        <source>Difference</source>
+        <target>Разница</target>
+      </trans-unit>
+      <trans-unit id="1567940090040631427" datatype="html">
+        <source>Matches</source>
+        <target>Совпадает</target>
+      </trans-unit>
+      <trans-unit id="1241147792399347680" datatype="html">
+        <source>A closed shift cannot be reopened</source>
+        <target>Закрытую смену нельзя открыть снова</target>
+      </trans-unit>
+      <trans-unit id="1985092179966731661" datatype="html">
+        <source>Closed at</source>
+        <target>Закрыта в</target>
+      </trans-unit>
+      <trans-unit id="7730634805174248430" datatype="html">
+        <source>This shift is already closed</source>
+        <target>Эта смена уже закрыта</target>
+      </trans-unit>
+      <trans-unit id="4508797687802051074" datatype="html">
+        <source>Surplus +<x id="amount" equiv-text="amount"/></source>
+        <target>Излишек +<x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
+      <trans-unit id="1725834195330970655" datatype="html">
+        <source>Shortage −<x id="amount" equiv-text="amount"/></source>
+        <target>Недостача −<x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
+      <trans-unit id="312251507763367352" datatype="html">
+        <source>Shift <x id="sequence" equiv-text="sequence"/> closed</source>
+        <target>Смена <x id="sequence" equiv-text="sequence"/> закрыта</target>
+      </trans-unit>
+      <trans-unit id="6673391624723270739" datatype="html">
+        <source>Counted amount is required</source>
+        <target>Укажите пересчитанную сумму</target>
+      </trans-unit>
+      <trans-unit id="3645462502531470630" datatype="html">
+        <source>Counted amount cannot be negative</source>
+        <target>Пересчитанная сумма не может быть отрицательной</target>
+      </trans-unit>
       <trans-unit id="6830276212769513989" datatype="html">
         <source>No collections or settlements in this period</source>
         <target>Нет инкассаций и зачислений за этот период</target>

@@ -31,6 +31,7 @@ import { PointTerminalCardComponent } from './point-terminal-card.component';
 import { PointMoneyMoveLauncher } from './point-money-move.launcher';
 import { POINT_MOVE_POSITIONS } from './point-money-move.meta';
 import type { PointMoneyMoveResult } from './point-money-move.model';
+import { ShiftClosureLauncher } from './shift-closure.launcher';
 
 const PAGE_SIZE = 100;
 
@@ -113,6 +114,7 @@ export class PointCashTabComponent {
   private readonly resolver = inject(ErrorMessageResolver);
   private readonly destroyRef = inject(DestroyRef);
   private readonly moves = inject(PointMoneyMoveLauncher);
+  private readonly closures = inject(ShiftClosureLauncher);
   private readonly injector = inject(Injector);
   private seenRevision = this.facade.revision();
 
@@ -181,7 +183,13 @@ export class PointCashTabComponent {
   }
 
   protected onCloseShift(): void {
-    this.notifications.info(Labels.PointActionNotAvailableYet);
+    const point = this.points.selected();
+    const shift = this.shiftStore.shift();
+    if (!point || !shift) return;
+    this.closures
+      .open({ pointSlug: point.slug, pointName: point.name, shift })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => this.applyOutcome(result?.outcome));
   }
 
   protected onSettle(): void {
