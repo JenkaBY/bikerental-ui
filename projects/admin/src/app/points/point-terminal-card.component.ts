@@ -15,6 +15,7 @@ import { type ActionAvailability, FixedMoneyPipe, Labels, type Money } from '@bi
       <div>
         <button
           mat-flat-button
+          color="primary"
           type="button"
           [disabled]="!settlement().enabled"
           (click)="settle.emit()"

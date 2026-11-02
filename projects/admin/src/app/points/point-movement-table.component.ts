@@ -56,7 +56,7 @@ const TIME_FORMAT = 'HH:mm';
               [routerLink]="['/customers', row.customerId]"
               [attr.aria-label]="labels.RentalOpenCustomer"
             >
-              {{ row.customerId | shortId }}
+              {{ row.customerName ?? (row.customerId | shortId) }}
             </a>
           } @else {
             <span class="text-slate-400">—</span>

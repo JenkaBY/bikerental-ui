@@ -58,6 +58,7 @@ const SHIFT_RULE_NOT_APPLIED: RunningShiftState = 'running';
         <div class="flex flex-wrap gap-2">
           <button
             mat-flat-button
+            color="primary"
             type="button"
             [disabled]="!collection().enabled"
             (click)="onCollect()"
@@ -65,8 +66,9 @@ const SHIFT_RULE_NOT_APPLIED: RunningShiftState = 'running';
             {{ labels.PointCollectCash }}
           </button>
           <button
-            mat-stroked-button
+            mat-flat-button
             type="button"
+            class="btn-utility"
             [disabled]="!settlement().enabled"
             (click)="onSettle()"
           >

@@ -49,6 +49,7 @@ export interface PointMoneyRow {
   readonly status: PointStatus;
   readonly cash: Money | null;
   readonly terminal: Money | null;
+  readonly bank: Money | null;
 }
 
 export interface PointMoneySummary {
@@ -126,4 +127,5 @@ export interface PointMovementQuery {
 
 export interface PointMovementRow extends PointMovement {
   readonly recordedByName: string;
+  readonly customerName?: string;
 }

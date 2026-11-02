@@ -29,6 +29,7 @@ export class PointListViewStore {
         status: point.status,
         cash: entry?.amounts.CASH ?? null,
         terminal: entry?.amounts.CARD_TERMINAL ?? null,
+        bank: entry?.amounts.BANK ?? null,
       };
     });
   });

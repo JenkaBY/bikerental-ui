@@ -54,7 +54,9 @@ import type {
         </dl>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
-        <button mat-flat-button type="button" (click)="done()">{{ labels.Done }}</button>
+        <button mat-flat-button color="primary" type="button" (click)="done()">
+          {{ labels.Done }}
+        </button>
       </mat-dialog-actions>
     } @else {
       <h2 mat-dialog-title>{{ labels.PointCloseShift }}</h2>
@@ -72,6 +74,7 @@ import type {
         <app-form-cancel-button />
         <button
           mat-flat-button
+          color="primary"
           type="button"
           [disabled]="store.counted() === null || store.submitting()"
           (click)="submit()"
