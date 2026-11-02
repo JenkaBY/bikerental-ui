@@ -28,6 +28,8 @@ export class FormErrorMessages {
   static readonly amountPositive = $localize`Amount must be greater than zero`;
   static readonly amountExceedsAvailable = $localize`Amount exceeds the available amount`;
   static readonly amountMaxTwoDecimals = $localize`Maximum 2 decimal places allowed`;
+  static readonly countedRequired = $localize`Counted amount is required`;
+  static readonly countedNotNegative = $localize`Counted amount cannot be negative`;
   static readonly settlementDateRequired = $localize`Settlement date is required`;
   static readonly settlementDateFuture = $localize`Settlement date cannot be in the future`;
   static readonly periodRequired = $localize`Select both the start and the end of the period`;

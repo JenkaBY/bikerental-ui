@@ -21,6 +21,10 @@ export function moneyAmountValidators(max: number): ValidatorFn[] {
   ];
 }
 
+export function countedAmountValidators(): ValidatorFn[] {
+  return [Validators.required, Validators.min(0), maxDecimalPlacesValidator(MONEY_DECIMALS)];
+}
+
 export function notFutureDateValidator(today: Date): ValidatorFn {
   const limit = startOfDay(today);
   return (control: AbstractControl): ValidationErrors | null => {

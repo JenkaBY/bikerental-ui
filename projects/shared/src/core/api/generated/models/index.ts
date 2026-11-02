@@ -597,6 +597,32 @@ export interface TransactionResponse {
   recordedAt: string;
 }
 
+/** Request body for recording the settlement of the working point's card terminal into its bank */
+export interface TerminalSettlementRequest {
+  /** Client-generated UUID sent with every request to ensure exactly-once submission */
+  idempotencyKey: string;
+  /** Settled amount; must not exceed the point's card-terminal position */
+  amount: number;
+  /** Settlement date shown on the bank statement; not in the future */
+  statementDate: string;
+}
+
+/** Result of recording a terminal settlement */
+export interface TerminalSettlementResponse {
+  /** Transaction UUID */
+  transactionId: string;
+  /** Slug of the point whose terminal and bank moved */
+  pointSlug: string;
+  /** Settled amount */
+  amount: number;
+  /** Settlement date from the bank statement */
+  statementDate: string;
+  /** The point's card-terminal position after the settlement */
+  cardTerminalPosition: number;
+  /** Timestamp when the settlement was recorded */
+  recordedAt: string;
+}
+
 /** Request body for closing the running cash shift of the working point */
 export interface CloseShiftRequest {
   /** Client-generated UUID sent with every request to ensure exactly-once submission */

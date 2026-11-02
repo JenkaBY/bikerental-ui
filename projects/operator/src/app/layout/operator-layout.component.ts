@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 import {
   APP_BRAND,
   AppToolbarComponent,
@@ -16,11 +17,13 @@ import {
   ProfileMenuComponent,
 } from '@bikerental/shared';
 import { PointSwitchRefreshService } from '../core/point-switch-refresh.service';
+import { isFullScreenRoute } from './full-screen-route';
 
 const NAV_ITEMS: NavItem[] = [
   { label: $localize`Rentals`, route: 'rentals', icon: 'directions_bike' },
   { label: $localize`New Rental`, route: 'rentals/new', icon: 'add_circle' },
   { label: $localize`Return`, route: 'return', icon: 'qr_code_scanner' },
+  { label: Labels.OperatorNavCash, route: 'cash', icon: 'point_of_sale' },
 ];
 
 @Component({
@@ -63,7 +66,9 @@ const NAV_ITEMS: NavItem[] = [
       }
     </main>
 
-    <app-bottom-nav [items]="navItems" />
+    @if (!hideBottomNav()) {
+      <app-bottom-nav [items]="navItems" />
+    }
   `,
 })
 export class OperatorLayoutComponent {
@@ -76,6 +81,14 @@ export class OperatorLayoutComponent {
   private readonly auth = inject(AuthService);
   protected readonly pointSwitchRefresh = inject(PointSwitchRefreshService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+  protected readonly hideBottomNav = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => isFullScreenRoute(this.router.routerState.snapshot.root)),
+    ),
+    { initialValue: isFullScreenRoute(this.router.routerState.snapshot.root) },
+  );
 
   protected onPointSelect(slug: string) {
     this.pointStore

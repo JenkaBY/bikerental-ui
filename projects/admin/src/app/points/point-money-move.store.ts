@@ -4,6 +4,7 @@ import {
   IdempotentAttempt,
   makeMoney,
   type Money,
+  type PointMoneyOperation,
   PointFinanceMapper,
   PointFinanceService,
 } from '@bikerental/shared';
@@ -16,6 +17,7 @@ export class PointMoneyMoveStore {
   private readonly _available = signal<Money>(makeMoney(0));
   private readonly _amount = signal<number | null>(null);
   private pointSlug = '';
+  private operation: PointMoneyOperation = 'COLLECTION';
 
   readonly available = computed(() => this._available());
   readonly remaining = computed<Money>(() => {
@@ -27,7 +29,8 @@ export class PointMoneyMoveStore {
       : available;
   });
 
-  init(pointSlug: string, available: Money): void {
+  init(operation: PointMoneyOperation, pointSlug: string, available: Money): void {
+    this.operation = operation;
     this.pointSlug = pointSlug;
     this._available.set(available);
   }
@@ -40,18 +43,32 @@ export class PointMoneyMoveStore {
     this._available.set(available);
   }
 
-  execute(amount: number): Observable<PointMoneyMoveOutcome> {
-    const idempotencyKey = this.attempt.keyFor({ amount });
-    return this.finance.recordCollection({ idempotencyKey, amount }, this.pointSlug).pipe(
+  execute(amount: number, statementDate: Date | null): Observable<PointMoneyMoveOutcome> {
+    const idempotencyKey = this.attempt.keyFor({
+      amount,
+      statementDate: statementDate?.getTime() ?? null,
+    });
+    return this.send(idempotencyKey, amount, statementDate).pipe(
       tap(() => this.attempt.settle('definitive')),
       catchError((err: unknown) => {
         this.attempt.settle(IdempotentAttempt.outcomeOf(err));
         return throwError(() => err);
       }),
-      map((collection) => ({
-        amount: collection.amount,
-        newPosition: collection.cashPosition,
-      })),
     );
+  }
+
+  private send(
+    idempotencyKey: string,
+    amount: number,
+    statementDate: Date | null,
+  ): Observable<PointMoneyMoveOutcome> {
+    if (this.operation === 'SETTLEMENT' && statementDate) {
+      return this.finance
+        .recordSettlement({ idempotencyKey, amount, statementDate }, this.pointSlug)
+        .pipe(map((s) => ({ amount: s.amount, newPosition: s.cardTerminalPosition })));
+    }
+    return this.finance
+      .recordCollection({ idempotencyKey, amount }, this.pointSlug)
+      .pipe(map((c) => ({ amount: c.amount, newPosition: c.cashPosition })));
   }
 }

@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
 import { PointFinanceService } from '../api/point-finance';
 import { ApiErrorParser } from '../errors/api-error.parser';
+import { ErrorCode } from '../errors/error-code';
 import { ErrorMessageResolver } from '../errors/error-message.resolver';
 import { NotificationService } from '../errors/notification.service';
 import type { RunningShift, RunningShiftState } from '../models';
@@ -53,7 +54,10 @@ export class RunningShiftStore {
         next: (shift) =>
           this._snapshot.set({ pointSlug, shift, state: shift ? 'running' : 'none' }),
         error: (err: unknown) => {
-          this.notifications.error(this.resolver.resolve(ApiErrorParser.parse(err)));
+          const apiError = ApiErrorParser.parse(err);
+          if (apiError.code !== ErrorCode.SCOPE_NOT_ESTABLISHED) {
+            this.notifications.error(this.resolver.resolve(apiError));
+          }
           this._snapshot.set({ pointSlug, shift: null, state: 'failed' });
         },
       });

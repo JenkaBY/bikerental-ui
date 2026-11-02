@@ -1,7 +1,8 @@
 import { computed, inject, Injectable, InjectionToken, signal } from '@angular/core';
-import { EMPTY, Observable } from 'rxjs';
-import { finalize, map, tap } from 'rxjs/operators';
+import { EMPTY, Observable, of } from 'rxjs';
+import { catchError, finalize, map, tap } from 'rxjs/operators';
 import { RentalPointsService } from '../api/generated';
+import { suppressErrorNotification } from '../errors/http-error-context';
 import { PointMapper } from '../mappers';
 import type { Point } from '../models';
 import { ProfileStore } from './profile.store';
@@ -39,6 +40,23 @@ export class CurrentPointStore {
       tap((points) => this._points.set(points)),
       map(() => undefined as void),
     );
+  }
+
+  refreshCurrent(): Observable<void> {
+    const slug = this.currentSlug();
+    if (!slug) return EMPTY;
+    return this.service.getPoint(slug, undefined, { context: suppressErrorNotification() }).pipe(
+      map(PointMapper.fromResponse),
+      tap((fresh) => this._points.update((list) => this.replaceOrAppend(list, fresh))),
+      map(() => undefined as void),
+      catchError(() => of(undefined as void)),
+    );
+  }
+
+  private replaceOrAppend(list: Point[], fresh: Point): Point[] {
+    return list.some((p) => p.slug === fresh.slug)
+      ? list.map((p) => (p.slug === fresh.slug ? fresh : p))
+      : [...list, fresh];
   }
 
   select(slug: string): Observable<void> {

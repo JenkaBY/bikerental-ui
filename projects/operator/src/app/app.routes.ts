@@ -8,6 +8,7 @@ import {
   operatorGuard,
 } from '@bikerental/shared';
 import { OperatorLayoutComponent } from './layout/operator-layout.component';
+import { financeReceiptGuard } from './cash/finance-receipt.guard';
 
 export const routes: Routes = [
   { path: 'forbidden', component: ForbiddenComponent },
@@ -48,6 +49,50 @@ export const routes: Routes = [
       {
         path: 'return',
         loadComponent: () => import('./return/return.component').then((m) => m.ReturnComponent),
+      },
+      {
+        path: 'cash',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./cash/operator-cash.component').then((m) => m.OperatorCashComponent),
+          },
+          {
+            path: 'collect/done',
+            data: { fullScreen: true },
+            canActivate: [financeReceiptGuard],
+            loadComponent: () =>
+              import('./cash/operator-finance-receipt.component').then(
+                (m) => m.OperatorFinanceReceiptComponent,
+              ),
+          },
+          {
+            path: 'collect',
+            data: { fullScreen: true },
+            loadComponent: () =>
+              import('./cash/operator-cash-collection.component').then(
+                (m) => m.OperatorCashCollectionComponent,
+              ),
+          },
+          {
+            path: 'close-shift/done',
+            data: { fullScreen: true },
+            canActivate: [financeReceiptGuard],
+            loadComponent: () =>
+              import('./cash/operator-finance-receipt.component').then(
+                (m) => m.OperatorFinanceReceiptComponent,
+              ),
+          },
+          {
+            path: 'close-shift',
+            data: { fullScreen: true },
+            loadComponent: () =>
+              import('./cash/operator-shift-closure.component').then(
+                (m) => m.OperatorShiftClosureComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'damage-reports',

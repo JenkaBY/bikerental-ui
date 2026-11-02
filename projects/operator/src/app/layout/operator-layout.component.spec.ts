@@ -40,9 +40,9 @@ describe('OperatorLayoutComponent', () => {
     expect(fixture.nativeElement.querySelector('main')).toBeTruthy();
   });
 
-  it('should render exactly 3 bottom nav items', () => {
+  it('should render exactly 4 bottom nav items', () => {
     const links = fixture.nativeElement.querySelectorAll('app-bottom-nav a');
-    expect(links.length).toBe(3);
+    expect(links.length).toBe(4);
   });
 
   it('should render the health indicator in the toolbar', () => {

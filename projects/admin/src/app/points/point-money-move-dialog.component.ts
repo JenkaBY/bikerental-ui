@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,7 +9,7 @@ import {
   LOCALE_ID,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -34,11 +35,13 @@ import {
   MaxDecimalsDirective,
   moneyAmountValidators,
   type Money,
+  notFutureDateValidator,
   NotificationService,
   PointMoneyErrorClassifier,
   pointMoveRemaining,
   PointPositionsStore,
   SERVER_ERROR_KEY,
+  TimeStore,
 } from '@bikerental/shared';
 import { buildMoveConfirmData } from './point-money-move-confirm';
 import {
@@ -52,6 +55,7 @@ import type {
   PointMoneyMoveResult,
 } from './point-money-move.model';
 import { PointMoneyMoveStore } from './point-money-move.store';
+import { PointSettlementDateFieldComponent } from './point-settlement-date-field.component';
 
 @Component({
   selector: 'app-point-money-move-dialog',
@@ -66,6 +70,7 @@ import { PointMoneyMoveStore } from './point-money-move.store';
     CancelButtonComponent,
     FixedMoneyPipe,
     MaxDecimalsDirective,
+    PointSettlementDateFieldComponent,
   ],
   template: `
     <h2 mat-dialog-title>{{ title }}</h2>
@@ -101,6 +106,9 @@ import { PointMoneyMoveStore } from './point-money-move.store';
           </button>
         </div>
         <p class="m-0 text-sm text-slate-500">{{ remainingText() }}</p>
+        @if (isSettlement) {
+          <app-point-settlement-date-field [control]="statementDate" [max]="today" />
+        }
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <app-form-cancel-button />
@@ -128,17 +136,26 @@ export class PointMoneyMoveDialogComponent {
 
   protected readonly title = POINT_MOVE_TITLES[this.data.operation];
   protected readonly source = POINT_MOVE_SOURCE_LABELS[this.data.operation];
+  protected readonly isSettlement = this.data.operation === 'SETTLEMENT';
+  protected readonly today = inject(TimeStore).getCurrentDate();
+  protected readonly statementDate = new FormControl<Date | null>(
+    null,
+    this.isSettlement ? [Validators.required, notFutureDateValidator(this.today)] : [],
+  );
   protected readonly amount = new FormControl<number | null>(
     null,
     moneyAmountValidators(this.data.available.amount),
   );
-  protected readonly form = new FormGroup({ amount: this.amount });
+  protected readonly form = new FormGroup({
+    amount: this.amount,
+    statementDate: this.statementDate,
+  });
   protected readonly remainingText = computed(() =>
     pointMoveRemaining(formatFixedMoney(this.store.remaining(), this.locale)),
   );
 
   constructor() {
-    this.store.init(this.data.pointSlug, this.data.available);
+    this.store.init(this.data.operation, this.data.pointSlug, this.data.available);
     this.amount.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((value) => this.store.setAmount(value));
@@ -163,13 +180,15 @@ export class PointMoneyMoveDialogComponent {
 
   protected submit(): void {
     const amount = this.amount.value;
-    if (this.form.invalid || amount === null) return;
+    const date = this.statementDate.value;
+    if (this.form.invalid || amount === null || (this.isSettlement && date === null)) return;
     const summary = {
       operation: this.data.operation,
       pointName: this.data.pointName,
       amount: makeMoney(amount, this.data.available.currency),
       remaining: this.store.remaining(),
-      settlementDate: null,
+      settlementDate:
+        this.isSettlement && date ? formatDate(date, 'dd.MM.yyyy', this.locale) : null,
     };
     this.dialog
       .open<
@@ -177,7 +196,7 @@ export class PointMoneyMoveDialogComponent {
         FinanceConfirmData<PointMoneyMoveOutcome>,
         FinanceConfirmResult<PointMoneyMoveOutcome>
       >(FinanceConfirmDialogComponent, {
-        data: buildMoveConfirmData(summary, this.locale, () => this.store.execute(amount)),
+        data: buildMoveConfirmData(summary, this.locale, () => this.store.execute(amount, date)),
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))

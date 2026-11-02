@@ -24,6 +24,8 @@ import {
   RecordWithdrawalRequest,
   RequestOptions,
   TransactionResponse,
+  TerminalSettlementRequest,
+  TerminalSettlementResponse,
   CloseShiftRequest,
   ShiftClosureResponse,
   RecordDepositRequest,
@@ -101,6 +103,50 @@ export class FinanceService {
     };
 
     return this.httpClient.post(url, recordWithdrawalRequest, requestOptions);
+  }
+
+  recordTerminalSettlement(
+    terminalSettlementRequest: TerminalSettlementRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<TerminalSettlementResponse>;
+  recordTerminalSettlement(
+    terminalSettlementRequest: TerminalSettlementRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<TerminalSettlementResponse>>;
+  recordTerminalSettlement(
+    terminalSettlementRequest: TerminalSettlementRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<TerminalSettlementResponse>>;
+  recordTerminalSettlement(
+    terminalSettlementRequest: TerminalSettlementRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/finance/terminal-settlements`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, terminalSettlementRequest, requestOptions);
   }
 
   closeShift(

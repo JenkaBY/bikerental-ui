@@ -85,8 +85,8 @@ an explicit confirmation step
       (`finance.point.permanently_closed`, both) → localized error notification, the dialogs
       close, and the calling tab and header refresh so the new status and disabled buttons show
     - Other errors → localized notification via the standard ProblemDetail handling
-  * **Backend dependency:** cash collection is available; terminal settlement is announced but not
-    yet published (its fields are final only once they appear in the published API description)
+  * **Backend dependency:** cash collection is available; terminal settlement is published
+    (`POST /api/finance/terminal-settlements`, fields per the published API description)
 
 ## 4. Acceptance Criteria (BDD)
 

@@ -1,10 +1,10 @@
-# Task 020: [BLOCKED - needs task 019] Enable "Record settlement" on the Cash tab
+# Task 020: Enable "Record settlement" on the Cash tab and add the success toast
 
-> **Applied Skill:** `angular-component`, `angular-signals` (existing `settlement` availability computed), AGENTS.md i18n Rules (new message function + Russian target in the same change), CLAUDE.md "Keep docs in sync".
+> **Applied Skill:** `angular-component`, `angular-signals` (existing `settlement` availability computed), AGENTS.md i18n Rules (new message function; extraction and Russian target happen in task 021), AGENTS.md "API Error Handling" (success toast only; errors stay in the dialog).
 
 ## 1. Objective
 
-Replace the interim `onSettle` handler, add the "Settlement recorded: X" success toast to the launcher, translate it.
+Replace the interim `onSettle` of `PointCashTabComponent` (it currently only shows `Labels.PointActionNotAvailableYet`), and make `PointMoneyMoveLauncher` show "Settlement recorded: X" for `operation === 'SETTLEMENT'`.
 
 Requires tasks 013, 014, 019.
 
@@ -13,11 +13,10 @@ Requires tasks 013, 014, 019.
 * **File Path:** `projects/shared/src/shared/constant/point-money-messages.ts` - **Action:** Modify Existing File
 * **File Path:** `projects/admin/src/app/points/point-money-move.launcher.ts` - **Action:** Modify Existing File
 * **File Path:** `projects/admin/src/app/points/point-cash-tab.component.ts` - **Action:** Modify Existing File
-* **File Path:** `projects/shared/src/locale/messages.xlf` / `messages.ru.xlf`, `overview.md`
 
 ## 3. Code Implementation
 
-**File 1 - append to `point-money-messages.ts`:**
+**File 1 - append after `pointCollectedMessage` in `point-money-messages.ts`:**
 
 ```typescript
 export function pointSettlementRecordedMessage(amount: string): string {
@@ -25,7 +24,20 @@ export function pointSettlementRecordedMessage(amount: string): string {
 }
 ```
 
-**File 2 - launcher.** Import `pointSettlementRecordedMessage`; replace the `tap` body with:
+(The file is already re-exported from `@bikerental/shared` via `public-api.ts`.)
+
+**File 2 - launcher.** Replace line 4 with:
+
+```typescript
+import {
+  formatFixedMoney,
+  NotificationService,
+  pointCollectedMessage,
+  pointSettlementRecordedMessage,
+} from '@bikerental/shared';
+```
+
+Replace the `tap(...)` argument inside `.pipe(` with:
 
 ```typescript
         tap((result) => {
@@ -39,7 +51,15 @@ export function pointSettlementRecordedMessage(amount: string): string {
         }),
 ```
 
-**File 3 - cash tab.** Replace the interim `onSettle`:
+**File 3 - `point-cash-tab.component.ts`.** Replace the interim handler
+
+```typescript
+  protected onSettle(): void {
+    this.notifications.info(Labels.PointActionNotAvailableYet);
+  }
+```
+
+with:
 
 ```typescript
   protected onSettle(): void {
@@ -58,20 +78,14 @@ export function pointSettlementRecordedMessage(amount: string): string {
   }
 ```
 
-`onCloseShift` keeps the interim handler (FR-08); `Labels` and `notifications` stay imported because it still uses them.
-
-**File 4 - i18n.** Run `npm run i18n:extract`; add to `messages.ru.xlf` (before `</body>`) one new unit, copying id and `<source>` verbatim from `messages.xlf`: source `Settlement recorded: <x id="amount" .../>` -> target `Зачисление записано: <x id="amount" .../>`. Do NOT change any existing unit. Run `npm run i18n:check`.
-
-**File 5 - overview.md.** In the `PointFinanceService` block add the bullet "`recordSettlement(write, pointSlug)` over `POST /api/finance/terminal-settlements` (ADMIN only)"; in `PointFinanceMapper` the `settlementToRequest` / `settlementFromResponse` bullet; in `PointCashTabComponent` mention `onSettle()` opens the SETTLEMENT dialog (available = CARD_TERMINAL); in `PointMoneyMoveDialogComponent` replace "terminal settlement mode follows" with the settlement date field description (`PointSettlementDateFieldComponent`, max today, `notFutureDateValidator`).
+`Labels` (template `labels`) and `notifications` (used by `applyOutcome`) stay imported. `onMoveClosed` already patches `POINT_MOVE_POSITIONS[result.operation]` (CARD_TERMINAL for settlement) and runs `applyOutcome`. Do NOT touch `PointTerminalCardComponent`; `(settle)="onSettle()"` is already bound.
 
 ## 4. Validation Steps
 
 Execute the following commands to ensure this task was successful. Do NOT run the full application server.
 
 ```bash
-npx prettier --write projects/shared/src/shared/constant/point-money-messages.ts projects/admin/src/app/points/point-money-move.launcher.ts projects/admin/src/app/points/point-cash-tab.component.ts overview.md
-npm run i18n:extract
-npm run i18n:check
+npx prettier --write projects/shared/src/shared/constant/point-money-messages.ts projects/admin/src/app/points/point-money-move.launcher.ts projects/admin/src/app/points/point-cash-tab.component.ts
 npx ng build admin --configuration development
 npx ng lint admin
 ```

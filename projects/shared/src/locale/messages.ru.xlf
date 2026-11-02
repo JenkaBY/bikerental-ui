@@ -6642,6 +6642,98 @@
         <source>Collected: <x id="amount" equiv-text="amount"/></source>
         <target>Сдано в банк: <x id="amount" equiv-text="amount"/></target>
       </trans-unit>
+      <trans-unit id="1620411971940274622" datatype="html">
+        <source>Settlement recorded: <x id="amount" equiv-text="amount"/></source>
+        <target>Зачислено в банк: <x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
+      <trans-unit id="2001807643854053542" datatype="html">
+        <source>Cash</source>
+        <target>Касса</target>
+      </trans-unit>
+      <trans-unit id="755352709090687402" datatype="html">
+        <source>Hand in cash</source>
+        <target>Сдать наличные</target>
+      </trans-unit>
+      <trans-unit id="2746213518617104480" datatype="html">
+        <source>Hand in cash?</source>
+        <target>Сдать наличные?</target>
+      </trans-unit>
+      <trans-unit id="2585243606250635267" datatype="html">
+        <source>Instant and cannot be cancelled — if it was a mistake, an administrator corrects it</source>
+        <target>Операция проводится сразу и не может быть отменена — если это ошибка, администратор её исправит</target>
+      </trans-unit>
+      <trans-unit id="1402720269009440899" datatype="html">
+        <source>Hand in</source>
+        <target>Сдать</target>
+      </trans-unit>
+      <trans-unit id="6283422360831444655" datatype="html">
+        <source>Cash handed in</source>
+        <target>Наличные сданы</target>
+      </trans-unit>
+      <trans-unit id="8497528947328199741" datatype="html">
+        <source>Time</source>
+        <target>Время</target>
+      </trans-unit>
+      <trans-unit id="156983938817494093" datatype="html">
+        <source>Remaining in drawer</source>
+        <target>Осталось в кассе</target>
+      </trans-unit>
+      <trans-unit id="6094967069775219115" datatype="html">
+        <source>Hand in <x id="amount" equiv-text="amount"/></source>
+        <target>Сдать <x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
+      <trans-unit id="8240571897505003751" datatype="html">
+        <source>Shift</source>
+        <target>Смена</target>
+      </trans-unit>
+      <trans-unit id="1099180152352536056" datatype="html">
+        <source>Close shift?</source>
+        <target>Закрыть смену?</target>
+      </trans-unit>
+      <trans-unit id="8193866907255500610" datatype="html">
+        <source>Counted amount</source>
+        <target>Пересчитано</target>
+      </trans-unit>
+      <trans-unit id="5613733318610282610" datatype="html">
+        <source>Difference</source>
+        <target>Разница</target>
+      </trans-unit>
+      <trans-unit id="1567940090040631427" datatype="html">
+        <source>Matches</source>
+        <target>Совпадает</target>
+      </trans-unit>
+      <trans-unit id="1241147792399347680" datatype="html">
+        <source>A closed shift cannot be reopened</source>
+        <target>Закрытую смену нельзя открыть снова</target>
+      </trans-unit>
+      <trans-unit id="1985092179966731661" datatype="html">
+        <source>Closed at</source>
+        <target>Закрыта в</target>
+      </trans-unit>
+      <trans-unit id="7730634805174248430" datatype="html">
+        <source>This shift is already closed</source>
+        <target>Эта смена уже закрыта</target>
+      </trans-unit>
+      <trans-unit id="4508797687802051074" datatype="html">
+        <source>Surplus +<x id="amount" equiv-text="amount"/></source>
+        <target>Излишек +<x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
+      <trans-unit id="1725834195330970655" datatype="html">
+        <source>Shortage −<x id="amount" equiv-text="amount"/></source>
+        <target>Недостача −<x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
+      <trans-unit id="312251507763367352" datatype="html">
+        <source>Shift <x id="sequence" equiv-text="sequence"/> closed</source>
+        <target>Смена <x id="sequence" equiv-text="sequence"/> закрыта</target>
+      </trans-unit>
+      <trans-unit id="6673391624723270739" datatype="html">
+        <source>Counted amount is required</source>
+        <target>Укажите пересчитанную сумму</target>
+      </trans-unit>
+      <trans-unit id="3645462502531470630" datatype="html">
+        <source>Counted amount cannot be negative</source>
+        <target>Пересчитанная сумма не может быть отрицательной</target>
+      </trans-unit>
       <trans-unit id="6830276212769513989" datatype="html">
         <source>No collections or settlements in this period</source>
         <target>Нет инкассаций и зачислений за этот период</target>

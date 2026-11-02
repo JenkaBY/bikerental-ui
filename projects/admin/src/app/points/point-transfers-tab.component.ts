@@ -203,7 +203,18 @@ export class PointTransfersTabComponent {
   }
 
   protected onSettle(): void {
-    this.notifications.info(Labels.PointActionNotAvailableYet);
+    const point = this.points.selected();
+    const available = this.positions.cardTerminal();
+    if (!point || !available) return;
+    this.moves
+      .open(this.injector, {
+        operation: 'SETTLEMENT',
+        pointSlug: point.slug,
+        pointName: point.name,
+        available,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => this.onMoveClosed(result));
   }
 
   private onMoveClosed(result: PointMoneyMoveResult | undefined): void {

@@ -99,5 +99,5 @@ Cash tab picks up fresh data when it is next mounted.
 * **Scale & Performance:** Server-side paging (≤ 100, default 50), one list + one totals request
   per period change; totals come from the backend, never summed from the visible page.
 * **Delivery split:** Entirely dependent on [B-FR08] for data; header actions depend on FR-05
-  (collection [MAIN], settlement [B-FR06]). The tab shell, period filter wiring and availability
-  can be built now and show failure states until the backend lands.
+  (collection [MAIN], settlement [B-FR06], both published). The tab shell, period filter wiring and availability
+  show failure states when a backend call fails.
