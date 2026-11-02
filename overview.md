@@ -379,18 +379,19 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: PointFinanceService
 TYPE: API
-PURPOSE: Single domain-typed entry point to point-finance reads (positions overview, period results); money commands: cash collection (settlement follows with the backend endpoint).
+PURPOSE: Single domain-typed entry point to point-finance reads (positions overview, period results); money commands: cash collection and terminal settlement.
 RESPONSIBILITIES:
 
 - Expose `getPositions()`, `getResults(period, pointSlug | null)` and `getMovements(query)` (page size clamped to 100) with domain models only.
 - Delegate the FIN-002 FR-08 reads to the `POINT_LEDGER_READER` token (`HttpPointLedgerReader`); the `UnavailablePointLedgerReader` placeholder (fails with `PointLedgerUnavailableError`, one warning toast via `PointLedgerUnavailableNotifier`) stays available for environments without the endpoints.
 - Expose `getCurrentShift(pointSlug | null)` over `GET /api/finance/shifts/current` (admin names the point via `X-Point-Slug`, `null` = operator via the point interceptor); HTTP 404 = no running shift → `null`, request sent with `suppressErrorNotification`.
 - Expose `recordCollection(write, pointSlug | null)` over `POST /api/finance/collections` (admin names the point via `X-Point-Slug` with `SKIP_POINT_SCOPE`, `null` = operator via the point interceptor); always `suppressErrorNotification`, the caller owns error copy.
+- `recordSettlement(write, pointSlug | null)` over `POST /api/finance/terminal-settlements` (admin only; `X-Point-Slug` with `SKIP_POINT_SCOPE`, `suppressErrorNotification`, date sent as `yyyy-MM-dd` `statementDate`); maps via `PointFinanceMapper.settlementToRequest` / `settlementFromResponse`.
 - `closeShift(write, pointSlug | null)` -> `POST /api/finance/shifts/current/closures` (explicit `X-Point-Slug` when the slug is non-null, `suppressErrorNotification()`).
   SOURCE: `projects/shared/src/core/api/point-finance/point-finance.service.ts`
   CALLS:
 - PointLedgerReader (`POINT_LEDGER_READER`) — `positions()`, `results()`, `movements()`.
-- FinanceService (generated) — `getRunningShift()`, `recordCollection()`.
+- FinanceService (generated) — `getRunningShift()`, `recordCollection()`, `recordTerminalSettlement()`.
   CALLED_BY:
 - PointMoneyOverviewStore
 - PointPositionsStore
@@ -3032,7 +3033,7 @@ RESPONSIBILITIES:
 - Provide its own `PointMovementsStore` (non-accumulate, numbered paginator) configured `{ slug, BANK, current month to date, newest, size 50 }` and `PointResultsStore` for the totals; one `PointPeriodFilterComponent` drives both (`onPeriodChange` -> `setPeriod` on both, page 0); the order toggle only affects the list.
 - Reload both stores on a new facade revision (period and order kept).
 - Header actions: "Collect cash" (point ACTIVE and CASH position > 0; the shift rule of `PointMoneyActionAvailability.collection` is bypassed, amount = `PointPositionsStore.cash()` only) and "Record settlement" (not permanently closed and CARD_TERMINAL > 0); hints under disabled buttons.
-- `onCollect()` opens the money-move dialog through `PointMoneyMoveLauncher`; `done` patches the CASH position; every result goes through `applyOutcome()` (`notifyChanged()`, plus `PointAdminStore.loadOne` on `statusChanged`). `onSettle()` is interim ("not available yet") until the terminal-settlement endpoint exists.
+- `onCollect()` opens the money-move dialog through `PointMoneyMoveLauncher`; `done` patches the CASH position; every result goes through `applyOutcome()` (`notifyChanged()`, plus `PointAdminStore.loadOne` on `statusChanged`). `onSettle()` opens the SETTLEMENT dialog (available = CARD_TERMINAL position) through `PointMoneyMoveLauncher`; `done` patches the CARD_TERMINAL position and goes through `applyOutcome()`.
 - No cancel/edit action; a note explains that a mistake is corrected by an adjustment. Any non-collection/settlement kind on the BANK position is shown with its own type name.
   SOURCE: `projects/admin/src/app/points/point-transfers-tab.component.ts`
   CALLS:
@@ -3099,7 +3100,7 @@ RESPONSIBILITIES:
 
 - Provide its own `RunningShiftStore` and `PointMovementsStore`; load the shift on entry, configure the list `{ slug, CASH, day of openedAt … today, newest, size 100, notBefore: openedAt, accumulate }`, reload shift and list on a new facade revision.
 - Compute button availability; collection amount = CASH position, falling back to the shift's expected cash while positions are unavailable.
-- `onCollect()` opens the money-move dialog (available = CASH position, fallback shift expected cash) through `PointMoneyMoveLauncher`; `done` patches the CASH position into `PointPositionsStore`; every result goes through `applyOutcome()` (`notifyChanged()`, plus `PointAdminStore.loadOne` on `statusChanged`). `onCloseShift()` opens `ShiftClosureDialogComponent` through `ShiftClosureLauncher` (data `{ pointSlug, pointName, shift }`; `done` / `shiftChanged` go through `applyOutcome()`, so the revision effect reloads the shift and the movements). The settlement opener arrives with the settlement endpoint.
+- `onCollect()` opens the money-move dialog (available = CASH position, fallback shift expected cash) through `PointMoneyMoveLauncher`; `done` patches the CASH position into `PointPositionsStore`; every result goes through `applyOutcome()` (`notifyChanged()`, plus `PointAdminStore.loadOne` on `statusChanged`). `onCloseShift()` opens `ShiftClosureDialogComponent` through `ShiftClosureLauncher` (data `{ pointSlug, pointName, shift }`; `done` / `shiftChanged` go through `applyOutcome()`, so the revision effect reloads the shift and the movements). `onSettle()` opens the same dialog in SETTLEMENT mode (available = CARD_TERMINAL position); `done` patches the CARD_TERMINAL position and goes through `applyOutcome()`.
   SOURCE: `projects/admin/src/app/points/point-cash-tab.component.ts`
   CALLS:
 - RunningShiftStore, PointMovementsStore, PointPositionsStore, PointAdminStore, PointMoneyRefreshFacade, PointMoneyMoveLauncher, ShiftClosureLauncher, TimeStore, BusinessPeriod, PointMoneyActionAvailability.
@@ -3149,7 +3150,7 @@ TYPE: Gateway
 PURPOSE: Opens the money-move dialog with the caller's injector and shows the success toast.
 RESPONSIBILITIES:
 
-- `open(injector, data)` returns the dialog result (`done` | `statusChanged` | undefined); on `done` shows "Collected: X".
+- `open(injector, data)` returns the dialog result (`done` | `statusChanged` | undefined); on `done` shows "Collected: X" (collection) or "Settlement recorded: X" (settlement).
   SOURCE: `projects/admin/src/app/points/point-money-move.launcher.ts`
   CALLS:
 - MatDialog, NotificationService, PointMoneyMoveDialogComponent, formatFixedMoney
@@ -3159,14 +3160,15 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: PointMoneyMoveDialogComponent
 TYPE: Gateway
-PURPOSE: Admin form dialog for a cash collection (terminal settlement mode follows with the backend endpoint).
+PURPOSE: Admin form dialog for a cash collection or a terminal settlement (`data.operation`).
 RESPONSIBILITIES:
 
 - Show point, read-only source, destination "Bank account" and available amount; amount field with "All" and live "Remaining: X"; submit opens `FinanceConfirmDialogComponent`.
 - Map failures with `PointMoneyErrorClassifier`: insufficient funds -> available / validators / position updated and a server error under the amount; point not active / permanently closed -> toast and close with `statusChanged`; validation -> `applyServerErrors`; other -> toast.
-  SOURCE: `projects/admin/src/app/points/point-money-move-dialog.component.ts`, `point-money-move.meta.ts`, `point-money-move-confirm.ts`, `point-money-move.model.ts`
+- SETTLEMENT mode adds `PointSettlementDateFieldComponent` (required statement date, `max` = today from `TimeStore`, `notFutureDateValidator`; form control `statementDate` so backend field errors bind) and passes the date to `PointMoneyMoveStore.execute(amount, statementDate)`; the confirmation shows it as `dd.MM.yyyy`.
+  SOURCE: `projects/admin/src/app/points/point-money-move-dialog.component.ts`, `point-money-move.meta.ts`, `point-money-move-confirm.ts`, `point-money-move.model.ts`, `point-settlement-date-field.component.ts`
   CALLS:
-- PointMoneyMoveStore, FinanceConfirmDialogComponent, PointMoneyErrorClassifier, ErrorMessageResolver, NotificationService, PointPositionsStore (optional), moneyAmountValidators
+- PointMoneyMoveStore, FinanceConfirmDialogComponent, PointMoneyErrorClassifier, ErrorMessageResolver, NotificationService, PointPositionsStore (optional), moneyAmountValidators, PointSettlementDateFieldComponent, notFutureDateValidator, TimeStore
   CALLED_BY:
 - PointMoneyMoveLauncher
 
@@ -3176,10 +3178,22 @@ PURPOSE: Dialog-scoped state and command of a point-money write.
 RESPONSIBILITIES:
 
 - State `available`, `amount`; computed `remaining` (`available - amount` while valid, else `available`).
-- `execute(amount)`: key from `IdempotentAttempt`, `PointFinanceService.recordCollection`, attempt settled definitive on success or by `IdempotentAttempt.outcomeOf(error)`.
+- `init(operation, pointSlug, available)`; `execute(amount, statementDate | null)`: key from `IdempotentAttempt` over `{ amount, statementDate }`, `PointFinanceService.recordCollection` or (SETTLEMENT) `recordSettlement`, attempt settled definitive on success or by `IdempotentAttempt.outcomeOf(error)`.
   SOURCE: `projects/admin/src/app/points/point-money-move.store.ts`
   CALLS:
 - PointFinanceService, IdempotentAttempt
+  CALLED_BY:
+- PointMoneyMoveDialogComponent
+
+COMPONENT_NAME: PointSettlementDateFieldComponent
+TYPE: Gateway
+PURPOSE: Dumb statement-date picker of the settlement dialog.
+RESPONSIBILITIES:
+
+- Inputs `control` (`FormControl<Date | null>`) and `max`; Material datepicker (`provideNativeDateAdapter`); renders required / future-date / server errors.
+  SOURCE: `projects/admin/src/app/points/point-settlement-date-field.component.ts`
+  CALLS:
+- NONE
   CALLED_BY:
 - PointMoneyMoveDialogComponent
 

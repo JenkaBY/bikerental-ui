@@ -12,6 +12,8 @@ import type {
   PositionTotal,
   RunningShiftResponse,
   ShiftClosureResponse,
+  TerminalSettlementRequest,
+  TerminalSettlementResponse,
 } from '@api-models';
 import { POINT_MOVEMENT_KINDS, POINT_POSITION_KINDS } from '../models';
 import type {
@@ -30,6 +32,8 @@ import type {
   RunningShift,
   ShiftClosure,
   ShiftClosureWrite,
+  TerminalSettlement,
+  TerminalSettlementWrite,
 } from '../models';
 import { makeMoney } from './money.mapper';
 
@@ -139,6 +143,28 @@ export class PointFinanceMapper {
       pointSlug: r.pointSlug,
       amount: PointFinanceMapper.money(r.amount),
       cashPosition: PointFinanceMapper.money(r.cashPosition),
+      recordedAt: new Date(r.recordedAt),
+    };
+  }
+
+  static settlementToRequest(write: TerminalSettlementWrite): TerminalSettlementRequest {
+    const date = write.statementDate;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return {
+      idempotencyKey: write.idempotencyKey,
+      amount: write.amount,
+      statementDate: `${date.getFullYear()}-${month}-${day}`,
+    };
+  }
+
+  static settlementFromResponse(r: TerminalSettlementResponse): TerminalSettlement {
+    return {
+      transactionId: r.transactionId,
+      pointSlug: r.pointSlug,
+      amount: PointFinanceMapper.money(r.amount),
+      statementDate: new Date(`${r.statementDate}T00:00:00`),
+      cardTerminalPosition: PointFinanceMapper.money(r.cardTerminalPosition),
       recordedAt: new Date(r.recordedAt),
     };
   }

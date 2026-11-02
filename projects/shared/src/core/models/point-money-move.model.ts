@@ -18,14 +18,14 @@ export interface CashCollection {
 export interface TerminalSettlementWrite {
   readonly idempotencyKey: string;
   readonly amount: number;
-  readonly settlementDate: Date;
+  readonly statementDate: Date;
 }
 
 export interface TerminalSettlement {
   readonly transactionId: string;
   readonly pointSlug: string;
   readonly amount: Money;
-  readonly settlementDate: Date;
-  readonly cardTerminalPosition: Money | null;
+  readonly statementDate: Date;
+  readonly cardTerminalPosition: Money;
   readonly recordedAt: Date;
 }

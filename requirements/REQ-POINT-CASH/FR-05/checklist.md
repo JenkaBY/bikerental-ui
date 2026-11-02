@@ -1,6 +1,6 @@
 # Implementation Checklist: FR-05 — Admin Cash Collection and Terminal Settlement Dialogs
 
-Implement after FR-03 (builds on `PointCashTabComponent`, `PointPositionsStore`, `applyOutcome`). Tasks 017-020 wait for the backend terminal-settlement endpoint.
+Implement after FR-03 (builds on `PointCashTabComponent`, `PointPositionsStore`, `applyOutcome`). Tasks 017-022 cover terminal settlement; the backend endpoint is published and the client is generated. Task 021 must run after FR-04 `task-006-blocked-backend-record-settlement-wiring.md` (it removes the label that task still uses).
 
 - [x] `task-001-point-money-move-domain-models.md`
 - [x] `task-002-collection-mapper.md`
@@ -18,12 +18,14 @@ Implement after FR-03 (builds on `PointCashTabComponent`, `PointPositionsStore`,
 - [x] `task-014-cash-tab-collect-wiring.md`
 - [x] `task-015-i18n-extract-and-russian-translations.md`
 - [x] `task-016-update-overview-docs.md`
-- [ ] `task-017-blocked-backend-generate-api-terminal-settlements.md` (BLOCKED: backend FIN-002 FR-06 `POST /api/finance/terminal-settlements` not published)
-- [ ] `task-018-blocked-backend-settlement-mapper-and-service.md` (BLOCKED: needs task-017)
-- [ ] `task-019-blocked-backend-settlement-dialog-mode.md` (BLOCKED: needs task-018)
-- [ ] `task-020-blocked-backend-record-settlement-wiring.md` (BLOCKED: needs task-019)
+- [x] `task-017-blocked-backend-generate-api-terminal-settlements.md` (done: `npm run generate:api` ran, additive diff in generated models/index.ts and services/finance.service.ts)
+- [x] `task-018-blocked-backend-settlement-mapper-and-service.md` (settlement model rename to `statementDate`, mapper, `recordSettlement`)
+- [x] `task-019-blocked-backend-settlement-dialog-mode.md` (date field component, store, dialog SETTLEMENT mode)
+- [x] `task-020-blocked-backend-record-settlement-wiring.md` (success toast, launcher, Cash tab `onSettle`)
+- [x] `task-021-i18n-settlement-extract-and-russian-translations.md` (after FR-04 task-006; extract, Russian target, remove `PointActionNotAvailableYet`)
+- [x] `task-022-update-overview-settlement-docs.md`
 
-**Next Task:** task-017-blocked-backend-generate-api-terminal-settlements.md (BLOCKED)
+**Next Task:** DONE
 
 ## Ad-hoc fixes discovered during the verification stage
 
@@ -40,3 +42,15 @@ Implement after FR-03 (builds on `PointCashTabComponent`, `PointPositionsStore`,
 ## Review fixes — round 2
 
 - None needed (review clean).
+
+## Ad-hoc fixes discovered during the verification stage
+
+- projects/admin/src/app/points/point-money-move-dialog.component.ts — wrapped the settlementDate summary line — prettier/prettier lint error
+
+## Review fixes — settlement round 1
+
+- requirements/REQ-POINT-CASH/FR-05/design.md — `settlementDate` renamed to `statementDate`, `cardTerminalPosition` made non-null, dropped "assumed" wording, added 409 and field constraints, removed "enable only once the endpoint exists" — sync with published contract
+- requirements/REQ-POINT-CASH/FR-05/fr.md — backend-dependency line states settlement endpoint is published — sync with published contract
+- requirements/REQ-POINT-CASH/FR-04/fr.md — backend-dependency line states movements and results are published — remove stale wording
+- requirements/REQ-POINT-CASH/FR-04/design.md — delivery split no longer says settlement waits for backend — remove stale wording
+- requirements/REQ-POINT-CASH/FR-04/checklist.md, FR-05/checklist.md — ticked remaining tasks, Next Task set to DONE — bookkeeping
