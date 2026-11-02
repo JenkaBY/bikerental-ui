@@ -66,6 +66,10 @@ they run are genuinely different decisions:
   never on push), and can be dispatched from **any branch or tag** — whichever ref should become the
   public demo. Runs its own Lint & Format → Unit Tests → Build → Deploy; nothing here talks to the
   `pi` target's build, GHCR, or `bike-rental`.
+- **`ghcr-cleanup.yml`** — GHCR retention for `bike-rental-ui`: after every publish, deletes
+  `sha-*` and untagged images older than 4 weeks, keeping `latest`, `v*`, `preview`, `prod` and
+  every tag sharing an image with them. Manual run supports `older_than` and `dry_run`. See
+  [docs/ghcr-retention.md](docs/ghcr-retention.md).
 - **Gate job**: `build-and-deploy.yml`'s `CI` job aggregates lint/test/build results and fails if any
   of them failed; `deploy-pages.yml` has no separate gate since its own three jobs already run in
   sequence.

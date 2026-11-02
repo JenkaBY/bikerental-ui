@@ -4,7 +4,7 @@
 
 - Three independently deployable Angular SPAs (`gateway`, `admin`, `operator`) plus one shared Angular library (`shared`), built from a single workspace and one commit.
 - All communication is synchronous HTTP/REST against one external Spring Boot backend (out of this repo), reached through an `ng-openapi`-generated client; a development-only SSE stream carries a simulated clock for the "time travel" testing feature.
-- Two deployment targets share one build definition: GitHub Pages (static hosting, cross-origin to a test API) and a Caddy container image (`pi` target, same-origin to the production API, published to GHCR and rolled out by a separate repository via `repository_dispatch`).
+- Two deployment targets share one build definition: GitHub Pages (static hosting, cross-origin to a test API) and a Caddy container image (`pi` target, same-origin to the production API, published to GHCR and rolled out by a separate repository via `repository_dispatch`; old images are pruned by `ghcr-cleanup.yml`, see `docs/ghcr-retention.md`).
 - Authentication is OIDC (`angular-auth-oidc-client`), one client id per authenticated SPA (`admin`, `operator`); `gateway` is unauthenticated.
 - No backend code, database, message broker, or infrastructure-as-code lives in this repository — the backend is an external dependency identified only by its OpenAPI spec and base URL.
 
