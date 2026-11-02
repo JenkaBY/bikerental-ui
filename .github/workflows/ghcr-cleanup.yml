@@ -1,0 +1,74 @@
+name: GHCR Cleanup
+
+on:
+  workflow_run:
+    workflows: [ Build and Deploy ]
+    types: [ completed ]
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      older_than:
+        description: 'Delete sha-* and untagged images older than this interval'
+        type: string
+        default: '4 weeks'
+      dry_run:
+        description: 'List what would be deleted without deleting anything'
+        type: boolean
+        default: true
+
+concurrency:
+  group: ghcr-cleanup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    name: Delete old UI images
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    permissions:
+      packages: write
+    env:
+      OWNER: ${{ github.repository_owner }}
+      PACKAGE: bike-rental-ui
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Resolve protected tags
+        id: protect
+        run: |
+          set -euo pipefail
+          OWNER_LC="${OWNER,,}"
+          ENDPOINT="/users/${OWNER_LC}/packages/container/${PACKAGE}/versions"
+          if [ "$(gh api "/users/${OWNER_LC}" -q .type)" = "Organization" ]; then
+            ENDPOINT="/orgs/${OWNER_LC}/packages/container/${PACKAGE}/versions"
+          fi
+          gh api --paginate "${ENDPOINT}?per_page=100" -q '.[] | {id, tags: .metadata.container.tags}' | jq -s '.' > versions.json
+
+          for required in preview prod; do
+            if ! jq -e --arg t "$required" 'any(.[]; .tags | index($t))' versions.json > /dev/null; then
+              echo "::error::Required tag '${required}' does not exist on ${PACKAGE}. Nothing was deleted."
+              exit 1
+            fi
+          done
+
+          jq -r '
+            [ .[] | select(.tags | any(. == "latest" or . == "preview" or . == "prod" or startswith("v"))) | .tags[] ]
+            | unique | join(",")
+          ' versions.json > protected.txt
+          echo "tags=$(cat protected.txt)" >> "$GITHUB_OUTPUT"
+          echo "Protected tags: $(cat protected.txt)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Delete old sha-* and untagged images
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ github.repository_owner }}
+          package: ${{ env.PACKAGE }}
+          delete-tags: 'sha-*'
+          delete-untagged: true
+          older-than: ${{ inputs.older_than || '4 weeks' }}
+          exclude-tags: ${{ steps.protect.outputs.tags }}
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
