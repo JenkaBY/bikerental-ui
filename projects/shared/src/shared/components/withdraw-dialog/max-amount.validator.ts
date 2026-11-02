@@ -1,9 +1,6 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms';
+import { maxAmountValidator } from '../../validators/amount-validators';
 
 export function maxWithdrawAmountValidator(max: number): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value as number | null;
-    if (value == null) return null;
-    return value > max ? { maxAmount: { max, actual: value } } : null;
-  };
+  return maxAmountValidator(max);
 }

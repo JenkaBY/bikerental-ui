@@ -17,3 +17,11 @@ export function pointResultTransferCount(count: number): string {
 export function pointShiftCaption(sequence: number, time: string): string {
   return $localize`Shift ${sequence}:sequence: · opened ${time}:time:`;
 }
+
+export function pointMoveRemaining(amount: string): string {
+  return $localize`Remaining: ${amount}:amount:`;
+}
+
+export function pointCollectedMessage(amount: string): string {
+  return $localize`Collected: ${amount}:amount:`;
+}
