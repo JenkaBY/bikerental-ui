@@ -14,6 +14,8 @@ import type {
   PointPeriodResults,
   PointPositionsOverview,
   RunningShift,
+  ShiftClosure,
+  ShiftClosureWrite,
 } from '../../models';
 import { FinanceService, RequestOptions } from '../generated';
 import { POINT_LEDGER_READER } from './point-ledger.reader';
@@ -62,6 +64,16 @@ export class PointFinanceService {
         PointFinanceService.scopedOptions(pointSlug),
       )
       .pipe(map((response) => PointFinanceMapper.collectionFromResponse(response)));
+  }
+
+  closeShift(write: ShiftClosureWrite, pointSlug: string | null): Observable<ShiftClosure> {
+    return this.finance
+      .closeShift(
+        PointFinanceMapper.closureToRequest(write),
+        'body',
+        PointFinanceService.scopedOptions(pointSlug),
+      )
+      .pipe(map((response) => PointFinanceMapper.closureFromResponse(response)));
   }
 
   private static scopedOptions(pointSlug: string | null): RequestOptions<'json'> {

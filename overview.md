@@ -386,6 +386,7 @@ RESPONSIBILITIES:
 - Delegate the FIN-002 FR-08 reads to the `POINT_LEDGER_READER` token (`HttpPointLedgerReader`); the `UnavailablePointLedgerReader` placeholder (fails with `PointLedgerUnavailableError`, one warning toast via `PointLedgerUnavailableNotifier`) stays available for environments without the endpoints.
 - Expose `getCurrentShift(pointSlug | null)` over `GET /api/finance/shifts/current` (admin names the point via `X-Point-Slug`, `null` = operator via the point interceptor); HTTP 404 = no running shift → `null`, request sent with `suppressErrorNotification`.
 - Expose `recordCollection(write, pointSlug | null)` over `POST /api/finance/collections` (admin names the point via `X-Point-Slug` with `SKIP_POINT_SCOPE`, `null` = operator via the point interceptor); always `suppressErrorNotification`, the caller owns error copy.
+- `closeShift(write, pointSlug | null)` -> `POST /api/finance/shifts/current/closures` (explicit `X-Point-Slug` when the slug is non-null, `suppressErrorNotification()`).
   SOURCE: `projects/shared/src/core/api/point-finance/point-finance.service.ts`
   CALLS:
 - PointLedgerReader (`POINT_LEDGER_READER`) — `positions()`, `results()`, `movements()`.
@@ -1180,6 +1181,7 @@ RESPONSIBILITIES:
 - Normalize movement kinds (`DEPOSIT`, `WITHDRAWAL`, `CAPTURE`, `PENALTY`, `ADJUSTMENT`, `COLLECTION`, `TERMINAL_SETTLEMENT`, `SHIFT_DISCREPANCY`); unknown kinds become `OTHER`.
 - `runningShiftFromResponse`: group `movements[{type, amount}]` by kind and sum (backend order kept, `PAYOUT` → `WITHDRAWAL`, zero totals dropped); `expectedCash` is the backend value.
 - `collectionToRequest` / `collectionFromResponse`: `{ idempotencyKey, amount }` out; `{ transactionId, pointSlug, amount, cashPosition, recordedAt }` in (`shiftId` not mapped).
+- `closureToRequest` / `closureFromResponse` (`ShiftClosureWrite` / `ShiftClosure`; the closing user id is not mapped).
   SOURCE: `projects/shared/src/core/mappers/point-finance.mapper.ts`
   CALLS:
 - NONE
@@ -2159,6 +2161,8 @@ RESPONSIBILITIES:
 - PointCashTabComponent
 - OperatorCashComponent
 - OperatorCashCollectionComponent
+- ShiftClosureDialogComponent
+- OperatorShiftClosureComponent
 
 COMPONENT_NAME: PointMoneyActionAvailability
 TYPE: Utility
@@ -3095,10 +3099,10 @@ RESPONSIBILITIES:
 
 - Provide its own `RunningShiftStore` and `PointMovementsStore`; load the shift on entry, configure the list `{ slug, CASH, day of openedAt … today, newest, size 100, notBefore: openedAt, accumulate }`, reload shift and list on a new facade revision.
 - Compute button availability; collection amount = CASH position, falling back to the shift's expected cash while positions are unavailable.
-- `onCollect()` opens the money-move dialog (available = CASH position, fallback shift expected cash) through `PointMoneyMoveLauncher`; `done` patches the CASH position into `PointPositionsStore`; every result goes through `applyOutcome()` (`notifyChanged()`, plus `PointAdminStore.loadOne` on `statusChanged`). Settlement and shift closure openers arrive with the settlement endpoint / FR-08.
+- `onCollect()` opens the money-move dialog (available = CASH position, fallback shift expected cash) through `PointMoneyMoveLauncher`; `done` patches the CASH position into `PointPositionsStore`; every result goes through `applyOutcome()` (`notifyChanged()`, plus `PointAdminStore.loadOne` on `statusChanged`). `onCloseShift()` opens `ShiftClosureDialogComponent` through `ShiftClosureLauncher` (data `{ pointSlug, pointName, shift }`; `done` / `shiftChanged` go through `applyOutcome()`, so the revision effect reloads the shift and the movements). The settlement opener arrives with the settlement endpoint.
   SOURCE: `projects/admin/src/app/points/point-cash-tab.component.ts`
   CALLS:
-- RunningShiftStore, PointMovementsStore, PointPositionsStore, PointAdminStore, PointMoneyRefreshFacade, PointMoneyMoveLauncher, TimeStore, BusinessPeriod, PointMoneyActionAvailability.
+- RunningShiftStore, PointMovementsStore, PointPositionsStore, PointAdminStore, PointMoneyRefreshFacade, PointMoneyMoveLauncher, ShiftClosureLauncher, TimeStore, BusinessPeriod, PointMoneyActionAvailability.
 - PointCashCardComponent, PointTerminalCardComponent, PointMovementTableComponent.
   CALLED_BY:
 - PointDetailPageComponent (child route)
@@ -3114,6 +3118,19 @@ RESPONSIBILITIES:
 - ShiftBreakdownComponent, FixedMoneyPipe
   CALLED_BY:
 - PointCashTabComponent
+
+COMPONENT_NAME: ShiftClosureDialogComponent
+TYPE: Gateway
+PURPOSE: Admin dialog that closes a point's running shift with a cash count (Cash tab "Close shift").
+RESPONSIBILITIES:
+
+- Data `{ pointSlug, pointName, shift }`; provides its own `ShiftClosureStore`. State 1: `ShiftCountFormComponent` + Cancel + "Close shift" -> `FinanceConfirmDialogComponent` (Shift / Expected cash / Counted amount / Difference, note "A closed shift cannot be reopened", Back / "Close shift", `execute = ShiftClosureStore.execute()`). State 2 (result): "Shift N closed", expected, counted, difference, closing time, "Done" -> close `{ outcome: 'done' }`; backdrop / Escape disabled in this state.
+- `PointMoneyErrorClassifier.classifyClosure`: `SHIFT_NOT_RUNNING` -> warn "This shift is already closed" and close `{ outcome: 'shiftChanged' }`; `VALIDATION` -> `applyServerErrors` on the counted control; other -> error notification, form kept.
+  SOURCE: `projects/admin/src/app/points/shift-closure-dialog.component.ts`, `shift-closure-dialog.model.ts`, `shift-closure.launcher.ts`
+  CALLS:
+- ShiftClosureStore, ShiftCountFormComponent, FinanceConfirmDialogComponent, buildShiftClosureConfirm, buildShiftClosureRows, PointMoneyErrorClassifier, ErrorMessageResolver, NotificationService
+  CALLED_BY:
+- PointCashTabComponent (via ShiftClosureLauncher)
 
 COMPONENT_NAME: PointTerminalCardComponent
 TYPE: Gateway
@@ -3178,6 +3195,8 @@ RESPONSIBILITIES:
   CALLED_BY:
 - PointMoneyMoveDialogComponent
 - OperatorCashCollectionComponent
+- ShiftClosureDialogComponent
+- OperatorShiftClosureComponent
 
 COMPONENT_NAME: IdempotentAttempt
 TYPE: Utility
@@ -3192,19 +3211,24 @@ RESPONSIBILITIES:
 - PointMoneyMoveStore
 - OperatorCashCollectionComponent
 - OperatorCollectionStore
+- ShiftClosureStore
+- ShiftClosureDialogComponent
+- OperatorShiftClosureComponent
 
 COMPONENT_NAME: PointMoneyErrorClassifier
 TYPE: Utility
 PURPOSE: Maps a parsed `ApiError` of a point-money write to a UI outcome.
 RESPONSIBILITIES:
 
-- `INSUFFICIENT_CASH` (`finance.point.insufficient_cash`, position = `params.cashPosition`), `INSUFFICIENT_TERMINAL` (`finance.point.insufficient_terminal`, `params.cardTerminalPosition`), `POINT_NOT_ACTIVE`, `POINT_PERMANENTLY_CLOSED`, `SCOPE`, `VALIDATION`, `OTHER`. `SHIFT_NOT_RUNNING` arrives with FR-08.
+- `INSUFFICIENT_CASH` (`finance.point.insufficient_cash`, position = `params.cashPosition`), `INSUFFICIENT_TERMINAL` (`finance.point.insufficient_terminal`, `params.cardTerminalPosition`), `POINT_NOT_ACTIVE`, `POINT_PERMANENTLY_CLOSED`, `SCOPE`, `VALIDATION`, `OTHER`. `SHIFT_NOT_RUNNING` (`finance.shift.not_running`); `classifyClosure(error)` additionally maps an otherwise-unclassified 409 / 422 to `SHIFT_NOT_RUNNING` (closure flows only, assumption A5).
   SOURCE: `projects/shared/src/shared/utils/point-money-error.classifier.ts`
   CALLS:
 - ErrorCode, makeMoney
   CALLED_BY:
 - PointMoneyMoveDialogComponent
 - OperatorCashCollectionComponent
+- ShiftClosureDialogComponent
+- OperatorShiftClosureComponent
 
 ### Operator feature components
 
@@ -3777,10 +3801,10 @@ RESPONSIBILITIES:
 
 - Provide its own `RunningShiftStore`; without a working point (`OperatingScopeStore.notEstablished()` or no `CurrentPointStore.currentSlug()`) show the "No working point" guidance, send no request and render no button.
 - Otherwise load `RunningShiftStore.load(null)` and `CurrentPointStore.refreshCurrent()` in parallel; render the card (`running`), "No shift is running" (`none`), or an error with Retry (`failed`).
-- Collection availability uses `CurrentPointStore.current().status` and `shift.expectedCash`; "Hand in cash" navigates to `cash/collect`; "Close shift" currently shows an info notification until FR-08 adds `cash/close-shift`.
+- Collection availability uses `CurrentPointStore.current().status` and `shift.expectedCash`; "Hand in cash" navigates to `cash/collect`; "Close shift" navigates to `cash/close-shift`.
   SOURCE: `projects/operator/src/app/cash/operator-cash.component.ts`
   CALLS:
-- RunningShiftStore, CurrentPointStore, OperatingScopeStore, PointMoneyActionAvailability, NotificationService.
+- RunningShiftStore, CurrentPointStore, OperatingScopeStore, PointMoneyActionAvailability.
 - OperatorShiftCardComponent.
   CALLED_BY:
 - OperatorRoutes
@@ -3796,6 +3820,55 @@ RESPONSIBILITIES:
 - ShiftBreakdownComponent, pointShiftCaption
   CALLED_BY:
 - OperatorCashComponent
+
+COMPONENT_NAME: OperatorShiftClosureComponent
+TYPE: Gateway
+PURPOSE: Operator full-screen close-shift page (`/cash/close-shift`).
+RESPONSIBILITIES:
+
+- Provide its own `RunningShiftStore` and `ShiftClosureStore`; load the shift with a null slug. No working point / scope lost -> `/cash`; no running shift -> info "No shift is running" and `/cash`. Back arrow -> `/cash`, nothing sent.
+- Mobile `ShiftCountFormComponent` + primary "Close shift" -> `FinanceConfirmDialogComponent`; success puts a `SHIFT_CLOSURE` receipt into `FinanceReceiptStore` and replace-navigates to `cash/close-shift/done`. `SHIFT_NOT_RUNNING` -> warn "This shift is already closed" and `/cash`; `SCOPE` -> `/cash` without an extra toast; `VALIDATION` binds to the form; other errors notify and keep the form.
+  SOURCE: `projects/operator/src/app/cash/operator-shift-closure.component.ts`
+  CALLS:
+- ShiftClosureStore, RunningShiftStore, ShiftCountFormComponent, FinanceConfirmDialogComponent, FinanceReceiptStore, CurrentPointStore, OperatingScopeStore, PointMoneyErrorClassifier, ErrorMessageResolver, NotificationService
+  CALLED_BY:
+- OperatorRoutes
+
+COMPONENT_NAME: ShiftCountFormComponent
+TYPE: Gateway
+PURPOSE: Shared dumb form of the shift closure (admin dialog and operator page).
+RESPONSIBILITIES:
+
+- Inputs `shift`, `pointName`, `layout` (`dialog` | `mobile`), `differenceText`; shows point name, expected cash, "Shift N · opened HH:mm" and ONE "Counted amount" control (`countedAmountValidators()`: required, >= 0, <= 2 decimals; decimal keypad; no "All" shortcut) with the live difference in a plain paragraph. Outputs `countedChange`, `submitted`; method `showServerErrors()`. No submit button (hosts render their own).
+  SOURCE: `projects/shared/src/shared/components/shift-count-form/shift-count-form.component.ts`
+  CALLS:
+- countedAmountValidators, applyServerErrors, MaxDecimalsDirective, pointShiftCaption
+  CALLED_BY:
+- ShiftClosureDialogComponent, OperatorShiftClosureComponent
+
+COMPONENT_NAME: ShiftClosureStore
+TYPE: Store
+PURPOSE: Host-scoped state and command of a shift closure (provided by the dialog / page, never root).
+RESPONSIBILITIES:
+
+- State `shift`, entered value, `submitting`, `closure`; computed `counted` (valid only when >= 0 with at most two decimals), `difference` (`ShiftDifference.of`), `differenceText`. `execute()` keys the attempt on `{ shiftId, counted }` via `IdempotentAttempt` and calls `PointFinanceService.closeShift(write, pointSlug)`.
+  SOURCE: `projects/shared/src/core/state/shift-closure.store.ts`
+  CALLS:
+- PointFinanceService, IdempotentAttempt, ShiftDifference, describeShiftDifference
+  CALLED_BY:
+- ShiftClosureDialogComponent, OperatorShiftClosureComponent
+
+COMPONENT_NAME: ShiftDifference
+TYPE: Utility
+PURPOSE: Pure rule: counted minus expected in integer cents, classified as `SURPLUS`, `SHORTAGE` or `MATCHES`.
+RESPONSIBILITIES:
+
+- `ShiftDifference.of(counted, expected)` -> `{ kind, amount }` (signed amount). Presentation helpers (`describeShiftDifference`, `buildShiftClosureRows`, `buildShiftClosureConfirm`) live in `shift-closure-presentation.ts`.
+  SOURCE: `projects/shared/src/shared/utils/shift-difference.ts`, `shift-closure-presentation.ts`
+  CALLS:
+- makeMoney, formatFixedMoney
+  CALLED_BY:
+- ShiftClosureStore, OperatorFinanceReceiptComponent (via buildShiftClosureRows)
 
 COMPONENT_NAME: OperatorCashCollectionComponent
 TYPE: Gateway
@@ -3837,10 +3910,11 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: OperatorFinanceReceiptComponent
 TYPE: Gateway
-PURPOSE: Operator success/receipt screen (`/cash/collect/done`), discriminated by receipt kind (SHIFT_CLOSURE arrives with FR-08).
+PURPOSE: Operator success/receipt screen (`/cash/collect/done`), discriminated by receipt kind (`/cash/collect/done` and `/cash/close-shift/done`).
 RESPONSIBILITIES:
 
 - Take the receipt once from `FinanceReceiptStore.take()`; COLLECTION shows "Cash handed in", amount, Cash drawer, Bank account, recorded time and the remaining cash in the drawer. "Done" replace-navigates to `/cash`. The route is protected by `financeReceiptGuard` (no receipt -> `/cash`).
+- SHIFT_CLOSURE shows "Shift N closed", point, expected cash, counted amount, difference ("Surplus +X" / "Shortage −X" / "Matches") and the closing time; `FinanceReceiptView.amount` is null for closures (no large amount line).
   SOURCE: `projects/operator/src/app/cash/operator-finance-receipt.component.ts`, `finance-receipt.view.ts`, `finance-receipt.guard.ts`
   CALLS:
 - FinanceReceiptStore
@@ -3852,19 +3926,20 @@ TYPE: Store
 PURPOSE: Transient, memory-only holder of the last finance receipt (root-provided); never persisted, never in the URL.
 RESPONSIBILITIES:
 
-- `set(receipt)`, `take()` (returns and clears), `has()`, `clear()`; `FinanceReceipt` is a discriminated union (`COLLECTION` now). Cleared on point switch by `PointSwitchRefreshService`.
+- `set(receipt)`, `take()` (returns and clears), `has()`, `clear()`; `FinanceReceipt` is a discriminated union (`COLLECTION`, `SHIFT_CLOSURE`). Cleared on point switch by `PointSwitchRefreshService`.
   SOURCE: `projects/shared/src/core/state/finance-receipt.store.ts`, `projects/shared/src/core/models/finance-receipt.model.ts`
   CALLS:
 - (none)
   CALLED_BY:
 - OperatorCashCollectionComponent, OperatorFinanceReceiptComponent, PointSwitchRefreshService
+- OperatorShiftClosureComponent
 
 COMPONENT_NAME: PointSwitchRefreshService
 TYPE: Service
 PURPOSE: Refreshes the operator outlet after a working-point switch.
 RESPONSIBILITIES:
 
-- On a single rental URL navigate to `/rentals`; on `cash/<sub-route>` (`collect`, `collect/done`, later `close-shift*`) clear `FinanceReceiptStore` and navigate to `/cash`; otherwise bump the outlet epoch.
+- On a single rental URL navigate to `/rentals`; on `cash/<sub-route>` (`collect`, `collect/done`, `close-shift`, `close-shift/done`) clear `FinanceReceiptStore` and navigate to `/cash`; otherwise bump the outlet epoch.
   SOURCE: `projects/operator/src/app/core/point-switch-refresh.service.ts`
   CALLS:
 - Router, FinanceReceiptStore

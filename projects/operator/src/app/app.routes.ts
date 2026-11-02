@@ -75,6 +75,23 @@ export const routes: Routes = [
                 (m) => m.OperatorCashCollectionComponent,
               ),
           },
+          {
+            path: 'close-shift/done',
+            data: { fullScreen: true },
+            canActivate: [financeReceiptGuard],
+            loadComponent: () =>
+              import('./cash/operator-finance-receipt.component').then(
+                (m) => m.OperatorFinanceReceiptComponent,
+              ),
+          },
+          {
+            path: 'close-shift',
+            data: { fullScreen: true },
+            loadComponent: () =>
+              import('./cash/operator-shift-closure.component').then(
+                (m) => m.OperatorShiftClosureComponent,
+              ),
+          },
         ],
       },
       {

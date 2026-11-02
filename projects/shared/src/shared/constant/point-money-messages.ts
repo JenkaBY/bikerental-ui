@@ -29,3 +29,15 @@ export function pointCollectedMessage(amount: string): string {
 export function operatorHandInAmount(amount: string): string {
   return $localize`Hand in ${amount}:amount:`;
 }
+
+export function shiftSurplusMessage(amount: string): string {
+  return $localize`Surplus +${amount}:amount:`;
+}
+
+export function shiftShortageMessage(amount: string): string {
+  return $localize`Shortage −${amount}:amount:`;
+}
+
+export function shiftClosedTitle(sequence: number): string {
+  return $localize`Shift ${sequence}:sequence: closed`;
+}

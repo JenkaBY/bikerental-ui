@@ -1,5 +1,12 @@
 import { formatDate } from '@angular/common';
-import { type FinanceReceipt, formatFixedMoney, Labels, type Money } from '@bikerental/shared';
+import {
+  buildShiftClosureRows,
+  type FinanceReceipt,
+  formatFixedMoney,
+  Labels,
+  type Money,
+  shiftClosedTitle,
+} from '@bikerental/shared';
 
 export interface FinanceReceiptRow {
   readonly label: string;
@@ -8,7 +15,7 @@ export interface FinanceReceiptRow {
 
 export interface FinanceReceiptView {
   readonly title: string;
-  readonly amount: Money;
+  readonly amount: Money | null;
   readonly rows: readonly FinanceReceiptRow[];
 }
 
@@ -31,6 +38,15 @@ export function buildReceiptView(receipt: FinanceReceipt, locale: string): Finan
             value: formatFixedMoney(collection.cashPosition, locale),
           },
         ],
+      };
+    }
+    case 'SHIFT_CLOSURE': {
+      const { closure, pointName } = receipt;
+      const pointRows = pointName ? [{ label: Labels.MoneyPointLabel, value: pointName }] : [];
+      return {
+        title: shiftClosedTitle(closure.sequence),
+        amount: null,
+        rows: [...pointRows, ...buildShiftClosureRows(closure, locale)],
       };
     }
   }

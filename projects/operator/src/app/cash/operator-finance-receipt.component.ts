@@ -14,7 +14,9 @@ import { buildReceiptView, type FinanceReceiptView } from './finance-receipt.vie
       <div class="flex flex-col items-center gap-4 py-8 text-center">
         <mat-icon class="!h-14 !w-14 !text-5xl text-green-600">check_circle</mat-icon>
         <h1 class="m-0 text-xl font-semibold">{{ receipt.title }}</h1>
-        <div class="text-3xl font-semibold tabular-nums">{{ receipt.amount | fixedMoney }}</div>
+        @if (receipt.amount) {
+          <div class="text-3xl font-semibold tabular-nums">{{ receipt.amount | fixedMoney }}</div>
+        }
         <dl class="m-0 grid w-full grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-left">
           @for (row of receipt.rows; track row.label) {
             <dt class="text-slate-500">{{ row.label }}</dt>

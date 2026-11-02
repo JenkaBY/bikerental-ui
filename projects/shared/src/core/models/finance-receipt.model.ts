@@ -1,4 +1,5 @@
 import type { CashCollection } from './point-money-move.model';
+import type { ShiftClosure } from './shift-closure.model';
 
 export interface CollectionReceipt {
   readonly kind: 'COLLECTION';
@@ -6,4 +7,10 @@ export interface CollectionReceipt {
   readonly collection: CashCollection;
 }
 
-export type FinanceReceipt = CollectionReceipt;
+export interface ShiftClosureReceipt {
+  readonly kind: 'SHIFT_CLOSURE';
+  readonly pointName: string;
+  readonly closure: ShiftClosure;
+}
+
+export type FinanceReceipt = CollectionReceipt | ShiftClosureReceipt;

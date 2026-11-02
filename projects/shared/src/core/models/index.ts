@@ -22,4 +22,5 @@ export * from './point-finance.model';
 export * from './point-money-move.model';
 export * from './finance-receipt.model';
 export * from './running-shift.model';
+export * from './shift-closure.model';
 export * from './returnable-rental.model';

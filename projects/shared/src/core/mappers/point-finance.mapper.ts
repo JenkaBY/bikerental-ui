@@ -1,7 +1,9 @@
 import type {
+  CloseShiftRequest,
   CollectionRequest,
   CollectionResponse,
   Movement,
+  NextShift,
   PagePointMovementResponse,
   PointFigureResponse,
   PointLedgerResponse,
@@ -9,6 +11,7 @@ import type {
   PointPositionsResponse,
   PositionTotal,
   RunningShiftResponse,
+  ShiftClosureResponse,
 } from '@api-models';
 import { POINT_MOVEMENT_KINDS, POINT_POSITION_KINDS } from '../models';
 import type {
@@ -25,6 +28,8 @@ import type {
   PointPositions,
   PointPositionsOverview,
   RunningShift,
+  ShiftClosure,
+  ShiftClosureWrite,
 } from '../models';
 import { makeMoney } from './money.mapper';
 
@@ -135,6 +140,29 @@ export class PointFinanceMapper {
       amount: PointFinanceMapper.money(r.amount),
       cashPosition: PointFinanceMapper.money(r.cashPosition),
       recordedAt: new Date(r.recordedAt),
+    };
+  }
+
+  static closureToRequest(write: ShiftClosureWrite): CloseShiftRequest {
+    return {
+      idempotencyKey: write.idempotencyKey,
+      shiftId: write.shiftId,
+      countedAmount: write.countedAmount.amount,
+    };
+  }
+
+  static closureFromResponse(r: ShiftClosureResponse): ShiftClosure {
+    const next: NextShift | undefined = r.nextShift;
+    return {
+      shiftId: r.shift.shiftId,
+      sequence: r.shift.sequence,
+      openedAt: new Date(r.shift.openedAt),
+      closedAt: new Date(r.shift.closedAt),
+      expectedCash: PointFinanceMapper.money(r.shift.expectedAmount),
+      countedAmount: PointFinanceMapper.money(r.shift.countedAmount),
+      difference: PointFinanceMapper.money(r.shift.discrepancy),
+      nextShiftId: next?.shiftId ?? null,
+      nextOpeningAmount: next ? PointFinanceMapper.money(next.openingAmount) : null,
     };
   }
 

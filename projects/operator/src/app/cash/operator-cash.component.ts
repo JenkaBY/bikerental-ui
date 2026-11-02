@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 import {
   CurrentPointStore,
   Labels,
-  NotificationService,
   OperatingScopeStore,
   PointMoneyActionAvailability,
   RunningShiftStore,
@@ -70,7 +69,6 @@ export class OperatorCashComponent {
 
   private readonly points = inject(CurrentPointStore);
   private readonly scope = inject(OperatingScopeStore);
-  private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -107,6 +105,6 @@ export class OperatorCashComponent {
   }
 
   protected onCloseShift(): void {
-    this.notifications.info(Labels.PointActionNotAvailableYet);
+    void this.router.navigate(['/cash', 'close-shift']);
   }
 }
