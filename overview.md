@@ -2142,6 +2142,7 @@ RESPONSIBILITIES:
 - PointFinanceService — `getResults(period, slug)`.
   CALLED_BY:
 - PointResultsTabComponent
+- PointTransfersTabComponent (period totals "Cash collections" / "Terminal settlements")
 
 COMPONENT_NAME: RunningShiftStore
 TYPE: Store
@@ -3019,6 +3020,35 @@ RESPONSIBILITIES:
   CALLED_BY:
 - PointDetailPageComponent (child route)
 
+COMPONENT_NAME: PointTransfersTabComponent
+TYPE: Gateway
+PURPOSE: Collections tab (`/points/:slug/transfers`) - read-only history of cash collections and terminal settlements (BANK position movements) with period totals.
+RESPONSIBILITIES:
+
+- Provide its own `PointMovementsStore` (non-accumulate, numbered paginator) configured `{ slug, BANK, current month to date, newest, size 50 }` and `PointResultsStore` for the totals; one `PointPeriodFilterComponent` drives both (`onPeriodChange` -> `setPeriod` on both, page 0); the order toggle only affects the list.
+- Reload both stores on a new facade revision (period and order kept).
+- Header actions: "Collect cash" (point ACTIVE and CASH position > 0; the shift rule of `PointMoneyActionAvailability.collection` is bypassed, amount = `PointPositionsStore.cash()` only) and "Record settlement" (not permanently closed and CARD_TERMINAL > 0); hints under disabled buttons.
+- `onCollect()` opens the money-move dialog through `PointMoneyMoveLauncher`; `done` patches the CASH position; every result goes through `applyOutcome()` (`notifyChanged()`, plus `PointAdminStore.loadOne` on `statusChanged`). `onSettle()` is interim ("not available yet") until the terminal-settlement endpoint exists.
+- No cancel/edit action; a note explains that a mistake is corrected by an adjustment. Any non-collection/settlement kind on the BANK position is shown with its own type name.
+  SOURCE: `projects/admin/src/app/points/point-transfers-tab.component.ts`
+  CALLS:
+- PointMovementsStore, PointResultsStore, PointPositionsStore, PointAdminStore, PointMoneyRefreshFacade, PointMoneyMoveLauncher, TimeStore, BusinessPeriod, PointMoneyActionAvailability.
+- PointPeriodFilterComponent, PointMovementTableComponent, PointResultsStripComponent.
+  CALLED_BY:
+- PointDetailPageComponent (child route)
+
+COMPONENT_NAME: PointResultsStripComponent
+TYPE: Gateway
+PURPOSE: Dumb strip with the period totals "Cash collections" and "Terminal settlements".
+RESPONSIBILITIES:
+
+- Render `PointPeriodResults.collected` and `terminalSettled` with `FixedMoneyPipe`; em-dash while the results are not available (`null`).
+  SOURCE: `projects/admin/src/app/points/point-results-strip.component.ts`
+  CALLS:
+- FixedMoneyPipe
+  CALLED_BY:
+- PointTransfersTabComponent
+
 COMPONENT_NAME: PointMovementTableComponent
 TYPE: Gateway
 PURPOSE: The one point-movement table, column presets `operations` | `shift` | `history`.
@@ -3031,6 +3061,7 @@ RESPONSIBILITIES:
   CALLED_BY:
 - PointOperationsTabComponent
 - PointCashTabComponent
+- PointTransfersTabComponent
 
 COMPONENT_NAME: PointPeriodFilterComponent
 TYPE: Gateway
@@ -3043,6 +3074,7 @@ RESPONSIBILITIES:
 - PointPeriodRule, POINT_PERIOD_VIOLATION_MESSAGES
   CALLED_BY:
 - PointOperationsTabComponent
+- PointTransfersTabComponent
 
 COMPONENT_NAME: PointBalancePillComponent
 TYPE: Gateway
@@ -3106,6 +3138,7 @@ RESPONSIBILITIES:
 - MatDialog, NotificationService, PointMoneyMoveDialogComponent, formatFixedMoney
   CALLED_BY:
 - PointCashTabComponent
+- PointTransfersTabComponent
 
 COMPONENT_NAME: PointMoneyMoveDialogComponent
 TYPE: Gateway

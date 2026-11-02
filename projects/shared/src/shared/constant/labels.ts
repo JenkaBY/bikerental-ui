@@ -798,6 +798,7 @@ export class Labels {
   static readonly PointMovementOrderOldest = $localize`Oldest first`;
   static readonly PointMovementsEmpty = $localize`No movements in this period`;
   static readonly PointMovementsLoadFailed = $localize`Movements could not be loaded`;
+  static readonly PointTransfersEmpty = $localize`No collections or settlements in this period`;
   static readonly PointCashCardTitle = $localize`Cash drawer`;
   static readonly PointTerminalCardTitle = $localize`Terminal account`;
   static readonly PointShiftOpening = $localize`Shift opening`;
