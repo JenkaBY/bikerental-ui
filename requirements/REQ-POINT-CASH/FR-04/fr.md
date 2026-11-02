@@ -71,8 +71,8 @@ period, together with the period totals
   * Empty state when no collections or settlements fall into the period
   * Load failure of the list or of the totals → standard error notification; the other part stays
     usable
-  * **Backend dependency:** point movements and period results are announced but not yet
-    published; field names are final only once they appear in the published API description
+  * **Backend dependency:** point movements and period results are published; field names
+    follow the published API description
 
 ## 4. Acceptance Criteria (BDD)
 

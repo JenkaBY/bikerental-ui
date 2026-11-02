@@ -1,14 +1,15 @@
-# Task 019: [BLOCKED - needs task 018] SETTLEMENT mode of PointMoneyMoveDialogComponent
+# Task 019: SETTLEMENT mode of PointMoneyMoveDialogComponent
 
-> **Applied Skill:** `angular-component` - the date field is a small dumb component so the dialog stays near its size budget. `angular-forms` - `Validators.required` + `notFutureDateValidator(today)`, Material datepicker with `provideNativeDateAdapter()` (same as `point-period-filter.component.ts`). `angular-signals`, CLAUDE.md "UI state in stores". i18n Rules - only `Labels.*` / `FormErrorMessages.*`.
+> **Applied Skill:** `angular-component` - the date field is a small dumb component so the dialog stays near its size budget. `angular-forms` - `Validators.required` + `notFutureDateValidator(today)`, Material datepicker with `provideNativeDateAdapter()` (same as `point-period-filter.component.ts`). `angular-signals`, CLAUDE.md "UI state in stores". i18n Rules - only existing `Labels.*` / `FormErrorMessages.*` (no new text in this task). AGENTS.md "API Error Handling" - server errors bound with `applyServerErrors` (already in the dialog).
 
 ## 1. Objective
 
-Make the dialog work for `operation: 'SETTLEMENT'` (source Terminal account, available = CARD_TERMINAL):
+Make the dialog work for `operation: 'SETTLEMENT'` (source Terminal account, available = CARD_TERMINAL; `POINT_MOVE_TITLES`, `POINT_MOVE_SOURCE_LABELS`, `POINT_MOVE_CONFIRM_TITLES`, `POINT_MOVE_POSITIONS` already carry the SETTLEMENT entries; `INSUFFICIENT_TERMINAL` / `POINT_PERMANENTLY_CLOSED` are already handled by `handleError`):
 
-* a required settlement-date picker, `max` = today from `TimeStore`, no minimum, validated with `notFutureDateValidator` (`settlementDateRequired` / `settlementDateFuture` messages, from task 007);
-* the confirmation shows the date as `dd.MM.yyyy` (`formatDate(date, 'dd.MM.yyyy', locale)`);
-* `PointMoneyMoveStore.execute(amount, settlementDate)` calls `recordSettlement` for the settlement operation. `INSUFFICIENT_TERMINAL` is already handled by the dialog (task 012).
+* a required statement-date picker, `max` = today from `TimeStore.getCurrentDate()`, no minimum, validated with `notFutureDateValidator` (`FormErrorMessages.settlementDateRequired` / `settlementDateFuture` already exist);
+* the form control is named `statementDate` so `applyServerErrors(form, error)` binds the backend field error `statementDate` to it;
+* the confirmation shows the date as `dd.MM.yyyy` (`formatDate(date, 'dd.MM.yyyy', locale)`) through the existing `summary.settlementDate` string (`buildMoveConfirmData` already adds the `PointMoveSettlementDate` row when it is non-null);
+* `PointMoneyMoveStore.execute(amount, statementDate)` calls `recordSettlement` for the settlement operation.
 
 Requires tasks 012, 018.
 
@@ -29,7 +30,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormErrorMessages, Labels } from '@bikerental/shared';
+import { FormErrorMessages, Labels, SERVER_ERROR_KEY } from '@bikerental/shared';
 
 @Component({
   selector: 'app-point-settlement-date-field',
@@ -42,7 +43,9 @@ import { FormErrorMessages, Labels } from '@bikerental/shared';
       <input matInput [matDatepicker]="picker" [max]="max()" [formControl]="control()" />
       <mat-datepicker-toggle matIconSuffix [for]="picker" />
       <mat-datepicker #picker />
-      @if (control().hasError('required')) {
+      @if (control().hasError(serverKey)) {
+        <mat-error>{{ control().getError(serverKey) }}</mat-error>
+      } @else if (control().hasError('required')) {
         <mat-error>{{ messages.settlementDateRequired }}</mat-error>
       } @else if (control().hasError('futureDate') || control().hasError('matDatepickerMax')) {
         <mat-error>{{ messages.settlementDateFuture }}</mat-error>
@@ -56,13 +59,20 @@ export class PointSettlementDateFieldComponent {
 
   protected readonly labels = Labels;
   protected readonly messages = FormErrorMessages;
+  protected readonly serverKey = SERVER_ERROR_KEY;
 }
 ```
 
-**File 2 - store.** Add `TerminalSettlement` is not needed. Change the `init` signature and `execute`:
+**File 2 - `point-money-move.store.ts`.**
 
-* Add field `private operation: PointMoneyOperation = 'COLLECTION';` below `private pointSlug = '';` and import `type PointMoneyOperation` from `@bikerental/shared`.
-* Replace `init`:
+* Imports: change `import { IdempotentAttempt, makeMoney, type Money, PointFinanceMapper, PointFinanceService } from '@bikerental/shared';` list to also include `type PointMoneyOperation,` (add it after `type Money,`).
+* Add the field below `private pointSlug = '';`:
+
+```typescript
+  private operation: PointMoneyOperation = 'COLLECTION';
+```
+
+* Replace `init` with:
 
 ```typescript
   init(operation: PointMoneyOperation, pointSlug: string, available: Money): void {
@@ -72,12 +82,15 @@ export class PointSettlementDateFieldComponent {
   }
 ```
 
-* Replace `execute` with:
+* Replace `execute` (the whole method, through its closing brace) with:
 
 ```typescript
-  execute(amount: number, settlementDate: Date | null): Observable<PointMoneyMoveOutcome> {
-    const idempotencyKey = this.attempt.keyFor({ amount, settlementDate: settlementDate?.getTime() ?? null });
-    return this.send(idempotencyKey, amount, settlementDate).pipe(
+  execute(amount: number, statementDate: Date | null): Observable<PointMoneyMoveOutcome> {
+    const idempotencyKey = this.attempt.keyFor({
+      amount,
+      statementDate: statementDate?.getTime() ?? null,
+    });
+    return this.send(idempotencyKey, amount, statementDate).pipe(
       tap(() => this.attempt.settle('definitive')),
       catchError((err: unknown) => {
         this.attempt.settle(IdempotentAttempt.outcomeOf(err));
@@ -89,11 +102,11 @@ export class PointSettlementDateFieldComponent {
   private send(
     idempotencyKey: string,
     amount: number,
-    settlementDate: Date | null,
+    statementDate: Date | null,
   ): Observable<PointMoneyMoveOutcome> {
-    if (this.operation === 'SETTLEMENT' && settlementDate) {
+    if (this.operation === 'SETTLEMENT' && statementDate) {
       return this.finance
-        .recordSettlement({ idempotencyKey, amount, settlementDate }, this.pointSlug)
+        .recordSettlement({ idempotencyKey, amount, statementDate }, this.pointSlug)
         .pipe(map((s) => ({ amount: s.amount, newPosition: s.cardTerminalPosition })));
     }
     return this.finance
@@ -102,23 +115,23 @@ export class PointSettlementDateFieldComponent {
   }
 ```
 
-**File 3 - dialog.**
+**File 3 - `point-money-move-dialog.component.ts`.**
 
-* Imports: add `formatDate` from `@angular/common`; `TimeStore`, `notFutureDateValidator` to the `@bikerental/shared` list; `Validators` to the `@angular/forms` import; `import { PointSettlementDateFieldComponent } from './point-settlement-date-field.component';`; add `PointSettlementDateFieldComponent` to `imports: []`.
-* Template: directly after the closing `</div>` of the amount row (before `</mat-dialog-content>`) add:
+* Imports: add `import { formatDate } from '@angular/common';` as the first import line; change `import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';` to `import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';`; add `notFutureDateValidator,` and `TimeStore,` to the `@bikerental/shared` import list; add `import { PointSettlementDateFieldComponent } from './point-settlement-date-field.component';` after the `./point-money-move.store` import; add `PointSettlementDateFieldComponent,` to the `imports: [...]` array after `MaxDecimalsDirective,`.
+* Template: directly after `<p class="m-0 text-sm text-slate-500">{{ remainingText() }}</p>` and before `</mat-dialog-content>` add:
 
 ```html
         @if (isSettlement) {
-          <app-point-settlement-date-field [control]="settlementDate" [max]="today" />
+          <app-point-settlement-date-field [control]="statementDate" [max]="today" />
         }
 ```
 
-* Members: directly after `protected readonly source = ...` add:
+* Members: directly after `protected readonly source = POINT_MOVE_SOURCE_LABELS[this.data.operation];` add:
 
 ```typescript
   protected readonly isSettlement = this.data.operation === 'SETTLEMENT';
   protected readonly today = inject(TimeStore).getCurrentDate();
-  protected readonly settlementDate = new FormControl<Date | null>(
+  protected readonly statementDate = new FormControl<Date | null>(
     null,
     this.isSettlement ? [Validators.required, notFutureDateValidator(this.today)] : [],
   );
@@ -129,20 +142,35 @@ export class PointSettlementDateFieldComponent {
 ```typescript
   protected readonly form = new FormGroup({
     amount: this.amount,
-    settlementDate: this.settlementDate,
+    statementDate: this.statementDate,
   });
 ```
 
-* In the constructor change `this.store.init(this.data.pointSlug, this.data.available);` to `this.store.init(this.data.operation, this.data.pointSlug, this.data.available);`.
-* In `submit()` replace `settlementDate: null,` in `summary` with:
+* Constructor: replace `this.store.init(this.data.pointSlug, this.data.available);` with `this.store.init(this.data.operation, this.data.pointSlug, this.data.available);`.
+* `submit()`: replace the first two lines
+
+```typescript
+    const amount = this.amount.value;
+    if (this.form.invalid || amount === null) return;
+```
+
+with
+
+```typescript
+    const amount = this.amount.value;
+    const date = this.statementDate.value;
+    if (this.form.invalid || amount === null || (this.isSettlement && date === null)) return;
+```
+
+  replace `settlementDate: null,` (inside `summary`) with
 
 ```typescript
       settlementDate: this.isSettlement && date ? formatDate(date, 'dd.MM.yyyy', this.locale) : null,
 ```
 
-and directly after `const amount = this.amount.value;` add `const date = this.settlementDate.value;`, and change `if (this.form.invalid || amount === null) return;` to `if (this.form.invalid || amount === null || (this.isSettlement && !date)) return;`. Replace `() => this.store.execute(amount)` with `() => this.store.execute(amount, date)`.
+  and replace `() => this.store.execute(amount)` with `() => this.store.execute(amount, date)`.
 
-The dialog will exceed ~200 lines TS. Do not refactor; report the final line count.
+The dialog already exceeds ~200 lines TS (240 before this task). Do not refactor; report the final line count.
 
 ## 4. Validation Steps
 

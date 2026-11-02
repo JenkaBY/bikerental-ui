@@ -26,6 +26,10 @@ export function pointCollectedMessage(amount: string): string {
   return $localize`Collected: ${amount}:amount:`;
 }
 
+export function pointSettlementRecordedMessage(amount: string): string {
+  return $localize`Settlement recorded: ${amount}:amount:`;
+}
+
 export function operatorHandInAmount(amount: string): string {
   return $localize`Hand in ${amount}:amount:`;
 }

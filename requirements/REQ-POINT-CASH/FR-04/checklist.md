@@ -5,9 +5,9 @@
 - [x] `task-003-point-transfers-tab-component.md`
 - [x] `task-004-i18n-extract-and-russian-translations.md`
 - [x] `task-005-update-overview-docs.md`
-- [ ] `task-006-blocked-backend-record-settlement-wiring.md` (BLOCKED: backend `POST /api/finance/terminal-settlements` not published; needs FR-05 tasks 017-020)
+- [x] `task-006-blocked-backend-record-settlement-wiring.md` (unblocked: run after FR-05 tasks 018-020 are checked off, before FR-05 task-021)
 
-**Next Task:** `task-006-blocked-backend-record-settlement-wiring.md` (BLOCKED)
+**Next Task:** DONE
 
 ## Ad-hoc fixes discovered during the verification stage
 

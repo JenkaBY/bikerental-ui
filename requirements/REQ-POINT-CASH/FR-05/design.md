@@ -91,9 +91,9 @@ immediately so the header updates even while positions ([B-FR08]) are not yet av
 * **Entity: `CashCollection`** *(new result model)* — `transactionId`, `pointSlug`, `amount`,
   `cashPosition` (after the collection), `recordedAt`.
 * **Entity: `TerminalSettlementWrite`** *(new command model, [B-FR06])* — `idempotencyKey`,
-  `amount`, `settlementDate` (business date from the bank statement, **A12**).
-* **Entity: `TerminalSettlement`** *(new result model, [B-FR06], assumed by analogy)* —
-  `transactionId`, `pointSlug`, `amount`, `settlementDate`, `cardTerminalPosition | null`,
+  `amount`, `statementDate` (business date from the bank statement, **A12**).
+* **Entity: `TerminalSettlement`** *(new result model, [B-FR06])* —
+  `transactionId`, `pointSlug`, `amount`, `statementDate`, `cardTerminalPosition` (non-null `Money`),
   `recordedAt`.
 * **Entity: `PointMoneyOperation`** *(UI enum)* — `COLLECTION`, `SETTLEMENT`.
 * **Relations:** a collection is one ledger transaction CASH → BANK of the same point (**A13**) and
@@ -115,10 +115,11 @@ immediately so the header updates even while positions ([B-FR08]) are not yet av
 * **Interaction: `PointFinanceService` -> backend (terminal settlement)**
   * **Protocol:** REST, `POST /api/finance/terminal-settlements` — **[B-FR06]**, ADMIN only,
     header `X-Point-Slug`.
-  * **Payload Changes:** Request `{ idempotencyKey, amount, settlementDate }` (field names
-    assumed). Response 201 (shape assumed above). Errors: 422 `finance.point.insufficient_terminal`
+  * **Payload Changes:** Request `{ idempotencyKey (uuid), amount (>= 0.01, <= terminal position), statementDate (date, not
+    in the future) }`. Response 201 (shape above). Errors: 422 `finance.point.insufficient_terminal`
     `params { pointSlug, cardTerminalPosition, amount }`; 422 `finance.point.permanently_closed`;
-    400 validation (amount, settlement date — shown under the field, **A12**); 403 for non-admins.
+    400 validation (amount, statement date — shown under the field, **A12**); 403 for non-admins;
+    409 when `X-Point-Slug` is missing.
 * **Interaction: `PointMoneyMoveDialogComponent` -> `FinanceConfirmDialogComponent`**
   * **Protocol:** In-process stacked dialog; `execute` is deferred, nothing is sent before Confirm.
 
@@ -163,5 +164,5 @@ immediately so the header updates even while positions ([B-FR08]) are not yet av
   `IdempotentAttempt` reuse rule. The backend serializes check-and-debit per point position.
 * **Delivery split:** Collection mode, the confirm dialog, the idempotency helper, the classifier
   and the validators are unblocked after regeneration ([MAIN]); settlement mode and the
-  `insufficient_terminal` branch wait for [B-FR06] (build the mode behind the same dialog, enable
-  the "Record settlement" button only once the endpoint exists).
+  `insufficient_terminal` branch use the published [B-FR06] endpoint behind the same dialog; the
+  "Record settlement" button is enabled.

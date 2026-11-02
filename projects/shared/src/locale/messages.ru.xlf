@@ -6642,6 +6642,10 @@
         <source>Collected: <x id="amount" equiv-text="amount"/></source>
         <target>Сдано в банк: <x id="amount" equiv-text="amount"/></target>
       </trans-unit>
+      <trans-unit id="1620411971940274622" datatype="html">
+        <source>Settlement recorded: <x id="amount" equiv-text="amount"/></source>
+        <target>Зачислено в банк: <x id="amount" equiv-text="amount"/></target>
+      </trans-unit>
       <trans-unit id="2001807643854053542" datatype="html">
         <source>Cash</source>
         <target>Касса</target>
