@@ -6650,6 +6650,10 @@
         <source>Hand in cash</source>
         <target>Сдать наличные</target>
       </trans-unit>
+      <trans-unit id="6830276212769513989" datatype="html">
+        <source>No collections or settlements in this period</source>
+        <target>Нет инкассаций и зачислений за этот период</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
