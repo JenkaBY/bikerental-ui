@@ -180,7 +180,7 @@ TYPE: Gateway
 PURPOSE: Authenticated operator shell with top toolbar and bottom tab navigation.
 RESPONSIBILITIES:
 
-- Declare the bottom navigation items (`rentals`, `rentals/new`, `return`).
+- Declare the bottom navigation items (`rentals`, `rentals/new`, `return`, `cash` with the `point_of_sale` icon).
 - Expose logout to the toolbar.
   SOURCE: `projects/operator/src/app/layout/operator-layout.component.ts`
   CALLS:
@@ -374,7 +374,7 @@ RESPONSIBILITIES:
 - HttpClient — transport.
   CALLED_BY:
 - PointAdminStore (admin `/points` list page, the `/points/:slug` detail host and the create dialog; points are addressed by `slug` — `PointResponse` has no `id`)
-- CurrentPointStore (operator toolbar switcher; all points loaded at startup, the switcher lists only non-permanently-closed ones and `nameBySlug` resolves return-point names on equipment cards in operator and admin rental details; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`; on success the operator `PointSwitchRefreshService` re-creates only the layout `<router-outlet>` (epoch-keyed `@for`), so the routed page and its component-scoped rental stores refetch under the new point while the toolbar and bottom nav stay — single-rental routes (`rentals/:id[/edit|/agreement]`) navigate to `rentals` instead, since that rental is a 404 under the new point)
+- CurrentPointStore (operator toolbar switcher; all points loaded at startup, the switcher lists only non-permanently-closed ones and `nameBySlug` resolves return-point names on equipment cards in operator and admin rental details; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`; on success the operator `PointSwitchRefreshService` re-creates only the layout `<router-outlet>` (epoch-keyed `@for`), so the routed page and its component-scoped rental stores refetch under the new point while the toolbar and bottom nav stay — single-rental routes (`rentals/:id[/edit|/agreement]`) navigate to `rentals` instead, since that rental is a 404 under the new point); `refreshCurrent()` re-reads the working point via `getPoint(slug)` (suppressed, silent) for the operator Cash screen
 
 COMPONENT_NAME: PointFinanceService
 TYPE: API
@@ -2141,6 +2141,7 @@ RESPONSIBILITIES:
 - PointFinanceService — `getResults(period, slug)`.
   CALLED_BY:
 - PointResultsTabComponent
+- PointTransfersTabComponent (period totals "Cash collections" / "Terminal settlements")
 
 COMPONENT_NAME: RunningShiftStore
 TYPE: Store
@@ -2155,6 +2156,7 @@ RESPONSIBILITIES:
 - ApiErrorParser, ErrorMessageResolver, NotificationService.
   CALLED_BY:
 - PointCashTabComponent
+- OperatorCashComponent
 
 COMPONENT_NAME: PointMoneyActionAvailability
 TYPE: Utility
@@ -2169,6 +2171,7 @@ RESPONSIBILITIES:
 - (none)
   CALLED_BY:
 - PointCashTabComponent
+- OperatorCashComponent
 
 COMPONENT_NAME: AmountValidators
 TYPE: Utility
@@ -2193,6 +2196,7 @@ RESPONSIBILITIES:
 - FixedMoneyPipe, POINT_MOVEMENT_KIND_LABELS
   CALLED_BY:
 - PointCashCardComponent
+- OperatorShiftCardComponent
 
 ### Admin feature components
 
@@ -3014,6 +3018,35 @@ RESPONSIBILITIES:
   CALLED_BY:
 - PointDetailPageComponent (child route)
 
+COMPONENT_NAME: PointTransfersTabComponent
+TYPE: Gateway
+PURPOSE: Collections tab (`/points/:slug/transfers`) - read-only history of cash collections and terminal settlements (BANK position movements) with period totals.
+RESPONSIBILITIES:
+
+- Provide its own `PointMovementsStore` (non-accumulate, numbered paginator) configured `{ slug, BANK, current month to date, newest, size 50 }` and `PointResultsStore` for the totals; one `PointPeriodFilterComponent` drives both (`onPeriodChange` -> `setPeriod` on both, page 0); the order toggle only affects the list.
+- Reload both stores on a new facade revision (period and order kept).
+- Header actions: "Collect cash" (point ACTIVE and CASH position > 0; the shift rule of `PointMoneyActionAvailability.collection` is bypassed, amount = `PointPositionsStore.cash()` only) and "Record settlement" (not permanently closed and CARD_TERMINAL > 0); hints under disabled buttons.
+- `onCollect()` opens the money-move dialog through `PointMoneyMoveLauncher`; `done` patches the CASH position; every result goes through `applyOutcome()` (`notifyChanged()`, plus `PointAdminStore.loadOne` on `statusChanged`). `onSettle()` is interim ("not available yet") until the terminal-settlement endpoint exists.
+- No cancel/edit action; a note explains that a mistake is corrected by an adjustment. Any non-collection/settlement kind on the BANK position is shown with its own type name.
+  SOURCE: `projects/admin/src/app/points/point-transfers-tab.component.ts`
+  CALLS:
+- PointMovementsStore, PointResultsStore, PointPositionsStore, PointAdminStore, PointMoneyRefreshFacade, PointMoneyMoveLauncher, TimeStore, BusinessPeriod, PointMoneyActionAvailability.
+- PointPeriodFilterComponent, PointMovementTableComponent, PointResultsStripComponent.
+  CALLED_BY:
+- PointDetailPageComponent (child route)
+
+COMPONENT_NAME: PointResultsStripComponent
+TYPE: Gateway
+PURPOSE: Dumb strip with the period totals "Cash collections" and "Terminal settlements".
+RESPONSIBILITIES:
+
+- Render `PointPeriodResults.collected` and `terminalSettled` with `FixedMoneyPipe`; em-dash while the results are not available (`null`).
+  SOURCE: `projects/admin/src/app/points/point-results-strip.component.ts`
+  CALLS:
+- FixedMoneyPipe
+  CALLED_BY:
+- PointTransfersTabComponent
+
 COMPONENT_NAME: PointMovementTableComponent
 TYPE: Gateway
 PURPOSE: The one point-movement table, column presets `operations` | `shift` | `history`.
@@ -3026,6 +3059,7 @@ RESPONSIBILITIES:
   CALLED_BY:
 - PointOperationsTabComponent
 - PointCashTabComponent
+- PointTransfersTabComponent
 
 COMPONENT_NAME: PointPeriodFilterComponent
 TYPE: Gateway
@@ -3038,6 +3072,7 @@ RESPONSIBILITIES:
 - PointPeriodRule, POINT_PERIOD_VIOLATION_MESSAGES
   CALLED_BY:
 - PointOperationsTabComponent
+- PointTransfersTabComponent
 
 COMPONENT_NAME: PointBalancePillComponent
 TYPE: Gateway
@@ -3101,6 +3136,7 @@ RESPONSIBILITIES:
 - MatDialog, NotificationService, PointMoneyMoveDialogComponent, formatFixedMoney
   CALLED_BY:
 - PointCashTabComponent
+- PointTransfersTabComponent
 
 COMPONENT_NAME: PointMoneyMoveDialogComponent
 TYPE: Gateway
@@ -3727,6 +3763,33 @@ CALLS:
 - HomeReturnTabComponent / OtherPointReturnTabComponent / SegmentedTabsComponent (state mode).
   CALLED_BY:
 - OperatorRoutes
+
+COMPONENT_NAME: OperatorCashComponent
+TYPE: Gateway
+PURPOSE: Operator Cash screen (`/cash`) - running shift of the working point with "Hand in cash" and "Close shift".
+RESPONSIBILITIES:
+
+- Provide its own `RunningShiftStore`; without a working point (`OperatingScopeStore.notEstablished()` or no `CurrentPointStore.currentSlug()`) show the "No working point" guidance, send no request and render no button.
+- Otherwise load `RunningShiftStore.load(null)` and `CurrentPointStore.refreshCurrent()` in parallel; render the card (`running`), "No shift is running" (`none`), or an error with Retry (`failed`).
+- Collection availability uses `CurrentPointStore.current().status` and `shift.expectedCash`; "Hand in cash" / "Close shift" currently show an info notification until FR-07 / FR-08 add `cash/collect` and `cash/close-shift`.
+  SOURCE: `projects/operator/src/app/cash/operator-cash.component.ts`
+  CALLS:
+- RunningShiftStore, CurrentPointStore, OperatingScopeStore, PointMoneyActionAvailability, NotificationService.
+- OperatorShiftCardComponent.
+  CALLED_BY:
+- OperatorRoutes
+
+COMPONENT_NAME: OperatorShiftCardComponent
+TYPE: Gateway
+PURPOSE: Dumb mobile card of the running shift: caption, breakdown with prominent expected cash, action buttons.
+RESPONSIBILITIES:
+
+- Render "Shift N · opened HH:mm", `ShiftBreakdownComponent` (prominent expected), "Hand in cash" per `collection` availability with the active-point hint, "Close shift" per `closeShift` availability; 48px buttons. Outputs `handIn`, `closeShiftRequested`.
+  SOURCE: `projects/operator/src/app/cash/operator-shift-card.component.ts`
+  CALLS:
+- ShiftBreakdownComponent, pointShiftCaption
+  CALLED_BY:
+- OperatorCashComponent
 
 COMPONENT_NAME: HomeReturnTabComponent
 TYPE: Gateway

@@ -798,6 +798,7 @@ export class Labels {
   static readonly PointMovementOrderOldest = $localize`Oldest first`;
   static readonly PointMovementsEmpty = $localize`No movements in this period`;
   static readonly PointMovementsLoadFailed = $localize`Movements could not be loaded`;
+  static readonly PointTransfersEmpty = $localize`No collections or settlements in this period`;
   static readonly PointCashCardTitle = $localize`Cash drawer`;
   static readonly PointTerminalCardTitle = $localize`Terminal account`;
   static readonly PointShiftOpening = $localize`Shift opening`;
@@ -812,6 +813,8 @@ export class Labels {
   static readonly PointCollectionNotActiveHint = $localize`Cash can be collected only at an active point`;
   static readonly PointSettlementClosedHint = $localize`Settlements cannot be recorded at a permanently closed point`;
   static readonly PointActionNotAvailableYet = $localize`This action is not available yet`;
+  static readonly OperatorNavCash = $localize`:Operator bottom navigation|Operator bottom navigation item:Cash`;
+  static readonly OperatorHandInCash = $localize`Hand in cash`;
   static readonly ShowMore = $localize`Show more`;
   static readonly PointMoveSourceLabel = $localize`:point money move|Where the money leaves from:From`;
   static readonly PointMoveDestinationLabel = $localize`:point money move|Where the money goes to:To`;

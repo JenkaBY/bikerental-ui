@@ -50,6 +50,11 @@ export const routes: Routes = [
         loadComponent: () => import('./return/return.component').then((m) => m.ReturnComponent),
       },
       {
+        path: 'cash',
+        loadComponent: () =>
+          import('./cash/operator-cash.component').then((m) => m.OperatorCashComponent),
+      },
+      {
         path: 'damage-reports',
         loadChildren: () => import('@bikerental/shared').then((m) => m.DAMAGE_REPORT_ROUTES),
       },
