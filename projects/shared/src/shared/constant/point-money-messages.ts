@@ -25,3 +25,7 @@ export function pointMoveRemaining(amount: string): string {
 export function pointCollectedMessage(amount: string): string {
   return $localize`Collected: ${amount}:amount:`;
 }
+
+export function operatorHandInAmount(amount: string): string {
+  return $localize`Hand in ${amount}:amount:`;
+}

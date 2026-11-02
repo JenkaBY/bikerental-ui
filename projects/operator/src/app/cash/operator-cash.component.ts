@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Router } from '@angular/router';
 import {
   CurrentPointStore,
   Labels,
@@ -70,6 +71,7 @@ export class OperatorCashComponent {
   private readonly points = inject(CurrentPointStore);
   private readonly scope = inject(OperatingScopeStore);
   private readonly notifications = inject(NotificationService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly hasWorkingPoint = computed(
@@ -101,7 +103,7 @@ export class OperatorCashComponent {
   }
 
   protected onHandIn(): void {
-    this.notifications.info(Labels.PointActionNotAvailableYet);
+    void this.router.navigate(['/cash', 'collect']);
   }
 
   protected onCloseShift(): void {

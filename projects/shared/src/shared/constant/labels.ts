@@ -815,6 +815,13 @@ export class Labels {
   static readonly PointActionNotAvailableYet = $localize`This action is not available yet`;
   static readonly OperatorNavCash = $localize`:Operator bottom navigation|Operator bottom navigation item:Cash`;
   static readonly OperatorHandInCash = $localize`Hand in cash`;
+  static readonly OperatorHandInConfirmTitle = $localize`Hand in cash?`;
+  static readonly OperatorHandInNote = $localize`Instant and cannot be cancelled — if it was a mistake, an administrator corrects it`;
+  static readonly OperatorHandInConfirm = $localize`Hand in`;
+  static readonly OperatorCashHandedIn = $localize`Cash handed in`;
+  static readonly OperatorReceiptTime = $localize`Time`;
+  static readonly OperatorReceiptRemaining = $localize`Remaining in drawer`;
+  static readonly Done = $localize`Done`;
   static readonly ShowMore = $localize`Show more`;
   static readonly PointMoveSourceLabel = $localize`:point money move|Where the money leaves from:From`;
   static readonly PointMoveDestinationLabel = $localize`:point money move|Where the money goes to:To`;
