@@ -1,0 +1,98 @@
+<div class="flex flex-wrap items-start gap-3 mb-2">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-72">
+    <mat-label>{{ Labels.BusinessSettingColumnSetting }}</mat-label>
+    <mat-select [value]="settingKey()" (selectionChange)="onSettingChange($event.value)">
+      <mat-option value="">{{ Labels.SettingHistoryFilterAll }}</mat-option>
+      @for (s of settings.settings(); track s.key) {
+        <mat-option [value]="s.key">{{ label(s.key, s.description) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-40">
+    <mat-label>{{ Labels.PointPeriodFrom }}</mat-label>
+    <input
+      matInput
+      [matDatepicker]="fromPicker"
+      [value]="from()"
+      [max]="to()"
+      (dateChange)="onFrom($event)"
+    />
+    <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+    <mat-datepicker #fromPicker />
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-40">
+    <mat-label>{{ Labels.PointPeriodTo }}</mat-label>
+    <input
+      matInput
+      [matDatepicker]="toPicker"
+      [value]="to()"
+      [min]="from()"
+      (dateChange)="onTo($event)"
+    />
+    <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+    <mat-datepicker #toPicker />
+  </mat-form-field>
+  @if (hasFilter()) {
+    <button mat-button class="!mt-2" (click)="clearFilters()">
+      {{ Labels.CustomerRentalsResetFilter }}
+    </button>
+  }
+</div>
+
+@if (store.loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (store.error()) {
+  <div class="text-center mt-6 flex flex-col items-center gap-2">
+    <p class="text-slate-500">{{ Labels.SettingHistoryLoadError }}</p>
+    <button mat-stroked-button (click)="store.reload()">{{ Labels.Retry }}</button>
+  </div>
+} @else if (!store.loading() && store.rows().length === 0) {
+  <p class="text-sm text-slate-400 py-8 text-center">{{ Labels.SettingHistoryEmptyState }}</p>
+} @else {
+  <table mat-table [dataSource]="store.rows()" class="w-full">
+    <ng-container matColumnDef="changedAt">
+      <th mat-header-cell *matHeaderCellDef>{{ Labels.SettingHistoryColumnChangedAt }}</th>
+      <td mat-cell *matCellDef="let row" class="whitespace-nowrap">
+        {{ row.change.changedAt | date: 'short' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="setting">
+      <th mat-header-cell *matHeaderCellDef>{{ Labels.BusinessSettingColumnSetting }}</th>
+      <td mat-cell *matCellDef="let row" class="!py-2">
+        <div class="font-medium">{{ label(row.change.key, row.change.description) }}</div>
+        <div class="font-mono text-xs text-slate-500">{{ row.change.key }}</div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="change">
+      <th mat-header-cell *matHeaderCellDef>{{ Labels.SettingHistoryColumnChange }}</th>
+      <td mat-cell *matCellDef="let row">
+        <div class="text-xs text-slate-500">{{ kindLabel(row.change) }}</div>
+        <div class="font-mono whitespace-nowrap">
+          {{ format(row.change, row.change.previousValue) }} →
+          {{ format(row.change, row.change.newValue) }}
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="author">
+      <th mat-header-cell *matHeaderCellDef>{{ Labels.SettingHistoryColumnAuthor }}</th>
+      <td mat-cell *matCellDef="let row">{{ row.author }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let _row; columns: displayedColumns"></tr>
+  </table>
+}
+
+<mat-paginator
+  [length]="store.totalItems()"
+  [pageIndex]="store.pageIndex()"
+  [pageSize]="store.pageSize()"
+  [pageSizeOptions]="[10, 20, 50, 100]"
+  (page)="onPageChange($event)"
+  showFirstLastButtons
+/>

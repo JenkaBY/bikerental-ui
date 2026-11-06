@@ -22,6 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: $localize`Users`, route: 'users', icon: 'manage_accounts' },
   { label: Labels.Points, route: 'points', icon: 'store' },
   { label: Labels.AnalyticsNavLabel, route: 'analytics', icon: 'analytics' },
+  { label: Labels.BusinessSettingsNavLabel, route: 'business-settings', icon: 'tune' },
 ];
 
 @Component({

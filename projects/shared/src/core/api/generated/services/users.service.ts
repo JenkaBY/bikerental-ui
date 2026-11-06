@@ -126,21 +126,33 @@ export class UsersService {
     return this.httpClient.put(url, updateUserRequest, requestOptions);
   }
 
-  list(observe?: 'body', options?: RequestOptions<'json'>): Observable<Array<UserResponse>>;
   list(
+    ids?: Array<string>,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<Array<UserResponse>>;
+  list(
+    ids?: Array<string>,
     observe?: 'response',
     options?: RequestOptions<'json'>,
   ): Observable<HttpResponse<Array<UserResponse>>>;
   list(
+    ids?: Array<string>,
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<Array<UserResponse>>>;
-  /** Returns all user accounts (admin only) */
+  /** Returns all user accounts, or only those with the given ids - e.g. the authors of a page of setting changes - in one call; unknown ids are skipped (admin only) */
   list(
+    ids?: Array<string>,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/auth/users`;
+
+    let params = new HttpParams();
+    if (ids != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, ids, 'ids');
+    }
 
     let headers: HttpHeaders;
     if (options?.headers instanceof HttpHeaders) {
@@ -152,6 +164,7 @@ export class UsersService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
+      params,
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),

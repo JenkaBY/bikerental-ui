@@ -852,4 +852,148 @@ export class Labels {
   static readonly NoWorkingPoint = $localize`No working point assigned`;
   static readonly EquipmentPoint = $localize`Rental point`;
   static readonly EquipmentInTransit = $localize`In transit`;
+
+  static readonly BusinessSettingsNavLabel = $localize`Business settings`;
+  static readonly BusinessSettingsSubtitle = $localize`Rules and defaults that apply to the whole rental network`;
+  static readonly BusinessSettingsTabSettings = $localize`:business settings tab:Settings`;
+  static readonly BusinessSettingsTabHistory = $localize`Change history`;
+  static readonly BusinessSettingsEmptyState = $localize`No business settings are available.`;
+  static readonly BusinessSettingsLoadError = $localize`Business settings could not be loaded.`;
+  static readonly BusinessSettingColumnSetting = $localize`:business setting column:Setting`;
+  static readonly BusinessSettingColumnValue = $localize`Current value`;
+  static readonly BusinessSettingColumnSource = $localize`:business setting column|Where the current value comes from:Source`;
+  static readonly BusinessSettingColumnDefault = $localize`Default`;
+  static readonly BusinessSettingColumnActions = $localize`:business setting column:Actions`;
+  static readonly BusinessSettingSourceBusiness = $localize`Set by administrator`;
+  static readonly BusinessSettingSourceDefault = $localize`:business setting source:Default`;
+  static readonly BusinessSettingSourcePoint = $localize`:business setting source:Rental point`;
+  static readonly BusinessSettingEditTooltip = $localize`Change value`;
+  static readonly BusinessSettingResetTooltip = $localize`Reset to default`;
+  static readonly BusinessSettingHistoryTooltip = $localize`Show change history`;
+  static readonly BusinessSettingDialogTitle = $localize`Change setting`;
+  static readonly BusinessSettingValueLabel = $localize`:business setting:New value`;
+  static readonly BusinessSettingCurrentValue = $localize`:business setting:Current value`;
+  static readonly BusinessSettingDefaultValue = $localize`Default value`;
+  static readonly BusinessSettingRulesTitle = $localize`Rules`;
+  static readonly BusinessSettingNoRules = $localize`No additional rules`;
+  static readonly BusinessSettingSaveSuccess = $localize`Setting saved`;
+  static readonly BusinessSettingUnsupported = $localize`This kind of setting cannot be edited in this version of the console.`;
+  static readonly BusinessSettingResetDialogTitle = $localize`Reset to default?`;
+  static readonly BusinessSettingResetConfirmButton = $localize`:business setting:Reset`;
+  static readonly BusinessSettingResetSuccess = $localize`Setting reset to default`;
+  static readonly BusinessSettingMinutesUnit = $localize`:minutes unit short:min`;
+
+  static businessSettingResetDialogMessage(description: string, value: string): string {
+    return $localize`“${description}:description:” will return to its default value: ${value}:value:.`;
+  }
+
+  static readonly SettingPatternPartDay = $localize`:date pattern part:day`;
+  static readonly SettingPatternPartMonth = $localize`:date pattern part:month`;
+  static readonly SettingPatternPartYear = $localize`:date pattern part:year`;
+  static readonly SettingPatternPartHour = $localize`:date pattern part:hour`;
+  static readonly SettingPatternPartMinute = $localize`:date pattern part:minute`;
+  static readonly SettingPatternPartTimeOfDay = $localize`:date pattern part:time of day`;
+
+  static settingRuleRange(min: string, max: string): string {
+    return $localize`From ${min}:min: to ${max}:max:`;
+  }
+  static settingRuleRangeMin(min: string): string {
+    return $localize`At least ${min}:min:`;
+  }
+  static settingRuleRangeMax(max: string): string {
+    return $localize`At most ${max}:max:`;
+  }
+  static settingRuleScale(maxScale: string): string {
+    return $localize`At most ${maxScale}:maxScale: decimal places`;
+  }
+  static settingRuleLength(min: string, max: string): string {
+    return $localize`From ${min}:min: to ${max}:max: characters`;
+  }
+  static settingRuleLengthMin(min: string): string {
+    return $localize`At least ${min}:min: characters`;
+  }
+  static settingRuleLengthMax(max: string): string {
+    return $localize`Up to ${max}:max: characters`;
+  }
+  static readonly SettingRuleSingleLine = $localize`A single line, without line breaks`;
+  static settingRuleRequiredParts(parts: string): string {
+    return $localize`Must contain: ${parts}:parts:`;
+  }
+  static settingRuleForbiddenParts(parts: string): string {
+    return $localize`Must not contain: ${parts}:parts:`;
+  }
+  static settingRuleUnknown(type: string): string {
+    return $localize`Rule: ${type}:type:`;
+  }
+
+  static readonly SettingViolationType = $localize`Enter a number.`;
+  static readonly SettingViolationWholeMinutes = $localize`Enter a whole number of minutes.`;
+  static settingViolationScale(maxScale: string): string {
+    return $localize`Use at most ${maxScale}:maxScale: decimal places.`;
+  }
+  static settingViolationRange(rule: string): string {
+    return $localize`Out of range: ${rule}:rule:.`;
+  }
+  static settingViolationLength(rule: string): string {
+    return $localize`Wrong length: ${rule}:rule:.`;
+  }
+  static readonly SettingViolationSingleLine = $localize`The text must be on a single line.`;
+  static readonly SettingViolationPatternMalformed = $localize`This is not a valid date and time pattern.`;
+  static readonly SettingViolationPatternUnformattable = $localize`This pattern cannot be used to print a date and time.`;
+  static settingViolationPatternMissing(parts: string): string {
+    return $localize`The pattern is missing: ${parts}:parts:.`;
+  }
+  static readonly SettingViolationPatternTimeOfDay = $localize`A date pattern must not contain a time of day.`;
+  static readonly SettingViolationBlank = $localize`The value must not be empty.`;
+  static settingViolationUnknown(code: string): string {
+    return $localize`The value breaks the rule “${code}:code:”.`;
+  }
+
+  static readonly SettingHistoryColumnChangedAt = $localize`Changed at`;
+  static readonly SettingHistoryColumnChange = $localize`:setting history column:Change`;
+  static readonly SettingHistoryColumnAuthor = $localize`Changed by`;
+  static readonly SettingHistoryKindSet = $localize`:setting change kind:New value`;
+  static readonly SettingHistoryKindReset = $localize`:setting change kind:Reset to default`;
+  static readonly SettingHistoryFilterAll = $localize`All settings`;
+  static readonly SettingHistoryEmptyState = $localize`No changes found for the selected filters.`;
+  static readonly SettingHistoryLoadError = $localize`The change history could not be loaded.`;
+
+  static readonly SettingQuoteTtlLabel = $localize`:business setting name:Price quote validity`;
+  static readonly SettingQuoteTtlHint = $localize`How long an issued rental price quote stays valid before it has to be calculated again.`;
+  static readonly SettingDebtWriteOffToleranceLabel = $localize`:business setting name:Debt write-off tolerance`;
+  static readonly SettingDebtWriteOffToleranceHint = $localize`A customer debt shortfall below this amount may be written off.`;
+  static readonly SettingTimeIncrementLabel = $localize`:business setting name:Rental time rounding step`;
+  static readonly SettingTimeIncrementHint = $localize`Rental time is rounded up to a multiple of this step before the cost is calculated.`;
+  static readonly SettingOvertimeForgivenessLabel = $localize`:business setting name:Forgiven overtime`;
+  static readonly SettingOvertimeForgivenessHint = $localize`Overtime up to this length past the planned return is not charged. 0 means overtime is never forgiven.`;
+  static readonly SettingEarlyReturnWindowLabel = $localize`:business setting name:Free early return window`;
+  static readonly SettingEarlyReturnWindowHint = $localize`Equipment returned within this time after the rental started is free of charge. 0 means there is no free window.`;
+  static readonly SettingAgreementDateTimePatternLabel = $localize`:business setting name:Agreement date and time format`;
+  static readonly SettingAgreementDateTimePatternHint = $localize`How dates with a time are written on the rental agreement document.`;
+  static readonly SettingAgreementDatePatternLabel = $localize`:business setting name:Agreement title date format`;
+  static readonly SettingAgreementDatePatternHint = $localize`How the date is written in the title of the rental agreement document.`;
+  static readonly SettingSignaturePlaceholderLabel = $localize`:business setting name:Signature box text`;
+  static readonly SettingSignaturePlaceholderHint = $localize`The text printed in the empty signature box of the rental agreement document.`;
+
+  static readonly DatePatternLegendTitle = $localize`Pattern symbols`;
+  static readonly DatePatternLegendIntro = $localize`Letters in the pattern are replaced by parts of the date; dots, dashes, slashes, spaces and commas are printed as is.`;
+  static readonly DatePatternLegendExampleDate = $localize`Examples are for Thursday, 5 March 2026, 09:07:00.`;
+  static readonly DatePatternSymbolYear4 = $localize`Year, four digits (2026)`;
+  static readonly DatePatternSymbolYear2 = $localize`Year, last two digits (26)`;
+  static readonly DatePatternSymbolMonth2 = $localize`Month, two digits (03)`;
+  static readonly DatePatternSymbolMonth1 = $localize`Month, without a leading zero (3)`;
+  static readonly DatePatternSymbolMonthShort = $localize`Month, short name (Mar)`;
+  static readonly DatePatternSymbolMonthFull = $localize`Month, full name (March)`;
+  static readonly DatePatternSymbolDay2 = $localize`Day of the month, two digits (05)`;
+  static readonly DatePatternSymbolDay1 = $localize`Day of the month, without a leading zero (5)`;
+  static readonly DatePatternSymbolWeekdayShort = $localize`Day of the week, short name (Thu)`;
+  static readonly DatePatternSymbolWeekdayFull = $localize`Day of the week, full name (Thursday)`;
+  static readonly DatePatternSymbolHour24 = $localize`Hour 00–23, two digits (09)`;
+  static readonly DatePatternSymbolHour24Short = $localize`Hour 0–23, without a leading zero (9)`;
+  static readonly DatePatternSymbolHour12 = $localize`Hour 01–12, two digits, use with “a” (09)`;
+  static readonly DatePatternSymbolAmPm = $localize`AM or PM`;
+  static readonly DatePatternSymbolMinute = $localize`Minutes, two digits (07)`;
+  static readonly DatePatternSymbolSecond = $localize`Seconds, two digits (00)`;
+  static readonly DatePatternSymbolLiteral = $localize`Text in single quotes is printed as is`;
+  static readonly DatePatternSymbolCaseNote = $localize`Letter case matters: MM is the month, mm is minutes.`;
 }

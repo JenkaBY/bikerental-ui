@@ -6738,6 +6738,406 @@
         <source>No collections or settlements in this period</source>
         <target>Нет инкассаций и зачислений за этот период</target>
       </trans-unit>
+      <trans-unit id="3464881901979411516" datatype="html">
+        <source>This setting can no longer be edited. The list has been refreshed.</source>
+        <target>Эту настройку больше нельзя изменить. Список обновлён.</target>
+      </trans-unit>
+      <trans-unit id="8530853686322572623" datatype="html">
+        <source>This setting cannot be changed at this level.</source>
+        <target>Эту настройку нельзя изменить на этом уровне.</target>
+      </trans-unit>
+      <trans-unit id="5368382844397043936" datatype="html">
+        <source>The value does not satisfy the setting&apos;s rules.</source>
+        <target>Значение не соответствует правилам настройки.</target>
+      </trans-unit>
+      <trans-unit id="5211222276528455578" datatype="html">
+        <source>This setting was changed by another administrator. The latest value has been loaded — review it and try again.</source>
+        <target>Эту настройку изменил другой администратор. Загружено актуальное значение — проверьте его и повторите попытку.</target>
+      </trans-unit>
+      <trans-unit id="8158327917487402751" datatype="html">
+        <source>A rental point must be given exactly when the level is a rental point.</source>
+        <target>Точка проката указывается тогда и только тогда, когда уровень — точка проката.</target>
+      </trans-unit>
+      <trans-unit id="5056033242891225381" datatype="html">
+        <source>Business settings</source>
+        <target>Бизнес-настройки</target>
+      </trans-unit>
+      <trans-unit id="7954745208835084588" datatype="html">
+        <source>Rules and defaults that apply to the whole rental network</source>
+        <target>Правила и значения по умолчанию для всей сети проката</target>
+      </trans-unit>
+      <trans-unit id="4930506384627295710" datatype="html">
+        <source>Settings</source>
+        <target>Настройки</target>
+      </trans-unit>
+      <trans-unit id="2901259234883761748" datatype="html">
+        <source>Change history</source>
+        <target>История изменений</target>
+      </trans-unit>
+      <trans-unit id="2519969210871980813" datatype="html">
+        <source>No business settings are available.</source>
+        <target>Бизнес-настройки недоступны.</target>
+      </trans-unit>
+      <trans-unit id="3557695192572312914" datatype="html">
+        <source>Business settings could not be loaded.</source>
+        <target>Не удалось загрузить бизнес-настройки.</target>
+      </trans-unit>
+      <trans-unit id="6785659997897155974" datatype="html">
+        <source>Setting</source>
+        <target>Настройка</target>
+      </trans-unit>
+      <trans-unit id="1844248428439297756" datatype="html">
+        <source>Current value</source>
+        <target>Текущее значение</target>
+      </trans-unit>
+      <trans-unit id="7110547373585075075" datatype="html">
+        <source>Source</source>
+        <target>Источник</target>
+      </trans-unit>
+      <trans-unit id="5607669932062416162" datatype="html">
+        <source>Default</source>
+        <target>По умолчанию</target>
+      </trans-unit>
+      <trans-unit id="5459504949125845540" datatype="html">
+        <source>Set by administrator</source>
+        <target>Задано администратором</target>
+      </trans-unit>
+      <trans-unit id="6661072412481533933" datatype="html">
+        <source>Change value</source>
+        <target>Изменить значение</target>
+      </trans-unit>
+      <trans-unit id="648306878592239743" datatype="html">
+        <source>Reset to default</source>
+        <target>Сбросить к значению по умолчанию</target>
+      </trans-unit>
+      <trans-unit id="2866196367687342704" datatype="html">
+        <source>Show change history</source>
+        <target>Показать историю изменений</target>
+      </trans-unit>
+      <trans-unit id="437683473865132554" datatype="html">
+        <source>Change setting</source>
+        <target>Изменение настройки</target>
+      </trans-unit>
+      <trans-unit id="6678171760523373674" datatype="html">
+        <source>New value</source>
+        <target>Новое значение</target>
+      </trans-unit>
+      <trans-unit id="5505557701532570198" datatype="html">
+        <source>Default value</source>
+        <target>Значение по умолчанию</target>
+      </trans-unit>
+      <trans-unit id="4645345687322304891" datatype="html">
+        <source>Rules</source>
+        <target>Правила</target>
+      </trans-unit>
+      <trans-unit id="1960103579600642301" datatype="html">
+        <source>No additional rules</source>
+        <target>Дополнительных правил нет</target>
+      </trans-unit>
+      <trans-unit id="1747238536642026612" datatype="html">
+        <source>Setting saved</source>
+        <target>Настройка сохранена</target>
+      </trans-unit>
+      <trans-unit id="6351550753415518700" datatype="html">
+        <source>This kind of setting cannot be edited in this version of the console.</source>
+        <target>Настройку такого вида нельзя изменить в этой версии консоли.</target>
+      </trans-unit>
+      <trans-unit id="6078469001665833459" datatype="html">
+        <source>Reset to default?</source>
+        <target>Сбросить к значению по умолчанию?</target>
+      </trans-unit>
+      <trans-unit id="4437159844851600195" datatype="html">
+        <source>Setting reset to default</source>
+        <target>Настройка сброшена к значению по умолчанию</target>
+      </trans-unit>
+      <trans-unit id="2310129259611694502" datatype="html">
+        <source>“<x id="description" equiv-text="description"/>” will return to its default value: <x id="value" equiv-text="value"/>.</source>
+        <target>«<x id="description" equiv-text="description"/>» вернётся к значению по умолчанию: <x id="value" equiv-text="value"/>.</target>
+      </trans-unit>
+      <trans-unit id="6320319413541466015" datatype="html">
+        <source>day</source>
+        <target>день</target>
+      </trans-unit>
+      <trans-unit id="7178101913251976451" datatype="html">
+        <source>month</source>
+        <target>месяц</target>
+      </trans-unit>
+      <trans-unit id="6479044529603381727" datatype="html">
+        <source>year</source>
+        <target>год</target>
+      </trans-unit>
+      <trans-unit id="5689442636734876664" datatype="html">
+        <source>hour</source>
+        <target>час</target>
+      </trans-unit>
+      <trans-unit id="5405071297219936776" datatype="html">
+        <source>minute</source>
+        <target>минута</target>
+      </trans-unit>
+      <trans-unit id="1910879194404751902" datatype="html">
+        <source>time of day</source>
+        <target>время суток</target>
+      </trans-unit>
+      <trans-unit id="3350624567714773564" datatype="html">
+        <source>From <x id="min" equiv-text="min"/> to <x id="max" equiv-text="max"/></source>
+        <target>От <x id="min" equiv-text="min"/> до <x id="max" equiv-text="max"/></target>
+      </trans-unit>
+      <trans-unit id="5121360413337785776" datatype="html">
+        <source>At least <x id="min" equiv-text="min"/></source>
+        <target>Не меньше <x id="min" equiv-text="min"/></target>
+      </trans-unit>
+      <trans-unit id="8072212496741671941" datatype="html">
+        <source>At most <x id="max" equiv-text="max"/></source>
+        <target>Не больше <x id="max" equiv-text="max"/></target>
+      </trans-unit>
+      <trans-unit id="8769386350610144662" datatype="html">
+        <source>At most <x id="maxScale" equiv-text="maxScale"/> decimal places</source>
+        <target>Не больше <x id="maxScale" equiv-text="maxScale"/> знаков после запятой</target>
+      </trans-unit>
+      <trans-unit id="4534669851592073049" datatype="html">
+        <source>From <x id="min" equiv-text="min"/> to <x id="max" equiv-text="max"/> characters</source>
+        <target>От <x id="min" equiv-text="min"/> до <x id="max" equiv-text="max"/> символов</target>
+      </trans-unit>
+      <trans-unit id="5318467496847401729" datatype="html">
+        <source>At least <x id="min" equiv-text="min"/> characters</source>
+        <target>Не меньше <x id="min" equiv-text="min"/> символов</target>
+      </trans-unit>
+      <trans-unit id="9004299500283986195" datatype="html">
+        <source>Up to <x id="max" equiv-text="max"/> characters</source>
+        <target>До <x id="max" equiv-text="max"/> символов</target>
+      </trans-unit>
+      <trans-unit id="5063759614614037338" datatype="html">
+        <source>A single line, without line breaks</source>
+        <target>Одна строка, без переносов</target>
+      </trans-unit>
+      <trans-unit id="3667026896222829523" datatype="html">
+        <source>Must contain: <x id="parts" equiv-text="parts"/></source>
+        <target>Должен содержать: <x id="parts" equiv-text="parts"/></target>
+      </trans-unit>
+      <trans-unit id="4760237722026416157" datatype="html">
+        <source>Must not contain: <x id="parts" equiv-text="parts"/></source>
+        <target>Не должен содержать: <x id="parts" equiv-text="parts"/></target>
+      </trans-unit>
+      <trans-unit id="1953754306130595623" datatype="html">
+        <source>Rule: <x id="type" equiv-text="type"/></source>
+        <target>Правило: <x id="type" equiv-text="type"/></target>
+      </trans-unit>
+      <trans-unit id="738603593172244085" datatype="html">
+        <source>Enter a number.</source>
+        <target>Введите число.</target>
+      </trans-unit>
+      <trans-unit id="6201336466379044747" datatype="html">
+        <source>Enter a whole number of minutes.</source>
+        <target>Введите целое число минут.</target>
+      </trans-unit>
+      <trans-unit id="9218015926186045926" datatype="html">
+        <source>Use at most <x id="maxScale" equiv-text="maxScale"/> decimal places.</source>
+        <target>Используйте не больше <x id="maxScale" equiv-text="maxScale"/> знаков после запятой.</target>
+      </trans-unit>
+      <trans-unit id="8751669164183804117" datatype="html">
+        <source>Out of range: <x id="rule" equiv-text="rule"/>.</source>
+        <target>Вне допустимого диапазона: <x id="rule" equiv-text="rule"/>.</target>
+      </trans-unit>
+      <trans-unit id="7461885750499797086" datatype="html">
+        <source>Wrong length: <x id="rule" equiv-text="rule"/>.</source>
+        <target>Недопустимая длина: <x id="rule" equiv-text="rule"/>.</target>
+      </trans-unit>
+      <trans-unit id="7977451332384740379" datatype="html">
+        <source>The text must be on a single line.</source>
+        <target>Текст должен быть в одну строку.</target>
+      </trans-unit>
+      <trans-unit id="6070478895764384928" datatype="html">
+        <source>This is not a valid date and time pattern.</source>
+        <target>Это недопустимый шаблон даты и времени.</target>
+      </trans-unit>
+      <trans-unit id="4957029174092323279" datatype="html">
+        <source>This pattern cannot be used to print a date and time.</source>
+        <target>По этому шаблону нельзя напечатать дату и время.</target>
+      </trans-unit>
+      <trans-unit id="2632817345813168240" datatype="html">
+        <source>The pattern is missing: <x id="parts" equiv-text="parts"/>.</source>
+        <target>В шаблоне не хватает: <x id="parts" equiv-text="parts"/>.</target>
+      </trans-unit>
+      <trans-unit id="1721671190091713680" datatype="html">
+        <source>A date pattern must not contain a time of day.</source>
+        <target>Шаблон даты не должен содержать время суток.</target>
+      </trans-unit>
+      <trans-unit id="6847053360662410888" datatype="html">
+        <source>The value must not be empty.</source>
+        <target>Значение не должно быть пустым.</target>
+      </trans-unit>
+      <trans-unit id="779266520374584531" datatype="html">
+        <source>The value breaks the rule “<x id="code" equiv-text="code"/>”.</source>
+        <target>Значение нарушает правило «<x id="code" equiv-text="code"/>».</target>
+      </trans-unit>
+      <trans-unit id="178695256096108172" datatype="html">
+        <source>Changed at</source>
+        <target>Дата изменения</target>
+      </trans-unit>
+      <trans-unit id="2908948907515933437" datatype="html">
+        <source>Changed by</source>
+        <target>Кто изменил</target>
+      </trans-unit>
+      <trans-unit id="48089279533497237" datatype="html">
+        <source>All settings</source>
+        <target>Все настройки</target>
+      </trans-unit>
+      <trans-unit id="163546013938781581" datatype="html">
+        <source>No changes found for the selected filters.</source>
+        <target>По выбранным фильтрам изменений нет.</target>
+      </trans-unit>
+      <trans-unit id="6547533978908916326" datatype="html">
+        <source>The change history could not be loaded.</source>
+        <target>Не удалось загрузить историю изменений.</target>
+      </trans-unit>
+      <trans-unit id="3369535384246474304" datatype="html">
+        <source>Price quote validity</source>
+        <target>Срок действия расчёта стоимости</target>
+      </trans-unit>
+      <trans-unit id="964943113219665364" datatype="html">
+        <source>How long an issued rental price quote stays valid before it has to be calculated again.</source>
+        <target>Сколько действует выданный расчёт стоимости аренды, прежде чем его нужно пересчитать.</target>
+      </trans-unit>
+      <trans-unit id="1556973689605184803" datatype="html">
+        <source>Debt write-off tolerance</source>
+        <target>Допуск списания долга</target>
+      </trans-unit>
+      <trans-unit id="8624664692944603455" datatype="html">
+        <source>A customer debt shortfall below this amount may be written off.</source>
+        <target>Недостачу по долгу клиента меньше этой суммы можно списать.</target>
+      </trans-unit>
+      <trans-unit id="5700680506559307487" datatype="html">
+        <source>Rental time rounding step</source>
+        <target>Шаг округления времени аренды</target>
+      </trans-unit>
+      <trans-unit id="681684610750961708" datatype="html">
+        <source>Rental time is rounded up to a multiple of this step before the cost is calculated.</source>
+        <target>Перед расчётом стоимости время аренды округляется вверх до кратного этому шагу.</target>
+      </trans-unit>
+      <trans-unit id="4893007616445374663" datatype="html">
+        <source>Forgiven overtime</source>
+        <target>Прощаемая просрочка</target>
+      </trans-unit>
+      <trans-unit id="3825893554514165591" datatype="html">
+        <source>Overtime up to this length past the planned return is not charged. 0 means overtime is never forgiven.</source>
+        <target>Просрочка не дольше этого срока после планового возврата не оплачивается. 0 — просрочка не прощается.</target>
+      </trans-unit>
+      <trans-unit id="8786410724486512761" datatype="html">
+        <source>Free early return window</source>
+        <target>Окно бесплатного раннего возврата</target>
+      </trans-unit>
+      <trans-unit id="1705127051031431344" datatype="html">
+        <source>Equipment returned within this time after the rental started is free of charge. 0 means there is no free window.</source>
+        <target>Оборудование, возвращённое в течение этого времени после начала аренды, возвращается бесплатно. 0 — бесплатного окна нет.</target>
+      </trans-unit>
+      <trans-unit id="4223681703203981540" datatype="html">
+        <source>Agreement date and time format</source>
+        <target>Формат даты и времени в договоре</target>
+      </trans-unit>
+      <trans-unit id="5685571553389564503" datatype="html">
+        <source>How dates with a time are written on the rental agreement document.</source>
+        <target>Как пишутся дата и время в документе договора аренды.</target>
+      </trans-unit>
+      <trans-unit id="8643315908803513435" datatype="html">
+        <source>Agreement title date format</source>
+        <target>Формат даты в заголовке договора</target>
+      </trans-unit>
+      <trans-unit id="5957407442642210320" datatype="html">
+        <source>How the date is written in the title of the rental agreement document.</source>
+        <target>Как пишется дата в заголовке документа договора аренды.</target>
+      </trans-unit>
+      <trans-unit id="4981307243380607394" datatype="html">
+        <source>Signature box text</source>
+        <target>Текст в поле подписи</target>
+      </trans-unit>
+      <trans-unit id="8012413425963761347" datatype="html">
+        <source>The text printed in the empty signature box of the rental agreement document.</source>
+        <target>Текст, который печатается в пустом поле подписи договора аренды.</target>
+      </trans-unit>
+      <trans-unit id="5637013074422998063" datatype="html">
+        <source>Pattern symbols</source>
+        <target>Обозначения в шаблоне</target>
+      </trans-unit>
+      <trans-unit id="5656641498279248606" datatype="html">
+        <source>Year, four digits (2026)</source>
+        <target>Год, четыре цифры (2026)</target>
+      </trans-unit>
+      <trans-unit id="6547672196498944510" datatype="html">
+        <source>Year, last two digits (26)</source>
+        <target>Год, две последние цифры (26)</target>
+      </trans-unit>
+      <trans-unit id="6038747500242548727" datatype="html">
+        <source>Month, two digits (03)</source>
+        <target>Месяц, две цифры (03)</target>
+      </trans-unit>
+      <trans-unit id="8806502014148984279" datatype="html">
+        <source>Month, without a leading zero (3)</source>
+        <target>Месяц без ведущего нуля (3)</target>
+      </trans-unit>
+      <trans-unit id="9081117219811281082" datatype="html">
+        <source>Month, short name (Mar)</source>
+        <target>Месяц, краткое название (мар.)</target>
+      </trans-unit>
+      <trans-unit id="565049370521138639" datatype="html">
+        <source>Month, full name (March)</source>
+        <target>Месяц, полное название (марта)</target>
+      </trans-unit>
+      <trans-unit id="2240315297062144220" datatype="html">
+        <source>Day of the month, two digits (05)</source>
+        <target>День месяца, две цифры (05)</target>
+      </trans-unit>
+      <trans-unit id="8727773250515526796" datatype="html">
+        <source>Day of the month, without a leading zero (5)</source>
+        <target>День месяца без ведущего нуля (5)</target>
+      </trans-unit>
+      <trans-unit id="2900821897951784832" datatype="html">
+        <source>Day of the week, short name (Thu)</source>
+        <target>День недели, краткое название (чт)</target>
+      </trans-unit>
+      <trans-unit id="8490819832222002969" datatype="html">
+        <source>Day of the week, full name (Thursday)</source>
+        <target>День недели, полное название (четверг)</target>
+      </trans-unit>
+      <trans-unit id="3488977829044013109" datatype="html">
+        <source>Hour 00–23, two digits (09)</source>
+        <target>Час 00–23, две цифры (09)</target>
+      </trans-unit>
+      <trans-unit id="9218090828283917781" datatype="html">
+        <source>Hour 0–23, without a leading zero (9)</source>
+        <target>Час 0–23 без ведущего нуля (9)</target>
+      </trans-unit>
+      <trans-unit id="5500741048787337719" datatype="html">
+        <source>Hour 01–12, two digits, use with “a” (09)</source>
+        <target>Час 01–12, две цифры, вместе с «a» (09)</target>
+      </trans-unit>
+      <trans-unit id="722975788133790445" datatype="html">
+        <source>AM or PM</source>
+        <target>AM или PM (до или после полудня)</target>
+      </trans-unit>
+      <trans-unit id="6578338952954333724" datatype="html">
+        <source>Minutes, two digits (07)</source>
+        <target>Минуты, две цифры (07)</target>
+      </trans-unit>
+      <trans-unit id="6848006181901186444" datatype="html">
+        <source>Seconds, two digits (00)</source>
+        <target>Секунды, две цифры (00)</target>
+      </trans-unit>
+      <trans-unit id="5481742008921891402" datatype="html">
+        <source>Text in single quotes is printed as is</source>
+        <target>Текст в одинарных кавычках печатается как есть</target>
+      </trans-unit>
+      <trans-unit id="3063459494748944496" datatype="html">
+        <source>Letter case matters: MM is the month, mm is minutes.</source>
+        <target>Регистр букв важен: MM — месяц, mm — минуты.</target>
+      </trans-unit>
+      <trans-unit id="8212192002232959703" datatype="html">
+        <source>Examples are for Thursday, 5 March 2026, 09:07:00.</source>
+        <target>Примеры даны для четверга, 5 марта 2026 года, 09:07:00.</target>
+      </trans-unit>
+      <trans-unit id="6530069623280357955" datatype="html">
+        <source>Letters in the pattern are replaced by parts of the date; dots, dashes, slashes, spaces and commas are printed as is.</source>
+        <target>Буквы в шаблоне заменяются частями даты; точки, дефисы, косые черты, пробелы и запятые печатаются как есть.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

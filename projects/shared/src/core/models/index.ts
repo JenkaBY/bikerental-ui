@@ -24,3 +24,4 @@ export * from './finance-receipt.model';
 export * from './running-shift.model';
 export * from './shift-closure.model';
 export * from './returnable-rental.model';
+export * from './business-setting.model';

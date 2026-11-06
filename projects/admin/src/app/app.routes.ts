@@ -110,6 +110,13 @@ export const routes: Routes = [
           import('./analytics/analytics-page.component').then((m) => m.AnalyticsPageComponent),
       },
       {
+        path: 'business-settings',
+        loadChildren: () =>
+          import('./business-settings/business-settings.routes').then(
+            (m) => m.BUSINESS_SETTINGS_ROUTES,
+          ),
+      },
+      {
         path: 'profile',
         loadChildren: () => import('@bikerental/shared').then((m) => m.PROFILE_SETTINGS_ROUTES),
       },
