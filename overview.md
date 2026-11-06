@@ -2745,9 +2745,17 @@ RESPONSIBILITIES:
   SOURCE: `projects/admin/src/app/business-settings/business-setting-dialog.component.ts`
   CALLS:
 - BusinessSettingsStore — `change()`, `load()`.
-- describeSettingRule / describeSettingViolation / formatSettingValue — `shared/business-setting.meta.ts`.
+- describeSettingRule / describeSettingViolation / formatSettingValue / settingLabel / settingHint / datePatternSymbols — `shared/business-setting.meta.ts`.
+- DatePatternLegendComponent — Java pattern symbols for `DATE_TIME_PATTERN` / `DATE_PATTERN`.
   CALLED_BY:
 - BusinessSettingListComponent
+
+COMPONENT_NAME: DatePatternLegendComponent
+TYPE: UI
+PURPOSE: Dumb legend of Java `DateTimeFormatter` symbols (yyyy, MM, dd, HH, mm, …) with localized explanations, shown in the change dialog of date and date-time pattern settings.
+  SOURCE: `projects/admin/src/app/business-settings/date-pattern-legend.component.ts`
+  CALLED_BY:
+- BusinessSettingDialogComponent
 
 COMPONENT_NAME: BusinessSettingHistoryComponent
 TYPE: Gateway

@@ -957,4 +957,43 @@ export class Labels {
   static readonly SettingHistoryFilterAll = $localize`All settings`;
   static readonly SettingHistoryEmptyState = $localize`No changes found for the selected filters.`;
   static readonly SettingHistoryLoadError = $localize`The change history could not be loaded.`;
+
+  static readonly SettingQuoteTtlLabel = $localize`:business setting name:Price quote validity`;
+  static readonly SettingQuoteTtlHint = $localize`How long an issued rental price quote stays valid before it has to be calculated again.`;
+  static readonly SettingDebtWriteOffToleranceLabel = $localize`:business setting name:Debt write-off tolerance`;
+  static readonly SettingDebtWriteOffToleranceHint = $localize`A customer debt shortfall below this amount may be written off.`;
+  static readonly SettingTimeIncrementLabel = $localize`:business setting name:Rental time rounding step`;
+  static readonly SettingTimeIncrementHint = $localize`Rental time is rounded up to a multiple of this step before the cost is calculated.`;
+  static readonly SettingOvertimeForgivenessLabel = $localize`:business setting name:Forgiven overtime`;
+  static readonly SettingOvertimeForgivenessHint = $localize`Overtime up to this length past the planned return is not charged. 0 means overtime is never forgiven.`;
+  static readonly SettingEarlyReturnWindowLabel = $localize`:business setting name:Free early return window`;
+  static readonly SettingEarlyReturnWindowHint = $localize`Equipment returned within this time after the rental started is free of charge. 0 means there is no free window.`;
+  static readonly SettingAgreementDateTimePatternLabel = $localize`:business setting name:Agreement date and time format`;
+  static readonly SettingAgreementDateTimePatternHint = $localize`How dates with a time are written on the rental agreement document.`;
+  static readonly SettingAgreementDatePatternLabel = $localize`:business setting name:Agreement title date format`;
+  static readonly SettingAgreementDatePatternHint = $localize`How the date is written in the title of the rental agreement document.`;
+  static readonly SettingSignaturePlaceholderLabel = $localize`:business setting name:Signature box text`;
+  static readonly SettingSignaturePlaceholderHint = $localize`The text printed in the empty signature box of the rental agreement document.`;
+
+  static readonly DatePatternLegendTitle = $localize`Pattern symbols`;
+  static readonly DatePatternLegendIntro = $localize`Letters in the pattern are replaced by parts of the date; dots, dashes, slashes, spaces and commas are printed as is.`;
+  static readonly DatePatternLegendExampleDate = $localize`Examples are for Thursday, 5 March 2026, 09:07:00.`;
+  static readonly DatePatternSymbolYear4 = $localize`Year, four digits (2026)`;
+  static readonly DatePatternSymbolYear2 = $localize`Year, last two digits (26)`;
+  static readonly DatePatternSymbolMonth2 = $localize`Month, two digits (03)`;
+  static readonly DatePatternSymbolMonth1 = $localize`Month, without a leading zero (3)`;
+  static readonly DatePatternSymbolMonthShort = $localize`Month, short name (Mar)`;
+  static readonly DatePatternSymbolMonthFull = $localize`Month, full name (March)`;
+  static readonly DatePatternSymbolDay2 = $localize`Day of the month, two digits (05)`;
+  static readonly DatePatternSymbolDay1 = $localize`Day of the month, without a leading zero (5)`;
+  static readonly DatePatternSymbolWeekdayShort = $localize`Day of the week, short name (Thu)`;
+  static readonly DatePatternSymbolWeekdayFull = $localize`Day of the week, full name (Thursday)`;
+  static readonly DatePatternSymbolHour24 = $localize`Hour 00–23, two digits (09)`;
+  static readonly DatePatternSymbolHour24Short = $localize`Hour 0–23, without a leading zero (9)`;
+  static readonly DatePatternSymbolHour12 = $localize`Hour 01–12, two digits, use with “a” (09)`;
+  static readonly DatePatternSymbolAmPm = $localize`AM or PM`;
+  static readonly DatePatternSymbolMinute = $localize`Minutes, two digits (07)`;
+  static readonly DatePatternSymbolSecond = $localize`Seconds, two digits (00)`;
+  static readonly DatePatternSymbolLiteral = $localize`Text in single quotes is printed as is`;
+  static readonly DatePatternSymbolCaseNote = $localize`Letter case matters: MM is the month, mm is minutes.`;
 }

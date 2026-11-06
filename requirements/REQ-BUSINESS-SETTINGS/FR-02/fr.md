@@ -20,14 +20,16 @@ silently overwriting a colleague's change
   * **Page:** title "Business settings", subtitle "Rules and defaults that apply to the whole rental
     network", tabs "Settings" | "Change history" (FR-05)
   * **Table**, catalogue order, one row per setting:
-    - description and, below it, the key in monospace
+    - localized name, its short explanation and the key in monospace (FR-01; the backend
+      description only as fallback name)
     - **Current value** — the effective value, formatted per kind (FR-01)
     - **Source** chip — "Set by administrator" (`BUSINESS`) or "Default" (`INSTALLATION_DEFAULT`)
     - **Default** — the installation default, formatted per kind
     - actions **Change value**, **Reset to default** (disabled when no business value is set) and
       **Show change history** (opens FR-05 filtered to this setting)
   * **Change dialog:**
-    - shows the description, key, current value, default value and the rules list (FR-01, generic)
+    - shows the name, explanation, key, current value, default value and the rules list (FR-01,
+      generic); date and date-time patterns also get the Java pattern symbol legend
     - one input per kind: whole minutes + "min"; money with step 0.01 + the currency; single-line text
     - pre-filled with the business value, or the effective value when none is set
     - client-side validation from the rules; Save is disabled while the value is invalid or saving

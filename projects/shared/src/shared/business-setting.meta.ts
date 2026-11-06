@@ -41,6 +41,89 @@ const PATTERN_PART_LABELS: Record<string, string> = {
   TIME_OF_DAY: Labels.SettingPatternPartTimeOfDay,
 };
 
+interface SettingText {
+  label: string;
+  hint: string;
+}
+
+const SETTING_TEXTS: Readonly<Record<string, SettingText>> = {
+  'app.tariff.quote-ttl': { label: Labels.SettingQuoteTtlLabel, hint: Labels.SettingQuoteTtlHint },
+  'app.finance.debt-write-off.tolerance': {
+    label: Labels.SettingDebtWriteOffToleranceLabel,
+    hint: Labels.SettingDebtWriteOffToleranceHint,
+  },
+  'app.rental.time-increment': {
+    label: Labels.SettingTimeIncrementLabel,
+    hint: Labels.SettingTimeIncrementHint,
+  },
+  'app.rental.forgiveness.overtime-duration': {
+    label: Labels.SettingOvertimeForgivenessLabel,
+    hint: Labels.SettingOvertimeForgivenessHint,
+  },
+  'app.rental.forgiveness.early-return-window': {
+    label: Labels.SettingEarlyReturnWindowLabel,
+    hint: Labels.SettingEarlyReturnWindowHint,
+  },
+  'app.agreement.pdf.date-time-pattern': {
+    label: Labels.SettingAgreementDateTimePatternLabel,
+    hint: Labels.SettingAgreementDateTimePatternHint,
+  },
+  'app.agreement.pdf.date-pattern': {
+    label: Labels.SettingAgreementDatePatternLabel,
+    hint: Labels.SettingAgreementDatePatternHint,
+  },
+  'app.agreement.pdf.signature-placeholder-label': {
+    label: Labels.SettingSignaturePlaceholderLabel,
+    hint: Labels.SettingSignaturePlaceholderHint,
+  },
+};
+
+export function settingLabel(key: string, fallback: string): string {
+  return SETTING_TEXTS[key]?.label ?? (fallback || key);
+}
+
+export function settingHint(key: string): string {
+  return SETTING_TEXTS[key]?.hint ?? '';
+}
+
+export interface DatePatternSymbol {
+  symbol: string;
+  description: string;
+}
+
+const DATE_SYMBOLS: readonly DatePatternSymbol[] = [
+  { symbol: 'yyyy', description: Labels.DatePatternSymbolYear4 },
+  { symbol: 'yy', description: Labels.DatePatternSymbolYear2 },
+  { symbol: 'MM', description: Labels.DatePatternSymbolMonth2 },
+  { symbol: 'M', description: Labels.DatePatternSymbolMonth1 },
+  { symbol: 'MMM', description: Labels.DatePatternSymbolMonthShort },
+  { symbol: 'MMMM', description: Labels.DatePatternSymbolMonthFull },
+  { symbol: 'dd', description: Labels.DatePatternSymbolDay2 },
+  { symbol: 'd', description: Labels.DatePatternSymbolDay1 },
+  { symbol: 'EEE', description: Labels.DatePatternSymbolWeekdayShort },
+  { symbol: 'EEEE', description: Labels.DatePatternSymbolWeekdayFull },
+];
+
+const TIME_SYMBOLS: readonly DatePatternSymbol[] = [
+  { symbol: 'HH', description: Labels.DatePatternSymbolHour24 },
+  { symbol: 'H', description: Labels.DatePatternSymbolHour24Short },
+  { symbol: 'hh', description: Labels.DatePatternSymbolHour12 },
+  { symbol: 'a', description: Labels.DatePatternSymbolAmPm },
+  { symbol: 'mm', description: Labels.DatePatternSymbolMinute },
+  { symbol: 'ss', description: Labels.DatePatternSymbolSecond },
+];
+
+const LITERAL_SYMBOL: DatePatternSymbol = {
+  symbol: "'…'",
+  description: Labels.DatePatternSymbolLiteral,
+};
+
+export function datePatternSymbols(valueType: string): readonly DatePatternSymbol[] {
+  if (valueType === 'DATE_TIME_PATTERN') return [...DATE_SYMBOLS, ...TIME_SYMBOLS, LITERAL_SYMBOL];
+  if (valueType === 'DATE_PATTERN') return [...DATE_SYMBOLS, LITERAL_SYMBOL];
+  return [];
+}
+
 export function settingUnitSuffix(kind: SettingValueKind, unit: string | null): string {
   if (kind === 'minutes') return Labels.BusinessSettingMinutesUnit;
   if (kind === 'money') return unit ?? '';

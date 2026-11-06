@@ -24,6 +24,8 @@ import {
   NotificationService,
   resolveErrorMessage,
   SETTING_SOURCE_META,
+  settingHint,
+  settingLabel,
 } from '@bikerental/shared';
 import type { ConfirmDialogData, SettingSourceMeta } from '@bikerental/shared';
 import type { BusinessSetting, SettingValue } from '@ui-models';
@@ -58,7 +60,10 @@ const RELOAD_CODES = new Set<string>([
         <ng-container matColumnDef="setting">
           <th mat-header-cell *matHeaderCellDef>{{ Labels.BusinessSettingColumnSetting }}</th>
           <td mat-cell *matCellDef="let row" class="!py-2">
-            <div class="font-medium">{{ row.description }}</div>
+            <div class="font-medium">{{ labelOf(row) }}</div>
+            @if (hintOf(row); as hint) {
+              <div class="text-xs text-slate-600 max-w-xl">{{ hint }}</div>
+            }
             <div class="font-mono text-xs text-slate-500">{{ row.key }}</div>
           </td>
         </ng-container>
@@ -146,6 +151,14 @@ export class BusinessSettingListComponent implements OnInit {
     return SETTING_SOURCE_META[setting.effectiveSource];
   }
 
+  protected labelOf(setting: BusinessSetting): string {
+    return settingLabel(setting.key, setting.description);
+  }
+
+  protected hintOf(setting: BusinessSetting): string {
+    return settingHint(setting.key);
+  }
+
   protected format(setting: BusinessSetting, value: SettingValue | null): string {
     return formatSettingValue(value, setting.kind, setting.unit);
   }
@@ -167,7 +180,7 @@ export class BusinessSettingListComponent implements OnInit {
     const data: ConfirmDialogData = {
       title: Labels.BusinessSettingResetDialogTitle,
       message: Labels.businessSettingResetDialogMessage(
-        setting.description,
+        this.labelOf(setting),
         this.format(setting, setting.installationDefault),
       ),
       confirmLabel: Labels.BusinessSettingResetConfirmButton,

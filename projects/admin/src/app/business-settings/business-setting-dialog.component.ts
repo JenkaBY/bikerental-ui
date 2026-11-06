@@ -13,6 +13,7 @@ import {
   businessSettingValueValidator,
   CancelButtonComponent,
   clearServerErrors,
+  datePatternSymbols,
   describeSettingRule,
   describeSettingViolation,
   ErrorCode,
@@ -24,10 +25,13 @@ import {
   resolveErrorMessage,
   SERVER_ERROR_KEY,
   SETTING_VIOLATIONS_KEY,
+  settingHint,
+  settingLabel,
   settingUnitSuffix,
 } from '@bikerental/shared';
 import type { ApiError } from '@bikerental/shared';
 import type { BusinessSetting, SettingValue, SettingViolation } from '@ui-models';
+import { DatePatternLegendComponent } from './date-pattern-legend.component';
 
 export interface BusinessSettingDialogData {
   setting: BusinessSetting;
@@ -48,13 +52,17 @@ const RELOAD_CODES = new Set<string>([
     MatInputModule,
     MatButtonModule,
     CancelButtonComponent,
+    DatePatternLegendComponent,
   ],
   template: `
     <h2 mat-dialog-title>{{ Labels.BusinessSettingDialogTitle }}</h2>
     <mat-dialog-content>
       <div class="flex flex-col gap-3 pt-1">
         <div>
-          <div class="font-medium">{{ setting.description }}</div>
+          <div class="font-medium">{{ label }}</div>
+          @if (hint) {
+            <div class="text-sm text-slate-600">{{ hint }}</div>
+          }
           <div class="font-mono text-xs text-slate-500">{{ setting.key }}</div>
         </div>
 
@@ -101,6 +109,10 @@ const RELOAD_CODES = new Set<string>([
             }
           </mat-form-field>
         </form>
+
+        @if (patternSymbols.length) {
+          <app-date-pattern-legend [symbols]="patternSymbols" />
+        }
       </div>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -132,6 +144,9 @@ export class BusinessSettingDialogComponent {
   protected readonly numeric = this.setting.kind === 'minutes' || this.setting.kind === 'money';
   protected readonly unit = settingUnitSuffix(this.setting.kind, this.setting.unit);
   protected readonly ruleTexts = this.setting.rules.map(describeSettingRule).filter(Boolean);
+  protected readonly label = settingLabel(this.setting.key, this.setting.description);
+  protected readonly hint = settingHint(this.setting.key);
+  protected readonly patternSymbols = datePatternSymbols(this.setting.valueType);
 
   protected readonly value = new FormControl(this.initialValue(), {
     nonNullable: true,

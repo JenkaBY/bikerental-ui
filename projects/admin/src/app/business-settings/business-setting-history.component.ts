@@ -25,6 +25,7 @@ import {
   Labels,
   parseDate,
   SETTING_CHANGE_KIND_LABELS,
+  settingLabel,
   toIsoDate,
 } from '@bikerental/shared';
 import type { BusinessSettingChange, SettingValue } from '@ui-models';
@@ -80,6 +81,10 @@ export class BusinessSettingHistoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.settings.ensureLoaded();
+  }
+
+  protected label(key: string, fallback: string): string {
+    return settingLabel(key, fallback);
   }
 
   protected kindLabel(change: BusinessSettingChange): string {

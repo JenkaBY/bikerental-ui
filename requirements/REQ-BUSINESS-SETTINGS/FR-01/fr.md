@@ -32,8 +32,11 @@ release
 * **Rules Enforced:**
   * **There is no single-setting read.** The client loads the list once and changes settings one by
     one; each change or reset returns the updated setting, which replaces its row
-  * **Description** comes from the backend in the request language (`Accept-Language`); the front end
-    keeps no per-setting `$localize` text. The key is shown as is and never translated
+  * **Setting names.** The front end keeps a localized name and a short explanation per known key
+    (`settingLabel(key, fallback)` / `settingHint(key)` in `business-setting.meta.ts`, en + ru). The
+    backend `description` is used only as the fallback name for a key the front end does not know
+    yet, so a new setting still shows up readable. The key itself is shown as is and never
+    translated
   * **Value kinds.** The front end knows value types, not keys:
 
     | `valueType` | Kind | Edited as | Shown as |
@@ -50,6 +53,10 @@ release
     `length {minLength?, maxLength?}`, `single_line {}`, `pattern_parts {requiredParts[],
     forbiddenParts[]}`. An unknown rule type is shown as "Rule: <type>" and left to the server.
     `pattern_parts` is described but validated by the server only
+  * **Date pattern legend.** `DATE_TIME_PATTERN` and `DATE_PATTERN` values are standard Java
+    `DateTimeFormatter` patterns; their dialog lists the symbols (`yyyy`, `yy`, `MM`, `M`, `MMM`,
+    `MMMM`, `dd`, `d`, `EEE`, `EEEE`, quoted literal text, and for date-time also `HH`, `H`, `hh`,
+    `a`, `mm`, `ss`) with localized explanations, and notes that letter case matters
   * **Server violations.** `400 settings.value.invalid` carries `params.violations[] = {code, rule}`;
     each violation is shown inline with a localized message per code (`type`, `whole_minutes`,
     `scale`, `range`, `length`, `single_line`, `pattern_malformed`, `pattern_unformattable`,

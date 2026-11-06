@@ -6737,6 +6737,273 @@
           <context context-type="linenumber">959</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="3369535384246474304" datatype="html">
+        <source>Price quote validity</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">961</context>
+        </context-group>
+        <note priority="1" from="description">business setting name</note>
+      </trans-unit>
+      <trans-unit id="964943113219665364" datatype="html">
+        <source>How long an issued rental price quote stays valid before it has to be calculated again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">962</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1556973689605184803" datatype="html">
+        <source>Debt write-off tolerance</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">963</context>
+        </context-group>
+        <note priority="1" from="description">business setting name</note>
+      </trans-unit>
+      <trans-unit id="8624664692944603455" datatype="html">
+        <source>A customer debt shortfall below this amount may be written off.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">964</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5700680506559307487" datatype="html">
+        <source>Rental time rounding step</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">965</context>
+        </context-group>
+        <note priority="1" from="description">business setting name</note>
+      </trans-unit>
+      <trans-unit id="681684610750961708" datatype="html">
+        <source>Rental time is rounded up to a multiple of this step before the cost is calculated.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">966</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4893007616445374663" datatype="html">
+        <source>Forgiven overtime</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">967</context>
+        </context-group>
+        <note priority="1" from="description">business setting name</note>
+      </trans-unit>
+      <trans-unit id="3825893554514165591" datatype="html">
+        <source>Overtime up to this length past the planned return is not charged. 0 means overtime is never forgiven.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">968</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8786410724486512761" datatype="html">
+        <source>Free early return window</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">969</context>
+        </context-group>
+        <note priority="1" from="description">business setting name</note>
+      </trans-unit>
+      <trans-unit id="1705127051031431344" datatype="html">
+        <source>Equipment returned within this time after the rental started is free of charge. 0 means there is no free window.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">970</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4223681703203981540" datatype="html">
+        <source>Agreement date and time format</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">971</context>
+        </context-group>
+        <note priority="1" from="description">business setting name</note>
+      </trans-unit>
+      <trans-unit id="5685571553389564503" datatype="html">
+        <source>How dates with a time are written on the rental agreement document.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">972</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8643315908803513435" datatype="html">
+        <source>Agreement title date format</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">973</context>
+        </context-group>
+        <note priority="1" from="description">business setting name</note>
+      </trans-unit>
+      <trans-unit id="5957407442642210320" datatype="html">
+        <source>How the date is written in the title of the rental agreement document.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">974</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4981307243380607394" datatype="html">
+        <source>Signature box text</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">975</context>
+        </context-group>
+        <note priority="1" from="description">business setting name</note>
+      </trans-unit>
+      <trans-unit id="8012413425963761347" datatype="html">
+        <source>The text printed in the empty signature box of the rental agreement document.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">976</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5637013074422998063" datatype="html">
+        <source>Pattern symbols</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">978</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6530069623280357955" datatype="html">
+        <source>Letters in the pattern are replaced by parts of the date; dots, dashes, slashes, spaces and commas are printed as is.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">979</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8212192002232959703" datatype="html">
+        <source>Examples are for Thursday, 5 March 2026, 09:07:00.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">980</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5656641498279248606" datatype="html">
+        <source>Year, four digits (2026)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">981</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6547672196498944510" datatype="html">
+        <source>Year, last two digits (26)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">982</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6038747500242548727" datatype="html">
+        <source>Month, two digits (03)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">983</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8806502014148984279" datatype="html">
+        <source>Month, without a leading zero (3)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">984</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9081117219811281082" datatype="html">
+        <source>Month, short name (Mar)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">985</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="565049370521138639" datatype="html">
+        <source>Month, full name (March)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">986</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2240315297062144220" datatype="html">
+        <source>Day of the month, two digits (05)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">987</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8727773250515526796" datatype="html">
+        <source>Day of the month, without a leading zero (5)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">988</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2900821897951784832" datatype="html">
+        <source>Day of the week, short name (Thu)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">989</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8490819832222002969" datatype="html">
+        <source>Day of the week, full name (Thursday)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">990</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3488977829044013109" datatype="html">
+        <source>Hour 00–23, two digits (09)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">991</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9218090828283917781" datatype="html">
+        <source>Hour 0–23, without a leading zero (9)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">992</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5500741048787337719" datatype="html">
+        <source>Hour 01–12, two digits, use with “a” (09)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">993</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="722975788133790445" datatype="html">
+        <source>AM or PM</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">994</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6578338952954333724" datatype="html">
+        <source>Minutes, two digits (07)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">995</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6848006181901186444" datatype="html">
+        <source>Seconds, two digits (00)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">996</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5481742008921891402" datatype="html">
+        <source>Text in single quotes is printed as is</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">997</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3063459494748944496" datatype="html">
+        <source>Letter case matters: MM is the month, mm is minutes.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">998</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="8433263439578205214" datatype="html">
         <source>Transfers: <x id="count" equiv-text="count"/></source>
         <context-group purpose="location">
