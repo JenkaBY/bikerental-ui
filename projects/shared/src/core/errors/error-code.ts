@@ -97,6 +97,12 @@ export const ErrorCode = {
   SCOPE_NOT_ESTABLISHED: 'scope.not_established',
   SCOPE_CALLER_SUPPLIED: 'scope.caller_supplied',
   SCOPE_POINT_HEADER_INVALID: 'scope.point_header_invalid',
+
+  // settings.* — business settings
+  SETTINGS_KEY_NOT_EDITABLE: 'settings.key.not_editable',
+  SETTINGS_LEVEL_NOT_PERMITTED: 'settings.level.not_permitted',
+  SETTINGS_VALUE_INVALID: 'settings.value.invalid',
+  SETTINGS_VERSION_CONFLICT: 'settings.version.conflict',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -111,6 +117,7 @@ const VALIDATION_CODES = new Set<string>([
   ErrorCode.NOT_READABLE,
   ErrorCode.RESPONSIBLE_PARTY_REQUIRED,
   ErrorCode.EQUIPMENT_POINT_REQUIRED,
+  ErrorCode.SETTINGS_VALUE_INVALID,
 ]);
 
 const DOMAIN_CODES = new Set<string>([
@@ -164,6 +171,9 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.SCOPE_CALLER_SUPPLIED,
   ErrorCode.SCOPE_POINT_HEADER_INVALID,
   ErrorCode.SETTINGS_WORKING_POINT_NOT_APPLICABLE,
+  ErrorCode.SETTINGS_KEY_NOT_EDITABLE,
+  ErrorCode.SETTINGS_LEVEL_NOT_PERMITTED,
+  ErrorCode.SETTINGS_VERSION_CONFLICT,
 ]);
 
 const CLIENT_DEFECT_CODES = new Set<string>([

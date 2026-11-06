@@ -390,6 +390,52 @@ export interface CustomerResponse {
   comments?: string;
 }
 
+/** Set a business setting at a level */
+export interface SettingChangeRequest {
+  /** Level the value is set at */
+  level: 'POINT' | 'BUSINESS';
+  /** Rental point slug; required exactly when level is POINT */
+  pointSlug?: string;
+  /** Typed value: minutes as a whole number, money as a number with at most two decimals */
+  value: string;
+  /** Version of the value the client saw; 0 when it was never set */
+  expectedVersion: number;
+}
+
+/** One rule a value of the setting must satisfy, with the parameters it is applied with */
+export interface SettingRuleResponse {
+  /** Rule type: range, scale, length, single_line or pattern_parts; the same code a violation of the rule carries */
+  type: string;
+  /** Parameters of the rule: range {min, max}, scale {maxScale}, length {minLength, maxLength}, single_line {}, pattern_parts {requiredParts, forbiddenParts} */
+  params: Record<string, any>;
+}
+
+/** One business setting with its rule, installation default, business value and effective value */
+export interface SettingViewResponse {
+  /** Catalogue key of the setting */
+  key: string;
+  /** What the setting controls */
+  description: string;
+  /** Type of the value */
+  valueType: 'MINUTES' | 'MONEY' | 'DATE_TIME_PATTERN' | 'DATE_PATTERN' | 'SINGLE_LINE_TEXT';
+  /** Unit the value is expressed in: MINUTES, the business currency code, or null for text settings */
+  unit?: string;
+  /** The rules a value must satisfy, one entry per rule */
+  rules: Array<SettingRuleResponse>;
+  /** Levels the setting may be set at */
+  permittedLevels: Array<'POINT' | 'BUSINESS'>;
+  /** Value shipped with the deployment; typed JSON: integer minutes, a number with two decimals, or a string for text settings */
+  installationDefault: any;
+  /** Business-wide value; null when it was never set or was reset */
+  businessValue?: any;
+  /** Value in effect: the business value when set, otherwise the installation default */
+  effectiveValue: any;
+  /** Level the effective value comes from */
+  effectiveSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
+  /** Version of the business-level value; 0 when it was never set */
+  version: number;
+}
+
 export interface UpdateUserRequest {
   /** Human-friendly display name */
   displayName?: string;
@@ -718,6 +764,16 @@ export interface EquipmentTypeRequest {
   name: string;
   /** Description */
   description?: string;
+}
+
+/** Return a business setting to the installation default at a level */
+export interface SettingResetRequest {
+  /** Level whose value is removed */
+  level: 'POINT' | 'BUSINESS';
+  /** Rental point slug; required exactly when level is POINT */
+  pointSlug?: string;
+  /** Version of the value the client saw; 0 when it was never set */
+  expectedVersion: number;
 }
 
 export interface CreateUserRequest {
@@ -1398,6 +1454,48 @@ export interface CustomerSearchResponse {
   firstName?: string;
   /** Last name */
   lastName?: string;
+}
+
+/** Query parameters filtering the history of setting changes; every parameter is optional */
+export interface SettingChangesFilterParams {
+  /** Only changes of this setting; an unknown key yields an empty page */
+  settingKey?: string;
+  /** Start of the period (inclusive), ISO date-time */
+  from?: string;
+  /** End of the period (exclusive), ISO date-time; not before from */
+  to?: string;
+}
+
+/** One accepted change of a business setting */
+export interface SettingChangeResponse {
+  /** Identifier of the change */
+  id: string;
+  /** Catalogue key of the setting */
+  key: string;
+  /** Setting description; the key itself when the setting left the catalogue */
+  description: string;
+  /** Level the change was made at */
+  level: 'POINT' | 'BUSINESS';
+  /** Slug of the rental point for a POINT-level change; null otherwise */
+  pointSlug?: string;
+  /** Type of the value; null when the setting left the catalogue */
+  valueType?: 'MINUTES' | 'MONEY' | 'DATE_TIME_PATTERN' | 'DATE_PATTERN' | 'SINGLE_LINE_TEXT';
+  /** Unit of the value: MINUTES or the business currency code; null for text settings and settings that left the catalogue */
+  unit?: string;
+  /** Typed JSON value in force before the change: integer minutes, a number with two decimals or a string */
+  previousValue: any;
+  /** Level the value in force before the change came from */
+  previousSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
+  /** Typed JSON value in force after the change; the installation default for a RESET */
+  newValue: any;
+  /** Level the value in force after the change comes from */
+  newSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
+  /** SET for a new value, RESET for a return to the installation default */
+  changeKind: 'SET' | 'RESET';
+  /** Id of the administrator who made the change; names are resolved in one call with GET /api/auth/users?ids= */
+  changedBy: string;
+  /** Time of the change */
+  changedAt: string;
 }
 
 export interface PointRevenueFilterParams {

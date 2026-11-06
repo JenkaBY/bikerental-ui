@@ -24,7 +24,7 @@ export class ManagedUserStore {
 
   load(options?: RequestOptions<'json'>): Observable<void> {
     this._loading.set(true);
-    return this.service.list(undefined, options).pipe(
+    return this.service.list(undefined, undefined, options).pipe(
       map((responses) => responses.map(ManagedUserMapper.fromResponse)),
       tap((users) => this._users.set(users)),
       map(() => undefined as void),

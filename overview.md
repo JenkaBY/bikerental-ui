@@ -17,7 +17,7 @@
   ENTRY_FILES: `projects/gateway/src/main.ts`, `projects/gateway/src/app/app.config.ts`, `projects/gateway/src/app/app.routes.ts`, `projects/gateway/src/index.html`
 
 - PATH: `projects/admin/`
-  PURPOSE: Desktop-first back office — equipment, equipment types, tariffs, agreement templates, customers, rentals, transactions, damage reports, users, rental points (registry + status lifecycle), revenue/customer analytics
+  PURPOSE: Desktop-first back office — equipment, equipment types, tariffs, agreement templates, customers, rentals, transactions, damage reports, users, rental points (registry + status lifecycle), business settings (change/reset + change history), revenue/customer analytics
   ENTRY_FILES: `projects/admin/src/main.ts`, `projects/admin/src/app/app.config.ts`, `projects/admin/src/app/app.routes.ts`, `projects/admin/src/index.html`
 
 - PATH: `projects/operator/`
@@ -226,6 +226,19 @@ RESPONSIBILITIES:
 - CustomerAnalyticsStore
 - CustomerEquipmentBreakdownStore
 
+COMPONENT_NAME: BusinessSettingsService
+TYPE: API
+PURPOSE: Generated client for business settings — list the catalogue (`GET /api/business-settings`), change a value (`PUT /{key}`), reset to the installation default (`POST /{key}/resets`), page the change history (`GET /changes`).
+RESPONSIBILITIES:
+
+- Issue typed HTTP requests against business-settings endpoints. The spec types the list and history responses as a single object; `BusinessSettingsStore` / `BusinessSettingHistoryStore` re-type them as an array and a page envelope.
+  SOURCE: `projects/shared/src/core/api/generated/services/businessSettings.service.ts`
+  CALLS:
+- HttpClient — transport.
+  CALLED_BY:
+- BusinessSettingsStore
+- BusinessSettingHistoryStore
+
 COMPONENT_NAME: CustomersService
 TYPE: API
 PURPOSE: Generated client for customer endpoints — search by phone, get by id, batch fetch, create, update.
@@ -427,6 +440,7 @@ RESPONSIBILITIES:
 - ManagedUserStore
 - TransactionDetailsStore
 - ChangePasswordComponent
+- BusinessSettingHistoryStore — `list(ids)` resolves the authors of one history page in one call
 
 COMPONENT_NAME: DefaultBaseInterceptor
 TYPE: Utility
@@ -885,6 +899,22 @@ RESPONSIBILITIES:
 - EquipmentUnitRevenueSource
 - OperatorRevenueSource
 - PointRevenueSource
+
+COMPONENT_NAME: BusinessSettingMapper
+TYPE: Mapper
+PURPOSE: Converts business-setting views and history entries into domain models and builds BUSINESS-level change/reset requests.
+RESPONSIBILITIES:
+
+- Derive the value kind from `valueType` (`MINUTES` → minutes, `MONEY` → money, the three text types → text, anything else → unknown, read-only).
+- Keep typed JSON values as number or string; send `value` as a string (`SettingChangeRequest.value` is a `String`).
+- Read `params.violations[]` of `settings.value.invalid` for inline errors.
+  SOURCE: `projects/shared/src/core/mappers/business-setting.mapper.ts`
+  CALLS:
+- NONE
+  CALLED_BY:
+- BusinessSettingsStore
+- BusinessSettingHistoryStore
+- BusinessSettingDialogComponent
 
 COMPONENT_NAME: BalanceMapper
 TYPE: Utility
@@ -1360,6 +1390,37 @@ RESPONSIBILITIES:
 - StaffNameResolver
 - UserEditDialogComponent
 - UsersListComponent
+
+COMPONENT_NAME: BusinessSettingsStore
+TYPE: Store
+PURPOSE: Feature store for the business-settings catalogue (BUSINESS level only), provided by `BusinessSettingsPageComponent` so both tabs share it.
+RESPONSIBILITIES:
+
+- Load the whole list once (there is no single-setting read); expose loading / error / saving / per-key busy flags.
+- `change(key, {value, expectedVersion})` and `reset(setting)` send the loaded `version` as `expectedVersion` with `SUPPRESS_ERROR_NOTIFICATION` and replace the row with the returned view.
+  SOURCE: `projects/shared/src/core/state/business-settings.store.ts`
+  CALLS:
+- BusinessSettingsService — list, change, reset.
+- BusinessSettingMapper — response/request conversion.
+  CALLED_BY:
+- BusinessSettingListComponent
+- BusinessSettingDialogComponent
+- BusinessSettingHistoryComponent — setting filter options
+
+COMPONENT_NAME: BusinessSettingHistoryStore
+TYPE: Store
+PURPOSE: Paged change history of business settings, newest first, filtered by setting and period.
+RESPONSIBILITIES:
+
+- Turn the picked days into the half-open instant range `[from 00:00, to + 1 day 00:00)`; page size at most 100.
+- Resolve author names with one `UsersService.list(ids)` call per page; an id the backend does not return (or a failed call) is shown as the id.
+  SOURCE: `projects/shared/src/core/state/business-setting-history.store.ts`
+  CALLS:
+- BusinessSettingsService — `getChanges`.
+- UsersService — `list(ids)`.
+- BusinessSettingMapper — `changeFromResponse`.
+  CALLED_BY:
+- BusinessSettingHistoryComponent
 
 COMPONENT_NAME: TimeTravelStore
 TYPE: Store
@@ -2643,6 +2704,63 @@ RESPONSIBILITIES:
 - NotificationService / ErrorMessageResolver — failure reporting.
   CALLED_BY:
 - AdminRoutes
+
+COMPONENT_NAME: BusinessSettingsPageComponent
+TYPE: Gateway
+PURPOSE: `/business-settings` shell — title, subtitle and the "Settings" / "Change history" segmented tabs (child routes `values`, `history`).
+RESPONSIBILITIES:
+
+- Provide `BusinessSettingsStore` and `BusinessSettingHistoryStore` for both tabs.
+  SOURCE: `projects/admin/src/app/business-settings/business-settings-page.component.ts`
+  CALLS:
+- SegmentedTabsComponent — link-mode tabs.
+  CALLED_BY:
+- AdminRoutes (`BUSINESS_SETTINGS_ROUTES`)
+
+COMPONENT_NAME: BusinessSettingListComponent
+TYPE: Gateway
+PURPOSE: Table of every catalogue setting — description, key, effective value, source chip, installation default — with Change, Reset to default and History actions.
+RESPONSIBILITIES:
+
+- Format values per kind (minutes, money with the `unit` currency, text); unknown kinds are read-only.
+- Confirm a reset; on `settings.version.conflict` / `settings.key.not_editable` warn and reload the list.
+- "History" opens the history tab filtered to the setting (`?settingKey=`).
+  SOURCE: `projects/admin/src/app/business-settings/business-setting-list.component.ts`
+  CALLS:
+- BusinessSettingsStore — `load()`, `reset()`.
+- BusinessSettingDialogComponent — change a value.
+- ConfirmDialogComponent — reset confirmation.
+- NotificationService / ErrorMessageResolver — success and failure reporting.
+  CALLED_BY:
+- BusinessSettingsPageComponent
+
+COMPONENT_NAME: BusinessSettingDialogComponent
+TYPE: Gateway
+PURPOSE: Change one setting's business value: shows current and default values, the rules (rendered generically from `rules[].type`) and one input per kind.
+RESPONSIBILITIES:
+
+- Validate on the client with `businessSettingValueValidator` (range, scale, length, single_line; whole minutes for `MINUTES`); `pattern_parts` is checked by the server only.
+- Show `settings.value.invalid` `params.violations[]` inline on the field; bind `validation.*` field errors via `applyServerErrors`.
+- On `409 settings.version.conflict` warn, reload the list and close.
+  SOURCE: `projects/admin/src/app/business-settings/business-setting-dialog.component.ts`
+  CALLS:
+- BusinessSettingsStore — `change()`, `load()`.
+- describeSettingRule / describeSettingViolation / formatSettingValue — `shared/business-setting.meta.ts`.
+  CALLED_BY:
+- BusinessSettingListComponent
+
+COMPONENT_NAME: BusinessSettingHistoryComponent
+TYPE: Gateway
+PURPOSE: Change-history tab — filter by setting and from/to day, paged table (changed at, setting, kind with previous → new value, author).
+RESPONSIBILITIES:
+
+- Keep `settingKey`, `from`, `to`, `page`, `size` in the URL query and search on every change.
+  SOURCE: `projects/admin/src/app/business-settings/business-setting-history.component.ts`
+  CALLS:
+- BusinessSettingHistoryStore — `search()`, `reload()`.
+- BusinessSettingsStore — `ensureLoaded()` for the setting filter.
+  CALLED_BY:
+- BusinessSettingsPageComponent
 
 COMPONENT_NAME: UserCreateDialogComponent
 TYPE: Gateway

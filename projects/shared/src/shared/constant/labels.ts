@@ -852,4 +852,109 @@ export class Labels {
   static readonly NoWorkingPoint = $localize`No working point assigned`;
   static readonly EquipmentPoint = $localize`Rental point`;
   static readonly EquipmentInTransit = $localize`In transit`;
+
+  static readonly BusinessSettingsNavLabel = $localize`Business settings`;
+  static readonly BusinessSettingsSubtitle = $localize`Rules and defaults that apply to the whole rental network`;
+  static readonly BusinessSettingsTabSettings = $localize`:business settings tab:Settings`;
+  static readonly BusinessSettingsTabHistory = $localize`Change history`;
+  static readonly BusinessSettingsEmptyState = $localize`No business settings are available.`;
+  static readonly BusinessSettingsLoadError = $localize`Business settings could not be loaded.`;
+  static readonly BusinessSettingColumnSetting = $localize`:business setting column:Setting`;
+  static readonly BusinessSettingColumnValue = $localize`Current value`;
+  static readonly BusinessSettingColumnSource = $localize`:business setting column|Where the current value comes from:Source`;
+  static readonly BusinessSettingColumnDefault = $localize`Default`;
+  static readonly BusinessSettingColumnActions = $localize`:business setting column:Actions`;
+  static readonly BusinessSettingSourceBusiness = $localize`Set by administrator`;
+  static readonly BusinessSettingSourceDefault = $localize`:business setting source:Default`;
+  static readonly BusinessSettingSourcePoint = $localize`:business setting source:Rental point`;
+  static readonly BusinessSettingEditTooltip = $localize`Change value`;
+  static readonly BusinessSettingResetTooltip = $localize`Reset to default`;
+  static readonly BusinessSettingHistoryTooltip = $localize`Show change history`;
+  static readonly BusinessSettingDialogTitle = $localize`Change setting`;
+  static readonly BusinessSettingValueLabel = $localize`:business setting:New value`;
+  static readonly BusinessSettingCurrentValue = $localize`:business setting:Current value`;
+  static readonly BusinessSettingDefaultValue = $localize`Default value`;
+  static readonly BusinessSettingRulesTitle = $localize`Rules`;
+  static readonly BusinessSettingNoRules = $localize`No additional rules`;
+  static readonly BusinessSettingSaveSuccess = $localize`Setting saved`;
+  static readonly BusinessSettingUnsupported = $localize`This kind of setting cannot be edited in this version of the console.`;
+  static readonly BusinessSettingResetDialogTitle = $localize`Reset to default?`;
+  static readonly BusinessSettingResetConfirmButton = $localize`:business setting:Reset`;
+  static readonly BusinessSettingResetSuccess = $localize`Setting reset to default`;
+  static readonly BusinessSettingMinutesUnit = $localize`:minutes unit short:min`;
+
+  static businessSettingResetDialogMessage(description: string, value: string): string {
+    return $localize`“${description}:description:” will return to its default value: ${value}:value:.`;
+  }
+
+  static readonly SettingPatternPartDay = $localize`:date pattern part:day`;
+  static readonly SettingPatternPartMonth = $localize`:date pattern part:month`;
+  static readonly SettingPatternPartYear = $localize`:date pattern part:year`;
+  static readonly SettingPatternPartHour = $localize`:date pattern part:hour`;
+  static readonly SettingPatternPartMinute = $localize`:date pattern part:minute`;
+  static readonly SettingPatternPartTimeOfDay = $localize`:date pattern part:time of day`;
+
+  static settingRuleRange(min: string, max: string): string {
+    return $localize`From ${min}:min: to ${max}:max:`;
+  }
+  static settingRuleRangeMin(min: string): string {
+    return $localize`At least ${min}:min:`;
+  }
+  static settingRuleRangeMax(max: string): string {
+    return $localize`At most ${max}:max:`;
+  }
+  static settingRuleScale(maxScale: string): string {
+    return $localize`At most ${maxScale}:maxScale: decimal places`;
+  }
+  static settingRuleLength(min: string, max: string): string {
+    return $localize`From ${min}:min: to ${max}:max: characters`;
+  }
+  static settingRuleLengthMin(min: string): string {
+    return $localize`At least ${min}:min: characters`;
+  }
+  static settingRuleLengthMax(max: string): string {
+    return $localize`Up to ${max}:max: characters`;
+  }
+  static readonly SettingRuleSingleLine = $localize`A single line, without line breaks`;
+  static settingRuleRequiredParts(parts: string): string {
+    return $localize`Must contain: ${parts}:parts:`;
+  }
+  static settingRuleForbiddenParts(parts: string): string {
+    return $localize`Must not contain: ${parts}:parts:`;
+  }
+  static settingRuleUnknown(type: string): string {
+    return $localize`Rule: ${type}:type:`;
+  }
+
+  static readonly SettingViolationType = $localize`Enter a number.`;
+  static readonly SettingViolationWholeMinutes = $localize`Enter a whole number of minutes.`;
+  static settingViolationScale(maxScale: string): string {
+    return $localize`Use at most ${maxScale}:maxScale: decimal places.`;
+  }
+  static settingViolationRange(rule: string): string {
+    return $localize`Out of range: ${rule}:rule:.`;
+  }
+  static settingViolationLength(rule: string): string {
+    return $localize`Wrong length: ${rule}:rule:.`;
+  }
+  static readonly SettingViolationSingleLine = $localize`The text must be on a single line.`;
+  static readonly SettingViolationPatternMalformed = $localize`This is not a valid date and time pattern.`;
+  static readonly SettingViolationPatternUnformattable = $localize`This pattern cannot be used to print a date and time.`;
+  static settingViolationPatternMissing(parts: string): string {
+    return $localize`The pattern is missing: ${parts}:parts:.`;
+  }
+  static readonly SettingViolationPatternTimeOfDay = $localize`A date pattern must not contain a time of day.`;
+  static readonly SettingViolationBlank = $localize`The value must not be empty.`;
+  static settingViolationUnknown(code: string): string {
+    return $localize`The value breaks the rule “${code}:code:”.`;
+  }
+
+  static readonly SettingHistoryColumnChangedAt = $localize`Changed at`;
+  static readonly SettingHistoryColumnChange = $localize`:setting history column:Change`;
+  static readonly SettingHistoryColumnAuthor = $localize`Changed by`;
+  static readonly SettingHistoryKindSet = $localize`:setting change kind:New value`;
+  static readonly SettingHistoryKindReset = $localize`:setting change kind:Reset to default`;
+  static readonly SettingHistoryFilterAll = $localize`All settings`;
+  static readonly SettingHistoryEmptyState = $localize`No changes found for the selected filters.`;
+  static readonly SettingHistoryLoadError = $localize`The change history could not be loaded.`;
 }

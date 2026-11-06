@@ -25,3 +25,4 @@ export * from './user-settings.mapper';
 export * from './point.mapper';
 export * from './point-finance.mapper';
 export * from './returnable-rental.mapper';
+export * from './business-setting.mapper';
