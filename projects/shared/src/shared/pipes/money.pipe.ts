@@ -1,16 +1,15 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { BusinessCurrencyStore } from '../../core/state/business-currency.store';
 import type { Money } from '../../core/models';
 
-@Pipe({ name: 'money', standalone: true })
+@Pipe({ name: 'money', standalone: true, pure: false })
 export class MoneyPipe implements PipeTransform {
-  /**
-   * Format Money as "{amount} {currency}". Returns empty string for nullish value.
-   * When `signed` is true a leading "+" is added for positive amounts (negatives already carry "-").
-   */
+  private readonly currency = inject(BusinessCurrencyStore);
+
   transform(value: Money | null | undefined, signed = false): string {
     if (!value) return '';
     const amount = parseFloat(value.amount.toFixed(2));
     const sign = signed && amount > 0 ? '+' : '';
-    return `${sign}${amount} ${value.currency}`;
+    return `${sign}${amount} ${this.currency.symbol()}`.trimEnd();
   }
 }

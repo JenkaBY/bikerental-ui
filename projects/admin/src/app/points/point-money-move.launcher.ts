@@ -2,6 +2,7 @@ import { Injectable, Injector, inject, LOCALE_ID } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
 import {
+  BusinessCurrencyStore,
   formatFixedMoney,
   NotificationService,
   pointCollectedMessage,
@@ -17,6 +18,7 @@ export class PointMoneyMoveLauncher {
   private readonly dialog = inject(MatDialog);
   private readonly notifications = inject(NotificationService);
   private readonly locale = inject(LOCALE_ID);
+  private readonly currency = inject(BusinessCurrencyStore);
 
   open(injector: Injector, data: PointMoneyMoveData): Observable<PointMoneyMoveResult | undefined> {
     return this.dialog
@@ -28,7 +30,7 @@ export class PointMoneyMoveLauncher {
       .pipe(
         tap((result) => {
           if (result?.outcome !== 'done') return;
-          const amount = formatFixedMoney(result.amount, this.locale);
+          const amount = formatFixedMoney(result.amount, this.locale, this.currency.symbol());
           this.notifications.success(
             result.operation === 'SETTLEMENT'
               ? pointSettlementRecordedMessage(amount)

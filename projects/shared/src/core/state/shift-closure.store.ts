@@ -4,6 +4,7 @@ import { IdempotentAttempt } from '../../shared/utils/idempotent-attempt';
 import { describeShiftDifference } from '../../shared/utils/shift-closure-presentation';
 import { ShiftDifference, type ShiftDifferenceResult } from '../../shared/utils/shift-difference';
 import { PointFinanceService } from '../api/point-finance';
+import { BusinessCurrencyStore } from './business-currency.store';
 import { makeMoney } from '../mappers/money.mapper';
 import type { Money, RunningShift, ShiftClosure } from '../models';
 
@@ -23,6 +24,7 @@ function isValidCount(value: number | null): value is number {
 export class ShiftClosureStore {
   private readonly finance = inject(PointFinanceService);
   private readonly locale = inject(LOCALE_ID);
+  private readonly currency = inject(BusinessCurrencyStore);
   private readonly attempt = new IdempotentAttempt();
   private readonly _shift = signal<RunningShift | null>(null);
   private readonly _entered = signal<number | null>(null);
@@ -49,7 +51,9 @@ export class ShiftClosureStore {
   });
   readonly differenceText = computed<string | null>(() => {
     const difference = this.difference();
-    return difference ? describeShiftDifference(difference, this.locale) : null;
+    return difference
+      ? describeShiftDifference(difference, this.locale, this.currency.symbol())
+      : null;
   });
 
   init(shift: RunningShift, pointSlug: string | null): void {

@@ -180,6 +180,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.SETTINGS_LEVEL_NOT_PERMITTED]: $localize`This setting cannot be changed at this level.`,
   [ErrorCode.SETTINGS_VALUE_INVALID]: $localize`The value does not satisfy the setting's rules.`,
   [ErrorCode.SETTINGS_VERSION_CONFLICT]: $localize`This setting was changed by another administrator. The latest value has been loaded — review it and try again.`,
+  [ErrorCode.SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY]: $localize`The currency and its symbol are set for the whole business and cannot be changed for a single rental point.`,
   'validation.setting_scope_consistency': $localize`A rental point must be given exactly when the level is a rental point.`,
 
   // Operating scope

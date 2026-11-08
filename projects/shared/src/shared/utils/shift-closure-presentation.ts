@@ -17,10 +17,15 @@ export interface ShiftClosureSummary {
   readonly difference: ShiftDifferenceResult;
 }
 
-export function describeShiftDifference(difference: ShiftDifferenceResult, locale: string): string {
+export function describeShiftDifference(
+  difference: ShiftDifferenceResult,
+  locale: string,
+  symbol: string,
+): string {
   const magnitude = formatFixedMoney(
     makeMoney(Math.abs(difference.amount.amount), difference.amount.currency),
     locale,
+    symbol,
   );
   switch (difference.kind) {
     case 'SURPLUS':
@@ -35,12 +40,22 @@ export function describeShiftDifference(difference: ShiftDifferenceResult, local
 export function buildShiftClosureRows(
   closure: ShiftClosure,
   locale: string,
+  symbol: string,
 ): readonly FinanceConfirmRow[] {
   const difference = ShiftDifference.of(closure.countedAmount, closure.expectedCash);
   return [
-    { label: Labels.PointShiftExpectedCash, value: formatFixedMoney(closure.expectedCash, locale) },
-    { label: Labels.ShiftClosureCounted, value: formatFixedMoney(closure.countedAmount, locale) },
-    { label: Labels.ShiftClosureDifference, value: describeShiftDifference(difference, locale) },
+    {
+      label: Labels.PointShiftExpectedCash,
+      value: formatFixedMoney(closure.expectedCash, locale, symbol),
+    },
+    {
+      label: Labels.ShiftClosureCounted,
+      value: formatFixedMoney(closure.countedAmount, locale, symbol),
+    },
+    {
+      label: Labels.ShiftClosureDifference,
+      value: describeShiftDifference(difference, locale, symbol),
+    },
     { label: Labels.ShiftClosureClosedAt, value: formatDate(closure.closedAt, 'short', locale) },
   ];
 }
@@ -48,6 +63,7 @@ export function buildShiftClosureRows(
 export function buildShiftClosureConfirm<T>(
   summary: ShiftClosureSummary,
   locale: string,
+  symbol: string,
   execute: () => Observable<T>,
 ): FinanceConfirmData<T> {
   return {
@@ -56,12 +72,15 @@ export function buildShiftClosureConfirm<T>(
       { label: Labels.ShiftClosureShiftRow, value: String(summary.shift.sequence) },
       {
         label: Labels.PointShiftExpectedCash,
-        value: formatFixedMoney(summary.shift.expectedCash, locale),
+        value: formatFixedMoney(summary.shift.expectedCash, locale, symbol),
       },
-      { label: Labels.ShiftClosureCounted, value: formatFixedMoney(summary.counted, locale) },
+      {
+        label: Labels.ShiftClosureCounted,
+        value: formatFixedMoney(summary.counted, locale, symbol),
+      },
       {
         label: Labels.ShiftClosureDifference,
-        value: describeShiftDifference(summary.difference, locale),
+        value: describeShiftDifference(summary.difference, locale, symbol),
       },
     ],
     note: Labels.ShiftClosureNote,

@@ -7,6 +7,7 @@ import {
   LOCALE_ID,
 } from '@angular/core';
 import {
+  BusinessCurrencyStore,
   FixedMoneyPipe,
   formatFixedMoney,
   Labels,
@@ -48,6 +49,7 @@ import {
 export class PointMoneySummaryCardsComponent {
   protected readonly labels = Labels;
   private readonly locale = inject(LOCALE_ID);
+  private readonly currency = inject(BusinessCurrencyStore);
 
   readonly summary = input.required<PointMoneySummary>();
 
@@ -59,8 +61,8 @@ export class PointMoneySummaryCardsComponent {
     const { collected, terminalSettled } = this.summary();
     if (!collected || !terminalSettled) return null;
     return pointDepositedSplit(
-      formatFixedMoney(collected, this.locale),
-      formatFixedMoney(terminalSettled, this.locale),
+      formatFixedMoney(collected, this.locale, this.currency.symbol()),
+      formatFixedMoney(terminalSettled, this.locale, this.currency.symbol()),
     );
   });
 }

@@ -2,7 +2,12 @@ import { ChangeDetectionStrategy, Component, inject, LOCALE_ID } from '@angular/
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { FinanceReceiptStore, FixedMoneyPipe, Labels } from '@bikerental/shared';
+import {
+  BusinessCurrencyStore,
+  FinanceReceiptStore,
+  FixedMoneyPipe,
+  Labels,
+} from '@bikerental/shared';
 import { buildReceiptView, type FinanceReceiptView } from './finance-receipt.view';
 
 @Component({
@@ -44,7 +49,9 @@ export class OperatorFinanceReceiptComponent {
 
   constructor() {
     const receipt = inject(FinanceReceiptStore).take();
-    this.view = receipt ? buildReceiptView(receipt, inject(LOCALE_ID)) : null;
+    this.view = receipt
+      ? buildReceiptView(receipt, inject(LOCALE_ID), inject(BusinessCurrencyStore).symbol())
+      : null;
     if (!this.view) this.onDone();
   }
 

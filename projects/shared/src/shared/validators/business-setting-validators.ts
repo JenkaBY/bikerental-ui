@@ -58,6 +58,8 @@ function breaks(rule: SettingRule, raw: string, value: SettingValue | null): boo
       return outside(raw.length, p['minLength'], p['maxLength']);
     case 'single_line':
       return /[\r\n]/.test(raw);
+    case 'trimmed':
+      return raw !== raw.trim();
     default:
       return false;
   }

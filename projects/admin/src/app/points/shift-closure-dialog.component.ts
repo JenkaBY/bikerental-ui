@@ -16,6 +16,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import {
+  BusinessCurrencyStore,
   type ApiError,
   buildShiftClosureConfirm,
   buildShiftClosureRows,
@@ -96,6 +97,7 @@ export class ShiftClosureDialogComponent {
   private readonly notifications = inject(NotificationService);
   private readonly resolver = inject(ErrorMessageResolver);
   private readonly locale = inject(LOCALE_ID);
+  private readonly currency = inject(BusinessCurrencyStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly form = viewChild(ShiftCountFormComponent);
 
@@ -105,7 +107,7 @@ export class ShiftClosureDialogComponent {
   });
   protected readonly resultRows = computed(() => {
     const closure = this.store.closure();
-    return closure ? buildShiftClosureRows(closure, this.locale) : [];
+    return closure ? buildShiftClosureRows(closure, this.locale, this.currency.symbol()) : [];
   });
 
   constructor() {
@@ -123,8 +125,11 @@ export class ShiftClosureDialogComponent {
         FinanceConfirmData<ShiftClosure>,
         FinanceConfirmResult<ShiftClosure>
       >(FinanceConfirmDialogComponent, {
-        data: buildShiftClosureConfirm({ shift, counted, difference }, this.locale, () =>
-          this.store.execute(),
+        data: buildShiftClosureConfirm(
+          { shift, counted, difference },
+          this.locale,
+          this.currency.symbol(),
+          () => this.store.execute(),
         ),
       })
       .afterClosed()

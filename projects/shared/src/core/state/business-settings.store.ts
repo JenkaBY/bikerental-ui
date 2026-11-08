@@ -5,6 +5,7 @@ import type { SettingViewResponse } from '@api-models';
 import { BusinessSettingsService } from '../api/generated';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { BusinessSettingMapper } from '../mappers/business-setting.mapper';
+import { BusinessCurrencyStore, CURRENCY_CODE_KEY } from './business-currency.store';
 import type { BusinessSetting, BusinessSettingChangeWrite } from '../models';
 
 interface BusinessSettingsState {
@@ -19,6 +20,7 @@ interface BusinessSettingsState {
 @Injectable()
 export class BusinessSettingsStore {
   private readonly service = inject(BusinessSettingsService);
+  private readonly currency = inject(BusinessCurrencyStore);
 
   private readonly _state = signal<BusinessSettingsState>({
     settings: [],
@@ -47,7 +49,10 @@ export class BusinessSettingsStore {
         finalize(() => this.patch({ loading: false })),
       )
       .subscribe({
-        next: (settings) => this.patch({ settings, loaded: true }),
+        next: (settings) => {
+          this.patch({ settings, loaded: true });
+          this.currency.applyFrom(settings);
+        },
         error: () => this.patch({ error: true }),
       });
   }
@@ -66,6 +71,7 @@ export class BusinessSettingsStore {
       .pipe(
         map(BusinessSettingMapper.fromResponse),
         tap((setting) => this.replace(setting)),
+        tap((setting) => this.refreshAfterCurrencyChange(setting.key)),
         finalize(() => this.patch({ saving: false })),
       );
   }
@@ -79,8 +85,14 @@ export class BusinessSettingsStore {
       .pipe(
         map(BusinessSettingMapper.fromResponse),
         tap((updated) => this.replace(updated)),
+        tap((updated) => this.refreshAfterCurrencyChange(updated.key)),
         finalize(() => this.setBusy(setting.key, false)),
       );
+  }
+
+  private refreshAfterCurrencyChange(key: string): void {
+    if (key === CURRENCY_CODE_KEY) this.load();
+    else this.currency.applyFrom(this._state().settings);
   }
 
   private replace(setting: BusinessSetting): void {

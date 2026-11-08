@@ -103,6 +103,7 @@ export const ErrorCode = {
   SETTINGS_LEVEL_NOT_PERMITTED: 'settings.level.not_permitted',
   SETTINGS_VALUE_INVALID: 'settings.value.invalid',
   SETTINGS_VERSION_CONFLICT: 'settings.version.conflict',
+  SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY: 'settings.currency.business_level_only',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -174,6 +175,7 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.SETTINGS_KEY_NOT_EDITABLE,
   ErrorCode.SETTINGS_LEVEL_NOT_PERMITTED,
   ErrorCode.SETTINGS_VERSION_CONFLICT,
+  ErrorCode.SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY,
 ]);
 
 const CLIENT_DEFECT_CODES = new Set<string>([

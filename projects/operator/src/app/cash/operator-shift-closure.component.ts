@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import {
+  BusinessCurrencyStore,
   type ApiError,
   buildShiftClosureConfirm,
   CurrentPointStore,
@@ -98,6 +99,7 @@ export class OperatorShiftClosureComponent {
   private readonly resolver = inject(ErrorMessageResolver);
   private readonly receipts = inject(FinanceReceiptStore);
   private readonly locale = inject(LOCALE_ID);
+  private readonly currency = inject(BusinessCurrencyStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly form = viewChild(ShiftCountFormComponent);
   private left = false;
@@ -148,8 +150,11 @@ export class OperatorShiftClosureComponent {
         FinanceConfirmData<ShiftClosure>,
         FinanceConfirmResult<ShiftClosure>
       >(FinanceConfirmDialogComponent, {
-        data: buildShiftClosureConfirm({ shift, counted, difference }, this.locale, () =>
-          this.closure.execute(),
+        data: buildShiftClosureConfirm(
+          { shift, counted, difference },
+          this.locale,
+          this.currency.symbol(),
+          () => this.closure.execute(),
         ),
       })
       .afterClosed()

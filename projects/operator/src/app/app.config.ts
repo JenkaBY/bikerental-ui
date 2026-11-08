@@ -19,6 +19,7 @@ import {
   apiAuthInterceptor,
   APP_BRAND,
   AuthService,
+  BusinessCurrencyStore,
   BRAND,
   CurrentPointStore,
   environment,
@@ -60,6 +61,7 @@ export const appConfig: ApplicationConfig = {
       const auth = inject(AuthService);
       const lookupFacade = inject(LookupInitializerFacade);
       const pointStore = inject(CurrentPointStore);
+      const currency = inject(BusinessCurrencyStore);
       return firstValueFrom(
         auth.checkAuth().pipe(
           tap((result) => {
@@ -72,6 +74,7 @@ export const appConfig: ApplicationConfig = {
                 })
                 .subscribe();
               pointStore.load().subscribe();
+              currency.load();
             }
           }),
         ),
