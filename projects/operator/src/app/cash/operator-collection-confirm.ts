@@ -10,18 +10,22 @@ export interface OperatorCollectionSummary {
 export function buildCollectionConfirm<T>(
   summary: OperatorCollectionSummary,
   locale: string,
+  symbol: string,
   execute: () => Observable<T>,
 ): FinanceConfirmData<T> {
   return {
     title: Labels.OperatorHandInConfirmTitle,
     rows: [
-      { label: Labels.PointMoveAmount, value: formatFixedMoney(summary.amount, locale) },
+      { label: Labels.PointMoveAmount, value: formatFixedMoney(summary.amount, locale, symbol) },
       {
         label: Labels.PointMoveSourceLabel,
         value: `${summary.pointName} · ${Labels.PointCashCardTitle}`,
       },
       { label: Labels.PointMoveDestinationLabel, value: Labels.PointMoveBankAccount },
-      { label: Labels.PointMoveRemainingRow, value: formatFixedMoney(summary.remaining, locale) },
+      {
+        label: Labels.PointMoveRemainingRow,
+        value: formatFixedMoney(summary.remaining, locale, symbol),
+      },
     ],
     note: Labels.OperatorHandInNote,
     backLabel: Labels.Back,

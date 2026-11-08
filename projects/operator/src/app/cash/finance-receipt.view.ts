@@ -19,7 +19,11 @@ export interface FinanceReceiptView {
   readonly rows: readonly FinanceReceiptRow[];
 }
 
-export function buildReceiptView(receipt: FinanceReceipt, locale: string): FinanceReceiptView {
+export function buildReceiptView(
+  receipt: FinanceReceipt,
+  locale: string,
+  symbol: string,
+): FinanceReceiptView {
   switch (receipt.kind) {
     case 'COLLECTION': {
       const { collection } = receipt;
@@ -35,7 +39,7 @@ export function buildReceiptView(receipt: FinanceReceipt, locale: string): Finan
           },
           {
             label: Labels.OperatorReceiptRemaining,
-            value: formatFixedMoney(collection.cashPosition, locale),
+            value: formatFixedMoney(collection.cashPosition, locale, symbol),
           },
         ],
       };
@@ -46,7 +50,7 @@ export function buildReceiptView(receipt: FinanceReceipt, locale: string): Finan
       return {
         title: shiftClosedTitle(closure.sequence),
         amount: null,
-        rows: [...pointRows, ...buildShiftClosureRows(closure, locale)],
+        rows: [...pointRows, ...buildShiftClosureRows(closure, locale, symbol)],
       };
     }
   }

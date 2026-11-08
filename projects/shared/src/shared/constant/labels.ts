@@ -396,7 +396,6 @@ export class Labels {
   static readonly DamageReportPenaltyPendingInfo = $localize`Damage report created. The penalty couldn't be collected yet — it will be charged automatically once the customer tops up.`;
   static readonly ItemsAlreadyReturned = $localize`items already returned`;
   static readonly Apply = $localize`Apply`;
-  static readonly CurrencySymbol = $localize`р.`;
 
   static readonly PenaltyStatusPending = $localize`Not collected yet`;
   static readonly PenaltyStatusSettled = $localize`Collected`;
@@ -916,6 +915,7 @@ export class Labels {
     return $localize`Up to ${max}:max: characters`;
   }
   static readonly SettingRuleSingleLine = $localize`A single line, without line breaks`;
+  static readonly SettingRuleTrimmed = $localize`No spaces at the start or end`;
   static settingRuleRequiredParts(parts: string): string {
     return $localize`Must contain: ${parts}:parts:`;
   }
@@ -938,6 +938,8 @@ export class Labels {
     return $localize`Wrong length: ${rule}:rule:.`;
   }
   static readonly SettingViolationSingleLine = $localize`The text must be on a single line.`;
+  static readonly SettingViolationTrimmed = $localize`Remove the spaces at the start or end.`;
+  static readonly SettingViolationCurrencyCode = $localize`Enter a valid three-letter currency code, for example EUR.`;
   static readonly SettingViolationPatternMalformed = $localize`This is not a valid date and time pattern.`;
   static readonly SettingViolationPatternUnformattable = $localize`This pattern cannot be used to print a date and time.`;
   static settingViolationPatternMissing(parts: string): string {
@@ -973,6 +975,10 @@ export class Labels {
   static readonly SettingAgreementDatePatternLabel = $localize`:business setting name:Agreement title date format`;
   static readonly SettingAgreementDatePatternHint = $localize`How the date is written in the title of the rental agreement document.`;
   static readonly SettingSignaturePlaceholderLabel = $localize`:business setting name:Signature box text`;
+  static readonly SettingCurrencyLabel = $localize`:business setting name:Currency`;
+  static readonly SettingCurrencyHint = $localize`The three-letter ISO code of the business currency, for example EUR or USD. Changing it clears the custom symbol.`;
+  static readonly SettingCurrencySymbolLabel = $localize`:business setting name:Currency symbol`;
+  static readonly SettingCurrencySymbolHint = $localize`Shown next to amounts on screen. Documents keep the currency code. Without a value, the default symbol of the currency is used.`;
   static readonly SettingSignaturePlaceholderHint = $localize`The text printed in the empty signature box of the rental agreement document.`;
 
   static readonly DatePatternLegendTitle = $localize`Pattern symbols`;

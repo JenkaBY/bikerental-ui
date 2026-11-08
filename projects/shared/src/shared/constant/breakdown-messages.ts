@@ -18,10 +18,9 @@ export function resolveTariffCodeLabel(bd: RentalCostBreakdown): string {
   return Labels.PricingTypeTitles[slug] ?? '';
 }
 
-export function resolveBreakdownMessage(bd: RentalCostBreakdown): string {
+export function resolveBreakdownMessage(bd: RentalCostBreakdown, currency: string): string {
   const code = bd.breakdownPatternCode;
   const p = bd.params ?? {};
-  const currency = bd.itemCost?.currency ?? 'p.';
 
   const raw = (key: string): string => {
     const value = p[key];

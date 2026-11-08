@@ -17,6 +17,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import {
+  BusinessCurrencyStore,
   type ApiError,
   type CashCollection,
   CurrentPointStore,
@@ -100,18 +101,21 @@ export class OperatorCashCollectionComponent {
   private readonly resolver = inject(ErrorMessageResolver);
   private readonly receipts = inject(FinanceReceiptStore);
   private readonly locale = inject(LOCALE_ID);
+  private readonly currency = inject(BusinessCurrencyStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly form = viewChild(OperatorCollectionFormComponent);
   private left = false;
   private readonly refreshed = signal(false);
 
   protected readonly remainingText = computed(() =>
-    pointMoveRemaining(formatFixedMoney(this.collection.remaining(), this.locale)),
+    pointMoveRemaining(
+      formatFixedMoney(this.collection.remaining(), this.locale, this.currency.symbol()),
+    ),
   );
   protected readonly submitLabel = computed(() => {
     const handIn = this.collection.handIn();
     return handIn
-      ? operatorHandInAmount(formatFixedMoney(handIn, this.locale))
+      ? operatorHandInAmount(formatFixedMoney(handIn, this.locale, this.currency.symbol()))
       : Labels.OperatorHandInCash;
   });
 
@@ -174,6 +178,7 @@ export class OperatorCashCollectionComponent {
         data: buildCollectionConfirm(
           { pointName, amount: money, remaining: this.collection.remaining() },
           this.locale,
+          this.currency.symbol(),
           () => this.collection.execute(amount),
         ),
       })

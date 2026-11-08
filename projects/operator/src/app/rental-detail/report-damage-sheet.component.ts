@@ -11,6 +11,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { v4 as uuid } from 'uuid';
 import type { DamageCondition, DamageReport, RentalEquipmentItem } from '@ui-models';
 import {
+  BusinessCurrencyStore,
   ApiErrorParser,
   applyServerErrors,
   clearServerErrors,
@@ -128,7 +129,7 @@ export type ReportDamageResult = { outcome: 'created'; report: DamageReport } | 
             formControlName="penaltyAmount"
             [appMaxDecimals]="2"
           />
-          <span matTextSuffix>{{ Labels.CurrencySymbol }}</span>
+          <span matTextSuffix>{{ currencySymbol() }}</span>
           @if (form.controls.penaltyAmount.hasError('server')) {
             <mat-error>{{ form.controls.penaltyAmount.getError('server') }}</mat-error>
           }
@@ -159,6 +160,7 @@ export class ReportDamageSheetComponent {
   private readonly sheetRef = inject(
     MatBottomSheetRef<ReportDamageSheetComponent, ReportDamageResult>,
   );
+  protected readonly currencySymbol = inject(BusinessCurrencyStore).symbol;
   private readonly store = inject(DamageReportCreateStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly notifications = inject(NotificationService);

@@ -19,6 +19,7 @@ export interface PointMoneyMoveSummary {
 export function buildMoveConfirmData<T>(
   summary: PointMoneyMoveSummary,
   locale: string,
+  symbol: string,
   execute: () => Observable<T>,
 ): FinanceConfirmData<T> {
   const source = POINT_MOVE_SOURCE_LABELS[summary.operation];
@@ -28,11 +29,14 @@ export function buildMoveConfirmData<T>(
   return {
     title: POINT_MOVE_CONFIRM_TITLES[summary.operation],
     rows: [
-      { label: Labels.PointMoveAmount, value: formatFixedMoney(summary.amount, locale) },
+      { label: Labels.PointMoveAmount, value: formatFixedMoney(summary.amount, locale, symbol) },
       { label: Labels.PointMoveSourceLabel, value: `${summary.pointName} · ${source}` },
       { label: Labels.PointMoveDestinationLabel, value: Labels.PointMoveBankAccount },
       ...dateRows,
-      { label: Labels.PointMoveRemainingRow, value: formatFixedMoney(summary.remaining, locale) },
+      {
+        label: Labels.PointMoveRemainingRow,
+        value: formatFixedMoney(summary.remaining, locale, symbol),
+      },
     ],
     note: Labels.PointMoveNote,
     backLabel: Labels.Back,

@@ -20,6 +20,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {
+  BusinessCurrencyStore,
   type ApiError,
   applyServerErrors,
   CancelButtonComponent,
@@ -131,6 +132,7 @@ export class PointMoneyMoveDialogComponent {
   private readonly resolver = inject(ErrorMessageResolver);
   private readonly positions = inject(PointPositionsStore, { optional: true });
   private readonly locale = inject(LOCALE_ID);
+  private readonly currency = inject(BusinessCurrencyStore);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -151,7 +153,9 @@ export class PointMoneyMoveDialogComponent {
     statementDate: this.statementDate,
   });
   protected readonly remainingText = computed(() =>
-    pointMoveRemaining(formatFixedMoney(this.store.remaining(), this.locale)),
+    pointMoveRemaining(
+      formatFixedMoney(this.store.remaining(), this.locale, this.currency.symbol()),
+    ),
   );
 
   constructor() {
@@ -196,7 +200,9 @@ export class PointMoneyMoveDialogComponent {
         FinanceConfirmData<PointMoneyMoveOutcome>,
         FinanceConfirmResult<PointMoneyMoveOutcome>
       >(FinanceConfirmDialogComponent, {
-        data: buildMoveConfirmData(summary, this.locale, () => this.store.execute(amount, date)),
+        data: buildMoveConfirmData(summary, this.locale, this.currency.symbol(), () =>
+          this.store.execute(amount, date),
+        ),
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))

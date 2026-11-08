@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import type { RentalCostBreakdown } from '../../../core/models';
+import { BusinessCurrencyStore } from '../../../core/state/business-currency.store';
 import { Labels } from '../../constant/labels';
 import { resolveBreakdownMessage, resolveTariffCodeLabel } from '../../constant/breakdown-messages';
 
@@ -21,9 +22,11 @@ import { resolveBreakdownMessage, resolveTariffCodeLabel } from '../../constant/
 export class CostBreakdownComponent {
   readonly breakdown = input<RentalCostBreakdown | null>(null);
 
+  private readonly currency = inject(BusinessCurrencyStore);
+
   protected readonly text = computed(() => {
     const bd = this.breakdown();
-    return bd ? resolveBreakdownMessage(bd) : Labels.NotAvailable;
+    return bd ? resolveBreakdownMessage(bd, this.currency.symbol()) : Labels.NotAvailable;
   });
 
   protected readonly tariffLabel = computed(() => {

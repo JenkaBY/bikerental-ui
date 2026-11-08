@@ -1,6 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Labels, makeMoney, MoneyPipe, SegmentedTabsComponent } from '@bikerental/shared';
+import {
+  BusinessCurrencyStore,
+  Labels,
+  makeMoney,
+  MoneyPipe,
+  SegmentedTabsComponent,
+} from '@bikerental/shared';
 import type {
   RentalCostEstimate,
   RentalPriceMode,
@@ -90,9 +96,7 @@ export class RentalPriceControlComponent {
     ];
   });
 
-  protected readonly currency = computed(
-    () => this.estimate()?.totalCost.currency ?? this.zeroMoney.currency,
-  );
+  protected readonly currency = inject(BusinessCurrencyStore).symbol;
 
   protected onModeSelect(id: string): void {
     const mode = id as RentalPriceMode;

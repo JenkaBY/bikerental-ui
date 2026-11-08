@@ -8,7 +8,7 @@ import { CustomerFinanceStore } from '../../../core/state/customer-finance.store
 import { AuthService } from '../../../core/auth/auth.service';
 import { CurrentPointStore } from '../../../core/state/current-point.store';
 
-const availableBalance = { amount: 100, currency: 'BYN' };
+const availableBalance = { amount: 100, currency: '' };
 
 const makeFinanceService = () => ({
   recordWithdrawal: vi.fn().mockReturnValue(of({ transactionId: 't1', recordedAt: new Date() })),

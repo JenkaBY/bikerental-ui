@@ -72,6 +72,14 @@ const SETTING_TEXTS: Readonly<Record<string, SettingText>> = {
     label: Labels.SettingAgreementDatePatternLabel,
     hint: Labels.SettingAgreementDatePatternHint,
   },
+  'app.business.currency': {
+    label: Labels.SettingCurrencyLabel,
+    hint: Labels.SettingCurrencyHint,
+  },
+  'app.business.currency-symbol': {
+    label: Labels.SettingCurrencySymbolLabel,
+    hint: Labels.SettingCurrencySymbolHint,
+  },
   'app.agreement.pdf.signature-placeholder-label': {
     label: Labels.SettingSignaturePlaceholderLabel,
     hint: Labels.SettingSignaturePlaceholderHint,
@@ -160,6 +168,8 @@ export function describeSettingRule(rule: SettingRule): string {
       });
     case 'single_line':
       return Labels.SettingRuleSingleLine;
+    case 'trimmed':
+      return Labels.SettingRuleTrimmed;
     case 'pattern_parts':
       return describePatternParts(p);
     default:
@@ -182,6 +192,10 @@ export function describeSettingViolation(violation: SettingViolation): string {
       return Labels.settingViolationLength(describeSettingRule({ type: 'length', params: r }));
     case 'single_line':
       return Labels.SettingViolationSingleLine;
+    case 'trimmed':
+      return Labels.SettingViolationTrimmed;
+    case 'currency_code':
+      return Labels.SettingViolationCurrencyCode;
     case 'pattern_malformed':
       return Labels.SettingViolationPatternMalformed;
     case 'pattern_unformattable':

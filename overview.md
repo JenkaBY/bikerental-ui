@@ -1402,10 +1402,28 @@ RESPONSIBILITIES:
   CALLS:
 - BusinessSettingsService — list, change, reset.
 - BusinessSettingMapper — response/request conversion.
+- BusinessCurrencyStore — `applyFrom()` after every load; a change or reset of `app.business.currency` triggers a reload so the symbol and `MONEY` units refresh.
   CALLED_BY:
 - BusinessSettingListComponent
 - BusinessSettingDialogComponent
 - BusinessSettingHistoryComponent — setting filter options
+
+COMPONENT_NAME: BusinessCurrencyStore
+TYPE: Store
+PURPOSE: Root store holding the business currency code and display symbol, read once at startup and used for every on-screen amount.
+RESPONSIBILITIES:
+
+- `load()` reads `app.business.currency` and `app.business.currency-symbol` (`effectiveValue`) from the settings catalogue; failures are swallowed and leave the symbol empty.
+- `symbol` falls back to the code when no symbol is set; `applyFrom(settings)` refreshes both after the console reloads or edits a setting.
+- `MoneyPipe`, `FixedMoneyPipe` and `formatFixedMoney(value, locale, symbol)` render this symbol; `Money.currency` is no longer displayed. Printed documents keep the ISO code.
+  SOURCE: `projects/shared/src/core/state/business-currency.store.ts`
+  CALLS:
+- BusinessSettingsService — `getAll`.
+- BusinessSettingMapper — response conversion.
+  CALLED_BY:
+- Admin and operator `provideAppInitializer` (after authentication)
+- BusinessSettingsStore — refresh after load, change and reset
+- MoneyPipe, FixedMoneyPipe, CostBreakdownComponent and the cash/shift view builders' callers
 
 COMPONENT_NAME: BusinessSettingHistoryStore
 TYPE: Store

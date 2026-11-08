@@ -1,5 +1,5 @@
 import { type Money } from '../models';
 
-export function makeMoney(amount: number, currency = 'p.'): Money {
+export function makeMoney(amount: number, currency = ''): Money {
   return { amount, currency };
 }

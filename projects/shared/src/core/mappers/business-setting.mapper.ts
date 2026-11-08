@@ -21,6 +21,7 @@ const KIND_BY_VALUE_TYPE: Record<string, SettingValueKind> = {
   DATE_TIME_PATTERN: 'text',
   DATE_PATTERN: 'text',
   SINGLE_LINE_TEXT: 'text',
+  CURRENCY_CODE: 'text',
 };
 
 export class BusinessSettingMapper {

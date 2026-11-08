@@ -19,6 +19,7 @@ import {
   apiAuthInterceptor,
   APP_BRAND,
   AuthService,
+  BusinessCurrencyStore,
   BRAND,
   environment,
   errorInterceptor,
@@ -52,11 +53,13 @@ export const appConfig: ApplicationConfig = {
       registerLocaleData(localeRu, 'ru');
       const auth = inject(AuthService);
       const lookupFacade = inject(LookupInitializerFacade);
+      const currency = inject(BusinessCurrencyStore);
       return firstValueFrom(
         auth.checkAuth().pipe(
           tap((result) => {
             if (result.isAuthenticated) {
               lookupFacade.init({ loadEquipmentType: true, loadPricingType: true }).subscribe();
+              currency.load();
             }
           }),
         ),
