@@ -1,8 +1,14 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -13,6 +19,7 @@ import {
   businessSettingValueValidator,
   CancelButtonComponent,
   clearServerErrors,
+  ConfirmDialogComponent,
   datePatternSymbols,
   describeSettingRule,
   describeSettingViolation,
@@ -28,18 +35,27 @@ import {
   settingHint,
   settingLabel,
   settingUnitSuffix,
+  TIME_ZONE_VALUE_TYPE,
+  zoneWithOffset,
 } from '@bikerental/shared';
-import type { ApiError } from '@bikerental/shared';
+import type { ApiError, ConfirmDialogData } from '@bikerental/shared';
 import type { BusinessSetting, SettingValue, SettingViolation } from '@ui-models';
 import { DatePatternLegendComponent } from './date-pattern-legend.component';
 
+export interface SettingDialogPoint {
+  slug: string;
+  name: string;
+}
+
 export interface BusinessSettingDialogData {
   setting: BusinessSetting;
+  point?: SettingDialogPoint;
 }
 
 const RELOAD_CODES = new Set<string>([
   ErrorCode.SETTINGS_VERSION_CONFLICT,
   ErrorCode.SETTINGS_KEY_NOT_EDITABLE,
+  ErrorCode.RESOURCE_NOT_FOUND,
 ]);
 
 @Component({
@@ -55,7 +71,7 @@ const RELOAD_CODES = new Set<string>([
     DatePatternLegendComponent,
   ],
   template: `
-    <h2 mat-dialog-title>{{ Labels.BusinessSettingDialogTitle }}</h2>
+    <h2 mat-dialog-title>{{ title }}</h2>
     <mat-dialog-content>
       <div class="flex flex-col gap-3 pt-1">
         <div>
@@ -68,7 +84,7 @@ const RELOAD_CODES = new Set<string>([
 
         <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
           <dt class="text-slate-500">{{ Labels.BusinessSettingCurrentValue }}</dt>
-          <dd class="font-mono">{{ format(setting.effectiveValue) }}</dd>
+          <dd class="font-mono">{{ format(currentValue) }}</dd>
           <dt class="text-slate-500">{{ Labels.BusinessSettingDefaultValue }}</dt>
           <dd class="font-mono">{{ format(setting.installationDefault) }}</dd>
         </dl>
@@ -134,7 +150,17 @@ export class BusinessSettingDialogComponent {
   protected readonly SERVER_ERROR_KEY = SERVER_ERROR_KEY;
   protected readonly SETTING_VIOLATIONS_KEY = SETTING_VIOLATIONS_KEY;
   protected readonly store = inject(BusinessSettingsStore);
-  protected readonly setting = inject<BusinessSettingDialogData>(MAT_DIALOG_DATA).setting;
+  private readonly data = inject<BusinessSettingDialogData>(MAT_DIALOG_DATA);
+  protected readonly setting = this.data.setting;
+  private readonly point = this.data.point;
+  private readonly ownPointValue =
+    this.setting.pointValues.find((p) => p.pointSlug === this.point?.slug) ?? null;
+  protected readonly currentValue = this.ownPointValue?.value ?? this.setting.effectiveValue;
+  protected readonly title = this.point
+    ? Labels.settingPointDialogTitle(this.point.name)
+    : Labels.BusinessSettingDialogTitle;
+  private readonly isTimeZone = this.setting.valueType === TIME_ZONE_VALUE_TYPE;
+  private readonly dialog = inject(MatDialog);
 
   private readonly dialogRef =
     inject<MatDialogRef<BusinessSettingDialogComponent, boolean>>(MatDialogRef);
@@ -155,6 +181,7 @@ export class BusinessSettingDialogComponent {
   protected readonly form = new FormGroup({ value: this.value });
 
   protected format(value: SettingValue | null): string {
+    if (this.isTimeZone) return zoneWithOffset(value);
     return formatSettingValue(value, this.setting.kind, this.setting.unit);
   }
 
@@ -166,10 +193,47 @@ export class BusinessSettingDialogComponent {
     if (this.form.invalid || this.store.saving()) return;
     const parsed = parseSettingInput(String(this.value.value), this.setting.kind);
     if (parsed === null) return;
+    if (!this.needsZoneConfirmation(parsed)) {
+      this.submit(parsed);
+      return;
+    }
+    this.dialog
+      .open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+        data: this.zoneConfirmation(parsed),
+      })
+      .afterClosed()
+      .pipe(
+        filter((confirmed) => confirmed === true),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.submit(parsed));
+  }
 
+  private needsZoneConfirmation(value: SettingValue): boolean {
+    return !!this.point && this.isTimeZone && value !== this.setting.effectiveValue;
+  }
+
+  private zoneConfirmation(value: SettingValue): ConfirmDialogData {
+    return {
+      title: Labels.SettingPointZoneConfirmTitle,
+      message: Labels.settingPointZoneConfirmMessage(
+        this.point?.name ?? '',
+        zoneWithOffset(value),
+        zoneWithOffset(this.setting.effectiveValue),
+      ),
+      confirmLabel: Labels.SettingPointZoneConfirmButton,
+      cancelLabel: Labels.Cancel,
+    };
+  }
+
+  private submit(parsed: SettingValue): void {
     clearServerErrors(this.form);
     this.store
-      .change(this.setting.key, { value: parsed, expectedVersion: this.setting.version })
+      .change(this.setting.key, {
+        value: parsed,
+        expectedVersion: this.point ? (this.ownPointValue?.version ?? 0) : this.setting.version,
+        pointSlug: this.point?.slug,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -206,7 +270,9 @@ export class BusinessSettingDialogComponent {
   }
 
   private initialValue(): string {
-    const current = this.setting.businessValue ?? this.setting.effectiveValue;
+    const current = this.point
+      ? this.currentValue
+      : (this.setting.businessValue ?? this.setting.effectiveValue);
     if (current === null) return '';
     if (this.setting.kind === 'money' && typeof current === 'number') return current.toFixed(2);
     return String(current);

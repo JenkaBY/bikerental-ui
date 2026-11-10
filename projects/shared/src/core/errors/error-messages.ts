@@ -181,6 +181,8 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.SETTINGS_VALUE_INVALID]: $localize`The value does not satisfy the setting's rules.`,
   [ErrorCode.SETTINGS_VERSION_CONFLICT]: $localize`This setting was changed by another administrator. The latest value has been loaded — review it and try again.`,
   [ErrorCode.SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY]: $localize`The currency and its symbol are set for the whole business and cannot be changed for a single rental point.`,
+  [ErrorCode.SETTINGS_LOCATION_CITY_NOT_IN_COUNTRY]: cityNotInCountryMessage,
+  [ErrorCode.SETTINGS_LOCATION_BUSINESS_LEVEL_ONLY]: $localize`The country and city are set for the whole business and cannot be changed for a single rental point.`,
   'validation.setting_scope_consistency': $localize`A rental point must be given exactly when the level is a rental point.`,
 
   // Operating scope
@@ -247,6 +249,16 @@ function maintenanceDamageReportPointsMixedMessage(params: Record<string, unknow
     return $localize`The selected equipment belongs to several rental points (${pointSlugs.map(String).join(', ')}:pointSlugs:). Name the rental, or file a separate report for each point's equipment.`;
   }
   return $localize`The selected equipment belongs to several rental points. Name the rental, or file a separate report for each point's equipment.`;
+}
+
+function cityNotInCountryMessage(params: Record<string, unknown>): string {
+  const city = params['city'];
+  const cityCountry = params['cityCountry'];
+  const declaredCountry = params['declaredCountry'];
+  if (city && cityCountry && declaredCountry) {
+    return $localize`${String(city)}:city: is in ${String(cityCountry)}:cityCountry:, not in ${String(declaredCountry)}:declaredCountry:. Change the city first, or choose a matching country.`;
+  }
+  return $localize`The city is not in the declared country. Change the city first, or choose a matching country.`;
 }
 
 function insufficientBalanceMessage(params: Record<string, unknown>): string {

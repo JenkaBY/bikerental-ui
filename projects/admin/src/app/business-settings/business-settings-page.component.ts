@@ -5,6 +5,7 @@ import {
   BusinessSettingHistoryStore,
   BusinessSettingsStore,
   Labels,
+  PointAdminStore,
   SegmentedTabsComponent,
 } from '@bikerental/shared';
 import type { SegmentTab } from '@bikerental/shared';
@@ -12,7 +13,7 @@ import type { SegmentTab } from '@bikerental/shared';
 @Component({
   selector: 'app-business-settings-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [BusinessSettingsStore, BusinessSettingHistoryStore],
+  providers: [BusinessSettingsStore, BusinessSettingHistoryStore, PointAdminStore],
   imports: [MatCardModule, RouterOutlet, SegmentedTabsComponent],
   template: `
     <mat-card>

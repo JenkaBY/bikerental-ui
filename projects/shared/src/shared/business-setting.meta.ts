@@ -25,6 +25,11 @@ export const SETTING_SOURCE_META: Record<SettingSource, SettingSourceMeta> = {
     badgeClass: 'bg-gray-100 text-gray-600',
   },
   POINT: { label: Labels.BusinessSettingSourcePoint, badgeClass: 'bg-amber-100 text-amber-700' },
+  DERIVED: { label: Labels.BusinessSettingSourceDerived, badgeClass: 'bg-sky-100 text-sky-700' },
+  NOT_DECLARED: {
+    label: Labels.BusinessSettingSourceNotDeclared,
+    badgeClass: 'bg-gray-50 text-gray-500',
+  },
 };
 
 export const SETTING_CHANGE_KIND_LABELS: Record<SettingChangeKind, string> = {
@@ -71,6 +76,12 @@ const SETTING_TEXTS: Readonly<Record<string, SettingText>> = {
   'app.agreement.pdf.date-pattern': {
     label: Labels.SettingAgreementDatePatternLabel,
     hint: Labels.SettingAgreementDatePatternHint,
+  },
+  'app.business.country': { label: Labels.SettingCountryLabel, hint: Labels.SettingCountryHint },
+  'app.business.city': { label: Labels.SettingCityLabel, hint: Labels.SettingCityHint },
+  'app.business.time-zone': {
+    label: Labels.SettingTimeZoneLabel,
+    hint: Labels.SettingTimeZoneHint,
   },
   'app.business.currency': {
     label: Labels.SettingCurrencyLabel,
@@ -149,6 +160,25 @@ export function formatSettingValue(
   return suffix ? `${value} ${suffix}` : String(value);
 }
 
+export const TIME_ZONE_VALUE_TYPE = 'TIME_ZONE';
+
+export function utcOffset(zone: string, at: Date = new Date()): string {
+  try {
+    const part = new Intl.DateTimeFormat('en-US', { timeZone: zone, timeZoneName: 'longOffset' })
+      .formatToParts(at)
+      .find((p) => p.type === 'timeZoneName');
+    return part?.value === 'GMT' ? 'UTC+00:00' : (part?.value.replace('GMT', 'UTC') ?? '');
+  } catch {
+    return '';
+  }
+}
+
+export function zoneWithOffset(zone: SettingValue | null): string {
+  if (zone === null || zone === '') return '—';
+  const offset = utcOffset(String(zone));
+  return offset ? `${zone} (${offset})` : String(zone);
+}
+
 export function describeSettingRule(rule: SettingRule): string {
   const p = rule.params;
   switch (rule.type) {
@@ -194,6 +224,12 @@ export function describeSettingViolation(violation: SettingViolation): string {
       return Labels.SettingViolationSingleLine;
     case 'trimmed':
       return Labels.SettingViolationTrimmed;
+    case 'country_code':
+      return Labels.SettingViolationCountryCode;
+    case 'known_city':
+      return Labels.SettingViolationKnownCity;
+    case 'time_zone':
+      return Labels.SettingViolationTimeZone;
     case 'currency_code':
       return Labels.SettingViolationCurrencyCode;
     case 'pattern_malformed':
