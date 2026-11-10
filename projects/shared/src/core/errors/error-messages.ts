@@ -254,7 +254,7 @@ function maintenanceDamageReportPointsMixedMessage(params: Record<string, unknow
 function cityNotInCountryMessage(params: Record<string, unknown>): string {
   const city = params['city'];
   const cityCountry = params['cityCountry'];
-  const declaredCountry = params['declaredCountry'];
+  const declaredCountry = params['effectiveCountry'] ?? params['declaredCountry'];
   if (city && cityCountry && declaredCountry) {
     return $localize`${String(city)}:city: is in ${String(cityCountry)}:cityCountry:, not in ${String(declaredCountry)}:declaredCountry:. Change the city first, or choose a matching country.`;
   }
