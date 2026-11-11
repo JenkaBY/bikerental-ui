@@ -1,6 +1,7 @@
 import type {
   SettingChangeRequest,
   SettingChangeResponse,
+  SettingPointValueResponse,
   SettingResetRequest,
   SettingRuleResponse,
   SettingViewResponse,
@@ -9,6 +10,9 @@ import type {
   BusinessSetting,
   BusinessSettingChange,
   BusinessSettingChangeWrite,
+  BusinessSettingResetWrite,
+  SettingPointValue,
+  SettingSource,
   SettingRule,
   SettingValue,
   SettingValueKind,
@@ -22,6 +26,9 @@ const KIND_BY_VALUE_TYPE: Record<string, SettingValueKind> = {
   DATE_PATTERN: 'text',
   SINGLE_LINE_TEXT: 'text',
   CURRENCY_CODE: 'text',
+  COUNTRY_CODE: 'text',
+  CITY: 'text',
+  TIME_ZONE: 'text',
 };
 
 export class BusinessSettingMapper {
@@ -37,8 +44,9 @@ export class BusinessSettingMapper {
       installationDefault: BusinessSettingMapper.toValue(r.installationDefault),
       businessValue: BusinessSettingMapper.toValue(r.businessValue),
       effectiveValue: BusinessSettingMapper.toValue(r.effectiveValue),
-      effectiveSource: r.effectiveSource,
+      effectiveSource: r.effectiveSource as SettingSource,
       version: r.version ?? 0,
+      pointValues: (r.pointValues ?? []).map(BusinessSettingMapper.pointValueFromResponse),
     };
   }
 
@@ -53,9 +61,9 @@ export class BusinessSettingMapper {
       kind: BusinessSettingMapper.kindOf(r.valueType),
       unit: r.unit ?? null,
       previousValue: BusinessSettingMapper.toValue(r.previousValue),
-      previousSource: r.previousSource,
+      previousSource: r.previousSource as SettingSource,
       newValue: BusinessSettingMapper.toValue(r.newValue),
-      newSource: r.newSource,
+      newSource: r.newSource as SettingSource,
       changeKind: r.changeKind,
       changedBy: r.changedBy,
       changedAt: new Date(r.changedAt),
@@ -64,14 +72,28 @@ export class BusinessSettingMapper {
 
   static toChangeRequest(w: BusinessSettingChangeWrite): SettingChangeRequest {
     return {
-      level: 'BUSINESS',
+      ...BusinessSettingMapper.scope(w.pointSlug),
       value: String(w.value),
       expectedVersion: w.expectedVersion,
     };
   }
 
-  static toResetRequest(expectedVersion: number): SettingResetRequest {
-    return { level: 'BUSINESS', expectedVersion };
+  static toResetRequest(w: BusinessSettingResetWrite): SettingResetRequest {
+    return { ...BusinessSettingMapper.scope(w.pointSlug), expectedVersion: w.expectedVersion };
+  }
+
+  private static scope(
+    pointSlug: string | undefined,
+  ): Pick<SettingResetRequest, 'level' | 'pointSlug'> {
+    return pointSlug ? { level: 'POINT', pointSlug } : { level: 'BUSINESS' };
+  }
+
+  private static pointValueFromResponse(r: SettingPointValueResponse): SettingPointValue {
+    return {
+      pointSlug: r.pointSlug,
+      value: BusinessSettingMapper.toValue(r.value),
+      version: r.version ?? 0,
+    };
   }
 
   static violationsFromParams(params: Record<string, unknown>): SettingViolation[] {

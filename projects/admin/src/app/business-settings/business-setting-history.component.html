@@ -64,6 +64,7 @@
       <td mat-cell *matCellDef="let row" class="!py-2">
         <div class="font-medium">{{ label(row.change.key, row.change.description) }}</div>
         <div class="font-mono text-xs text-slate-500">{{ row.change.key }}</div>
+        <div class="text-xs text-slate-600">{{ levelOf(row.change) }}</div>
       </td>
     </ng-container>
 

@@ -402,6 +402,16 @@ export interface SettingChangeRequest {
   expectedVersion: number;
 }
 
+/** The value a rental point has of its own for a setting that permits the POINT level. A point without an entry inherits the business effective value */
+export interface SettingPointValueResponse {
+  /** Slug of the rental point */
+  pointSlug: string;
+  /** The point's own value, typed JSON like the business value */
+  value: any;
+  /** Version of the point's value; send it back as expectedVersion */
+  version: number;
+}
+
 /** One rule a value of the setting must satisfy, with the parameters it is applied with */
 export interface SettingRuleResponse {
   /** Rule type: range, scale, length, single_line or pattern_parts; the same code a violation of the rule carries */
@@ -417,7 +427,16 @@ export interface SettingViewResponse {
   /** What the setting controls */
   description: string;
   /** Type of the value */
-  valueType: 'MINUTES' | 'MONEY' | 'DATE_TIME_PATTERN' | 'DATE_PATTERN' | 'SINGLE_LINE_TEXT';
+  valueType:
+    | 'MINUTES'
+    | 'MONEY'
+    | 'CURRENCY_CODE'
+    | 'COUNTRY_CODE'
+    | 'CITY'
+    | 'TIME_ZONE'
+    | 'DATE_TIME_PATTERN'
+    | 'DATE_PATTERN'
+    | 'SINGLE_LINE_TEXT';
   /** Unit the value is expressed in: MINUTES, the business currency code, or null for text settings */
   unit?: string;
   /** The rules a value must satisfy, one entry per rule */
@@ -434,6 +453,8 @@ export interface SettingViewResponse {
   effectiveSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
   /** Version of the business-level value; 0 when it was never set */
   version: number;
+  /** For a setting that permits POINT: one entry per rental point that has a value of its own; a point not listed inherits effectiveValue. Empty for every other setting */
+  pointValues: Array<SettingPointValueResponse>;
 }
 
 export interface UpdateUserRequest {
@@ -1479,7 +1500,16 @@ export interface SettingChangeResponse {
   /** Slug of the rental point for a POINT-level change; null otherwise */
   pointSlug?: string;
   /** Type of the value; null when the setting left the catalogue */
-  valueType?: 'MINUTES' | 'MONEY' | 'DATE_TIME_PATTERN' | 'DATE_PATTERN' | 'SINGLE_LINE_TEXT';
+  valueType?:
+    | 'MINUTES'
+    | 'MONEY'
+    | 'CURRENCY_CODE'
+    | 'COUNTRY_CODE'
+    | 'CITY'
+    | 'TIME_ZONE'
+    | 'DATE_TIME_PATTERN'
+    | 'DATE_PATTERN'
+    | 'SINGLE_LINE_TEXT';
   /** Unit of the value: MINUTES or the business currency code; null for text settings and settings that left the catalogue */
   unit?: string;
   /** Typed JSON value in force before the change: integer minutes, a number with two decimals or a string */

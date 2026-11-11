@@ -104,6 +104,8 @@ export const ErrorCode = {
   SETTINGS_VALUE_INVALID: 'settings.value.invalid',
   SETTINGS_VERSION_CONFLICT: 'settings.version.conflict',
   SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY: 'settings.currency.business_level_only',
+  SETTINGS_LOCATION_CITY_NOT_IN_COUNTRY: 'settings.business_location.city_not_in_country',
+  SETTINGS_LOCATION_BUSINESS_LEVEL_ONLY: 'settings.business_location.business_level_only',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];

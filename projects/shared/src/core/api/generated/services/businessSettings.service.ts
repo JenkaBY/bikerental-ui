@@ -59,7 +59,7 @@ export class BusinessSettingsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<SettingViewResponse>>;
-  /** Sets the value of a setting at a level. The level not permitted by the setting, an invalid value and a stale version are rejected and nothing is saved (admin only) */
+  /** Sets the value of a setting at a level. The level not permitted by the setting, an invalid value and a stale version are rejected and nothing is saved. An unknown rental point is 404 (admin only) */
   change(
     key: string,
     settingChangeRequest: SettingChangeRequest,

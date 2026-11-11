@@ -17,7 +17,7 @@
   ENTRY_FILES: `projects/gateway/src/main.ts`, `projects/gateway/src/app/app.config.ts`, `projects/gateway/src/app/app.routes.ts`, `projects/gateway/src/index.html`
 
 - PATH: `projects/admin/`
-  PURPOSE: Desktop-first back office — equipment, equipment types, tariffs, agreement templates, customers, rentals, transactions, damage reports, users, rental points (registry + status lifecycle), business settings (change/reset + change history), revenue/customer analytics
+  PURPOSE: Desktop-first back office — equipment, equipment types, tariffs, agreement templates, customers, rentals, transactions, damage reports, users, rental points (registry + status lifecycle), business settings (change/reset at business and per-point level, country/city/time zone, change history), revenue/customer analytics
   ENTRY_FILES: `projects/admin/src/main.ts`, `projects/admin/src/app/app.config.ts`, `projects/admin/src/app/app.routes.ts`, `projects/admin/src/index.html`
 
 - PATH: `projects/operator/`
@@ -902,7 +902,7 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: BusinessSettingMapper
 TYPE: Mapper
-PURPOSE: Converts business-setting views and history entries into domain models and builds BUSINESS-level change/reset requests.
+PURPOSE: Converts business-setting views and history entries into domain models and builds BUSINESS- or POINT-level change/reset requests (per-point values in `pointValues`; sources include `DERIVED` and `NOT_DECLARED`).
 RESPONSIBILITIES:
 
 - Derive the value kind from `valueType` (`MINUTES` → minutes, `MONEY` → money, the three text types → text, anything else → unknown, read-only).

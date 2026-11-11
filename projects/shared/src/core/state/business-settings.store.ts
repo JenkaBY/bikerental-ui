@@ -8,6 +8,10 @@ import { BusinessSettingMapper } from '../mappers/business-setting.mapper';
 import { BusinessCurrencyStore, CURRENCY_CODE_KEY } from './business-currency.store';
 import type { BusinessSetting, BusinessSettingChangeWrite } from '../models';
 
+export function settingBusyKey(key: string, pointSlug?: string): string {
+  return pointSlug ? `${key}@${pointSlug}` : key;
+}
+
 interface BusinessSettingsState {
   settings: BusinessSetting[];
   loading: boolean;
@@ -76,17 +80,24 @@ export class BusinessSettingsStore {
       );
   }
 
-  reset(setting: BusinessSetting): Observable<BusinessSetting> {
-    this.setBusy(setting.key, true);
+  reset(setting: BusinessSetting, pointSlug?: string): Observable<BusinessSetting> {
+    const busyKey = settingBusyKey(setting.key, pointSlug);
+    const expectedVersion = pointSlug
+      ? (setting.pointValues.find((p) => p.pointSlug === pointSlug)?.version ?? 0)
+      : setting.version;
+    this.setBusy(busyKey, true);
     return this.service
-      .reset(setting.key, BusinessSettingMapper.toResetRequest(setting.version), undefined, {
-        context: suppressErrorNotification(),
-      })
+      .reset(
+        setting.key,
+        BusinessSettingMapper.toResetRequest({ expectedVersion, pointSlug }),
+        undefined,
+        { context: suppressErrorNotification() },
+      )
       .pipe(
         map(BusinessSettingMapper.fromResponse),
         tap((updated) => this.replace(updated)),
         tap((updated) => this.refreshAfterCurrencyChange(updated.key)),
-        finalize(() => this.setBusy(setting.key, false)),
+        finalize(() => this.setBusy(busyKey, false)),
       );
   }
 

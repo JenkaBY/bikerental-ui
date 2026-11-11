@@ -23,9 +23,12 @@ import {
   BusinessSettingsStore,
   formatSettingValue,
   Labels,
+  PointAdminStore,
   parseDate,
   SETTING_CHANGE_KIND_LABELS,
   settingLabel,
+  TIME_ZONE_VALUE_TYPE,
+  zoneWithOffset,
   toIsoDate,
 } from '@bikerental/shared';
 import type { BusinessSettingChange, SettingValue } from '@ui-models';
@@ -54,6 +57,7 @@ export class BusinessSettingHistoryComponent implements OnInit {
 
   protected readonly store = inject(BusinessSettingHistoryStore);
   protected readonly settings = inject(BusinessSettingsStore);
+  private readonly points = inject(PointAdminStore);
   protected readonly displayedColumns = ['changedAt', 'setting', 'change', 'author'];
 
   private readonly router = inject(Router);
@@ -81,6 +85,13 @@ export class BusinessSettingHistoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.settings.ensureLoaded();
+    if (this.points.points().length === 0) this.points.load().subscribe();
+  }
+
+  protected levelOf(change: BusinessSettingChange): string {
+    if (change.level !== 'POINT' || !change.pointSlug) return Labels.SettingHistoryBusinessLevel;
+    const name = this.points.nameBySlug().get(change.pointSlug) ?? change.pointSlug;
+    return Labels.settingHistoryPointLevel(name);
   }
 
   protected label(key: string, fallback: string): string {
@@ -92,6 +103,7 @@ export class BusinessSettingHistoryComponent implements OnInit {
   }
 
   protected format(change: BusinessSettingChange, value: SettingValue | null): string {
+    if (change.valueType === TIME_ZONE_VALUE_TYPE) return zoneWithOffset(value);
     return formatSettingValue(value, change.kind, change.unit);
   }
 

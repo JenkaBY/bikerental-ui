@@ -2,7 +2,12 @@ export type SettingValue = number | string;
 
 export type SettingValueKind = 'minutes' | 'money' | 'text' | 'unknown';
 
-export type SettingSource = 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
+export type SettingSource =
+  | 'POINT'
+  | 'BUSINESS'
+  | 'DERIVED'
+  | 'INSTALLATION_DEFAULT'
+  | 'NOT_DECLARED';
 
 export type SettingLevel = 'POINT' | 'BUSINESS';
 
@@ -18,6 +23,12 @@ export interface SettingViolation {
   readonly rule: Readonly<Record<string, unknown>>;
 }
 
+export interface SettingPointValue {
+  readonly pointSlug: string;
+  readonly value: SettingValue | null;
+  readonly version: number;
+}
+
 export interface BusinessSetting {
   readonly key: string;
   readonly description: string;
@@ -31,11 +42,18 @@ export interface BusinessSetting {
   readonly effectiveValue: SettingValue | null;
   readonly effectiveSource: SettingSource;
   readonly version: number;
+  readonly pointValues: readonly SettingPointValue[];
 }
 
 export interface BusinessSettingChangeWrite {
   readonly value: SettingValue;
   readonly expectedVersion: number;
+  readonly pointSlug?: string;
+}
+
+export interface BusinessSettingResetWrite {
+  readonly expectedVersion: number;
+  readonly pointSlug?: string;
 }
 
 export interface BusinessSettingChange {

@@ -4,6 +4,7 @@ import {
   DestroyRef,
   inject,
   OnInit,
+  computed,
   ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -22,10 +23,13 @@ import {
   formatSettingValue,
   Labels,
   NotificationService,
+  PointAdminStore,
   resolveErrorMessage,
   SETTING_SOURCE_META,
   settingHint,
   settingLabel,
+  TIME_ZONE_VALUE_TYPE,
+  zoneWithOffset,
 } from '@bikerental/shared';
 import type { ConfirmDialogData, SettingSourceMeta } from '@bikerental/shared';
 import type { BusinessSetting, SettingValue } from '@ui-models';
@@ -33,6 +37,7 @@ import {
   BusinessSettingDialogComponent,
   BusinessSettingDialogData,
 } from './business-setting-dialog.component';
+import { BusinessSettingPointsComponent } from './business-setting-points.component';
 
 const RELOAD_CODES = new Set<string>([
   ErrorCode.SETTINGS_VERSION_CONFLICT,
@@ -42,7 +47,14 @@ const RELOAD_CODES = new Set<string>([
 @Component({
   selector: 'app-business-setting-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatTooltipModule, MatProgressBarModule],
+  imports: [
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    BusinessSettingPointsComponent,
+  ],
   template: `
     @if (store.loading()) {
       <mat-progress-bar mode="indeterminate" />
@@ -128,6 +140,9 @@ const RELOAD_CODES = new Set<string>([
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let _row; columns: displayedColumns"></tr>
       </table>
+      @for (setting of pointSettings(); track setting.key) {
+        <app-business-setting-points [setting]="setting" />
+      }
     }
   `,
 })
@@ -137,6 +152,11 @@ export class BusinessSettingListComponent implements OnInit {
 
   protected readonly displayedColumns = ['setting', 'value', 'source', 'default', 'actions'];
 
+  private readonly points = inject(PointAdminStore);
+  protected readonly pointSettings = computed(() =>
+    this.store.settings().filter((s) => s.permittedLevels.includes('POINT')),
+  );
+
   private readonly dialog = inject(MatDialog);
   private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly destroyRef = inject(DestroyRef);
@@ -145,6 +165,7 @@ export class BusinessSettingListComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.load();
+    this.points.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   protected sourceOf(setting: BusinessSetting): SettingSourceMeta {
@@ -160,6 +181,7 @@ export class BusinessSettingListComponent implements OnInit {
   }
 
   protected format(setting: BusinessSetting, value: SettingValue | null): string {
+    if (setting.valueType === TIME_ZONE_VALUE_TYPE) return zoneWithOffset(value);
     return formatSettingValue(value, setting.kind, setting.unit);
   }
 

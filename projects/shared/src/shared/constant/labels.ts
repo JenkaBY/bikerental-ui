@@ -866,6 +866,8 @@ export class Labels {
   static readonly BusinessSettingSourceBusiness = $localize`Set by administrator`;
   static readonly BusinessSettingSourceDefault = $localize`:business setting source:Default`;
   static readonly BusinessSettingSourcePoint = $localize`:business setting source:Rental point`;
+  static readonly BusinessSettingSourceDerived = $localize`:business setting source:From city`;
+  static readonly BusinessSettingSourceNotDeclared = $localize`:business setting source:Not declared`;
   static readonly BusinessSettingEditTooltip = $localize`Change value`;
   static readonly BusinessSettingResetTooltip = $localize`Reset to default`;
   static readonly BusinessSettingHistoryTooltip = $localize`Show change history`;
@@ -939,6 +941,9 @@ export class Labels {
   }
   static readonly SettingViolationSingleLine = $localize`The text must be on a single line.`;
   static readonly SettingViolationTrimmed = $localize`Remove the spaces at the start or end.`;
+  static readonly SettingViolationCountryCode = $localize`Enter a valid two-letter country code, for example LT.`;
+  static readonly SettingViolationKnownCity = $localize`This city is not known. Check the spelling or choose another city.`;
+  static readonly SettingViolationTimeZone = $localize`Enter a valid time zone region, for example Europe/Vilnius.`;
   static readonly SettingViolationCurrencyCode = $localize`Enter a valid three-letter currency code, for example EUR.`;
   static readonly SettingViolationPatternMalformed = $localize`This is not a valid date and time pattern.`;
   static readonly SettingViolationPatternUnformattable = $localize`This pattern cannot be used to print a date and time.`;
@@ -975,6 +980,40 @@ export class Labels {
   static readonly SettingAgreementDatePatternLabel = $localize`:business setting name:Agreement title date format`;
   static readonly SettingAgreementDatePatternHint = $localize`How the date is written in the title of the rental agreement document.`;
   static readonly SettingSignaturePlaceholderLabel = $localize`:business setting name:Signature box text`;
+  static readonly SettingCountryLabel = $localize`:business setting name:Country`;
+  static readonly SettingCountryHint = $localize`The two-letter ISO code of the country the business operates in, for example LT.`;
+  static readonly SettingCityLabel = $localize`:business setting name:City`;
+  static readonly SettingCityHint = $localize`The city the business operates in. When declared, it sets the business time zone unless a time zone is set explicitly.`;
+  static readonly SettingTimeZoneLabel = $localize`:business setting name:Time zone`;
+  static readonly SettingTimeZoneHint = $localize`The time zone region, for example Europe/Vilnius. Rental times, reports and agreements use the time zone of the pick-up point.`;
+  static readonly SettingPointValuesTitle = $localize`Rental points`;
+  static readonly SettingPointColumnPoint = $localize`:setting point column:Rental point`;
+  static readonly SettingPointColumnValue = $localize`:setting point column:Value`;
+  static readonly SettingPointColumnOrigin = $localize`:setting point column:Origin`;
+  static readonly SettingPointOwnValue = $localize`Own value`;
+  static readonly SettingPointInheritedValue = $localize`Inherited from business`;
+  static readonly SettingPointValuesEmpty = $localize`No rental points yet.`;
+  static readonly SettingPointResetDialogTitle = $localize`Remove the point's own value?`;
+  static readonly SettingPointResetSuccess = $localize`The rental point now inherits the business value`;
+  static readonly SettingPointZoneConfirmTitle = $localize`Use a different time zone?`;
+  static readonly SettingPointZoneConfirmButton = $localize`Use this time zone`;
+  static readonly SettingHistoryBusinessLevel = $localize`:setting history level:Whole business`;
+  static settingPointDialogTitle(point: string): string {
+    return $localize`Change setting for ${point}:point:`;
+  }
+  static settingPointResetDialogMessage(point: string, value: string): string {
+    return $localize`“${point}:point:” will inherit the business value: ${value}:value:.`;
+  }
+  static settingPointZoneConfirmMessage(
+    point: string,
+    pointZone: string,
+    businessZone: string,
+  ): string {
+    return $localize`“${point}:point:” will use ${pointZone}:pointZone:, while the business uses ${businessZone}:businessZone:. Rental times, reports and agreements of this point will follow its own time zone.`;
+  }
+  static settingHistoryPointLevel(point: string): string {
+    return $localize`:setting history level:Rental point: ${point}:point:`;
+  }
   static readonly SettingCurrencyLabel = $localize`:business setting name:Currency`;
   static readonly SettingCurrencyHint = $localize`The three-letter ISO code of the business currency, for example EUR or USD. Changing it clears the custom symbol.`;
   static readonly SettingCurrencySymbolLabel = $localize`:business setting name:Currency symbol`;
