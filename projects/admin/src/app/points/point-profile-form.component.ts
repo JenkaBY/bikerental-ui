@@ -36,9 +36,13 @@ import {
   type PointDraft,
   suppressErrorNotification,
   syncGeoLocationEnabled,
-  TimeZoneAutocompleteComponent,
+  TimeZoneSelectComponent,
   toGeoLocationWrite,
 } from '@bikerental/shared';
+import {
+  type PointLocationPresetChoice,
+  PointLocationPresetsComponent,
+} from './point-location-presets.component';
 
 export type PointProfileFormMode = 'create' | 'edit';
 
@@ -51,7 +55,8 @@ export type PointProfileFormMode = 'create' | 'edit';
     MatFormFieldModule,
     MatInputModule,
     GeoLocationFieldsComponent,
-    TimeZoneAutocompleteComponent,
+    TimeZoneSelectComponent,
+    PointLocationPresetsComponent,
   ],
   templateUrl: './point-profile-form.component.html',
 })
@@ -83,6 +88,7 @@ export class PointProfileFormComponent {
     const id = this.point()?.geoLocationId;
     return id ? (this.store.locations().get(id) ?? null) : null;
   });
+  private presetLocation: GeoLocation | null = null;
   protected readonly incomplete = computed(() => {
     const p = this.point();
     return !this.creating() && !!p && (!p.geoLocationId || !p.timeZone);
@@ -126,6 +132,18 @@ export class PointProfileFormComponent {
     this.form.controls.timeZone.setValue(zone);
   }
 
+  protected applyPreset({ preset, auto }: PointLocationPresetChoice): void {
+    const group = this.form.controls.location;
+    if (auto && (group.dirty || group.controls.country.value)) return;
+    const sameCountry = this.countryCode() === preset.location.country.code;
+    group.reset(geoLocationFormValue(preset.location));
+    syncGeoLocationEnabled(group, [this.form.controls.timeZone]);
+    if (preset.timeZone) this.form.controls.timeZone.setValue(preset.timeZone);
+    else if (!sameCountry) this.form.controls.timeZone.setValue(null);
+    if (!auto) group.markAsDirty();
+    this.presetLocation = preset.location;
+  }
+
   protected save(): void {
     if (this.form.invalid || this.saving()) return;
     clearServerErrors(this.form);
@@ -162,9 +180,9 @@ export class PointProfileFormComponent {
     const { slug, name, timeZone, contacts } = this.form.getRawValue();
     const write = toGeoLocationWrite(this.form.controls.location);
     if (!write || !timeZone) return null;
-    const currentId = this.point()?.geoLocationId;
-    const reuse = !this.creating() && !!currentId && isSameGeoLocation(write, this.location());
-    return { slug, name, timeZone, contacts, location: reuse && currentId ? currentId : write };
+    const known = [this.creating() ? null : this.location(), this.presetLocation];
+    const reused = known.find((location) => isSameGeoLocation(write, location));
+    return { slug, name, timeZone, contacts, location: reused ? reused.id : write };
   }
 
   private handleSaveError(err: unknown): void {
@@ -194,6 +212,7 @@ export class PointProfileFormComponent {
     creating: boolean,
     editing: boolean,
   ): void {
+    this.presetLocation = null;
     this.form.reset({
       slug: point?.slug ?? '',
       name: point?.name ?? '',

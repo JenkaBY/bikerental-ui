@@ -8,9 +8,9 @@ import {
   GEO_LOCATIONS_BATCH_MAX,
   type GeoCity,
   type GeoCountry,
+  type GeoCountryTimeZone,
   type GeoLocation,
   type GeoLocationWrite,
-  type GeoTimeZone,
 } from '../../models/geo.model';
 
 export class GeoLocationSaveError extends Error {
@@ -35,10 +35,10 @@ export class GeoService {
       .pipe(map((page) => (page.items ?? []).map(GeoMapper.cityFromResponse)));
   }
 
-  timeZones(countryCode?: string): Observable<GeoTimeZone[]> {
+  countryTimeZones(countryCode: string): Observable<GeoCountryTimeZone[]> {
     return this.api
-      .listTimeZones(countryCode)
-      .pipe(map((items) => items.map(GeoMapper.timeZoneFromResponse)));
+      .listCountryTimeZones(countryCode)
+      .pipe(map((items) => items.map(GeoMapper.countryTimeZoneFromResponse)));
   }
 
   location(id: number): Observable<GeoLocation> {

@@ -3,9 +3,9 @@ import type {
   CountryResponse,
   LocationRequest,
   LocationResponse,
-  TimeZoneResponse,
+  CountryTimeZoneResponse,
 } from '@api-models';
-import type { GeoCity, GeoCountry, GeoLocation, GeoTimeZone } from '../models/geo.model';
+import type { GeoCity, GeoCountry, GeoCountryTimeZone, GeoLocation } from '../models/geo.model';
 
 export class GeoMapper {
   static countryFromResponse(r: CountryResponse): GeoCountry {
@@ -23,8 +23,8 @@ export class GeoMapper {
     };
   }
 
-  static timeZoneFromResponse(r: TimeZoneResponse): GeoTimeZone {
-    return { name: r.name, ofCountry: r.ofCountry ?? false };
+  static countryTimeZoneFromResponse(r: CountryTimeZoneResponse): GeoCountryTimeZone {
+    return { name: r.name, defaultZone: r.defaultZone ?? false };
   }
 
   static locationFromResponse(r: LocationResponse): GeoLocation {

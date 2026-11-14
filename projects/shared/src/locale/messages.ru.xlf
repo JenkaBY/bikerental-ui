@@ -7334,6 +7334,18 @@
         <source>Maximum 255 characters</source>
         <target>Не более 255 символов</target>
       </trans-unit>
+      <trans-unit id="5466710098649403945" datatype="html">
+        <source>Saved addresses</source>
+        <target>Сохранённые адреса</target>
+      </trans-unit>
+      <trans-unit id="4607581465689784056" datatype="html">
+        <source>Business</source>
+        <target>Бизнес</target>
+      </trans-unit>
+      <trans-unit id="1795536070990986961" datatype="html">
+        <source>Use business address</source>
+        <target>Адрес бизнеса</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

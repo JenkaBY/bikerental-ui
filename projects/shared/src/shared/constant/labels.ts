@@ -739,6 +739,9 @@ export class Labels {
   static readonly PointLocationMissing = $localize`Location not set`;
   static readonly PointTimeZoneMissing = $localize`Time zone not set`;
   static readonly PointIncompleteNotice = $localize`This point has no location or time zone yet. Edit the point to complete them.`;
+  static readonly PointSavedAddresses = $localize`Saved addresses`;
+  static readonly PointBusinessAddressTag = $localize`:saved address of the business:Business`;
+  static readonly PointUseBusinessAddress = $localize`Use business address`;
   static readonly PointColumnLocation = $localize`:points-table|Points table column header:Location`;
   static readonly GeoCountry = $localize`:geo picker:Country`;
   static readonly GeoCity = $localize`:geo picker:City`;

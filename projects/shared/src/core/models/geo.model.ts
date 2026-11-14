@@ -13,9 +13,9 @@ export interface GeoCity {
   readonly userEntered: boolean;
 }
 
-export interface GeoTimeZone {
+export interface GeoCountryTimeZone {
   readonly name: string;
-  readonly ofCountry: boolean;
+  readonly defaultZone: boolean;
 }
 
 export interface GeoLocation {

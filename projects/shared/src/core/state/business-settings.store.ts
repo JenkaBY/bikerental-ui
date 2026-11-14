@@ -5,6 +5,7 @@ import type { SettingViewResponse } from '@api-models';
 import { BusinessSettingsService } from '../api/generated';
 import { GeoService } from '../api/geo/geo.service';
 import { GeoLocationLookupStore } from './geo-location-lookup.store';
+import { BusinessLocationStore } from './business-location.store';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { BusinessSettingMapper } from '../mappers/business-setting.mapper';
 import { BusinessCurrencyStore, CURRENCY_CODE_KEY } from './business-currency.store';
@@ -29,6 +30,7 @@ export class BusinessSettingsStore {
   private readonly currency = inject(BusinessCurrencyStore);
   private readonly geo = inject(GeoService);
   private readonly geoLookup = inject(GeoLocationLookupStore);
+  private readonly businessLocation = inject(BusinessLocationStore);
 
   private readonly _state = signal<BusinessSettingsState>({
     settings: [],
@@ -60,6 +62,7 @@ export class BusinessSettingsStore {
         next: (settings) => {
           this.patch({ settings, loaded: true });
           this.currency.applyFrom(settings);
+          this.businessLocation.applyFrom(settings);
         },
         error: () => this.patch({ error: true }),
       });
@@ -104,6 +107,7 @@ export class BusinessSettingsStore {
       ),
       map(BusinessSettingMapper.fromResponse),
       tap((updated) => this.replace(updated)),
+      tap((updated) => this.refreshAfterCurrencyChange(updated.key)),
       finalize(() => this.patch({ saving: false })),
     );
   }
@@ -132,6 +136,7 @@ export class BusinessSettingsStore {
   private refreshAfterCurrencyChange(key: string): void {
     if (key === CURRENCY_CODE_KEY) this.load();
     else this.currency.applyFrom(this._state().settings);
+    this.businessLocation.applyFrom(this._state().settings);
   }
 
   private replace(setting: BusinessSetting): void {
