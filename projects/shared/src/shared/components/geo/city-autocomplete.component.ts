@@ -27,7 +27,11 @@ import { GEO_SEARCH_DEBOUNCE_MS, GeoAutocompleteBase } from './geo-autocomplete.
         (input)="onInput($event)"
         (blur)="onBlur()"
       />
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onPick($event.option.value)">
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        [displayWith]="displayWith"
+        (optionSelected)="onPick($event.option.value)"
+      >
         @for (city of options(); track city.id) {
           <mat-option [value]="city">
             {{ city.name }}

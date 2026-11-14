@@ -30,6 +30,7 @@ export abstract class GeoAutocompleteBase<T, P = T> implements ControlValueAcces
   protected readonly value = signal<T | null>(null);
   protected readonly disabled = signal(false);
   protected readonly matcher: ErrorStateMatcher = { isErrorState: () => this.invalid() };
+  protected readonly displayWith = (value: T | null): string => this.display(value);
 
   private onChange: (value: T | null) => void = () => void 0;
   protected onTouched: () => void = () => void 0;

@@ -29,7 +29,11 @@ const MAX_OPTIONS = 100;
         (input)="onInput($event)"
         (blur)="onTouched()"
       />
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onPick($event.option.value)">
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        [displayWith]="displayWith"
+        (optionSelected)="onPick($event.option.value)"
+      >
         @for (zone of options(); track zone.name) {
           <mat-option [value]="zone.name" [class.font-medium]="zone.ofCountry">
             {{ withOffset(zone.name) }}

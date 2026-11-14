@@ -31,7 +31,11 @@ export interface GeoCountryPick {
         (input)="onInput($event)"
         (blur)="onTouched()"
       />
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onPick($event.option.value)">
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        [displayWith]="displayWith"
+        (optionSelected)="onPick($event.option.value)"
+      >
         @for (country of options(); track country.code) {
           <mat-option [value]="country">
             {{ country.name }} <span class="text-xs text-slate-500">{{ country.code }}</span>
