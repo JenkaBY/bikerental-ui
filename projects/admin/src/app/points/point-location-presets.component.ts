@@ -40,7 +40,11 @@ export interface PointLocationPresetChoice {
   template: `
     @if (presets().length) {
       <div class="flex items-start gap-4">
-        <mat-form-field appearance="outline" class="flex-1" subscriptSizing="dynamic">
+        <mat-form-field
+          appearance="outline"
+          class="flex-1 min-w-0 max-w-xl"
+          subscriptSizing="dynamic"
+        >
           <mat-label>{{ labels.PointSavedAddresses }}</mat-label>
           <mat-select (selectionChange)="pick($event.value, false)">
             @for (preset of presets(); track preset.location.id) {
