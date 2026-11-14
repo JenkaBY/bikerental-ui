@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import {
   ApiErrorParser,
   applyServerErrors,
+  BusinessLocationStore,
   BusinessSettingMapper,
   BusinessSettingsStore,
   businessSettingValueValidator,
@@ -36,6 +37,7 @@ import {
   settingLabel,
   settingUnitSuffix,
   TIME_ZONE_VALUE_TYPE,
+  TimeZoneSelectComponent,
   zoneWithOffset,
 } from '@bikerental/shared';
 import type { ApiError, ConfirmDialogData } from '@bikerental/shared';
@@ -69,6 +71,7 @@ const RELOAD_CODES = new Set<string>([
     MatButtonModule,
     CancelButtonComponent,
     DatePatternLegendComponent,
+    TimeZoneSelectComponent,
   ],
   template: `
     <h2 mat-dialog-title>{{ title }}</h2>
@@ -103,27 +106,35 @@ const RELOAD_CODES = new Set<string>([
         </div>
 
         <form [formGroup]="form" (ngSubmit)="save()">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>{{ Labels.BusinessSettingValueLabel }}</mat-label>
-            <input
-              matInput
+          @if (isTimeZone) {
+            <app-time-zone-select
               formControlName="value"
-              [type]="numeric ? 'number' : 'text'"
-              [step]="setting.kind === 'money' ? '0.01' : '1'"
-              [class.font-mono]="setting.kind === 'text'"
-              autocomplete="off"
+              [label]="Labels.BusinessSettingValueLabel"
+              [countryCode]="businessLocation.zoneCountryCode()"
             />
-            @if (unit) {
-              <span matTextSuffix>{{ unit }}</span>
-            }
-            @if (value.hasError('required')) {
-              <mat-error>{{ FormErrorMessages.required }}</mat-error>
-            } @else if (value.hasError(SERVER_ERROR_KEY)) {
-              <mat-error>{{ value.getError(SERVER_ERROR_KEY) }}</mat-error>
-            } @else if (value.hasError(SETTING_VIOLATIONS_KEY)) {
-              <mat-error>{{ violationText(value.getError(SETTING_VIOLATIONS_KEY)) }}</mat-error>
-            }
-          </mat-form-field>
+          } @else {
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>{{ Labels.BusinessSettingValueLabel }}</mat-label>
+              <input
+                matInput
+                formControlName="value"
+                [type]="numeric ? 'number' : 'text'"
+                [step]="setting.kind === 'money' ? '0.01' : '1'"
+                [class.font-mono]="setting.kind === 'text'"
+                autocomplete="off"
+              />
+              @if (unit) {
+                <span matTextSuffix>{{ unit }}</span>
+              }
+              @if (value.hasError('required')) {
+                <mat-error>{{ FormErrorMessages.required }}</mat-error>
+              } @else if (value.hasError(SERVER_ERROR_KEY)) {
+                <mat-error>{{ value.getError(SERVER_ERROR_KEY) }}</mat-error>
+              } @else if (value.hasError(SETTING_VIOLATIONS_KEY)) {
+                <mat-error>{{ violationText(value.getError(SETTING_VIOLATIONS_KEY)) }}</mat-error>
+              }
+            </mat-form-field>
+          }
         </form>
 
         @if (patternSymbols.length) {
@@ -159,7 +170,8 @@ export class BusinessSettingDialogComponent {
   protected readonly title = this.point
     ? Labels.settingPointDialogTitle(this.point.name)
     : Labels.BusinessSettingDialogTitle;
-  private readonly isTimeZone = this.setting.valueType === TIME_ZONE_VALUE_TYPE;
+  protected readonly isTimeZone = this.setting.valueType === TIME_ZONE_VALUE_TYPE;
+  protected readonly businessLocation = inject(BusinessLocationStore);
   private readonly dialog = inject(MatDialog);
 
   private readonly dialogRef =

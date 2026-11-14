@@ -171,6 +171,10 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.POINT_SLUG_DUPLICATE]: $localize`A rental point with this slug already exists.`,
   [ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN]: $localize`This status change is not allowed for the rental point.`,
 
+  // Geo locations
+  [ErrorCode.GEO_CITY_NOT_FOUND]: $localize`The chosen city was not found. Choose the city again.`,
+  [ErrorCode.GEO_CITY_NOT_IN_COUNTRY]: $localize`The chosen city is not in the chosen country. Choose the city again.`,
+
   // Equipment ownership by rental point
   [ErrorCode.EQUIPMENT_POINT_REQUIRED]: $localize`Select the rental point this equipment belongs to.`,
   [ErrorCode.EQUIPMENT_POINT_NOT_ACCEPTING]: $localize`This rental point is permanently closed and does not accept equipment.`,

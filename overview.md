@@ -379,7 +379,7 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: RentalPointsService
 TYPE: API
-PURPOSE: Generated client for the rental point registry (register, update, change status, search, get).
+PURPOSE: Generated client for the rental point registry (register, update, change status, search, get). A point carries `geoLocationId` + its own IANA `timeZone` (both `null` until the owner fills them) instead of an address; names come from `GeoService`.
 RESPONSIBILITIES:
 
 - Issue typed HTTP requests against `/api/points` endpoints.
@@ -389,6 +389,45 @@ RESPONSIBILITIES:
   CALLED_BY:
 - PointAdminStore (admin `/points` list page, the `/points/:slug` detail host and the create dialog; points are addressed by `slug` — `PointResponse` has no `id`)
 - CurrentPointStore (operator toolbar switcher; all points loaded at startup, the switcher lists only non-permanently-closed ones and `nameBySlug` resolves return-point names on equipment cards in operator and admin rental details; current point sourced from `UserStore`'s `workingPointSlug` setting (sent as the `X-Point-Slug` header) — not localStorage — and switching PATCHes `/api/auth/me/settings` via `ProfileStore.saveWorkingPoint()`; on success the operator `PointSwitchRefreshService` re-creates only the layout `<router-outlet>` (epoch-keyed `@for`), so the routed page and its component-scoped rental stores refetch under the new point while the toolbar and bottom nav stay — single-rental routes (`rentals/:id[/edit|/agreement]`) navigate to `rentals` instead, since that rental is a 404 under the new point); `refreshCurrent()` re-reads the working point via `getPoint(slug)` (suppressed, silent) for the operator Cash screen
+
+COMPONENT_NAME: GeoService
+TYPE: API
+PURPOSE: Domain-typed wrapper over the generated `GeographyService` (`/api/geo/*`): country, city and time-zone search for the location pickers, location reads and location creation.
+RESPONSIBILITIES:
+
+- `countries(query)`, `cities(code, query)` (page 0, size 20, server order kept), `countryTimeZones(code)` (only the zones of that country, its default zone first).
+- `location(id)` and `locations(ids)` (batch `?ids=`, split into chunks of 100).
+- `saveLocation(write)`: create a typed, unlisted city first (`POST /countries/{code}/cities`), then `POST /locations`; any failure is rethrown as `GeoLocationSaveError` so forms can bind it to the location fields. A location is immutable — a changed address is a new location.
+- Names follow `Accept-Language` (set by the shared accept-language interceptor).
+  SOURCE: `projects/shared/src/core/api/geo/geo.service.ts`
+  CALLS:
+- GeographyService (generated), GeoMapper.
+  CALLED_BY:
+- GeoLocationLookupStore, PointAdminStore, BusinessSettingsStore, CountryAutocompleteComponent, CityAutocompleteComponent, TimeZoneSelectComponent
+
+COMPONENT_NAME: BusinessLocationStore
+TYPE: Store
+PURPOSE: Root snapshot of the business location settings: effective `app.business.geo-location-id` (resolved through `GeoLocationLookupStore`), `app.business.time-zone` and `app.business.country`.
+RESPONSIBILITIES:
+
+- `applyFrom(settings)` is called by `BusinessCurrencyStore.load()` at startup and by `BusinessSettingsStore` after every load, change and reset.
+- `zoneCountryCode` is the country whose zones the business time zone offers: the geo location's country, otherwise `app.business.country`.
+  SOURCE: `projects/shared/src/core/state/business-location.store.ts`
+  CALLED_BY:
+- BusinessSettingDialogComponent (time zone dropdown), PointLocationPresetsComponent (business address)
+
+COMPONENT_NAME: GeoLocationLookupStore
+TYPE: Store
+PURPOSE: Root cache of geo locations by id, filled by one batch request per page (points list, settings list, settings history).
+RESPONSIBILITIES:
+
+- `ensure(ids)` fetches only unknown ids; ids the batch skipped are remembered as missing.
+- `describe(value)` renders "street, city – region, country", `#id` while loading, "Unknown location #id" when missing, `—` for `null`.
+  SOURCE: `projects/shared/src/core/state/geo-location-lookup.store.ts`
+  CALLS:
+- GeoService — `locations()`.
+  CALLED_BY:
+- PointAdminStore, BusinessSettingsStore, BusinessSettingListComponent, BusinessSettingHistoryComponent, BusinessGeoLocationDialogComponent
 
 COMPONENT_NAME: PointFinanceService
 TYPE: API
@@ -1398,6 +1437,7 @@ RESPONSIBILITIES:
 
 - Load the whole list once (there is no single-setting read); expose loading / error / saving / per-key busy flags.
 - `change(key, {value, expectedVersion})` and `reset(setting)` send the loaded `version` as `expectedVersion` with `SUPPRESS_ERROR_NOTIFICATION` and replace the row with the returned view.
+- `changeGeoLocation(setting, write)` saves a new geo location, then sends its id as the value of `app.business.geo-location-id` (`GEO_LOCATION_REF`, which ships without a value: `installationDefault` / `effectiveValue` / history values may be `null`).
   SOURCE: `projects/shared/src/core/state/business-settings.store.ts`
   CALLS:
 - BusinessSettingsService — list, change, reset.
@@ -2747,6 +2787,7 @@ RESPONSIBILITIES:
   CALLS:
 - BusinessSettingsStore — `load()`, `reset()`.
 - BusinessSettingDialogComponent — change a value.
+- BusinessGeoLocationDialogComponent — change `app.business.geo-location-id` (values of that setting are shown as location names via `GeoLocationLookupStore`).
 - ConfirmDialogComponent — reset confirmation.
 - NotificationService / ErrorMessageResolver — success and failure reporting.
   CALLED_BY:
@@ -2759,12 +2800,26 @@ RESPONSIBILITIES:
 
 - Validate on the client with `businessSettingValueValidator` (range, scale, length, single_line; whole minutes for `MINUTES`); `pattern_parts` is checked by the server only.
 - Show `settings.value.invalid` `params.violations[]` inline on the field; bind `validation.*` field errors via `applyServerErrors`.
+- `TIME_ZONE` settings use `TimeZoneSelectComponent` with the zones of `BusinessLocationStore.zoneCountryCode()`.
 - On `409 settings.version.conflict` warn, reload the list and close.
   SOURCE: `projects/admin/src/app/business-settings/business-setting-dialog.component.ts`
   CALLS:
 - BusinessSettingsStore — `change()`, `load()`.
 - describeSettingRule / describeSettingViolation / formatSettingValue / settingLabel / settingHint / datePatternSymbols — `shared/business-setting.meta.ts`.
 - DatePatternLegendComponent — Java pattern symbols for `DATE_TIME_PATTERN` / `DATE_PATTERN`.
+  CALLED_BY:
+- BusinessSettingListComponent
+
+COMPONENT_NAME: BusinessGeoLocationDialogComponent
+TYPE: Gateway
+PURPOSE: Change dialog of the business geo location: country → city → street pickers prefilled from the current location; saving creates a location and stores its id.
+RESPONSIBILITIES:
+
+- Close without a request when the location is unchanged; bind `geo.city.*` / field errors to the location fields; show `settings.value.invalid` violations (`geo_location_ref`) as a toast; on `settings.version.conflict` warn, reload and close.
+  SOURCE: `projects/admin/src/app/business-settings/business-geo-location-dialog.component.ts`
+  CALLS:
+- BusinessSettingsStore — `changeGeoLocation()`, `load()`.
+- GeoLocationFieldsComponent, GeoLocationLookupStore.
   CALLED_BY:
 - BusinessSettingListComponent
 
@@ -3066,7 +3121,7 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: PointListComponent
 TYPE: Gateway
-PURPOSE: Dumb money table of rental points (Point, Status, Cash in drawer, Terminal).
+PURPOSE: Dumb money table of rental points (Point, Location with time zone, Status, Cash in drawer, Terminal).
 RESPONSIBILITIES:
 
 - Render `PointMoneyRow[]` with the existing status pill and right-aligned two-decimal money (`—` when unknown).
@@ -3103,18 +3158,33 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: PointProfileFormComponent
 TYPE: Gateway
-PURPOSE: Point profile form (slug, name, address, contacts) in `create` or `edit` (view/edit toggle) mode.
+PURPOSE: Point profile form (slug, name, country → city → street location, time zone, contacts) in `create` or `edit` (view/edit toggle) mode.
 RESPONSIBILITIES:
+
+- Only the country is editable at first; choosing it enables city, street and time zone. Changing the country clears the city; every country or city choice refills the zone from the city's `suggestedTimeZone` (or the country's `defaultTimeZone`). An unlisted typed city is created on save.
+- Save sends a new location only when the location changed (otherwise the current `geoLocationId`, or the id of a picked saved address, is reused); points without a location or zone show a notice and can be completed.
+- The time zone is a `TimeZoneSelectComponent` limited to the zones of the chosen country.
+- Above the fields, `PointLocationPresetsComponent` offers "Saved addresses" (the business location first, then the unique locations of the points) and a "Use business address" button; picking one fills country, city, street and the zone of that address (the point's zone, or the business time zone). A new point starts with the business address when one is set.
 
 - Create or update through `PointAdminStore` with the global toast suppressed; bind `point.slug.duplicate` to the slug field and other field errors via `applyServerErrors`; toast "Rental point saved".
 - Emit `saved(point)` / `cancelled()`.
   SOURCE: `projects/admin/src/app/points/point-profile-form.component.ts`
   CALLS:
 - PointAdminStore — `create()`, `update()`, `startEdit()`, `cancelEdit()`, `editing`, `saving`.
-- ApiErrorParser / ErrorMessageResolver / applyServerErrors / NotificationService.
+- ApiErrorParser / ErrorMessageResolver / applyServerErrors / applyGeoLocationErrors / NotificationService.
+- GeoLocationFieldsComponent, TimeZoneSelectComponent, PointLocationPresetsComponent.
   CALLED_BY:
 - PointCreateDialogComponent
 - PointProfileTabComponent
+
+COMPONENT_NAME: PointLocationPresetsComponent
+TYPE: UI
+PURPOSE: "Saved addresses" dropdown and "Use business address" button above the point location fields; emits the chosen address (`auto` for the create-mode default).
+  SOURCE: `projects/admin/src/app/points/point-location-presets.component.ts`
+  CALLS:
+- PointAdminStore — `points()`, `locations()`; BusinessLocationStore — `location()`, `timeZone()`.
+  CALLED_BY:
+- PointProfileFormComponent
 
 COMPONENT_NAME: PointDetailPageComponent
 TYPE: Gateway
@@ -4526,6 +4596,20 @@ RESPONSIBILITIES:
 - resolveBreakdownMessage — localized breakdown copy.
   CALLED_BY:
 - EquipmentUnitDetailsComponent
+
+COMPONENT_NAME: GeoLocationFieldsComponent
+TYPE: Utility
+PURPOSE: Country / city / street fields bound to a `GeoLocationFormGroup` (`createGeoLocationGroup()` in `geo-location.form.ts`), built from three `ControlValueAccessor` autocompletes: `CountryAutocompleteComponent`, `CityAutocompleteComponent` (shows the region, keeps an unlisted typed name as a new city); `TimeZoneSelectComponent` is a separate reusable dropdown of the zones of a given country (`countryCode` input; a current value outside the list stays as an extra option), used by the point form and the business time zone dialog.
+RESPONSIBILITIES:
+
+- Emit `countryChanged` and `zoneSuggested` on user choices; clear the city when the country changes.
+- Helpers: `geoLocationFormValue`, `syncGeoLocationEnabled`, `toGeoLocationWrite`, `isSameGeoLocation`, `applyGeoLocationErrors`.
+  SOURCE: `projects/shared/src/shared/components/geo/`
+  CALLS:
+- GeoService
+  CALLED_BY:
+- PointProfileFormComponent
+- BusinessGeoLocationDialogComponent
 
 COMPONENT_NAME: EquipmentTypeDropdownComponent
 TYPE: Utility

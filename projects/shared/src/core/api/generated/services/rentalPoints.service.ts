@@ -56,7 +56,7 @@ export class RentalPointsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PointResponse>>;
-  /** Returns a single rental point */
+  /** Returns a single rental point; its geo location is referred to by identifier, read it with GET /api/geo/locations/{id} */
   getPoint(
     pointSlug: string,
     observe?: 'body' | 'events' | 'response',
@@ -100,7 +100,7 @@ export class RentalPointsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PointResponse>>;
-  /** Replaces the mutable details of a rental point; the slug is immutable and is not part of the payload (admin only) */
+  /** Replaces the mutable details of a rental point, including its location and time zone; the slug is immutable and is not part of the payload. A change of the zone moves no recorded moment (admin only) */
   updatePoint(
     pointSlug: string,
     pointUpdateRequest: PointUpdateRequest,
@@ -149,7 +149,7 @@ export class RentalPointsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PagePointResponse>>;
-  /** Returns a paginated list of rental points, optionally filtered by lifecycle status */
+  /** Returns a paginated list of rental points, optionally filtered by lifecycle status. A point carries the identifier of its geo location; read the location with GET /api/geo/locations/{id} or, for a list, GET /api/geo/locations?ids= */
   searchPoints(
     pageable: Pageable,
     status?: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED',
@@ -200,7 +200,7 @@ export class RentalPointsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<PointResponse>>;
-  /** Registers a new rental point in status INACTIVE; it is opened for trading by a separate status change (admin only) */
+  /** Registers a new rental point in status INACTIVE; it is opened for trading by a separate status change. The location is the identifier of a geo location created beforehand through POST /api/geo/locations, plus the point's own time zone; the point module does not validate the location and the response carries its identifier only (admin only) */
   registerPoint(
     pointRequest: PointRequest,
     observe?: 'body' | 'events' | 'response',

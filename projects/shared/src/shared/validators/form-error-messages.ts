@@ -1,5 +1,7 @@
 export class FormErrorMessages {
   static readonly required = $localize`This field is required`;
+  static readonly geoCityNameInvalid = $localize`Enter 1 to 100 characters with at least one letter`;
+  static readonly streetMaxLength = $localize`Maximum 255 characters`;
   static readonly slugRequired = $localize`Slug is required`;
   static readonly slugPattern = $localize`Only uppercase letters, numbers, hyphens and underscores`;
   static readonly slugMaxLength = $localize`Maximum 50 characters`;

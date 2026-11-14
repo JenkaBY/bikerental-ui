@@ -22,6 +22,8 @@ import {
   BusinessSettingHistoryStore,
   BusinessSettingsStore,
   formatSettingValue,
+  GEO_LOCATION_REF_VALUE_TYPE,
+  GeoLocationLookupStore,
   Labels,
   PointAdminStore,
   parseDate,
@@ -58,6 +60,7 @@ export class BusinessSettingHistoryComponent implements OnInit {
   protected readonly store = inject(BusinessSettingHistoryStore);
   protected readonly settings = inject(BusinessSettingsStore);
   private readonly points = inject(PointAdminStore);
+  private readonly geoLookup = inject(GeoLocationLookupStore);
   protected readonly displayedColumns = ['changedAt', 'setting', 'change', 'author'];
 
   private readonly router = inject(Router);
@@ -72,6 +75,14 @@ export class BusinessSettingHistoryComponent implements OnInit {
   private readonly size = computed(() => Math.min(toIndex(this.params()['size'], PAGE_SIZE), 100));
 
   constructor() {
+    effect(() =>
+      this.geoLookup.ensure(
+        this.store
+          .rows()
+          .filter((row) => row.change.valueType === GEO_LOCATION_REF_VALUE_TYPE)
+          .flatMap((row) => [row.change.previousValue, row.change.newValue]),
+      ),
+    );
     effect(() => {
       this.store.search({
         settingKey: this.settingKey() || undefined,
@@ -104,6 +115,7 @@ export class BusinessSettingHistoryComponent implements OnInit {
 
   protected format(change: BusinessSettingChange, value: SettingValue | null): string {
     if (change.valueType === TIME_ZONE_VALUE_TYPE) return zoneWithOffset(value);
+    if (change.valueType === GEO_LOCATION_REF_VALUE_TYPE) return this.geoLookup.describe(value);
     return formatSettingValue(value, change.kind, change.unit);
   }
 

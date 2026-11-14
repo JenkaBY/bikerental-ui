@@ -1,6 +1,6 @@
 export type SettingValue = number | string;
 
-export type SettingValueKind = 'minutes' | 'money' | 'text' | 'unknown';
+export type SettingValueKind = 'minutes' | 'money' | 'text' | 'geoLocation' | 'unknown';
 
 export type SettingSource =
   | 'POINT'

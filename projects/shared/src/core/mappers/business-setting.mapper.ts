@@ -29,6 +29,7 @@ const KIND_BY_VALUE_TYPE: Record<string, SettingValueKind> = {
   COUNTRY_CODE: 'text',
   CITY: 'text',
   TIME_ZONE: 'text',
+  GEO_LOCATION_REF: 'geoLocation',
 };
 
 export class BusinessSettingMapper {

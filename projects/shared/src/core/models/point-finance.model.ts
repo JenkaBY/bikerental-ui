@@ -47,6 +47,8 @@ export interface PointMoneyRow {
   readonly slug: string;
   readonly name: string;
   readonly status: PointStatus;
+  readonly location: string | null;
+  readonly timeZone: string | null;
   readonly cash: Money | null;
   readonly terminal: Money | null;
   readonly bank: Money | null;

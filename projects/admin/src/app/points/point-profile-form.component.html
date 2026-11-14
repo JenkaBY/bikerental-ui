@@ -30,20 +30,24 @@
     </mat-form-field>
   </div>
 
-  <h3 class="text-base font-medium m-0">{{ labels.PointAddressTitle }}</h3>
-  <div formGroupName="address" class="grid grid-cols-3 gap-x-4">
-    @for (f of addressFields; track f.key) {
-      <mat-form-field appearance="outline">
-        <mat-label>{{ f.label }}</mat-label>
-        <input matInput [formControlName]="f.key" />
-        @if (form.controls.address.controls[f.key].hasError('required')) {
-          <mat-error>{{ errors.required }}</mat-error>
-        }
-        @if (form.controls.address.controls[f.key].hasError('server')) {
-          <mat-error>{{ form.controls.address.controls[f.key].getError('server') }}</mat-error>
-        }
-      </mat-form-field>
-    }
+  <h3 class="text-base font-medium m-0">{{ labels.PointLocationTitle }}</h3>
+  @if (incomplete()) {
+    <p class="text-sm text-amber-700 m-0">{{ labels.PointIncompleteNotice }}</p>
+  }
+  @if (editing()) {
+    <app-point-location-presets [autoApplyBusiness]="creating()" (chosen)="applyPreset($event)" />
+  }
+  <app-geo-location-fields
+    [group]="form.controls.location"
+    (countryChanged)="onCountryChanged()"
+    (zoneSuggested)="onZoneSuggested($event)"
+  />
+  <div class="grid grid-cols-3 gap-x-4">
+    <app-time-zone-select
+      formControlName="timeZone"
+      [countryCode]="countryCode()"
+      [hint]="labels.PointTimeZoneHint"
+    />
   </div>
 
   <h3 class="text-base font-medium m-0">{{ labels.PointContactsTitle }}</h3>

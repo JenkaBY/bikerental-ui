@@ -83,6 +83,10 @@ const SETTING_TEXTS: Readonly<Record<string, SettingText>> = {
     label: Labels.SettingTimeZoneLabel,
     hint: Labels.SettingTimeZoneHint,
   },
+  'app.business.geo-location-id': {
+    label: Labels.SettingGeoLocationLabel,
+    hint: Labels.SettingGeoLocationHint,
+  },
   'app.business.currency': {
     label: Labels.SettingCurrencyLabel,
     hint: Labels.SettingCurrencyHint,
@@ -161,6 +165,7 @@ export function formatSettingValue(
 }
 
 export const TIME_ZONE_VALUE_TYPE = 'TIME_ZONE';
+export const GEO_LOCATION_REF_VALUE_TYPE = 'GEO_LOCATION_REF';
 
 export function utcOffset(zone: string, at: Date = new Date()): string {
   try {
@@ -232,6 +237,8 @@ export function describeSettingViolation(violation: SettingViolation): string {
       return Labels.SettingViolationTimeZone;
     case 'currency_code':
       return Labels.SettingViolationCurrencyCode;
+    case 'geo_location_ref':
+      return Labels.SettingViolationGeoLocationRef;
     case 'pattern_malformed':
       return Labels.SettingViolationPatternMalformed;
     case 'pattern_unformattable':
