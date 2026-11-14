@@ -18,6 +18,7 @@ export * from './damage-report.model';
 export * from './analytics-revenue.model';
 export * from './analytics-customer.model';
 export * from './point.model';
+export * from './geo.model';
 export * from './point-finance.model';
 export * from './point-money-move.model';
 export * from './finance-receipt.model';

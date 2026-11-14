@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { FixedMoneyPipe, Labels, type PointMoneyRow } from '@bikerental/shared';
+import { FixedMoneyPipe, Labels, type PointMoneyRow, zoneWithOffset } from '@bikerental/shared';
 import type { PointStatus } from '@ui-models';
 import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
 
@@ -15,6 +15,19 @@ import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
         <td mat-cell *matCellDef="let row">
           <div class="font-medium text-slate-800">{{ row.name }}</div>
           <div class="text-xs text-slate-500 font-mono">{{ row.slug }}</div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef>{{ labels.PointColumnLocation }}</th>
+        <td mat-cell *matCellDef="let row">
+          @if (row.location === null) {
+            <div class="text-sm italic text-slate-400">{{ labels.PointLocationMissing }}</div>
+          } @else {
+            <div class="text-sm text-slate-700">{{ row.location }}</div>
+          }
+          <div class="text-xs text-slate-500">
+            {{ row.timeZone ? zoneWithOffset(row.timeZone) : labels.PointTimeZoneMissing }}
+          </div>
         </td>
       </ng-container>
       <ng-container matColumnDef="status">
@@ -62,7 +75,9 @@ import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
 })
 export class PointListComponent {
   protected readonly labels = Labels;
-  protected readonly columns = ['point', 'status', 'cash', 'terminal', 'bank'];
+  protected readonly columns = ['point', 'location', 'status', 'cash', 'terminal', 'bank'];
+
+  protected readonly zoneWithOffset = zoneWithOffset;
 
   readonly rows = input.required<readonly PointMoneyRow[]>();
 

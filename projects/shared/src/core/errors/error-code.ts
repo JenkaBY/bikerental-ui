@@ -89,6 +89,10 @@ export const ErrorCode = {
   POINT_SLUG_DUPLICATE: 'point.slug.duplicate',
   POINT_STATUS_TRANSITION_FORBIDDEN: 'point.status.transition_forbidden',
 
+  // geo.* — city checks while creating a location
+  GEO_CITY_NOT_FOUND: 'geo.city.not_found',
+  GEO_CITY_NOT_IN_COUNTRY: 'geo.city.not_in_country',
+
   // equipment.* — equipment ownership by rental point
   EQUIPMENT_POINT_REQUIRED: 'equipment.point.required',
   EQUIPMENT_POINT_NOT_ACCEPTING: 'equipment.point.not_accepting_equipment',

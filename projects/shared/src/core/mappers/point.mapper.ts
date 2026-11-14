@@ -6,7 +6,8 @@ export class PointMapper {
     return {
       slug: r.slug,
       name: r.name,
-      address: { street: r.address.street, city: r.address.city, country: r.address.country },
+      geoLocationId: r.geoLocationId ?? null,
+      timeZone: r.timeZone ?? null,
       contacts: {
         primaryPhone: r.contacts.primaryPhone,
         additionalPhone: r.contacts.additionalPhone,
@@ -23,7 +24,8 @@ export class PointMapper {
   static toUpdateRequest(w: PointWrite): PointUpdateRequest {
     return {
       name: w.name,
-      address: { street: w.address.street, city: w.address.city, country: w.address.country },
+      geoLocationId: w.geoLocationId,
+      timeZone: w.timeZone,
       contacts: PointMapper.toContactsRequest(w.contacts),
     };
   }

@@ -2,6 +2,7 @@ import { computed, DestroyRef, inject, Injectable, LOCALE_ID, signal } from '@an
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { PointMoneyRow, PointMoneySummary } from '../models';
 import { BusinessPeriod } from '../../shared/utils/business-period.util';
+import { formatGeoLocation } from '../../shared/utils/geo-location.util';
 import { PointAdminStore } from './point-admin.store';
 import { PointMoneyOverviewStore } from './point-money-overview.store';
 
@@ -21,12 +22,17 @@ export class PointListViewStore {
 
   readonly rows = computed<readonly PointMoneyRow[]>(() => {
     const positions = this.money.positionsBySlug();
+    const locations = this.registry.locations();
     return this.registry.points().map((point) => {
       const entry = positions.get(point.slug);
       return {
         slug: point.slug,
         name: point.name,
         status: point.status,
+        location: point.geoLocationId
+          ? formatGeoLocation(locations.get(point.geoLocationId))
+          : null,
+        timeZone: point.timeZone,
         cash: entry?.amounts.CASH ?? null,
         terminal: entry?.amounts.CARD_TERMINAL ?? null,
         bank: entry?.amounts.BANK ?? null,

@@ -15,6 +15,7 @@ import {
   ApiErrorParser,
   ErrorCode,
   ErrorMessageResolver,
+  formatGeoLocation,
   Labels,
   NotificationService,
   PageHeaderComponent,
@@ -24,6 +25,7 @@ import {
   SegmentedTabsComponent,
   type SegmentTab,
   StaffNameResolver,
+  zoneWithOffset,
 } from '@bikerental/shared';
 import { PointBalancePillComponent } from './point-balance-pill.component';
 import { POINT_STATUS_CLASSES, POINT_STATUS_LABELS } from './point-status';
@@ -102,7 +104,11 @@ export class PointDetailPageComponent {
   protected readonly identity = computed(() => {
     const p = this.point();
     if (!p) return '';
-    return `${p.address.street}, ${p.address.city}, ${p.address.country} · ${p.slug}`;
+    const location = p.geoLocationId
+      ? formatGeoLocation(this.points.selectedLocation())
+      : Labels.PointLocationMissing;
+    const zone = p.timeZone ? zoneWithOffset(p.timeZone) : Labels.PointTimeZoneMissing;
+    return [location, zone, p.slug].filter(Boolean).join(' · ');
   });
 
   constructor() {

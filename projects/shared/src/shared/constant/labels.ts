@@ -734,10 +734,22 @@ export class Labels {
   static readonly PointsEmpty = $localize`No rental points yet`;
   static readonly PointRegisterTitle = $localize`Register rental point`;
   static readonly PointSlugHint = $localize`Cannot be changed after registration`;
-  static readonly PointAddressTitle = $localize`Address`;
-  static readonly PointStreet = $localize`Street and building`;
-  static readonly PointCity = $localize`City`;
-  static readonly PointCountry = $localize`Country`;
+  static readonly PointLocationTitle = $localize`Location and time zone`;
+  static readonly PointTimeZoneHint = $localize`Filled in from the chosen city. You can choose another zone.`;
+  static readonly PointLocationMissing = $localize`Location not set`;
+  static readonly PointTimeZoneMissing = $localize`Time zone not set`;
+  static readonly PointIncompleteNotice = $localize`This point has no location or time zone yet. Edit the point to complete them.`;
+  static readonly PointColumnLocation = $localize`:points-table|Points table column header:Location`;
+  static readonly GeoCountry = $localize`:geo picker:Country`;
+  static readonly GeoCity = $localize`:geo picker:City`;
+  static readonly GeoStreet = $localize`Street and building`;
+  static readonly GeoTimeZone = $localize`:geo picker:Time zone`;
+  static readonly GeoCountryFirstHint = $localize`Choose the country first`;
+  static readonly GeoCityNewHint = $localize`Not in the list: this city will be added when you save`;
+  static readonly GeoNoMatches = $localize`No matches`;
+  static geoLocationUnknown(id: string): string {
+    return $localize`Unknown location #${id}:id:`;
+  }
   static readonly PointContactsTitle = $localize`Contacts`;
   static readonly PointPrimaryPhone = $localize`Primary phone`;
   static readonly PointAdditionalPhone = $localize`Additional phone`;
@@ -944,6 +956,7 @@ export class Labels {
   static readonly SettingViolationCountryCode = $localize`Enter a valid two-letter country code, for example LT.`;
   static readonly SettingViolationKnownCity = $localize`This city is not known. Check the spelling or choose another city.`;
   static readonly SettingViolationTimeZone = $localize`Enter a valid time zone region, for example Europe/Vilnius.`;
+  static readonly SettingViolationGeoLocationRef = $localize`Choose the location again and save it.`;
   static readonly SettingViolationCurrencyCode = $localize`Enter a valid three-letter currency code, for example EUR.`;
   static readonly SettingViolationPatternMalformed = $localize`This is not a valid date and time pattern.`;
   static readonly SettingViolationPatternUnformattable = $localize`This pattern cannot be used to print a date and time.`;
@@ -1015,6 +1028,8 @@ export class Labels {
     return $localize`:setting history level:Rental point: ${point}:point:`;
   }
   static readonly SettingCurrencyLabel = $localize`:business setting name:Currency`;
+  static readonly SettingGeoLocationLabel = $localize`:business setting name:Business location`;
+  static readonly SettingGeoLocationHint = $localize`The country, city and street of the business. It will replace the Country and City settings in a later release.`;
   static readonly SettingCurrencyHint = $localize`The three-letter ISO code of the business currency, for example EUR or USD. Changing it clears the custom symbol.`;
   static readonly SettingCurrencySymbolLabel = $localize`:business setting name:Currency symbol`;
   static readonly SettingCurrencySymbolHint = $localize`Shown next to amounts on screen. Documents keep the currency code. Without a value, the default symbol of the currency is used.`;

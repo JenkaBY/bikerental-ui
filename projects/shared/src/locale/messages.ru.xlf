@@ -7266,6 +7266,74 @@
         <source>Rental point: <x id="point" equiv-text="point"/></source>
         <target>Пункт проката: <x id="point" equiv-text="point"/></target>
       </trans-unit>
+      <trans-unit id="2823715611556147824" datatype="html">
+        <source>The chosen city was not found. Choose the city again.</source>
+        <target>Выбранный город не найден. Выберите город заново.</target>
+      </trans-unit>
+      <trans-unit id="2333585902312896782" datatype="html">
+        <source>The chosen city is not in the chosen country. Choose the city again.</source>
+        <target>Выбранный город не находится в выбранной стране. Выберите город заново.</target>
+      </trans-unit>
+      <trans-unit id="6701692659985978388" datatype="html">
+        <source>Location and time zone</source>
+        <target>Местоположение и часовой пояс</target>
+      </trans-unit>
+      <trans-unit id="299460726212306897" datatype="html">
+        <source>Filled in from the chosen city. You can choose another zone.</source>
+        <target>Заполняется по выбранному городу. Можно выбрать другой пояс.</target>
+      </trans-unit>
+      <trans-unit id="691356150681416902" datatype="html">
+        <source>Location not set</source>
+        <target>Местоположение не задано</target>
+      </trans-unit>
+      <trans-unit id="6254161870825576938" datatype="html">
+        <source>Time zone not set</source>
+        <target>Часовой пояс не задан</target>
+      </trans-unit>
+      <trans-unit id="571515464904430048" datatype="html">
+        <source>This point has no location or time zone yet. Edit the point to complete them.</source>
+        <target>У этого пункта пока нет местоположения или часового пояса. Отредактируйте пункт, чтобы заполнить их.</target>
+      </trans-unit>
+      <trans-unit id="7553218660706716996" datatype="html">
+        <source>Location</source>
+        <target>Местоположение</target>
+      </trans-unit>
+      <trans-unit id="5424440825604833486" datatype="html">
+        <source>Choose the country first</source>
+        <target>Сначала выберите страну</target>
+      </trans-unit>
+      <trans-unit id="1474247477292136185" datatype="html">
+        <source>Not in the list: this city will be added when you save</source>
+        <target>Нет в списке: этот город будет добавлен при сохранении</target>
+      </trans-unit>
+      <trans-unit id="2933395362711398504" datatype="html">
+        <source>No matches</source>
+        <target>Нет совпадений</target>
+      </trans-unit>
+      <trans-unit id="2501065097106147591" datatype="html">
+        <source>Unknown location #<x id="id" equiv-text="id"/></source>
+        <target>Неизвестное местоположение #<x id="id" equiv-text="id"/></target>
+      </trans-unit>
+      <trans-unit id="3958911053631055860" datatype="html">
+        <source>Choose the location again and save it.</source>
+        <target>Выберите местоположение заново и сохраните его.</target>
+      </trans-unit>
+      <trans-unit id="1095723255847940143" datatype="html">
+        <source>Business location</source>
+        <target>Местоположение бизнеса</target>
+      </trans-unit>
+      <trans-unit id="16914059256416871" datatype="html">
+        <source>The country, city and street of the business. It will replace the Country and City settings in a later release.</source>
+        <target>Страна, город и улица бизнеса. В одном из следующих выпусков заменит настройки «Страна» и «Город».</target>
+      </trans-unit>
+      <trans-unit id="8379795887727266779" datatype="html">
+        <source>Enter 1 to 100 characters with at least one letter</source>
+        <target>Введите от 1 до 100 символов, хотя бы одна буква</target>
+      </trans-unit>
+      <trans-unit id="1869407683183816507" datatype="html">
+        <source>Maximum 255 characters</source>
+        <target>Не более 255 символов</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
