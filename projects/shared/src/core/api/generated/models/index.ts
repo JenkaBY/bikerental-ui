@@ -222,16 +222,6 @@ export interface RentalResponse {
   pickUpPointSlug?: string;
 }
 
-/** Postal address of a rental point */
-export interface PointAddressRequest {
-  /** Street and building */
-  street: string;
-  /** City */
-  city: string;
-  /** Country */
-  country: string;
-}
-
 /** Contact details of a rental point */
 export interface PointContactsRequest {
   /** Primary contact phone */
@@ -246,20 +236,12 @@ export interface PointContactsRequest {
 export interface PointUpdateRequest {
   /** Display name */
   name: string;
-  /** Postal address */
-  address: PointAddressRequest;
+  /** Identifier of a location created through POST /api/geo/locations; a changed address is a new location */
+  geoLocationId: number;
+  /** Standard IANA time zone name; any zone of the list is accepted, not only the zone of the country or the city */
+  timeZone: string;
   /** Contact details */
   contacts: PointContactsRequest;
-}
-
-/** Postal address of a rental point */
-export interface PointAddressResponse {
-  /** Street and building */
-  street: string;
-  /** City */
-  city: string;
-  /** Country */
-  country: string;
 }
 
 /** Contact details of a rental point */
@@ -278,8 +260,10 @@ export interface PointResponse {
   slug: string;
   /** Display name */
   name: string;
-  /** Postal address */
-  address: PointAddressResponse;
+  /** Identifier of the geo location of the point (country, city, street); read it with GET /api/geo/locations/{id}. Absent when the point has none yet */
+  geoLocationId?: number;
+  /** IANA time zone of the point; absent only for a point whose location has not been filled yet */
+  timeZone?: string;
   /** Contact details */
   contacts: PointContactsResponse;
   /** Lifecycle status */
@@ -433,6 +417,7 @@ export interface SettingViewResponse {
     | 'CURRENCY_CODE'
     | 'COUNTRY_CODE'
     | 'CITY'
+    | 'GEO_LOCATION_REF'
     | 'TIME_ZONE'
     | 'DATE_TIME_PATTERN'
     | 'DATE_PATTERN'
@@ -443,12 +428,12 @@ export interface SettingViewResponse {
   rules: Array<SettingRuleResponse>;
   /** Levels the setting may be set at */
   permittedLevels: Array<'POINT' | 'BUSINESS'>;
-  /** Value shipped with the deployment; typed JSON: integer minutes, a number with two decimals, or a string for text settings */
-  installationDefault: any;
+  /** Value shipped with the deployment; typed JSON: integer minutes, a number with two decimals, an integer identifier, or a string for text settings; null for a setting that ships without a value (app.business.geo-location-id) */
+  installationDefault?: any;
   /** Business-wide value; null when it was never set or was reset */
   businessValue?: any;
-  /** Value in effect: the business value when set, otherwise the installation default */
-  effectiveValue: any;
+  /** Value in effect: the business value when set, otherwise the installation default; null when neither exists */
+  effectiveValue?: any;
   /** Level the effective value comes from */
   effectiveSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
   /** Version of the business-level value; 0 when it was never set */
@@ -572,8 +557,10 @@ export interface PointRequest {
   slug: string;
   /** Display name */
   name: string;
-  /** Postal address */
-  address: PointAddressRequest;
+  /** Identifier of a location created through POST /api/geo/locations; a changed address is a new location */
+  geoLocationId: number;
+  /** Standard IANA time zone name; any zone of the list is accepted, not only the zone of the country or the city */
+  timeZone: string;
   /** Contact details */
   contacts: PointContactsRequest;
 }
@@ -638,6 +625,70 @@ export interface PenaltyResponse {
   status?: 'PENDING' | 'SETTLED';
   /** Finance transaction id; null while the penalty is PENDING */
   transactionId?: string;
+}
+
+/** Request body for creating a location */
+export interface LocationRequest {
+  /** ISO 3166-1 alpha-2 country code */
+  country: string;
+  /** Identifier of a city of the country */
+  cityId: number;
+  /** Street and building, at most 255 characters; a blank value is stored as absent */
+  street?: string;
+}
+
+/** City of a location */
+export interface LocationCityResponse {
+  /** City identifier */
+  id: number;
+  /** Name in the response language */
+  name: string;
+  /** Region name; absent for a user-entered city */
+  region?: string;
+  /** True for a city entered by a user */
+  userEntered?: boolean;
+}
+
+/** Country of a location */
+export interface LocationCountryResponse {
+  /** ISO 3166-1 alpha-2 code */
+  code: string;
+  /** Name in the response language */
+  name: string;
+}
+
+/** An immutable place: country, city and the optional street */
+export interface LocationResponse {
+  /** Location identifier */
+  id: number;
+  /** Country */
+  country: LocationCountryResponse;
+  /** City */
+  city: LocationCityResponse;
+  /** Street and building; absent when none was given */
+  street?: string;
+}
+
+/** Request body for creating a user-entered city */
+export interface CityRequest {
+  /** City name, 1 to 100 characters after trimming, with at least one letter */
+  name: string;
+}
+
+/** A city of a country */
+export interface CityResponse {
+  /** The application's city identifier; consumers store it, never the name */
+  id: number;
+  /** Display name in the response language */
+  name: string;
+  /** Region name, tells same-named cities apart; absent for a user-entered city */
+  region?: string;
+  /** The city's own time zone; absent for a user-entered city */
+  timeZone?: string;
+  /** The own time zone, otherwise the default zone of the country */
+  suggestedTimeZone?: string;
+  /** True for a city entered by a user, false for a reference city */
+  userEntered?: boolean;
 }
 
 /** Request body for recording a fund withdrawal */
@@ -1091,6 +1142,46 @@ export interface PageDamageReportSummaryResponse {
   pageRequest?: PageRequest;
 }
 
+/** A standard IANA region time zone */
+export interface TimeZoneResponse {
+  /** IANA zone name */
+  name: string;
+  /** True when the zone belongs to the requested country */
+  ofCountry?: boolean;
+}
+
+/** A country of the reference list */
+export interface CountryResponse {
+  /** ISO 3166-1 alpha-2 code */
+  code: string;
+  /** Name in the response language */
+  name: string;
+  /** Default time zone, the zone of the capital; absent for a country without zones */
+  defaultTimeZone?: string;
+}
+
+/** A time zone of a country */
+export interface CountryTimeZoneResponse {
+  /** IANA zone name */
+  name: string;
+  /** True for the default zone of the country, the zone of its capital */
+  defaultZone?: boolean;
+}
+
+export interface PageCityResponse {
+  items?: Array<CityResponse>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
+}
+
+/** The time zone of a city and where it comes from */
+export interface CityTimeZoneResponse {
+  /** IANA zone name; absent when neither the city nor its country has a zone */
+  timeZone?: string;
+  /** CITY: the own zone of the city; COUNTRY_DEFAULT: the default zone of its country; NONE: no zone is known */
+  source: 'CITY' | 'COUNTRY_DEFAULT' | 'NONE';
+}
+
 export interface TransactionFilterParams {
   customerIds?: Array<string>;
   fromDate?: string;
@@ -1506,18 +1597,19 @@ export interface SettingChangeResponse {
     | 'CURRENCY_CODE'
     | 'COUNTRY_CODE'
     | 'CITY'
+    | 'GEO_LOCATION_REF'
     | 'TIME_ZONE'
     | 'DATE_TIME_PATTERN'
     | 'DATE_PATTERN'
     | 'SINGLE_LINE_TEXT';
   /** Unit of the value: MINUTES or the business currency code; null for text settings and settings that left the catalogue */
   unit?: string;
-  /** Typed JSON value in force before the change: integer minutes, a number with two decimals or a string */
-  previousValue: any;
+  /** Typed JSON value in force before the change: integer minutes, a number with two decimals or a string; null when no value was in force */
+  previousValue?: any;
   /** Level the value in force before the change came from */
   previousSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
-  /** Typed JSON value in force after the change; the installation default for a RESET */
-  newValue: any;
+  /** Typed JSON value in force after the change; the installation default for a RESET, null when the setting has none */
+  newValue?: any;
   /** Level the value in force after the change comes from */
   newSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
   /** SET for a new value, RESET for a return to the installation default */

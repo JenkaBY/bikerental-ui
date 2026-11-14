@@ -14,6 +14,7 @@ export { CustomersService } from './customers.service';
 export { EquipmentsCatalogueService } from './equipmentsCatalogue.service';
 export { EquipmentTypesService } from './equipmentTypes.service';
 export { FinanceService } from './finance.service';
+export { GeographyService } from './geography.service';
 export { IdentityService } from './identity.service';
 export { MaintenanceService } from './maintenance.service';
 export { RentalPointsService } from './rentalPoints.service';
