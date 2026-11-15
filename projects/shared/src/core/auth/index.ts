@@ -5,6 +5,7 @@ export * from './auth.interceptor';
 export * from './auth.guard';
 export * from './admin.guard';
 export * from './operator.guard';
+export * from './platform-manager.guard';
 export * from './customer-profile.guard';
 export * from './must-change-password.guard';
 export * from './password-policy.validator';

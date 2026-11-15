@@ -9,7 +9,7 @@
 // environment, so parse it once and swap only the segment you mean to change. Never
 // rebuild the prefix by guessing segment positions or hardcoding it.
 
-const APP_SEGMENTS = new Set(['admin', 'operator']);
+const APP_SEGMENTS = new Set(['admin', 'operator', 'platform']);
 
 // Angular locale code (LOCALE_ID / user preference) → the URL segment the i18n build emits.
 const LOCALE_SEGMENTS: Readonly<Record<string, string>> = {

@@ -56,6 +56,13 @@ export class HomeComponent {
       ariaLabel: $localize`Open operator dashboard`,
       href: 'operator/',
     },
+    {
+      id: 'platform',
+      title: $localize`Platform`,
+      description: $localize`Manage the platform and its managers`,
+      ariaLabel: $localize`Open platform dashboard`,
+      href: 'platform/',
+    },
   ];
 
   onCardSelect(card: DashboardCardDef): void {

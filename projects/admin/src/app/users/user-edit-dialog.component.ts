@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import {
   ApiErrorParser,
+  ErrorMessageResolver,
   applyServerErrors,
   ASSIGNABLE_ROLES,
   CancelButtonComponent,
@@ -113,6 +114,7 @@ export class UserEditDialogComponent {
   private readonly dialogRef = inject<MatDialogRef<UserEditDialogComponent>>(MatDialogRef);
   private readonly store = inject(ManagedUserStore);
   private readonly notifications = inject(NotificationService);
+  private readonly resolver = inject(ErrorMessageResolver);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly saving = this.store.saving;
@@ -150,7 +152,11 @@ export class UserEditDialogComponent {
         error: (err) => {
           const apiError = ApiErrorParser.parse(err);
           const summary = applyServerErrors(this.form, apiError);
-          if (summary.length) this.notifications.error(summary.join(' '));
+          if (summary.length) {
+            this.notifications.error(summary.join(' '));
+          } else if (apiError.fieldErrors.length === 0) {
+            this.notifications.error(this.resolver.resolve(apiError));
+          }
         },
       });
   }

@@ -7346,6 +7346,66 @@
         <source>Use business address</source>
         <target>Адрес бизнеса</target>
       </trans-unit>
+      <trans-unit id="962765493084218985" datatype="html">
+        <source>Platform</source>
+        <target>Платформа</target>
+      </trans-unit>
+      <trans-unit id="5152967360018126204" datatype="html">
+        <source>Manage the platform and its managers</source>
+        <target>Управление платформой и её менеджерами</target>
+      </trans-unit>
+      <trans-unit id="3708344960904457046" datatype="html">
+        <source>Open platform dashboard</source>
+        <target>Открыть панель платформы</target>
+      </trans-unit>
+      <trans-unit id="6292563589802333983" datatype="html">
+        <source>This role cannot be assigned to a business account.</source>
+        <target>Эту роль нельзя назначить бизнес-аккаунту.</target>
+      </trans-unit>
+      <trans-unit id="1131784428705412251" datatype="html">
+        <source>You cannot deactivate your own account.</source>
+        <target>Нельзя деактивировать собственную учётную запись.</target>
+      </trans-unit>
+      <trans-unit id="8889264794877410789" datatype="html">
+        <source>The initial platform manager cannot be deactivated.</source>
+        <target>Первого менеджера платформы нельзя деактивировать.</target>
+      </trans-unit>
+      <trans-unit id="4286199236110157018" datatype="html">
+        <source>Platform manager</source>
+        <target>Менеджер платформы</target>
+      </trans-unit>
+      <trans-unit id="4146758542946403668" datatype="html">
+        <source>Platform Dashboard</source>
+        <target>Панель платформы</target>
+      </trans-unit>
+      <trans-unit id="53251146689861843" datatype="html">
+        <source>Platform managers</source>
+        <target>Менеджеры платформы</target>
+      </trans-unit>
+      <trans-unit id="3250733939588770682" datatype="html">
+        <source>No platform managers yet.</source>
+        <target>Менеджеров платформы пока нет.</target>
+      </trans-unit>
+      <trans-unit id="2104356859037574485" datatype="html">
+        <source>New platform manager</source>
+        <target>Новый менеджер платформы</target>
+      </trans-unit>
+      <trans-unit id="522004762762659816" datatype="html">
+        <source>Platform manager created. Share the password you set with them securely.</source>
+        <target>Менеджер платформы создан. Передайте ему заданный пароль безопасным способом.</target>
+      </trans-unit>
+      <trans-unit id="4386838954606117714" datatype="html">
+        <source>You cannot deactivate your own account</source>
+        <target>Нельзя деактивировать собственную учётную запись</target>
+      </trans-unit>
+      <trans-unit id="1009736031435923890" datatype="html">
+        <source>Deactivate platform manager</source>
+        <target>Деактивировать менеджера платформы</target>
+      </trans-unit>
+      <trans-unit id="1753183453956039096" datatype="html">
+        <source>This will disable the account and revoke all of its active sessions. It cannot be reactivated from here.</source>
+        <target>Учётная запись будет отключена, а все её активные сеансы — завершены. Повторно активировать её здесь нельзя.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

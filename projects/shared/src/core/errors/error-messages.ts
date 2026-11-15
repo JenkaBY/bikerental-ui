@@ -102,6 +102,9 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.EMAIL_DUPLICATE]: $localize`This email address is already in use.`,
   [ErrorCode.PASSWORD_POLICY_VIOLATION]: $localize`The password does not meet the required policy (8–20 characters, at least one letter and one digit).`,
   [ErrorCode.PASSWORD_INVALID_CURRENT]: $localize`The current password is incorrect.`,
+  [ErrorCode.ROLE_NOT_ASSIGNABLE]: $localize`This role cannot be assigned to a business account.`,
+  [ErrorCode.PLATFORM_MANAGER_SELF_DEACTIVATION]: $localize`You cannot deactivate your own account.`,
+  [ErrorCode.PLATFORM_MANAGER_SEEDED_NOT_DEACTIVATABLE]: $localize`The initial platform manager cannot be deactivated.`,
 
   // Agreement template lifecycle
   [ErrorCode.AGREEMENT_TEMPLATE_NOT_EDITABLE]: agreementTemplateNotEditableMessage,

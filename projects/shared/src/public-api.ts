@@ -78,6 +78,7 @@ export * from './core/state/returnable-rental-lookup.store';
 export * from './core/state/rental-validation.store';
 export * from './core/state/user.store';
 export * from './core/state/managed-user.store';
+export * from './core/state/platform-manager.store';
 export * from './core/state/business-settings.store';
 export * from './core/state/business-currency.store';
 export * from './core/state/business-setting-history.store';

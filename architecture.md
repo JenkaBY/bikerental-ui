@@ -2,10 +2,10 @@
 
 ## Summary
 
-- Three independently deployable Angular SPAs (`gateway`, `admin`, `operator`) plus one shared Angular library (`shared`), built from a single workspace and one commit.
+- Four independently deployable Angular SPAs (`gateway`, `admin`, `operator`, `platform`) plus one shared Angular library (`shared`), built from a single workspace and one commit.
 - All communication is synchronous HTTP/REST against one external Spring Boot backend (out of this repo), reached through an `ng-openapi`-generated client; a development-only SSE stream carries a simulated clock for the "time travel" testing feature.
 - Two deployment targets share one build definition: GitHub Pages (static hosting, cross-origin to a test API) and a Caddy container image (`pi` target, same-origin to the production API, published to GHCR and rolled out by a separate repository via `repository_dispatch`; old images are pruned by `ghcr-cleanup.yml`, see `docs/ghcr-retention.md`).
-- Authentication is OIDC (`angular-auth-oidc-client`), one client id per authenticated SPA (`admin`, `operator`); `gateway` is unauthenticated.
+- Authentication is OIDC (`angular-auth-oidc-client`), one client id per authenticated SPA (`admin`, `operator`, `platform`); `gateway` is unauthenticated.
 - No backend code, database, message broker, or infrastructure-as-code lives in this repository — the backend is an external dependency identified only by its OpenAPI spec and base URL.
 
 ---
@@ -131,6 +131,26 @@ CONSUMES:
     ENDPOINT_OR_TOPIC: `{apiUrl}/api/dev/time`
     FROM_SERVICE: bikerental-backend
     DESCRIPTION: Simulated-clock stream for the "time travel" testing feature; only opened when `environment.timeTravelEnabled` is true (false in every checked-in environment file)
+
+---
+
+SERVICE_NAME: platform
+TYPE: Frontend
+PURPOSE: Authenticated, desktop-first SPA for the `PLATFORM_MANAGER` role — platform-wide administration; first section is platform managers (list, create with a one-time temporary password, deactivate). Clients, payments and tariffs sections come later.
+ENTRY_POINT: `projects/platform/src/main.ts`
+EXPOSES:
+  - PROTOCOL: HTTP
+    ENDPOINT_OR_TOPIC: `/platform/` (baseHref; dev server port 4203)
+    DESCRIPTION: Compiled static bundle for platform administration; routes guarded by `authGuard`, `mustChangePasswordGuard`, `platformManagerGuard`
+CONSUMES:
+  - PROTOCOL: HTTP
+    ENDPOINT_OR_TOPIC: `PlatformManagersService` — `GET`/`POST /api/platform/managers`, `POST /api/platform/managers/{id}/deactivate`
+    FROM_SERVICE: bikerental-backend
+    DESCRIPTION: Platform manager registry via `PlatformManagerStore`. Never calls business APIs (rentals, customers, settings), which answer 403 to a platform manager; `422 identity.platform_manager.self_deactivation` / `identity.platform_manager.seeded_not_deactivatable` are shown as localized toasts
+  - PROTOCOL: HTTP
+    ENDPOINT_OR_TOPIC: OIDC authorization/token/end-session endpoints (client id `bike-rental-platform`)
+    FROM_SERVICE: bikerental-backend
+    DESCRIPTION: Login, token refresh and logout via `angular-auth-oidc-client`
 
 ---
 

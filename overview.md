@@ -2,7 +2,7 @@
 
 ## Summary
 
-- Three independently deployable browser SPAs (`gateway`, `admin`, `operator`) plus one shared Angular library (`shared`) in a single Angular 21 workspace; no SSR, no NgModules, no NgRx.
+- Four independently deployable browser SPAs (`gateway`, `admin`, `operator`, `platform`) plus one shared Angular library (`shared`) in a single Angular 21 workspace; no SSR, no NgModules, no NgRx.
 - `gateway` is a static application chooser served at the site root; `admin` is a desktop-first CRUD/analytics back office; `operator` is a mobile-first PWA driving the rental lifecycle (create → sign → active → return).
 - Every runtime component talks to one Spring Boot backend over HTTP through an `ng-openapi`-generated client in `projects/shared/src/core/api/generated/`; there is no local database and no direct `HttpClient` use for spec-covered endpoints.
 - State lives in class-based signal stores under `projects/shared/src/core/state/` — global lookups are `providedIn: 'root'`, feature stores are provided on the parent page component so sibling children share one instance.
@@ -25,6 +25,10 @@
   ENTRY_FILES: `projects/operator/src/main.ts`, `projects/operator/src/app/app.config.ts`, `projects/operator/src/app/app.routes.ts`, `projects/operator/src/index.html`
   PWA_FILES: `projects/operator/ngsw-config.json`, `projects/operator/public/manifest.webmanifest`, `projects/operator/public/icons/`, `projects/operator/src/app/core/pwa-update.service.ts`
 
+- PATH: `projects/platform/`
+  PURPOSE: Desktop-first SPA for the `PLATFORM_MANAGER` role — platform managers list, create dialog (one-time temporary password via the shared `TemporaryPasswordDialogComponent`), deactivate; `PlatformManagerStore` → `PlatformManagersService`; toolbar profile menu + shared `PROFILE_SETTINGS_ROUTES` (account, security, language preferences) as in admin/operator
+  ENTRY_FILES: `projects/platform/src/main.ts`, `projects/platform/src/app/app.config.ts`, `projects/platform/src/app/app.routes.ts`, `projects/platform/src/index.html`
+
 - PATH: `projects/shared/`
   PURPOSE: Angular library consumed by all three SPAs via the `@bikerental/shared` barrel
   ENTRY_FILES: `projects/shared/src/public-api.ts`, `projects/shared/src/app.tokens.ts`
@@ -39,7 +43,7 @@
 
 - PATH: `projects/shared/src/core/auth/`
   PURPOSE: OIDC wiring, bearer-token interceptor, route guards, password-policy validators, forbidden/change-password screens
-  ENTRY_FILES: `auth.config.ts`, `auth.service.ts`, `auth.interceptor.ts`, `auth.guard.ts`, `admin.guard.ts`, `operator.guard.ts`, `must-change-password.guard.ts`, `customer-profile.guard.ts`, `index.ts`
+  ENTRY_FILES: `auth.config.ts`, `auth.service.ts`, `auth.interceptor.ts`, `auth.guard.ts`, `admin.guard.ts`, `operator.guard.ts`, `platform-manager.guard.ts`, `must-change-password.guard.ts`, `customer-profile.guard.ts`, `index.ts`
 
 - PATH: `projects/shared/src/core/errors/`
   PURPOSE: RFC 7807 `ProblemDetail` → typed `ApiError`, localized message catalog keyed by backend error code, snackbar facade, form server-error binding, suppression context token
@@ -500,7 +504,7 @@ TYPE: Service
 PURPOSE: OIDC session facade exposing authentication state, roles and the current user as signals.
 RESPONSIBILITIES:
 
-- Run `checkAuth()` at startup and expose `isAuthenticated`, `roles`, `uid`, `isAdmin`, `isOperator`, `mustChangePassword`.
+- Run `checkAuth()` at startup and expose `isAuthenticated`, `roles`, `uid`, `isAdmin`, `isOperator`, `isPlatformManager`, `mustChangePassword`.
 - Decode access-token claims via `readAccessTokenClaims`.
 - Load the current user profile into `UserStore` on login and clear it on logout.
 - Start login/logout redirects and token refresh.

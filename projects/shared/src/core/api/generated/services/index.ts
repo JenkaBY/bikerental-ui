@@ -17,6 +17,7 @@ export { FinanceService } from './finance.service';
 export { GeographyService } from './geography.service';
 export { IdentityService } from './identity.service';
 export { MaintenanceService } from './maintenance.service';
+export { PlatformManagersService } from './platformManagers.service';
 export { RentalPointsService } from './rentalPoints.service';
 export { RentalsService } from './rentals.service';
 export { TariffsService } from './tariffs.service';

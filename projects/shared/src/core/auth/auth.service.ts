@@ -43,6 +43,7 @@ export class AuthService {
   readonly mustChangePassword = this._mustChangePassword.asReadonly();
   readonly isAdmin = computed(() => this._roles().includes('ADMIN'));
   readonly isOperator = computed(() => this._roles().includes('OPERATOR'));
+  readonly isPlatformManager = computed(() => this._roles().includes('PLATFORM_MANAGER'));
   readonly currentUserId = computed(() => this._uid() ?? '');
 
   private refreshInFlight$: Observable<LoginResponse> | null = null;

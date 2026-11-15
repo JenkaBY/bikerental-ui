@@ -3,7 +3,12 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 
 const STAGING = 'staging';
-const APP_STAGING_DIRS = { gateway: '', admin: 'admin', operator: 'operator' };
+const APP_STAGING_DIRS = {
+  gateway: '',
+  admin: 'admin',
+  operator: 'operator',
+  platform: 'platform',
+};
 
 const sha1 = (buf) => createHash('sha1').update(buf).digest('hex');
 
@@ -33,7 +38,9 @@ function expectedManifests() {
 
     const locales = options.localize;
     if (!Array.isArray(locales) || locales.length === 0) {
-      throw new Error(`Project '${name}' builds a service worker but declares no locales to verify.`);
+      throw new Error(
+        `Project '${name}' builds a service worker but declares no locales to verify.`,
+      );
     }
 
     for (const locale of locales) {
@@ -52,7 +59,9 @@ function verifyManifest(manifestPath) {
 
   for (const [urlPath, expectedHash] of Object.entries(manifest.hashTable)) {
     if (!urlPath.startsWith(basePrefix)) {
-      failures.push(`PREFIX MISMATCH ${manifestPath} :: ${urlPath} does not start with ${basePrefix}`);
+      failures.push(
+        `PREFIX MISMATCH ${manifestPath} :: ${urlPath} does not start with ${basePrefix}`,
+      );
       continue;
     }
 
@@ -84,7 +93,9 @@ const failures = [];
 
 for (const manifestPath of expected) {
   if (!found.includes(manifestPath)) {
-    failures.push(`MISSING MANIFEST ${manifestPath} — this locale would ship with no service worker.`);
+    failures.push(
+      `MISSING MANIFEST ${manifestPath} — this locale would ship with no service worker.`,
+    );
   }
 }
 

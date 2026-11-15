@@ -1059,4 +1059,17 @@ export class Labels {
   static readonly DatePatternSymbolSecond = $localize`Seconds, two digits (00)`;
   static readonly DatePatternSymbolLiteral = $localize`Text in single quotes is printed as is`;
   static readonly DatePatternSymbolCaseNote = $localize`Letter case matters: MM is the month, mm is minutes.`;
+
+  static readonly PlatformDashboardTitle = $localize`Platform Dashboard`;
+  static readonly PlatformManagersNavLabel = $localize`Platform managers`;
+  static readonly PlatformManagersListTitle = $localize`Platform managers`;
+  static readonly PlatformManagersEmptyState = $localize`No platform managers yet.`;
+  static readonly NewPlatformManagerButton = $localize`New platform manager`;
+  static readonly CreatePlatformManagerDialogTitle = $localize`New platform manager`;
+  static readonly CreatePlatformManagerConfirmButton = $localize`Create`;
+  static readonly CreatePlatformManagerSuccessNoReveal = $localize`Platform manager created. Share the password you set with them securely.`;
+  static readonly PlatformManagerColumnCreated = $localize`Created`;
+  static readonly PlatformManagerOwnAccountTooltip = $localize`You cannot deactivate your own account`;
+  static readonly DeactivatePlatformManagerDialogTitle = $localize`Deactivate platform manager`;
+  static readonly DeactivatePlatformManagerDialogMessage = $localize`This will disable the account and revoke all of its active sessions. It cannot be reactivated from here.`;
 }
