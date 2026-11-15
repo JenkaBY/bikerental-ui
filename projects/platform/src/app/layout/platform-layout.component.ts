@@ -5,8 +5,8 @@ import {
   AuthService,
   HealthIndicatorComponent,
   Labels,
-  LogoutButtonComponent,
   NavItem,
+  ProfileMenuComponent,
   ShellComponent,
 } from '@bikerental/shared';
 
@@ -17,7 +17,7 @@ const NAV_ITEMS: NavItem[] = [
 @Component({
   selector: 'app-platform-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ShellComponent, RouterOutlet, HealthIndicatorComponent, LogoutButtonComponent],
+  imports: [ShellComponent, RouterOutlet, HealthIndicatorComponent, ProfileMenuComponent],
   host: { class: 'block h-screen' },
   template: `
     <app-shell [items]="navItems" [brand]="brand" [title]="title" (logout)="onLogout()">
@@ -26,7 +26,7 @@ const NAV_ITEMS: NavItem[] = [
       </div>
 
       <div toolbar-actions>
-        <app-logout-button (logout)="onLogout()" />
+        <app-profile-menu (logout)="onLogout()" />
       </div>
 
       <router-outlet></router-outlet>

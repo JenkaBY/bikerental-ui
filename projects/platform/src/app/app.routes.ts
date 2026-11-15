@@ -22,6 +22,10 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./managers/managers-list.component').then((m) => m.ManagersListComponent),
       },
+      {
+        path: 'profile',
+        loadChildren: () => import('@bikerental/shared').then((m) => m.PROFILE_SETTINGS_ROUTES),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -8,6 +8,7 @@ import { Labels } from '../../constant/labels';
 import { FormErrorMessages } from '../../validators/form-error-messages';
 import { UserStore } from '../../../core/state/user.store';
 import { ProfileStore } from '../../../core/state/profile.store';
+import { ROLE_LABELS, type Role } from '../../../core/models/role.model';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 
 @Component({
@@ -42,7 +43,7 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
           <div class="flex flex-wrap gap-1">
             @for (role of roles(); track role) {
               <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs">
-                {{ role }}
+                {{ roleLabel(role) }}
               </span>
             } @empty {
               <span class="text-xs text-slate-400">—</span>
@@ -92,6 +93,10 @@ export class ProfileAccountComponent {
   protected readonly username = computed(() => this.userStore.currentUser()?.username ?? '');
   protected readonly displayName = computed(() => this.userStore.currentUser()?.displayName ?? '');
   protected readonly roles = computed(() => this.userStore.currentUser()?.roles ?? []);
+
+  protected roleLabel(role: string): string {
+    return ROLE_LABELS[role as Role] ?? role;
+  }
 
   protected readonly form = new FormGroup({
     email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
