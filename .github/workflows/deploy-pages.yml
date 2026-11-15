@@ -112,14 +112,18 @@ jobs:
       - name: Build operator
         run: npx ng build operator --configuration production,dev --base-href /${{ github.event.repository.name }}/operator/
 
+      - name: Build platform
+        run: npx ng build platform --configuration production,dev --base-href /${{ github.event.repository.name }}/platform/
+
       # The gateway's locales are top-level URLs (/en/, /ru/), so its files sit at the tree root; admin
       # and operator each get a directory of their own.
       - name: Assemble staging directory
         run: |
-          mkdir -p staging/admin staging/operator
+          mkdir -p staging/admin staging/operator staging/platform
           cp -r dist/gateway/browser/. staging/
           cp -r dist/admin/browser/. staging/admin/
           cp -r dist/operator/browser/. staging/operator/
+          cp -r dist/platform/browser/. staging/platform/
 
       - name: Create root redirect to /en/
         run: |
@@ -146,7 +150,7 @@ jobs:
       - name: Create per-app locale redirects
         run: |
           BASE="/${{ github.event.repository.name }}"
-          for app in admin operator; do
+          for app in admin operator platform; do
             cat > "staging/${app}/index.html" << 'HTMLEOF'
           <!doctype html>
           <html lang="en">
@@ -192,7 +196,7 @@ jobs:
                   var path = window.location.pathname;
                   var rel = path.indexOf(base) === 0 ? path.slice(base.length) : path.replace(/^\//, '');
                   var segments = rel.split('/').filter(Boolean);
-                  var apps = ['admin', 'operator'];
+                  var apps = ['admin', 'operator', 'platform'];
                   var locales = ['en', 'ru'];
                   var appDir;
                   if (apps.indexOf(segments[0]) !== -1) {

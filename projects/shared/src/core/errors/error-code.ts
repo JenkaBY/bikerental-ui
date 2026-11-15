@@ -63,6 +63,9 @@ export const ErrorCode = {
   PASSWORD_POLICY_VIOLATION: 'identity.password.policy_violation',
   PASSWORD_INVALID_CURRENT: 'identity.password.invalid_current',
   SETTINGS_WORKING_POINT_NOT_APPLICABLE: 'identity.settings.working_point_not_applicable',
+  ROLE_NOT_ASSIGNABLE: 'identity.role.not_assignable',
+  PLATFORM_MANAGER_SELF_DEACTIVATION: 'identity.platform_manager.self_deactivation',
+  PLATFORM_MANAGER_SEEDED_NOT_DEACTIVATABLE: 'identity.platform_manager.seeded_not_deactivatable',
 
   // agreement.* — template lifecycle
   AGREEMENT_TEMPLATE_NOT_EDITABLE: 'agreement.template.not_editable',

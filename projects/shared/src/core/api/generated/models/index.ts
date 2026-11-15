@@ -446,7 +446,7 @@ export interface UpdateUserRequest {
   /** Human-friendly display name */
   displayName?: string;
   /** Replacement set of roles; ignored when empty */
-  roles?: Array<'ADMIN' | 'OPERATOR'>;
+  roles?: Array<'ADMIN' | 'OPERATOR' | 'PLATFORM_MANAGER'>;
   /** Account status */
   status?: 'ACTIVE' | 'DISABLED';
 }
@@ -458,7 +458,7 @@ export interface UserResponse {
   displayName?: string;
   status?: 'ACTIVE' | 'DISABLED';
   mustChangePassword?: boolean;
-  roles?: Array<'ADMIN' | 'OPERATOR'>;
+  roles?: Array<'ADMIN' | 'OPERATOR' | 'PLATFORM_MANAGER'>;
   lastLoginAt?: string;
   settings?: Record<string, string>;
 }
@@ -563,6 +563,41 @@ export interface PointRequest {
   timeZone: string;
   /** Contact details */
   contacts: PointContactsRequest;
+}
+
+export interface CreatePlatformManagerRequest {
+  /** Unique login name */
+  username: string;
+  /** Unique email address */
+  email: string;
+  /** Human-friendly display name */
+  displayName?: string;
+  /** Optional initial temporary password; generated when omitted */
+  password?: string;
+}
+
+export interface AccountRefResponse {
+  id?: string;
+  displayName?: string;
+}
+
+export interface PlatformManagerCreationResponse {
+  user?: PlatformManagerResponse;
+  temporaryPassword?: string;
+}
+
+export interface PlatformManagerResponse {
+  id?: string;
+  username?: string;
+  email?: string;
+  displayName?: string;
+  status?: 'ACTIVE' | 'DISABLED';
+  mustChangePassword?: boolean;
+  lastLoginAt?: string;
+  createdAt?: string;
+  createdBy?: AccountRefResponse;
+  deactivatedAt?: string;
+  deactivatedBy?: AccountRefResponse;
 }
 
 /** Request body for registering a damage report */
@@ -856,7 +891,7 @@ export interface CreateUserRequest {
   /** Human-friendly display name */
   displayName?: string;
   /** Roles assigned to the account; at least one is required */
-  roles: Array<'ADMIN' | 'OPERATOR'>;
+  roles: Array<'ADMIN' | 'OPERATOR' | 'PLATFORM_MANAGER'>;
   /** Optional initial temporary password; generated when omitted */
   password?: string;
 }

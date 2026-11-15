@@ -10,5 +10,11 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "warn"
+  },
+  "/platform": {
+    "target": "http://localhost:4203",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "warn"
   }
 }

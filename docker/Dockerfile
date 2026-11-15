@@ -10,6 +10,7 @@ COPY docker/Caddyfile.generated /etc/caddy/Caddyfile
 COPY staging/gateway /srv/gateway
 COPY staging/admin /srv/admin
 COPY staging/operator /srv/operator
+COPY staging/platform /srv/platform
 
 USER 1201:1201
 EXPOSE 8080

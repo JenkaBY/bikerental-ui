@@ -189,14 +189,18 @@ jobs:
       - name: Build operator
         run: npx ng build operator --configuration production --base-href /operator/
 
+      - name: Build platform
+        run: npx ng build platform --configuration production --base-href /platform/
+
       # Each application keeps its own layer in the image (see docker/Dockerfile), so an unchanged
       # application re-uses its layer instead of being pushed again over a residential uplink.
       - name: Assemble staging directory
         run: |
-          mkdir -p staging/gateway staging/admin staging/operator
+          mkdir -p staging/gateway staging/admin staging/operator staging/platform
           cp -r dist/gateway/browser/. staging/gateway/
           cp -r dist/admin/browser/. staging/admin/
           cp -r dist/operator/browser/. staging/operator/
+          cp -r dist/platform/browser/. staging/platform/
 
       # Turns the assembled tree into the container's routing config. It reads which
       # locales exist rather than being told, so adding a language changes nothing

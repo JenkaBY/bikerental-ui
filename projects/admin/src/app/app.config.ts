@@ -57,7 +57,7 @@ export const appConfig: ApplicationConfig = {
       return firstValueFrom(
         auth.checkAuth().pipe(
           tap((result) => {
-            if (result.isAuthenticated) {
+            if (result.isAuthenticated && auth.isAdmin()) {
               lookupFacade.init({ loadEquipmentType: true, loadPricingType: true }).subscribe();
               currency.load();
             }

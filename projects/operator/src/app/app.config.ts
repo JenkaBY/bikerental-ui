@@ -65,7 +65,7 @@ export const appConfig: ApplicationConfig = {
       return firstValueFrom(
         auth.checkAuth().pipe(
           tap((result) => {
-            if (result.isAuthenticated) {
+            if (result.isAuthenticated && auth.isOperator()) {
               lookupFacade
                 .init({
                   loadEquipmentType: true,

@@ -20,6 +20,12 @@
       "port": 4201
     },
     {
+      "name": "platform-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:platform"],
+      "port": 4203
+    },
+    {
       "name": "admin-dev-ru",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start:admin:ru"],

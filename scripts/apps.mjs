@@ -1,5 +1,5 @@
 // Applications served under a path segment of their own: /admin/en/…, /operator/ru/…
-export const CONTAINER_APPS = ['admin', 'operator'];
+export const CONTAINER_APPS = ['admin', 'operator', 'platform'];
 
 // The application served at the SITE ROOT. Its locales are top-level URLs — /en/…, /ru/… — because
 // it is built with a base href of '/', so it has no segment of its own to live under. It is the

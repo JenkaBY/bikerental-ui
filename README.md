@@ -11,6 +11,7 @@ The latest stable version is available at: https://jenkaby.github.io/bikerental-
 
 - **Admin** (desktop-first, ≥22" 1080p) — CRUD management of equipment, types, statuses, tariffs, customers, rental/payment history, users
 - **Operator** (mobile-first, installable PWA) — rental creation, QR code equipment scanning, return flow, active rentals dashboard
+- **Platform** (desktop-first, `/platform/`, port 4203) — platform-wide administration for the `PLATFORM_MANAGER` role; first section: platform managers (list, create with a one-time temporary password, deactivate). Admin and operator deny a profile without their own role, and the platform app denies everyone but platform managers
 
 ## Prerequisites
 
@@ -84,7 +85,7 @@ There are **two deployment targets**, one per workflow:
 | API base from | `vars.BIKE_RENTAL_TEST_API` (build time) | `window.location.origin` (runtime)                  |
 | Built with    | `--configuration production,dev`         | `--configuration production`                         |
 | Environment   | `environment.dev.ts`                    | `environment.prod.ts`                                |
-| Apps          | gateway, admin, operator                | gateway, admin, operator (`scripts/apps.mjs`)        |
+| Apps          | gateway, admin, operator, platform      | gateway, admin, operator, platform (`scripts/apps.mjs`) |
 | Base href     | `/<repo>/`, `/<repo>/admin/`, …         | `/admin/`, `/operator/`                              |
 | Origin vs API | cross-origin (needs CORS)               | **same origin** — no preflights, no CORS on login     |
 | Routing       | static redirect files + root `404.html` | generated Caddy config in the image                  |
@@ -183,15 +184,15 @@ secret here. Production never happens automatically: a person promotes that same
 "Deploy UI to production" in `bike-rental` by hand, with `environment: production` — no rebuild, since
 one image serves both hosts.
 
-### OIDC redirect URIs (admin & operator auth)
+### OIDC redirect URIs (admin, operator & platform auth)
 
 Both the admin and operator SPAs compute their OAuth `redirect_uri` from `document.baseURI` (the
 app's mount path) — each points at its own base path directly rather than a synthetic
 `/login/callback` route, so it always resolves to a real `index.html` on static hosting instead of
 depending on the 404 SPA-fallback trick. `redirect_uri` and `post_logout_redirect_uri` are therefore
 the same URL per app, and the **backend OAuth client must register it for each context** the app
-runs in. Admin and operator are registered as separate OAuth clients (`bike-rental-admin` and
-`bike-rental-operator`):
+runs in. Admin, operator and platform are registered as separate OAuth clients (`bike-rental-admin`,
+`bike-rental-operator` and `bike-rental-platform`, redirect `/platform/…`):
 
 `pages` (dev) is genuinely cross-origin from its API (GitHub Pages → Render), so its base comes from a
 repository variable injected into `environment.dev.ts` at build time by the **Inject Bike Rental
