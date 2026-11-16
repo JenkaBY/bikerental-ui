@@ -1,0 +1,142 @@
+<h2 mat-dialog-title>
+  {{ isEdit ? Labels.EditClientDialogTitle : Labels.RegisterClientDialogTitle }}
+</h2>
+<mat-dialog-content>
+  @if (stale()) {
+    <div
+      class="flex items-center justify-between gap-4 mb-3 p-3 rounded bg-amber-50 text-amber-900 text-sm"
+      role="alert"
+    >
+      <span>{{ Labels.ClientStaleVersion }}</span>
+      <button mat-stroked-button type="button" (click)="reload()">
+        {{ Labels.ClientReload }}
+      </button>
+    </div>
+  }
+
+  <form
+    [formGroup]="form"
+    class="grid grid-cols-2 gap-x-4 gap-y-2 pt-2 min-w-[720px]"
+    (ngSubmit)="save()"
+  >
+    <mat-form-field appearance="outline">
+      <mat-label>{{ Labels.ClientDisplayName }}</mat-label>
+      <input matInput formControlName="displayName" />
+      @if (form.controls.displayName.hasError('required')) {
+        <mat-error>{{ errors.nameRequired }}</mat-error>
+      }
+      @if (form.controls.displayName.hasError('maxlength')) {
+        <mat-error>{{ errors.nameMaxLength }}</mat-error>
+      }
+      @if (form.controls.displayName.hasError('consecutiveSpaces')) {
+        <mat-error>{{ errors.consecutiveSpaces }}</mat-error>
+      }
+      @if (form.controls.displayName.hasError('server')) {
+        <mat-error>{{ form.controls.displayName.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ Labels.ClientCurrency }}</mat-label>
+      <input matInput formControlName="currency" maxlength="3" class="uppercase" />
+      <mat-hint>{{ Labels.ClientCurrencyHint }}</mat-hint>
+      @if (form.controls.currency.hasError('required')) {
+        <mat-error>{{ errors.required }}</mat-error>
+      }
+      @if (form.controls.currency.hasError('pattern')) {
+        <mat-error>{{ errors.currencyPattern }}</mat-error>
+      }
+      @if (form.controls.currency.hasError('server')) {
+        <mat-error>{{ form.controls.currency.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ Labels.ClientLegalName }}</mat-label>
+      <input matInput formControlName="legalName" />
+      @if (form.controls.legalName.hasError('required')) {
+        <mat-error>{{ errors.required }}</mat-error>
+      }
+      @if (form.controls.legalName.hasError('maxlength')) {
+        <mat-error>{{ errors.legalNameMaxLength }}</mat-error>
+      }
+      @if (form.controls.legalName.hasError('server')) {
+        <mat-error>{{ form.controls.legalName.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ Labels.ClientRegistrationNumber }}</mat-label>
+      <input matInput formControlName="registrationNumber" />
+      @if (form.controls.registrationNumber.hasError('maxlength')) {
+        <mat-error>{{ errors.serialNumberMaxLength }}</mat-error>
+      }
+      @if (form.controls.registrationNumber.hasError('server')) {
+        <mat-error>{{ form.controls.registrationNumber.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ Labels.ClientContactEmail }}</mat-label>
+      <input matInput type="email" formControlName="contactEmail" />
+      @if (form.controls.contactEmail.hasError('email')) {
+        <mat-error>{{ errors.emailInvalid }}</mat-error>
+      }
+      @if (form.controls.contactEmail.hasError('maxlength')) {
+        <mat-error>{{ errors.emailMaxLength }}</mat-error>
+      }
+      @if (form.controls.contactEmail.hasError('server')) {
+        <mat-error>{{ form.controls.contactEmail.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ Labels.ClientContactPhone }}</mat-label>
+      <input matInput type="tel" formControlName="contactPhone" />
+      @if (form.controls.contactPhone.hasError('pattern')) {
+        <mat-error>{{ errors.phonePattern }}</mat-error>
+      }
+      @if (form.controls.contactPhone.hasError('maxlength')) {
+        <mat-error>{{ errors.phoneMaxLength }}</mat-error>
+      }
+      @if (form.controls.contactPhone.hasError('server')) {
+        <mat-error>{{ form.controls.contactPhone.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="col-span-2">
+      <div class="text-sm font-medium">{{ Labels.ClientBusinessLocation }}</div>
+      <div class="text-xs text-slate-500 mb-2">{{ Labels.ClientBusinessLocationHint }}</div>
+      <app-geo-location-fields
+        [group]="form.controls.location"
+        (countryChanged)="onCountryChanged()"
+        (zoneSuggested)="onZoneSuggested($event)"
+      />
+      @if (!isEdit) {
+        <div class="grid grid-cols-3 gap-x-4">
+          <app-time-zone-select
+            formControlName="timeZone"
+            [countryCode]="countryCode()"
+            [hint]="Labels.ClientTimeZoneHint"
+          />
+        </div>
+      }
+      @if (form.controls.location.controls.country.hasError('server')) {
+        <div class="text-xs text-red-700">
+          {{ form.controls.location.controls.country.getError('server') }}
+        </div>
+      }
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <app-form-cancel-button />
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="form.invalid || store.saving() || stale()"
+    (click)="save()"
+  >
+    {{ isEdit ? Labels.Save : Labels.RegisterClientConfirmButton }}
+  </button>
+</mat-dialog-actions>

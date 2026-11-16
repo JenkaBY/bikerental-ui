@@ -1,0 +1,97 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ Labels.ClientsListTitle }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="flex items-center gap-4 mb-2">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-80">
+        <mat-label>{{ Labels.Search }}</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          [formControl]="search"
+          [maxlength]="searchMax"
+          [placeholder]="Labels.ClientSearchPlaceholder"
+        />
+      </mat-form-field>
+
+      <mat-button-toggle-group
+        [value]="store.query().status"
+        (change)="onStatus($event.value)"
+        hideSingleSelectionIndicator
+      >
+        <mat-button-toggle [value]="null">{{ Labels.All }}</mat-button-toggle>
+        @for (status of statuses; track status) {
+          <mat-button-toggle [value]="status">{{ statusLabels[status] }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+
+      <span class="flex-1"></span>
+      <button mat-raised-button color="primary" (click)="openRegisterDialog()">
+        <mat-icon>add</mat-icon>
+        <span>{{ Labels.NewClientButton }}</span>
+      </button>
+    </div>
+
+    @if (store.loading()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    @if (store.listError()) {
+      <div class="flex items-center gap-4 py-6 text-sm text-red-700" role="alert">
+        <span>{{ Labels.ClientsLoadFailed }} {{ listErrorMessage() }}</span>
+        <button mat-stroked-button (click)="store.reload()">{{ Labels.ClientReload }}</button>
+      </div>
+    } @else if (!store.loading() && store.items().length === 0) {
+      <div class="text-sm text-slate-500 py-6">{{ Labels.ClientsEmptyState }}</div>
+    } @else {
+      <table mat-table [dataSource]="store.items()" class="w-full">
+        <ng-container matColumnDef="slug">
+          <th mat-header-cell *matHeaderCellDef>{{ Labels.ClientSlug }}</th>
+          <td mat-cell *matCellDef="let row" class="font-mono">{{ row.slug }}</td>
+        </ng-container>
+        <ng-container matColumnDef="displayName">
+          <th mat-header-cell *matHeaderCellDef>{{ Labels.ClientDisplayName }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.displayName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="legalName">
+          <th mat-header-cell *matHeaderCellDef>{{ Labels.ClientLegalName }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.legalName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="currency">
+          <th mat-header-cell *matHeaderCellDef>{{ Labels.ClientCurrency }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.currency }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>{{ Labels.Status }}</th>
+          <td mat-cell *matCellDef="let row">
+            <app-client-status-badge [status]="row.status" />
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>{{ Labels.ClientCreatedAt }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'dd MMM yyyy HH:mm' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="cursor-pointer hover:bg-slate-50"
+          tabindex="0"
+          (click)="open(row)"
+          (keydown.enter)="open(row)"
+        ></tr>
+      </table>
+    }
+
+    <mat-paginator
+      [length]="store.totalItems()"
+      [pageIndex]="store.query().pageIndex"
+      [pageSize]="store.query().pageSize"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onPage($event)"
+    />
+  </mat-card-content>
+</mat-card>

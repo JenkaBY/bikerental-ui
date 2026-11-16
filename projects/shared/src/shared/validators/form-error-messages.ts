@@ -6,6 +6,12 @@ export class FormErrorMessages {
   static readonly slugPattern = $localize`Only uppercase letters, numbers, hyphens and underscores`;
   static readonly slugMaxLength = $localize`Maximum 50 characters`;
   static readonly nameRequired = $localize`Name is required`;
+  static readonly consecutiveSpaces = $localize`Use no more than one space in a row`;
+  static readonly legalNameMaxLength = $localize`Maximum 300 characters`;
+  static readonly emailMaxLength = $localize`Maximum 255 characters`;
+  static readonly phoneMaxLength = $localize`Maximum 20 characters`;
+  static readonly currencyPattern = $localize`Enter a three-letter ISO 4217 code, for example EUR`;
+  static readonly businessLocationRequired = $localize`Choose the country and city of the business`;
   // Common equipment-related messages
   static readonly conditionIsRequired = $localize`Condition is required`;
   static readonly pointRequired = $localize`Rental point is required`;

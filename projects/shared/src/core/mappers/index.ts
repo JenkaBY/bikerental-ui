@@ -28,3 +28,4 @@ export * from './geo.mapper';
 export * from './point-finance.mapper';
 export * from './returnable-rental.mapper';
 export * from './business-setting.mapper';
+export * from './client.mapper';

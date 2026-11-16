@@ -270,6 +270,56 @@ export interface PointResponse {
   status: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED';
 }
 
+/** Request body for editing the details of a client */
+export interface ClientUpdateRequest {
+  /** Version of the client the edit is based on; an outdated version is refused with 409 */
+  expectedVersion: number;
+  /** Name the business is known by */
+  displayName: string;
+  /** Name of the legal entity */
+  legalName: string;
+  /** Registration (tax) number */
+  registrationNumber?: string;
+  /** Contact email */
+  contactEmail?: string;
+  /** Contact phone */
+  contactPhone?: string;
+  /** Identifier of an existing geo location inside the client's country */
+  businessGeoLocationId: number;
+}
+
+/** Full client record */
+export interface ClientResponse {
+  /** URL-friendly identifier, the key the client is addressed by */
+  slug: string;
+  /** Name the business is known by */
+  displayName: string;
+  /** Name of the legal entity */
+  legalName: string;
+  /** Registration (tax) number */
+  registrationNumber?: string;
+  /** Contact email */
+  contactEmail?: string;
+  /** Contact phone */
+  contactPhone?: string;
+  /** Identifier of the business geo location; read it with GET /api/geo/locations/{id} */
+  businessGeoLocationId: number;
+  /** ISO 4217 currency; never changes */
+  currency: string;
+  /** IANA time zone; never changes */
+  timeZone: string;
+  /** Lifecycle status */
+  status: 'DRAFT' | 'ACTIVE' | 'SUSPENDED' | 'CLOSED';
+  /** Version to send back as expectedVersion when editing */
+  version: number;
+  /** When the client was registered */
+  createdAt: string;
+  /** Identifier of the platform manager who registered the client */
+  createdBy?: string;
+  /** When the client was last changed */
+  updatedAt: string;
+}
+
 /** Request body for creating or updating equipment */
 export interface EquipmentRequest {
   /** Unique serial number */
@@ -598,6 +648,28 @@ export interface PlatformManagerResponse {
   createdBy?: AccountRefResponse;
   deactivatedAt?: string;
   deactivatedBy?: AccountRefResponse;
+}
+
+/** Request body for registering a client */
+export interface ClientRequest {
+  /** URL-friendly identifier, unique across the installation, immutable after registration; when omitted a free one is derived from the display name (see GET /api/platform/clients/slug-suggestion) */
+  slug?: string | null;
+  /** Name the business is known by */
+  displayName: string;
+  /** Name of the legal entity */
+  legalName: string;
+  /** Registration (tax) number */
+  registrationNumber?: string;
+  /** Contact email */
+  contactEmail?: string;
+  /** Contact phone */
+  contactPhone?: string;
+  /** Identifier of an existing geo location; its country is the business country */
+  businessGeoLocationId: number;
+  /** ISO 4217 currency of the client's books; it must be legal tender in the country of the business location and never changes */
+  currency: string;
+  /** Standard IANA time zone of the client; never changes */
+  timeZone: string;
 }
 
 /** Request body for registering a damage report */
@@ -1136,6 +1208,36 @@ export interface PagePointResponse {
   items?: Array<PointResponse>;
   totalItems?: number;
   pageRequest?: PageRequest;
+}
+
+/** A client in the registry list */
+export interface ClientSummaryResponse {
+  /** URL-friendly identifier */
+  slug: string;
+  /** Name the business is known by */
+  displayName: string;
+  /** Name of the legal entity */
+  legalName: string;
+  /** ISO 4217 currency */
+  currency: string;
+  /** Lifecycle status */
+  status: 'DRAFT' | 'ACTIVE' | 'SUSPENDED' | 'CLOSED';
+  /** When the client was registered */
+  createdAt: string;
+}
+
+export interface PageClientSummaryResponse {
+  items?: Array<ClientSummaryResponse>;
+  totalItems?: number;
+  pageRequest?: PageRequest;
+}
+
+/** A client slug and whether a registration may use it */
+export interface SlugCheckResponse {
+  /** The slug checked or suggested */
+  slug: string;
+  /** AVAILABLE - free to use; RESERVED - an address the platform itself uses; TAKEN - used by another client */
+  verdict: 'AVAILABLE' | 'RESERVED' | 'TAKEN';
 }
 
 export interface DamageReportSearchFilterParams {
