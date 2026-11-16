@@ -1097,8 +1097,9 @@ export class Labels {
   static readonly ClientCurrencyHint = $localize`ISO 4217 code. Cannot be changed later.`;
   static readonly ClientBusinessLocation = $localize`Business location`;
   static readonly ClientBusinessLocationHint = $localize`The country of this location is the client's country.`;
+  static readonly ClientTimeZone = $localize`:client field:Time zone`;
   static readonly ClientTimeZoneHint = $localize`Chosen from the country; change it if the business works in another zone.`;
-  static readonly ClientImmutableHint = $localize`Slug and currency cannot be changed after registration.`;
+  static readonly ClientImmutableHint = $localize`Slug, currency and time zone cannot be changed after registration.`;
   static readonly ClientCreatedAt = $localize`Registered`;
   static readonly ClientUpdatedAt = $localize`Last changed`;
   static readonly ClientStatusDraft = $localize`Draft`;

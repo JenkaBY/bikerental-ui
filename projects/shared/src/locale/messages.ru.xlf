@@ -7630,14 +7630,6 @@
           <context context-type="linenumber">1100</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7756095865817133102" datatype="html">
-        <source>Slug and currency cannot be changed after registration.</source>
-        <target>Код и валюту нельзя изменить после регистрации.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1101</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="8445947709567300737" datatype="html">
         <source>Registered</source>
         <target>Зарегистрирован</target>
@@ -7710,28 +7702,20 @@
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2731986000219133436" datatype="html">
-        <source>Use only Latin letters, digits, spaces, hyphens and underscores</source>
-        <target>Используйте только латинские буквы, цифры, пробелы, дефисы и подчёркивания</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">10</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3930602992763135311" datatype="html">
-        <source>Maximum 50 characters for a new client</source>
-        <target>Максимум 50 символов для нового клиента</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="8880400484798192971" datatype="html">
         <source>Chosen from the country; change it if the business works in another zone.</source>
         <target>Выбирается по стране; измените, если бизнес работает в другом поясе.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">1100</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9075636133458121923" datatype="html">
+        <source>Slug, currency and time zone cannot be changed after registration.</source>
+        <target>Код, валюту и часовой пояс нельзя изменить после регистрации.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1102</context>
         </context-group>
       </trans-unit>
     </body>

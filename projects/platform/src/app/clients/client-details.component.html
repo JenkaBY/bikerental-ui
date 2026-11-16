@@ -43,6 +43,8 @@
         <dd>{{ c.currency }}</dd>
         <dt class="text-slate-500">{{ Labels.ClientBusinessLocation }}</dt>
         <dd>{{ lookup.describe(c.businessGeoLocationId) }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientTimeZone }}</dt>
+        <dd>{{ c.timeZone }}</dd>
         <dt class="text-slate-500">{{ Labels.ClientCreatedAt }}</dt>
         <dd>{{ c.createdAt | date: 'dd MMM yyyy HH:mm' }}</dd>
         <dt class="text-slate-500">{{ Labels.ClientUpdatedAt }}</dt>

@@ -7,8 +7,6 @@ export class FormErrorMessages {
   static readonly slugMaxLength = $localize`Maximum 50 characters`;
   static readonly nameRequired = $localize`Name is required`;
   static readonly consecutiveSpaces = $localize`Use no more than one space in a row`;
-  static readonly clientNameSlugChars = $localize`Use only Latin letters, digits, spaces, hyphens and underscores`;
-  static readonly clientNameSlugLength = $localize`Maximum 50 characters for a new client`;
   static readonly legalNameMaxLength = $localize`Maximum 300 characters`;
   static readonly emailMaxLength = $localize`Maximum 255 characters`;
   static readonly phoneMaxLength = $localize`Maximum 20 characters`;

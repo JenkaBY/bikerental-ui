@@ -16,6 +16,7 @@ export interface Client extends ClientSummary {
   readonly contactEmail?: string;
   readonly contactPhone?: string;
   readonly businessGeoLocationId: number;
+  readonly timeZone: string;
   readonly version: number;
   readonly createdBy?: string;
   readonly updatedAt?: Date;
@@ -31,7 +32,6 @@ export interface ClientDetailsWrite {
 }
 
 export interface ClientRegistrationWrite extends ClientDetailsWrite {
-  slug: string;
   currency: string;
   timeZone: string;
 }

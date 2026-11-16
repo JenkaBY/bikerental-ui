@@ -2644,7 +2644,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1104</context>
+          <context context-type="linenumber">1105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8204176479746810612" datatype="html">
@@ -2667,7 +2667,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1105</context>
+          <context context-type="linenumber">1106</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1161299114153631702" datatype="html">
@@ -5884,6 +5884,10 @@
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
           <context context-type="linenumber">1003</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1100</context>
+        </context-group>
         <note priority="1" from="description">geo picker</note>
       </trans-unit>
       <trans-unit id="5424440825604833486" datatype="html">
@@ -7739,42 +7743,42 @@
         <source>Chosen from the country; change it if the business works in another zone.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1100</context>
+          <context context-type="linenumber">1101</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7756095865817133102" datatype="html">
-        <source>Slug and currency cannot be changed after registration.</source>
+      <trans-unit id="9075636133458121923" datatype="html">
+        <source>Slug, currency and time zone cannot be changed after registration.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1101</context>
+          <context context-type="linenumber">1102</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8445947709567300737" datatype="html">
         <source>Registered</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1102</context>
+          <context context-type="linenumber">1103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="90870512579357900" datatype="html">
         <source>Last changed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1103</context>
+          <context context-type="linenumber">1104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5851424994801012357" datatype="html">
         <source>Suspended</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1106</context>
+          <context context-type="linenumber">1107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7860418101283165917" datatype="html">
         <source>Closed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
-          <context context-type="linenumber">1107</context>
+          <context context-type="linenumber">1108</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8433263439578205214" datatype="html">
@@ -7827,7 +7831,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8066517240031359965" datatype="html">
@@ -7852,7 +7856,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">21</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3833692663709091545" datatype="html">
@@ -7869,281 +7873,267 @@
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2731986000219133436" datatype="html">
-        <source>Use only Latin letters, digits, spaces, hyphens and underscores</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">10</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3930602992763135311" datatype="html">
-        <source>Maximum 50 characters for a new client</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="3921530534292354628" datatype="html">
         <source>Maximum 300 characters</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">12</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5173226741404707539" datatype="html">
         <source>Maximum 20 characters</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8097698685942431707" datatype="html">
         <source>Enter a three-letter ISO 4217 code, for example EUR</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7211515737904417205" datatype="html">
         <source>Choose the country and city of the business</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2512050545664298460" datatype="html">
         <source>Condition is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6708352290193932913" datatype="html">
         <source>Rental point is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2227408205390626747" datatype="html">
         <source>Serial number is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8226206503312259817" datatype="html">
         <source>Maximum 200 characters</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="138509216936346453" datatype="html">
         <source>Pricing type is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4232245843945881957" datatype="html">
         <source>Valid from date is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8465319979419985306" datatype="html">
         <source>Value must be greater than zero</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9051942183765968854" datatype="html">
         <source>Value must be zero or greater</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2054355385147864497" datatype="html">
         <source>Value must be at least 1</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1135007352868118043" datatype="html">
         <source>Cannot exceed first hour price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1253754921981276433" datatype="html">
         <source>Phone is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1613287617321741904" datatype="html">
         <source>Enter a valid phone number</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6407628057642629970" datatype="html">
         <source>First name is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5005290836214172506" datatype="html">
         <source>Last name is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8938510541215036054" datatype="html">
         <source>Enter a valid email address</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8366188030252170126" datatype="html">
         <source>Birth date must be in the past</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7438481856204076275" datatype="html">
         <source>Amount exceeds available balance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4902713238380400576" datatype="html">
         <source>Maximum 2 decimal places allowed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">34</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7726673361294642871" datatype="html">
         <source>Amount is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5622438805856831950" datatype="html">
         <source>Amount must be greater than zero</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6052555891169099337" datatype="html">
         <source>Amount exceeds the available amount</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6673391624723270739" datatype="html">
         <source>Counted amount is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3645462502531470630" datatype="html">
         <source>Counted amount cannot be negative</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="886576114353004245" datatype="html">
         <source>Settlement date is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7237117395171516917" datatype="html">
         <source>Settlement date cannot be in the future</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4376776695963224818" datatype="html">
         <source>Select both the start and the end of the period</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9108321070723993484" datatype="html">
         <source>The end of the period cannot be before its start</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3063293482156769632" datatype="html">
         <source>The period may not exceed 366 days</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="205044832662301680" datatype="html">
         <source>Password is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9014292784299963935" datatype="html">
         <source>Must be between 8 and 20 characters</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4018922463086225373" datatype="html">
         <source>Must contain at least one letter and one digit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6451269955734195952" datatype="html">
         <source>Passwords do not match</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1315278751476515725" datatype="html">
         <source>At least one role is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="187187500641108332" datatype="html">

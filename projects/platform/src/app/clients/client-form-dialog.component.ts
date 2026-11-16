@@ -31,7 +31,6 @@ import {
   createClientForm,
   isStaleClientVersion,
   patchClientForm,
-  toClientSlug,
 } from './client-form';
 
 export interface ClientFormDialogData {
@@ -109,7 +108,6 @@ export class ClientFormDialogComponent {
       : this.store.register(
           {
             ...details,
-            slug: toClientSlug(raw.displayName),
             currency: raw.currency,
             timeZone: raw.timeZone ?? '',
           },

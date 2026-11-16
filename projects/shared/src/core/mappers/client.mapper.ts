@@ -30,6 +30,7 @@ export class ClientMapper {
       contactEmail: r.contactEmail || undefined,
       contactPhone: r.contactPhone || undefined,
       businessGeoLocationId: r.businessGeoLocationId,
+      timeZone: r.timeZone,
       version: r.version,
       createdBy: r.createdBy || undefined,
       updatedAt: ClientMapper.toDate(r.updatedAt),
@@ -39,8 +40,8 @@ export class ClientMapper {
   static toRequest(w: ClientRegistrationWrite): ClientRequest {
     return {
       ...ClientMapper.details(w),
-      slug: w.slug.trim(),
       currency: w.currency.trim().toUpperCase(),
+      timeZone: w.timeZone,
     };
   }
 

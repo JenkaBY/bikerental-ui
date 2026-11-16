@@ -27,6 +27,7 @@ import {
   Pageable,
   PageClientSummaryResponse,
   ClientRequest,
+  SlugCheckResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -206,7 +207,7 @@ export class ClientsService {
     observe?: 'events',
     options?: RequestOptions<'json'>,
   ): Observable<HttpEvent<ClientResponse>>;
-  /** Registers a client as a draft. The currency must be legal tender in the country of the business location; the slug and the currency never change (platform manager only) */
+  /** Registers a client as a draft. The currency must be legal tender in the country of the business location; without a slug a free one is derived from the display name; the slug, the currency and the time zone never change (platform manager only) */
   registerClient(
     clientRequest: ClientRequest,
     observe?: 'body' | 'events' | 'response',
@@ -234,5 +235,99 @@ export class ClientsService {
     };
 
     return this.httpClient.post(url, clientRequest, requestOptions);
+  }
+
+  suggestClientSlug(
+    displayName: string,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<SlugCheckResponse>;
+  suggestClientSlug(
+    displayName: string,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<SlugCheckResponse>>;
+  suggestClientSlug(
+    displayName: string,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<SlugCheckResponse>>;
+  /** Derives a free slug from a display name the way a registration without a slug does: transliterated, upper-cased, other characters replaced by '_', a '-2', '-3'... suffix when taken or reserved (platform manager only) */
+  suggestClientSlug(
+    displayName: string,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/platform/clients/slug-suggestion`;
+
+    let params = new HttpParams();
+    if (displayName != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, displayName, 'displayName');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  checkClientSlug(
+    slug: string,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<SlugCheckResponse>;
+  checkClientSlug(
+    slug: string,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<SlugCheckResponse>>;
+  checkClientSlug(
+    slug: string,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<SlugCheckResponse>>;
+  /** Tells whether a registration may use the slug (platform manager only) */
+  checkClientSlug(
+    slug: string,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/platform/clients/slug-availability`;
+
+    let params = new HttpParams();
+    if (slug != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, slug, 'slug');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
   }
 }

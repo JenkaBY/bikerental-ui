@@ -306,6 +306,8 @@ export interface ClientResponse {
   businessGeoLocationId: number;
   /** ISO 4217 currency; never changes */
   currency: string;
+  /** IANA time zone; never changes */
+  timeZone: string;
   /** Lifecycle status */
   status: 'DRAFT' | 'ACTIVE' | 'SUSPENDED' | 'CLOSED';
   /** Version to send back as expectedVersion when editing */
@@ -650,8 +652,8 @@ export interface PlatformManagerResponse {
 
 /** Request body for registering a client */
 export interface ClientRequest {
-  /** URL-friendly identifier, unique across the installation, immutable after registration */
-  slug: string;
+  /** URL-friendly identifier, unique across the installation, immutable after registration; when omitted a free one is derived from the display name (see GET /api/platform/clients/slug-suggestion) */
+  slug?: string | null;
   /** Name the business is known by */
   displayName: string;
   /** Name of the legal entity */
@@ -666,6 +668,8 @@ export interface ClientRequest {
   businessGeoLocationId: number;
   /** ISO 4217 currency of the client's books; it must be legal tender in the country of the business location and never changes */
   currency: string;
+  /** Standard IANA time zone of the client; never changes */
+  timeZone: string;
 }
 
 /** Request body for registering a damage report */
@@ -1226,6 +1230,14 @@ export interface PageClientSummaryResponse {
   items?: Array<ClientSummaryResponse>;
   totalItems?: number;
   pageRequest?: PageRequest;
+}
+
+/** A client slug and whether a registration may use it */
+export interface SlugCheckResponse {
+  /** The slug checked or suggested */
+  slug: string;
+  /** AVAILABLE - free to use; RESERVED - an address the platform itself uses; TAKEN - used by another client */
+  verdict: 'AVAILABLE' | 'RESERVED' | 'TAKEN';
 }
 
 export interface DamageReportSearchFilterParams {

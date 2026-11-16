@@ -14,7 +14,11 @@
     </div>
   }
 
-  <form [formGroup]="form" class="grid grid-cols-2 gap-x-4 pt-2 min-w-[720px]" (ngSubmit)="save()">
+  <form
+    [formGroup]="form"
+    class="grid grid-cols-2 gap-x-4 gap-y-2 pt-2 min-w-[720px]"
+    (ngSubmit)="save()"
+  >
     <mat-form-field appearance="outline">
       <mat-label>{{ Labels.ClientDisplayName }}</mat-label>
       <input matInput formControlName="displayName" />
@@ -26,12 +30,6 @@
       }
       @if (form.controls.displayName.hasError('consecutiveSpaces')) {
         <mat-error>{{ errors.consecutiveSpaces }}</mat-error>
-      }
-      @if (form.controls.displayName.hasError('slugChars')) {
-        <mat-error>{{ errors.clientNameSlugChars }}</mat-error>
-      }
-      @if (form.controls.displayName.hasError('slugLength')) {
-        <mat-error>{{ errors.clientNameSlugLength }}</mat-error>
       }
       @if (form.controls.displayName.hasError('server')) {
         <mat-error>{{ form.controls.displayName.getError('server') }}</mat-error>

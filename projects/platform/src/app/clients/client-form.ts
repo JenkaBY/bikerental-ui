@@ -15,8 +15,6 @@ import {
 } from '@bikerental/shared';
 import type { ApiError, Client, GeoLocationFormGroup } from '@bikerental/shared';
 
-export const CLIENT_SLUG_PATTERN = /^[A-Z0-9_-]+$/;
-export const CLIENT_SLUG_MAX = 50;
 export const CLIENT_CURRENCY_PATTERN = /^[A-Za-z]{3}$/;
 export const CLIENT_PHONE_PATTERN = /^\+?[0-9\-\s()]+$/;
 
@@ -31,22 +29,10 @@ export type ClientFormGroup = FormGroup<{
   timeZone: FormControl<string | null>;
 }>;
 
-export function toClientSlug(displayName: string): string {
-  return displayName.trim().replace(/ /g, '_').toUpperCase();
-}
-
 export function noConsecutiveSpacesValidator(control: AbstractControl): ValidationErrors | null {
   return typeof control.value === 'string' && control.value.includes('  ')
     ? { consecutiveSpaces: true }
     : null;
-}
-
-export function slugSourceValidator(control: AbstractControl): ValidationErrors | null {
-  if (typeof control.value !== 'string' || !control.value.trim()) return null;
-  const slug = toClientSlug(control.value);
-  if (!CLIENT_SLUG_PATTERN.test(slug)) return { slugChars: true };
-  if (slug.length > CLIENT_SLUG_MAX) return { slugLength: true };
-  return null;
 }
 
 function text(validators: ValidatorFn[] = []): FormControl<string> {
@@ -54,14 +40,13 @@ function text(validators: ValidatorFn[] = []): FormControl<string> {
 }
 
 export function createClientForm(registering: boolean): ClientFormGroup {
-  const nameValidators = [
-    Validators.required,
-    Validators.maxLength(200),
-    noConsecutiveSpacesValidator,
-  ];
   return new FormGroup({
     currency: text([Validators.required, Validators.pattern(CLIENT_CURRENCY_PATTERN)]),
-    displayName: text(registering ? [...nameValidators, slugSourceValidator] : nameValidators),
+    displayName: text([
+      Validators.required,
+      Validators.maxLength(200),
+      noConsecutiveSpacesValidator,
+    ]),
     legalName: text([Validators.required, Validators.maxLength(300)]),
     registrationNumber: text([Validators.maxLength(50)]),
     contactEmail: text([Validators.email, Validators.maxLength(255)]),
