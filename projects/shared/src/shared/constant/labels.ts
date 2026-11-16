@@ -1072,4 +1072,37 @@ export class Labels {
   static readonly PlatformManagerOwnAccountTooltip = $localize`You cannot deactivate your own account`;
   static readonly DeactivatePlatformManagerDialogTitle = $localize`Deactivate platform manager`;
   static readonly DeactivatePlatformManagerDialogMessage = $localize`This will disable the account and revoke all of its active sessions. It cannot be reactivated from here.`;
+
+  static readonly ClientsNavLabel = $localize`Clients`;
+  static readonly ClientsListTitle = $localize`Clients`;
+  static readonly ClientsEmptyState = $localize`No clients match the filter.`;
+  static readonly ClientsLoadFailed = $localize`The clients could not be loaded.`;
+  static readonly ClientSearchPlaceholder = $localize`Name, legal name or slug`;
+  static readonly NewClientButton = $localize`Register client`;
+  static readonly RegisterClientDialogTitle = $localize`Register client`;
+  static readonly EditClientDialogTitle = $localize`Edit client`;
+  static readonly RegisterClientConfirmButton = $localize`Register`;
+  static readonly ClientRegisteredSuccess = $localize`Client registered.`;
+  static readonly ClientUpdatedSuccess = $localize`Client updated.`;
+  static readonly ClientNotFound = $localize`The client could not be loaded.`;
+  static readonly ClientStaleVersion = $localize`This client was changed by someone else. Reload it to see the latest details, then edit again.`;
+  static readonly ClientReload = $localize`Reload`;
+  static readonly ClientSlug = $localize`Slug`;
+  static readonly ClientDisplayName = $localize`Display name`;
+  static readonly ClientLegalName = $localize`Legal name`;
+  static readonly ClientRegistrationNumber = $localize`Registration number`;
+  static readonly ClientContactEmail = $localize`Contact email`;
+  static readonly ClientContactPhone = $localize`Contact phone`;
+  static readonly ClientCurrency = $localize`Currency`;
+  static readonly ClientCurrencyHint = $localize`ISO 4217 code. Cannot be changed later.`;
+  static readonly ClientBusinessLocation = $localize`Business location`;
+  static readonly ClientBusinessLocationHint = $localize`The country of this location is the client's country.`;
+  static readonly ClientTimeZoneHint = $localize`Chosen from the country; change it if the business works in another zone.`;
+  static readonly ClientImmutableHint = $localize`Slug and currency cannot be changed after registration.`;
+  static readonly ClientCreatedAt = $localize`Registered`;
+  static readonly ClientUpdatedAt = $localize`Last changed`;
+  static readonly ClientStatusDraft = $localize`Draft`;
+  static readonly ClientStatusActive = $localize`Active`;
+  static readonly ClientStatusSuspended = $localize`Suspended`;
+  static readonly ClientStatusClosed = $localize`Closed`;
 }

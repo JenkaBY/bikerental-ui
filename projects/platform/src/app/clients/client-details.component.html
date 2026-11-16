@@ -1,0 +1,54 @@
+<app-page-header [title]="client()?.displayName ?? slug()" (back)="back()">
+  @if (client(); as c) {
+    <app-client-status-badge [status]="c.status" />
+  }
+  <div actions>
+    @if (client(); as c) {
+      <button mat-raised-button color="primary" (click)="edit(c)">
+        <mat-icon>edit</mat-icon>
+        <span>{{ Labels.Edit }}</span>
+      </button>
+    }
+  </div>
+</app-page-header>
+
+@if (store.clientLoading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (error(); as message) {
+  <div class="flex items-center gap-4 p-4 text-sm text-red-700" role="alert">
+    <span>{{ Labels.ClientNotFound }} {{ message }}</span>
+    <button mat-stroked-button (click)="reload()">{{ Labels.ClientReload }}</button>
+  </div>
+}
+
+@if (client(); as c) {
+  <mat-card class="mt-4">
+    <mat-card-content>
+      <dl class="grid grid-cols-[max-content_1fr] gap-x-8 gap-y-3 text-sm">
+        <dt class="text-slate-500">{{ Labels.ClientSlug }}</dt>
+        <dd class="font-mono">{{ c.slug }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientDisplayName }}</dt>
+        <dd>{{ c.displayName }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientLegalName }}</dt>
+        <dd>{{ c.legalName }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientRegistrationNumber }}</dt>
+        <dd>{{ c.registrationNumber ?? '—' }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientContactEmail }}</dt>
+        <dd>{{ c.contactEmail ?? '—' }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientContactPhone }}</dt>
+        <dd>{{ c.contactPhone ?? '—' }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientCurrency }}</dt>
+        <dd>{{ c.currency }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientBusinessLocation }}</dt>
+        <dd>{{ lookup.describe(c.businessGeoLocationId) }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientCreatedAt }}</dt>
+        <dd>{{ c.createdAt | date: 'dd MMM yyyy HH:mm' }}</dd>
+        <dt class="text-slate-500">{{ Labels.ClientUpdatedAt }}</dt>
+        <dd>{{ c.updatedAt | date: 'dd MMM yyyy HH:mm' }}</dd>
+      </dl>
+      <p class="mt-4 text-xs text-slate-500">{{ Labels.ClientImmutableHint }}</p>
+    </mat-card-content>
+  </mat-card>
+}

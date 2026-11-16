@@ -23,6 +23,16 @@ export const routes: Routes = [
           import('./managers/managers-list.component').then((m) => m.ManagersListComponent),
       },
       {
+        path: 'clients',
+        loadComponent: () =>
+          import('./clients/clients-list.component').then((m) => m.ClientsListComponent),
+      },
+      {
+        path: 'clients/:slug',
+        loadComponent: () =>
+          import('./clients/client-details.component').then((m) => m.ClientDetailsComponent),
+      },
+      {
         path: 'profile',
         loadChildren: () => import('@bikerental/shared').then((m) => m.PROFILE_SETTINGS_ROUTES),
       },

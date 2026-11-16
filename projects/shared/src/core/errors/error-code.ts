@@ -113,6 +113,13 @@ export const ErrorCode = {
   SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY: 'settings.currency.business_level_only',
   SETTINGS_LOCATION_CITY_NOT_IN_COUNTRY: 'settings.business_location.city_not_in_country',
   SETTINGS_LOCATION_BUSINESS_LEVEL_ONLY: 'settings.business_location.business_level_only',
+
+  // tenants.* — client registry
+  CLIENT_SLUG_DUPLICATE: 'tenants.client.slug_duplicate',
+  CLIENT_SLUG_RESERVED: 'tenants.client.slug_reserved',
+  CLIENT_LOCATION_UNKNOWN: 'tenants.client.location_unknown',
+  CLIENT_CURRENCY_NOT_LEGAL_TENDER: 'tenants.client.currency_not_legal_tender',
+  CLIENT_BUSINESS_LOCATION_OUTSIDE_COUNTRY: 'tenants.client.business_location_outside_country',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -185,6 +192,11 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.SETTINGS_LEVEL_NOT_PERMITTED,
   ErrorCode.SETTINGS_VERSION_CONFLICT,
   ErrorCode.SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY,
+  ErrorCode.CLIENT_SLUG_DUPLICATE,
+  ErrorCode.CLIENT_SLUG_RESERVED,
+  ErrorCode.CLIENT_LOCATION_UNKNOWN,
+  ErrorCode.CLIENT_CURRENCY_NOT_LEGAL_TENDER,
+  ErrorCode.CLIENT_BUSINESS_LOCATION_OUTSIDE_COUNTRY,
 ]);
 
 const CLIENT_DEFECT_CODES = new Set<string>([

@@ -190,6 +190,12 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY]: $localize`The currency and its symbol are set for the whole business and cannot be changed for a single rental point.`,
   [ErrorCode.SETTINGS_LOCATION_CITY_NOT_IN_COUNTRY]: cityNotInCountryMessage,
   [ErrorCode.SETTINGS_LOCATION_BUSINESS_LEVEL_ONLY]: $localize`The country and city are set for the whole business and cannot be changed for a single rental point.`,
+  [ErrorCode.CLIENT_SLUG_DUPLICATE]: clientSlugDuplicateMessage,
+  [ErrorCode.CLIENT_SLUG_RESERVED]: clientSlugReservedMessage,
+  [ErrorCode.CLIENT_LOCATION_UNKNOWN]: $localize`The chosen business location does not exist. Choose the location again.`,
+  [ErrorCode.CLIENT_CURRENCY_NOT_LEGAL_TENDER]: clientCurrencyNotLegalTenderMessage,
+  [ErrorCode.CLIENT_BUSINESS_LOCATION_OUTSIDE_COUNTRY]: clientLocationOutsideCountryMessage,
+  'validation.iso_currency': $localize`Enter a valid ISO 4217 currency code, for example EUR.`,
   'validation.setting_scope_consistency': $localize`A rental point must be given exactly when the level is a rental point.`,
 
   // Operating scope
@@ -266,6 +272,39 @@ function cityNotInCountryMessage(params: Record<string, unknown>): string {
     return $localize`${String(city)}:city: is in ${String(cityCountry)}:cityCountry:, not in ${String(declaredCountry)}:declaredCountry:. Change the city first, or choose a matching country.`;
   }
   return $localize`The city is not in the declared country. Change the city first, or choose a matching country.`;
+}
+
+function clientSlugDuplicateMessage(params: Record<string, unknown>): string {
+  const slug = params['slug'];
+  if (typeof slug === 'string' && slug.length > 0) {
+    return $localize`A client with the slug ${slug}:slug: already exists.`;
+  }
+  return $localize`A client with this slug already exists.`;
+}
+
+function clientSlugReservedMessage(params: Record<string, unknown>): string {
+  const slug = params['slug'];
+  if (typeof slug === 'string' && slug.length > 0) {
+    return $localize`The slug ${slug}:slug: is reserved by the platform. Choose another one.`;
+  }
+  return $localize`This slug is reserved by the platform. Choose another one.`;
+}
+
+function clientCurrencyNotLegalTenderMessage(params: Record<string, unknown>): string {
+  const currency = params['currency'];
+  const country = params['country'];
+  if (typeof currency === 'string' && typeof country === 'string') {
+    return $localize`The currency ${currency}:currency: is not legal tender in ${country}:country:.`;
+  }
+  return $localize`The currency is not legal tender in the country of the business location.`;
+}
+
+function clientLocationOutsideCountryMessage(params: Record<string, unknown>): string {
+  const country = params['country'];
+  if (typeof country === 'string' && country.length > 0) {
+    return $localize`The business location must stay in ${country}:country:.`;
+  }
+  return $localize`The business location must stay in the client's country.`;
 }
 
 function insufficientBalanceMessage(params: Record<string, unknown>): string {

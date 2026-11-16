@@ -7406,6 +7406,334 @@
         <source>This will disable the account and revoke all of its active sessions. It cannot be reactivated from here.</source>
         <target>Учётная запись будет отключена, а все её активные сеансы — завершены. Повторно активировать её здесь нельзя.</target>
       </trans-unit>
+      <trans-unit id="364507357847961236" datatype="html">
+        <source>The chosen business location does not exist. Choose the location again.</source>
+        <target>Выбранное местоположение бизнеса не существует. Выберите местоположение заново.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">195</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5762131625471893866" datatype="html">
+        <source>Enter a valid ISO 4217 currency code, for example EUR.</source>
+        <target>Введите корректный код валюты ISO 4217, например EUR.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">198</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8498422460538647905" datatype="html">
+        <source>A client with the slug <x id="slug" equiv-text="slug"/> already exists.</source>
+        <target>Клиент с кодом <x id="slug" equiv-text="slug"/> уже существует.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">280</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="689001104398703218" datatype="html">
+        <source>A client with this slug already exists.</source>
+        <target>Клиент с таким кодом уже существует.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">282</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6366314240470621222" datatype="html">
+        <source>The slug <x id="slug" equiv-text="slug"/> is reserved by the platform. Choose another one.</source>
+        <target>Код <x id="slug" equiv-text="slug"/> зарезервирован платформой. Выберите другой.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">288</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2387465239211409521" datatype="html">
+        <source>This slug is reserved by the platform. Choose another one.</source>
+        <target>Этот код зарезервирован платформой. Выберите другой.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">290</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5570491387478975078" datatype="html">
+        <source>The currency <x id="currency" equiv-text="currency"/> is not legal tender in <x id="country" equiv-text="country"/>.</source>
+        <target>Валюта <x id="currency" equiv-text="currency"/> не является законным платёжным средством в <x id="country" equiv-text="country"/>.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">297</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1529527450869218077" datatype="html">
+        <source>The currency is not legal tender in the country of the business location.</source>
+        <target>Валюта не является законным платёжным средством в стране местоположения бизнеса.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">299</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4823287336252916657" datatype="html">
+        <source>The business location must stay in <x id="country" equiv-text="country"/>.</source>
+        <target>Местоположение бизнеса должно оставаться в <x id="country" equiv-text="country"/>.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">305</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6778963237834816398" datatype="html">
+        <source>The business location must stay in the client&apos;s country.</source>
+        <target>Местоположение бизнеса должно оставаться в стране клиента.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/core/errors/error-messages.ts</context>
+          <context context-type="linenumber">307</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5910845130937645353" datatype="html">
+        <source>Clients</source>
+        <target>Клиенты</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1076</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1077</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6963547645258766748" datatype="html">
+        <source>No clients match the filter.</source>
+        <target>Нет клиентов, подходящих под фильтр.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1078</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1951566975314359247" datatype="html">
+        <source>The clients could not be loaded.</source>
+        <target>Не удалось загрузить клиентов.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1079</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7599938817663962714" datatype="html">
+        <source>Name, legal name or slug</source>
+        <target>Название, юридическое название или код</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1080</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3162421108827315074" datatype="html">
+        <source>Register client</source>
+        <target>Зарегистрировать клиента</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1081</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1082</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5316427965597224406" datatype="html">
+        <source>Edit client</source>
+        <target>Редактирование клиента</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1083</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3301086086650990787" datatype="html">
+        <source>Register</source>
+        <target>Зарегистрировать</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1084</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8089944477212472539" datatype="html">
+        <source>Client registered.</source>
+        <target>Клиент зарегистрирован.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1085</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="945497087170979837" datatype="html">
+        <source>Client updated.</source>
+        <target>Клиент обновлён.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1086</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8252583799469311405" datatype="html">
+        <source>The client could not be loaded.</source>
+        <target>Не удалось загрузить клиента.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1087</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8674807495654340876" datatype="html">
+        <source>This client was changed by someone else. Reload it to see the latest details, then edit again.</source>
+        <target>Клиент был изменён другим пользователем. Перезагрузите данные и отредактируйте снова.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1088</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3254723239457001761" datatype="html">
+        <source>Legal name</source>
+        <target>Юридическое название</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1093</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6645333413867569064" datatype="html">
+        <source>Registration number</source>
+        <target>Регистрационный номер</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1094</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8757962954958495112" datatype="html">
+        <source>Contact email</source>
+        <target>Контактный email</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1095</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6550607946154692993" datatype="html">
+        <source>Contact phone</source>
+        <target>Контактный телефон</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1096</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8728501783916372255" datatype="html">
+        <source>ISO 4217 code. Cannot be changed later.</source>
+        <target>Код ISO 4217. Изменить позже нельзя.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1098</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1435944842223227744" datatype="html">
+        <source>The country of this location is the client&apos;s country.</source>
+        <target>Страна этого местоположения — страна клиента.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1100</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7756095865817133102" datatype="html">
+        <source>Slug and currency cannot be changed after registration.</source>
+        <target>Код и валюту нельзя изменить после регистрации.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1101</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8445947709567300737" datatype="html">
+        <source>Registered</source>
+        <target>Зарегистрирован</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1102</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="90870512579357900" datatype="html">
+        <source>Last changed</source>
+        <target>Последнее изменение</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5851424994801012357" datatype="html">
+        <source>Suspended</source>
+        <target>Приостановлен</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1106</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7860418101283165917" datatype="html">
+        <source>Closed</source>
+        <target>Закрыт</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3921530534292354628" datatype="html">
+        <source>Maximum 300 characters</source>
+        <target>Максимум 300 символов</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5173226741404707539" datatype="html">
+        <source>Maximum 20 characters</source>
+        <target>Максимум 20 символов</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8097698685942431707" datatype="html">
+        <source>Enter a three-letter ISO 4217 code, for example EUR</source>
+        <target>Введите трёхбуквенный код ISO 4217, например EUR</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7211515737904417205" datatype="html">
+        <source>Choose the country and city of the business</source>
+        <target>Выберите страну и город бизнеса</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4372132069859838109" datatype="html">
+        <source>Use no more than one space in a row</source>
+        <target>Не более одного пробела подряд</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2731986000219133436" datatype="html">
+        <source>Use only Latin letters, digits, spaces, hyphens and underscores</source>
+        <target>Используйте только латинские буквы, цифры, пробелы, дефисы и подчёркивания</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3930602992763135311" datatype="html">
+        <source>Maximum 50 characters for a new client</source>
+        <target>Максимум 50 символов для нового клиента</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/validators/form-error-messages.ts</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8880400484798192971" datatype="html">
+        <source>Chosen from the country; change it if the business works in another zone.</source>
+        <target>Выбирается по стране; измените, если бизнес работает в другом поясе.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/shared/src/shared/constant/labels.ts</context>
+          <context context-type="linenumber">1100</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

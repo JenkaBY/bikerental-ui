@@ -10,6 +10,7 @@
 export { AgreementsService } from './agreements.service';
 export { AnalyticsService } from './analytics.service';
 export { BusinessSettingsService } from './businessSettings.service';
+export { ClientsService } from './clients.service';
 export { CustomersService } from './customers.service';
 export { EquipmentsCatalogueService } from './equipmentsCatalogue.service';
 export { EquipmentTypesService } from './equipmentTypes.service';

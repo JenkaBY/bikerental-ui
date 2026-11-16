@@ -12,6 +12,7 @@ import {
 
 const NAV_ITEMS: NavItem[] = [
   { label: Labels.PlatformManagersNavLabel, route: 'managers', icon: 'admin_panel_settings' },
+  { label: Labels.ClientsNavLabel, route: 'clients', icon: 'business' },
 ];
 
 @Component({
