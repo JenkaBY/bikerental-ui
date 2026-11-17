@@ -7718,6 +7718,30 @@
           <context context-type="linenumber">1102</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="29832309535656200" datatype="html">
+        <source>System</source>
+        <target>Система</target>
+      </trans-unit>
+      <trans-unit id="7809283268012176571" datatype="html">
+        <source>Details changed</source>
+        <target>Изменены данные</target>
+      </trans-unit>
+      <trans-unit id="3198123723060667787" datatype="html">
+        <source>When</source>
+        <target>Когда</target>
+      </trans-unit>
+      <trans-unit id="7071470734400948493" datatype="html">
+        <source>Author</source>
+        <target>Автор</target>
+      </trans-unit>
+      <trans-unit id="9033045811000879464" datatype="html">
+        <source>Fields</source>
+        <target>Поля</target>
+      </trans-unit>
+      <trans-unit id="2011656345874703898" datatype="html">
+        <source>No changes recorded yet.</source>
+        <target>Изменений пока нет.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

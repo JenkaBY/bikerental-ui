@@ -29,3 +29,4 @@ export * from './point-finance.mapper';
 export * from './returnable-rental.mapper';
 export * from './business-setting.mapper';
 export * from './client.mapper';
+export * from './client-change.mapper';

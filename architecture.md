@@ -136,7 +136,7 @@ CONSUMES:
 
 SERVICE_NAME: platform
 TYPE: Frontend
-PURPOSE: Authenticated, desktop-first SPA for the `PLATFORM_MANAGER` role — platform-wide administration; first section is platform managers (list, create with a one-time temporary password, deactivate). Clients, payments and tariffs sections come later.
+PURPOSE: Authenticated, desktop-first SPA for the `PLATFORM_MANAGER` role — platform-wide administration; platform managers (list, create with a one-time temporary password, deactivate) and the client registry (paged list, register/edit, details with a paged change history). Payments and tariffs sections come later.
 ENTRY_POINT: `projects/platform/src/main.ts`
 EXPOSES:
   - PROTOCOL: HTTP
@@ -147,6 +147,10 @@ CONSUMES:
     ENDPOINT_OR_TOPIC: `PlatformManagersService` — `GET`/`POST /api/platform/managers`, `POST /api/platform/managers/{id}/deactivate`
     FROM_SERVICE: bikerental-backend
     DESCRIPTION: Platform manager registry via `PlatformManagerStore`. Never calls business APIs (rentals, customers, settings), which answer 403 to a platform manager; `422 identity.platform_manager.self_deactivation` / `identity.platform_manager.seeded_not_deactivatable` are shown as localized toasts
+  - PROTOCOL: HTTP
+    ENDPOINT_OR_TOPIC: `ClientsService` — `GET`/`POST /api/platform/clients`, `GET`/`PUT /api/platform/clients/{clientSlug}`, `GET /api/platform/clients/{clientSlug}/changes`
+    FROM_SERVICE: bikerental-backend
+    DESCRIPTION: Client registry via `ClientRegistryStore`; change history via `ClientChangeHistoryStore` (newest first, paged). The history returns author ids only; names are resolved through `UsersService.list(ids)`, a null author is shown as the system
   - PROTOCOL: HTTP
     ENDPOINT_OR_TOPIC: OIDC authorization/token/end-session endpoints (client id `bike-rental-platform`)
     FROM_SERVICE: bikerental-backend

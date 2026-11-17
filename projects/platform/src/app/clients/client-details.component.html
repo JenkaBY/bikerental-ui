@@ -53,4 +53,5 @@
       <p class="mt-4 text-xs text-slate-500">{{ Labels.ClientImmutableHint }}</p>
     </mat-card-content>
   </mat-card>
+  <app-client-change-history [slug]="c.slug" [version]="c.version" />
 }

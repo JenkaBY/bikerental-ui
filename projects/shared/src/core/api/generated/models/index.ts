@@ -1232,6 +1232,42 @@ export interface PageClientSummaryResponse {
   pageRequest?: PageRequest;
 }
 
+/** Query parameters narrowing the history of a client; every parameter is optional */
+export interface ClientChangeFilterParams {
+  /** Only records of these kinds; repeat the parameter or separate the values by commas */
+  kind?: Array<'REGISTERED' | 'DETAILS_CHANGED' | 'STATUS_CHANGED'>;
+  /** Start of the period (inclusive), ISO date-time */
+  from?: string;
+  /** End of the period (exclusive), ISO date-time; not before from */
+  to?: string;
+}
+
+/** One record of the change history of a client */
+export interface ClientChangeResponse {
+  /** Identifier of the record */
+  id: string;
+  /** Kind of the change */
+  kind: 'REGISTERED' | 'DETAILS_CHANGED' | 'STATUS_CHANGED';
+  /** When the change was made */
+  changedAt: string;
+  /** Identifier of the user account that made the change; null means the system */
+  changedBy?: string;
+  /** Reason given for a status change */
+  reason?: string;
+  /** Every changed field; for a registration every initial value */
+  changes: Array<FieldChangeResponse>;
+}
+
+/** One changed field of a client with its previous and new value */
+export interface FieldChangeResponse {
+  /** Field name as in the client response */
+  field: string;
+  /** Value before the change; null when the field had no value */
+  previousValue?: string;
+  /** Value after the change; null when the field was cleared */
+  newValue?: string;
+}
+
 /** A client slug and whether a registration may use it */
 export interface SlugCheckResponse {
   /** The slug checked or suggested */
