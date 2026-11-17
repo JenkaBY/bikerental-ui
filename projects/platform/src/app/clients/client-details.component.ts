@@ -29,6 +29,7 @@ import {
 import type { Client } from '@bikerental/shared';
 import { ClientStatusBadgeComponent } from './client-status-badge.component';
 import { ClientFormDialogComponent } from './client-form-dialog.component';
+import { ClientChangeHistoryComponent } from './client-change-history.component';
 import type { ClientFormDialogData } from './client-form-dialog.component';
 
 @Component({
@@ -42,6 +43,7 @@ import type { ClientFormDialogData } from './client-form-dialog.component';
     MatProgressBarModule,
     PageHeaderComponent,
     ClientStatusBadgeComponent,
+    ClientChangeHistoryComponent,
   ],
   templateUrl: './client-details.component.html',
 })

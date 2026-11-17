@@ -26,7 +26,7 @@
   PWA_FILES: `projects/operator/ngsw-config.json`, `projects/operator/public/manifest.webmanifest`, `projects/operator/public/icons/`, `projects/operator/src/app/core/pwa-update.service.ts`
 
 - PATH: `projects/platform/`
-  PURPOSE: Desktop-first SPA for the `PLATFORM_MANAGER` role — platform managers list, create dialog (one-time temporary password via the shared `TemporaryPasswordDialogComponent`), deactivate; `PlatformManagerStore` → `PlatformManagersService`; toolbar profile menu + shared `PROFILE_SETTINGS_ROUTES` (account, security, language preferences) as in admin/operator
+  PURPOSE: Desktop-first SPA for the `PLATFORM_MANAGER` role — platform managers list, create dialog (one-time temporary password via the shared `TemporaryPasswordDialogComponent`), deactivate; `PlatformManagerStore` → `PlatformManagersService`; client registry (`clients`, `clients/:slug`) via `ClientRegistryStore`, with the details page embedding `ClientChangeHistoryComponent` (component-scoped `ClientChangeHistoryStore` → `ClientsService.listClientChanges` + `UsersService.list` for author names, reloads when the client version changes); toolbar profile menu + shared `PROFILE_SETTINGS_ROUTES` (account, security, language preferences) as in admin/operator
   ENTRY_FILES: `projects/platform/src/main.ts`, `projects/platform/src/app/app.config.ts`, `projects/platform/src/app/app.routes.ts`, `projects/platform/src/index.html`
 
 - PATH: `projects/shared/`

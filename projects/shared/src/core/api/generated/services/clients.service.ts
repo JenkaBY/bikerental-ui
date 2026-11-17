@@ -27,6 +27,8 @@ import {
   Pageable,
   PageClientSummaryResponse,
   ClientRequest,
+  ClientChangeFilterParams,
+  ClientChangeResponse,
   SlugCheckResponse,
 } from '../models';
 
@@ -235,6 +237,64 @@ export class ClientsService {
     };
 
     return this.httpClient.post(url, clientRequest, requestOptions);
+  }
+
+  listClientChanges(
+    clientSlug: string,
+    filterParams: ClientChangeFilterParams,
+    pageable: Pageable,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<ClientChangeResponse>;
+  listClientChanges(
+    clientSlug: string,
+    filterParams: ClientChangeFilterParams,
+    pageable: Pageable,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<ClientChangeResponse>>;
+  listClientChanges(
+    clientSlug: string,
+    filterParams: ClientChangeFilterParams,
+    pageable: Pageable,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<ClientChangeResponse>>;
+  /** Returns a page of the permanent change history of a client - its registration, every edit of its details and every status change - newest first, optionally narrowed by kind and by the period [from, to). Each record carries the id of its author; a record without an author is made by the system. The order is fixed; a sort parameter is ignored (platform manager only) */
+  listClientChanges(
+    clientSlug: string,
+    filterParams: ClientChangeFilterParams,
+    pageable: Pageable,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/platform/clients/${clientSlug}/changes`;
+
+    let params = new HttpParams();
+    if (filterParams != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, filterParams, 'filterParams');
+    }
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
   }
 
   suggestClientSlug(

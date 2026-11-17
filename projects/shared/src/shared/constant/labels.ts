@@ -1106,4 +1106,16 @@ export class Labels {
   static readonly ClientStatusActive = $localize`Active`;
   static readonly ClientStatusSuspended = $localize`Suspended`;
   static readonly ClientStatusClosed = $localize`Closed`;
+  static readonly ClientHistoryTitle = $localize`Change history`;
+  static readonly ClientHistorySystemAuthor = $localize`:client change author:System`;
+  static readonly ClientHistoryKindRegistered = $localize`Registered`;
+  static readonly ClientHistoryKindDetailsChanged = $localize`Details changed`;
+  static readonly ClientHistoryKindStatusChanged = $localize`Status changed`;
+  static readonly ClientHistoryColumnChangedAt = $localize`:client change column:When`;
+  static readonly ClientHistoryColumnKind = $localize`:client change column:Change`;
+  static readonly ClientHistoryColumnAuthor = $localize`:client change column:Author`;
+  static readonly ClientHistoryColumnFields = $localize`:client change column:Fields`;
+  static readonly ClientHistoryReason = $localize`Reason`;
+  static readonly ClientHistoryEmptyState = $localize`No changes recorded yet.`;
+  static readonly ClientHistoryLoadError = $localize`The change history could not be loaded.`;
 }

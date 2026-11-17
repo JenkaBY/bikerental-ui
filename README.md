@@ -11,7 +11,7 @@ The latest stable version is available at: https://jenkaby.github.io/bikerental-
 
 - **Admin** (desktop-first, ≥22" 1080p) — CRUD management of equipment, types, statuses, tariffs, customers, rental/payment history, users
 - **Operator** (mobile-first, installable PWA) — rental creation, QR code equipment scanning, return flow, active rentals dashboard
-- **Platform** (desktop-first, `/platform/`, port 4203) — platform-wide administration for the `PLATFORM_MANAGER` role; first section: platform managers (list, create with a one-time temporary password, deactivate). Admin and operator deny a profile without their own role, and the platform app denies everyone but platform managers
+- **Platform** (desktop-first, `/platform/`, port 4203) — platform-wide administration for the `PLATFORM_MANAGER` role; platform managers (list, create with a one-time temporary password, deactivate) and the client registry (list, register/edit, details with a paged change history). Admin and operator deny a profile without their own role, and the platform app denies everyone but platform managers
 
 ## Prerequisites
 
