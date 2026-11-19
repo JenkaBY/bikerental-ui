@@ -81,6 +81,7 @@ export * from './core/state/managed-user.store';
 export * from './core/state/platform-manager.store';
 export * from './core/state/client-registry.store';
 export * from './core/state/client-change-history.store';
+export * from './core/state/client-points.store';
 export * from './core/state/business-settings.store';
 export * from './core/state/business-currency.store';
 export * from './core/state/business-setting-history.store';

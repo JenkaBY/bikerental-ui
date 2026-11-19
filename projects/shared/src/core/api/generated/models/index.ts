@@ -465,8 +465,6 @@ export interface SettingViewResponse {
     | 'MINUTES'
     | 'MONEY'
     | 'CURRENCY_CODE'
-    | 'COUNTRY_CODE'
-    | 'CITY'
     | 'GEO_LOCATION_REF'
     | 'TIME_ZONE'
     | 'DATE_TIME_PATTERN'
@@ -478,12 +476,12 @@ export interface SettingViewResponse {
   rules: Array<SettingRuleResponse>;
   /** Levels the setting may be set at */
   permittedLevels: Array<'POINT' | 'BUSINESS'>;
-  /** Value shipped with the deployment; typed JSON: integer minutes, a number with two decimals, an integer identifier, or a string for text settings; null for a setting that ships without a value (app.business.geo-location-id) */
-  installationDefault?: any;
+  /** Value shipped with the deployment; typed JSON: integer minutes, a number with two decimals, an integer identifier, or a string for text settings */
+  installationDefault: any;
   /** Business-wide value; null when it was never set or was reset */
   businessValue?: any;
-  /** Value in effect: the business value when set, otherwise the installation default; null when neither exists */
-  effectiveValue?: any;
+  /** Value in effect: the business value when set, otherwise the installation default */
+  effectiveValue: any;
   /** Level the effective value comes from */
   effectiveSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
   /** Version of the business-level value; 0 when it was never set */
@@ -1232,6 +1230,20 @@ export interface PageClientSummaryResponse {
   pageRequest?: PageRequest;
 }
 
+/** A rental point of a client, as a platform manager reads it */
+export interface ClientPointResponse {
+  /** URL-friendly identifier of the point */
+  slug: string;
+  /** Display name */
+  name: string;
+  /** Identifier of the geo location of the point; read it with GET /api/geo/locations/{id}. Absent when the point has none yet */
+  geoLocationId?: number;
+  /** IANA time zone of the point */
+  timeZone?: string;
+  /** Lifecycle status */
+  status: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED';
+}
+
 /** Query parameters narrowing the history of a client; every parameter is optional */
 export interface ClientChangeFilterParams {
   /** Only records of these kinds; repeat the parameter or separate the values by commas */
@@ -1768,8 +1780,6 @@ export interface SettingChangeResponse {
     | 'MINUTES'
     | 'MONEY'
     | 'CURRENCY_CODE'
-    | 'COUNTRY_CODE'
-    | 'CITY'
     | 'GEO_LOCATION_REF'
     | 'TIME_ZONE'
     | 'DATE_TIME_PATTERN'
@@ -1777,12 +1787,12 @@ export interface SettingChangeResponse {
     | 'SINGLE_LINE_TEXT';
   /** Unit of the value: MINUTES or the business currency code; null for text settings and settings that left the catalogue */
   unit?: string;
-  /** Typed JSON value in force before the change: integer minutes, a number with two decimals or a string; null when no value was in force */
+  /** Typed JSON value in force before the change: integer minutes, a number with two decimals or a string; null for a change recorded before the previous value was kept */
   previousValue?: any;
   /** Level the value in force before the change came from */
   previousSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
-  /** Typed JSON value in force after the change; the installation default for a RESET, null when the setting has none */
-  newValue?: any;
+  /** Typed JSON value in force after the change; the installation default for a RESET */
+  newValue: any;
   /** Level the value in force after the change comes from */
   newSource: 'POINT' | 'BUSINESS' | 'INSTALLATION_DEFAULT';
   /** SET for a new value, RESET for a return to the installation default */

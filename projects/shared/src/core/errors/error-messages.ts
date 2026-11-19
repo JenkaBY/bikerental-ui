@@ -172,7 +172,9 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
 
   // Rental point registry
   [ErrorCode.POINT_SLUG_DUPLICATE]: $localize`A rental point with this slug already exists.`,
-  [ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN]: $localize`This status change is not allowed for the rental point.`,
+  [ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN]: $localize`This status change is not allowed for the rental point. A permanently closed point cannot be edited.`,
+  [ErrorCode.POINT_LOCATION_CURRENCY_MISMATCH]: $localize`The currency of the chosen country does not match the business currency. Choose a location in a country that uses the business currency.`,
+  [ErrorCode.TENANTS_CLIENT_NOT_ESTABLISHED]: $localize`Your account is not linked to a business yet. Ask a platform manager to set it up.`,
 
   // Geo locations
   [ErrorCode.GEO_CITY_NOT_FOUND]: $localize`The chosen city was not found. Choose the city again.`,

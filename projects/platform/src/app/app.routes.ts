@@ -33,6 +33,11 @@ export const routes: Routes = [
           import('./clients/client-details.component').then((m) => m.ClientDetailsComponent),
       },
       {
+        path: 'clients/:slug/points',
+        loadComponent: () =>
+          import('./clients/client-points.component').then((m) => m.ClientPointsComponent),
+      },
+      {
         path: 'profile',
         loadChildren: () => import('@bikerental/shared').then((m) => m.PROFILE_SETTINGS_ROUTES),
       },

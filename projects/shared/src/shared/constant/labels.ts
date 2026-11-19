@@ -1099,6 +1099,16 @@ export class Labels {
   static readonly ClientBusinessLocationHint = $localize`The country of this location is the client's country.`;
   static readonly ClientTimeZone = $localize`:client field:Time zone`;
   static readonly ClientTimeZoneHint = $localize`Chosen from the country; change it if the business works in another zone.`;
+  static readonly ClientPointsTitle = $localize`Rental points`;
+  static readonly ClientPointsOpen = $localize`Rental points`;
+  static readonly ClientPointsStatusFilter = $localize`Status`;
+  static readonly ClientPointsAllStatuses = $localize`All statuses`;
+  static readonly ClientPointsColumnName = $localize`Name`;
+  static readonly ClientPointsColumnSlug = $localize`Slug`;
+  static readonly ClientPointsColumnLocation = $localize`Location`;
+  static readonly ClientPointsColumnTimeZone = $localize`Time zone`;
+  static readonly ClientPointsColumnStatus = $localize`Status`;
+  static readonly ClientPointsEmptyState = $localize`This client has no rental points with this status.`;
   static readonly ClientImmutableHint = $localize`Slug, currency and time zone cannot be changed after registration.`;
   static readonly ClientCreatedAt = $localize`Registered`;
   static readonly ClientUpdatedAt = $localize`Last changed`;

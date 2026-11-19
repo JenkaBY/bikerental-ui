@@ -27,6 +27,7 @@ import {
   Pageable,
   PageClientSummaryResponse,
   ClientRequest,
+  ClientPointResponse,
   ClientChangeFilterParams,
   ClientChangeResponse,
   SlugCheckResponse,
@@ -237,6 +238,64 @@ export class ClientsService {
     };
 
     return this.httpClient.post(url, clientRequest, requestOptions);
+  }
+
+  listClientPoints(
+    clientSlug: string,
+    pageable: Pageable,
+    status?: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED',
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<ClientPointResponse>;
+  listClientPoints(
+    clientSlug: string,
+    pageable: Pageable,
+    status?: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED',
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<ClientPointResponse>>;
+  listClientPoints(
+    clientSlug: string,
+    pageable: Pageable,
+    status?: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED',
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<ClientPointResponse>>;
+  /** Returns a page of the rental points of one client - slug, name, location id, time zone, status - optionally filtered by status. Read-only: a platform manager does not create, edit or change the status of a point (platform manager only) */
+  listClientPoints(
+    clientSlug: string,
+    pageable: Pageable,
+    status?: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED',
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/platform/clients/${clientSlug}/points`;
+
+    let params = new HttpParams();
+    if (status != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, status, 'status');
+    }
+    if (pageable != null) {
+      params = HttpParamsBuilder.addToHttpParams(params, pageable, 'pageable');
+    }
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      params,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
   }
 
   listClientChanges(

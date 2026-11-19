@@ -4,6 +4,10 @@
   }
   <div actions>
     @if (client(); as c) {
+      <a mat-stroked-button [routerLink]="['/clients', c.slug, 'points']">
+        <mat-icon>storefront</mat-icon>
+        <span>{{ Labels.ClientPointsOpen }}</span>
+      </a>
       <button mat-raised-button color="primary" (click)="edit(c)">
         <mat-icon>edit</mat-icon>
         <span>{{ Labels.Edit }}</span>

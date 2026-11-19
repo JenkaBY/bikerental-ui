@@ -6118,10 +6118,6 @@
         <source>Country</source>
         <target>Страна</target>
       </trans-unit>
-      <trans-unit id="5300299752747305537" datatype="html">
-        <source>This status change is not allowed for the rental point.</source>
-        <target>Такое изменение статуса пункта проката недопустимо.</target>
-      </trans-unit>
       <trans-unit id="5359164678559943913" datatype="html">
         <source>A rental point with this slug already exists.</source>
         <target>Пункт проката с таким кодом уже существует.</target>
@@ -7741,6 +7737,30 @@
       <trans-unit id="2011656345874703898" datatype="html">
         <source>No changes recorded yet.</source>
         <target>Изменений пока нет.</target>
+      </trans-unit>
+      <trans-unit id="7899485643793421942" datatype="html">
+        <source>This status change is not allowed for the rental point. A permanently closed point cannot be edited.</source>
+        <target>Такое изменение статуса пункта проката недопустимо. Окончательно закрытый пункт нельзя редактировать.</target>
+      </trans-unit>
+      <trans-unit id="5085901032269634312" datatype="html">
+        <source>The currency of the chosen country does not match the business currency. Choose a location in a country that uses the business currency.</source>
+        <target>Валюта выбранной страны не совпадает с валютой бизнеса. Выберите расположение в стране, где используется валюта бизнеса.</target>
+      </trans-unit>
+      <trans-unit id="6391078368910807305" datatype="html">
+        <source>Your account is not linked to a business yet. Ask a platform manager to set it up.</source>
+        <target>Ваша учётная запись ещё не привязана к бизнесу. Обратитесь к менеджеру платформы.</target>
+      </trans-unit>
+      <trans-unit id="5355345801871981482" datatype="html">
+        <source>All statuses</source>
+        <target>Все статусы</target>
+      </trans-unit>
+      <trans-unit id="471816275243265264" datatype="html">
+        <source>Location</source>
+        <target>Расположение</target>
+      </trans-unit>
+      <trans-unit id="6019240466234774466" datatype="html">
+        <source>This client has no rental points with this status.</source>
+        <target>У этого клиента нет пунктов проката с таким статусом.</target>
       </trans-unit>
     </body>
   </file>

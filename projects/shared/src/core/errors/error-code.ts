@@ -91,6 +91,10 @@ export const ErrorCode = {
   // point.* — rental point registry
   POINT_SLUG_DUPLICATE: 'point.slug.duplicate',
   POINT_STATUS_TRANSITION_FORBIDDEN: 'point.status.transition_forbidden',
+  POINT_LOCATION_CURRENCY_MISMATCH: 'point.location.currency_mismatch',
+
+  // tenants.* — acting client
+  TENANTS_CLIENT_NOT_ESTABLISHED: 'tenants.client.not_established',
 
   // geo.* — city checks while creating a location
   GEO_CITY_NOT_FOUND: 'geo.city.not_found',
@@ -197,6 +201,9 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.CLIENT_LOCATION_UNKNOWN,
   ErrorCode.CLIENT_CURRENCY_NOT_LEGAL_TENDER,
   ErrorCode.CLIENT_BUSINESS_LOCATION_OUTSIDE_COUNTRY,
+  ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN,
+  ErrorCode.POINT_LOCATION_CURRENCY_MISMATCH,
+  ErrorCode.TENANTS_CLIENT_NOT_ESTABLISHED,
 ]);
 
 const CLIENT_DEFECT_CODES = new Set<string>([
