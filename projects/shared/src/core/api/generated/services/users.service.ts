@@ -27,6 +27,7 @@ import {
   CreateUserRequest,
   UserCreationResponse,
   ChangePasswordRequest,
+  UserProfileResponse,
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -390,13 +391,16 @@ export class UsersService {
     return this.httpClient.patch(url, requestBody, requestOptions);
   }
 
-  me(observe?: 'body', options?: RequestOptions<'json'>): Observable<UserResponse>;
+  me(observe?: 'body', options?: RequestOptions<'json'>): Observable<UserProfileResponse>;
   me(
     observe?: 'response',
     options?: RequestOptions<'json'>,
-  ): Observable<HttpResponse<UserResponse>>;
-  me(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<UserResponse>>;
-  /** Returns the profile of the authenticated user */
+  ): Observable<HttpResponse<UserProfileResponse>>;
+  me(
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<UserProfileResponse>>;
+  /** Returns the profile of the authenticated user, including their client (null for a platform account) */
   me(
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,

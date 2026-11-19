@@ -95,6 +95,9 @@ export const ErrorCode = {
 
   // tenants.* — acting client
   TENANTS_CLIENT_NOT_ESTABLISHED: 'tenants.client.not_established',
+  TENANTS_CLIENT_NOT_YET_ACTIVE: 'tenants.client.not_yet_active',
+  TENANTS_CLIENT_SUSPENDED: 'tenants.client.suspended',
+  TENANTS_CLIENT_CLOSED: 'tenants.client.closed',
 
   // geo.* — city checks while creating a location
   GEO_CITY_NOT_FOUND: 'geo.city.not_found',
@@ -204,6 +207,9 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN,
   ErrorCode.POINT_LOCATION_CURRENCY_MISMATCH,
   ErrorCode.TENANTS_CLIENT_NOT_ESTABLISHED,
+  ErrorCode.TENANTS_CLIENT_NOT_YET_ACTIVE,
+  ErrorCode.TENANTS_CLIENT_SUSPENDED,
+  ErrorCode.TENANTS_CLIENT_CLOSED,
 ]);
 
 const CLIENT_DEFECT_CODES = new Set<string>([

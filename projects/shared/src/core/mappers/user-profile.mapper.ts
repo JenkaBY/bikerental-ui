@@ -1,8 +1,8 @@
-import type { UserAccountStatus, UserProfile } from '@ui-models';
-import type { UserResponse } from '../api/generated';
+import type { UserAccountStatus, UserClient, UserProfile } from '@ui-models';
+import type { UserClientResponse, UserProfileResponse } from '../api/generated';
 
 export class UserProfileMapper {
-  static fromResponse(r: UserResponse): UserProfile {
+  static fromResponse(r: UserProfileResponse): UserProfile {
     const roles = r.roles ?? [];
     return {
       id: r.id ?? '',
@@ -14,6 +14,14 @@ export class UserProfileMapper {
       isOperator: roles.includes('OPERATOR'),
       mustChangePassword: r.mustChangePassword ?? false,
       status: (r.status ?? 'ACTIVE') as UserAccountStatus,
+      client: UserProfileMapper.clientFrom(r.client),
     };
+  }
+
+  private static clientFrom(c: UserClientResponse | null | undefined): UserClient | null {
+    if (!c?.slug) {
+      return null;
+    }
+    return { slug: c.slug, displayName: c.displayName ?? c.slug };
   }
 }

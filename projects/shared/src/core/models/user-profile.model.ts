@@ -1,5 +1,10 @@
 export type UserAccountStatus = 'ACTIVE' | 'DISABLED';
 
+export interface UserClient {
+  slug: string;
+  displayName: string;
+}
+
 export interface UserProfile {
   id: string;
   username: string;
@@ -10,4 +15,5 @@ export interface UserProfile {
   isOperator: boolean;
   mustChangePassword: boolean;
   status: UserAccountStatus;
+  client: UserClient | null;
 }
