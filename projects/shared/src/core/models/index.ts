@@ -29,3 +29,4 @@ export * from './returnable-rental.model';
 export * from './business-setting.model';
 export * from './client.model';
 export * from './client-change.model';
+export * from './client-point.model';

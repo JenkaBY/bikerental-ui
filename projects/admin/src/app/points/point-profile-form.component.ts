@@ -198,6 +198,13 @@ export class PointProfileFormComponent {
       this.form.controls.slug.markAsTouched();
       return;
     }
+    if (apiError.code === ErrorCode.POINT_LOCATION_CURRENCY_MISMATCH) {
+      const country = this.form.controls.location.controls.country;
+      country.setErrors({ server: message });
+      country.markAsTouched();
+      this.notifications.error(message);
+      return;
+    }
     const summary = applyServerErrors(this.form, apiError);
     if (summary.length) {
       this.notifications.error(summary.join(' '));

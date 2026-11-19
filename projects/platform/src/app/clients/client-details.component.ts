@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,6 +42,7 @@ import type { ClientFormDialogData } from './client-form-dialog.component';
     MatIconModule,
     MatProgressBarModule,
     PageHeaderComponent,
+    RouterLink,
     ClientStatusBadgeComponent,
     ClientChangeHistoryComponent,
   ],
