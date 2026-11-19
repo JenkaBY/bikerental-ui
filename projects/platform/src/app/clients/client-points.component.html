@@ -6,8 +6,11 @@
   <mat-card-content>
     <mat-form-field class="w-64" subscriptSizing="dynamic">
       <mat-label>{{ Labels.ClientPointsStatusFilter }}</mat-label>
-      <mat-select [value]="store.status()" (selectionChange)="onStatusChange($event.value)">
-        <mat-option [value]="null">{{ Labels.ClientPointsAllStatuses }}</mat-option>
+      <mat-select
+        [value]="store.status() ?? allStatuses"
+        (selectionChange)="onStatusChange($event.value)"
+      >
+        <mat-option [value]="allStatuses">{{ Labels.ClientPointsAllStatuses }}</mat-option>
         @for (s of statuses; track s) {
           <mat-option [value]="s">{{ statusLabel(s) }}</mat-option>
         }

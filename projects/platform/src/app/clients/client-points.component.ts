@@ -28,6 +28,8 @@ const STATUS_LABELS: Record<PointStatus, string> = {
   PERMANENTLY_CLOSED: Labels.PointStatusClosed,
 };
 
+const ALL_STATUSES = 'ALL';
+
 const STATUS_CLASSES: Record<PointStatus, string> = {
   ACTIVE: 'bg-green-100 text-green-800',
   INACTIVE: 'bg-slate-100 text-slate-700',
@@ -56,6 +58,7 @@ export class ClientPointsComponent {
   protected readonly Labels = Labels;
   protected readonly store = inject(ClientPointsStore);
   protected readonly lookup = inject(GeoLocationLookupStore);
+  protected readonly allStatuses = ALL_STATUSES;
   protected readonly statuses = Object.keys(STATUS_LABELS) as PointStatus[];
   protected readonly displayedColumns = ['name', 'slug', 'location', 'timeZone', 'status'];
 
@@ -76,8 +79,8 @@ export class ClientPointsComponent {
     return STATUS_CLASSES[status];
   }
 
-  protected onStatusChange(status: PointStatus | null): void {
-    this.store.setStatus(status);
+  protected onStatusChange(value: PointStatus | typeof ALL_STATUSES): void {
+    this.store.setStatus(value === ALL_STATUSES ? null : value);
   }
 
   protected onPageChange(event: PageEvent): void {
