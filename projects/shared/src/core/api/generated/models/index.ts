@@ -1019,6 +1019,16 @@ export interface PointStatusChangeRequest {
   status: 'INACTIVE' | 'ACTIVE' | 'PERMANENTLY_CLOSED';
 }
 
+/** Request body for changing the lifecycle status of a client */
+export interface ClientStatusRequest {
+  /** Target status: ACTIVE (activate a draft or resume a suspended client), SUSPENDED (from active), CLOSED (from active or suspended, final) */
+  status: 'DRAFT' | 'ACTIVE' | 'SUSPENDED' | 'CLOSED';
+  /** Why the status changes; required for SUSPENDED and CLOSED */
+  reason?: string;
+  /** Version of the client the change is based on; an outdated version is refused with 409 */
+  expectedVersion: number;
+}
+
 /** Request body for a batch equipment condition change */
 export interface ChangeEquipmentConditionRequest {
   /** Equipment ids the condition is applied to, 1-5 elements */

@@ -131,6 +131,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   // Derived from Bean Validation annotations as validation.<snake_case_annotation_name>
   // resolveFieldErrorMessage() uses these before falling back to field.message
 
+  'validation.reason_required_for_status': $localize`Give a reason for this status change.`,
   'validation.not_null': $localize`This field is required.`,
   'validation.not_blank': $localize`This field is required.`,
   'validation.not_empty': $localize`This field is required.`,
@@ -200,6 +201,8 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.CLIENT_LOCATION_UNKNOWN]: $localize`The chosen business location does not exist. Choose the location again.`,
   [ErrorCode.CLIENT_CURRENCY_NOT_LEGAL_TENDER]: clientCurrencyNotLegalTenderMessage,
   [ErrorCode.CLIENT_BUSINESS_LOCATION_OUTSIDE_COUNTRY]: clientLocationOutsideCountryMessage,
+  [ErrorCode.CLIENT_STATUS_TRANSITION_FORBIDDEN]: $localize`This status change is not allowed for the client in its current status. A closed client cannot be reopened.`,
+  [ErrorCode.CLIENT_CLOSED_NOT_EDITABLE]: $localize`A closed client cannot be edited.`,
   'validation.iso_currency': $localize`Enter a valid ISO 4217 currency code, for example EUR.`,
   'validation.setting_scope_consistency': $localize`A rental point must be given exactly when the level is a rental point.`,
 

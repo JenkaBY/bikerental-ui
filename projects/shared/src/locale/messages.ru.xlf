@@ -7778,6 +7778,58 @@
         <source>Client</source>
         <target>Клиент</target>
       </trans-unit>
+      <trans-unit id="2448322746769494828" datatype="html">
+        <source>Give a reason for this status change.</source>
+        <target>Укажите причину смены статуса.</target>
+      </trans-unit>
+      <trans-unit id="5312752477438696146" datatype="html">
+        <source>This status change is not allowed for the client in its current status. A closed client cannot be reopened.</source>
+        <target>Такая смена статуса недоступна для клиента в его текущем статусе. Закрытого клиента нельзя открыть снова.</target>
+      </trans-unit>
+      <trans-unit id="926454547313766613" datatype="html">
+        <source>A closed client cannot be edited.</source>
+        <target>Закрытого клиента нельзя редактировать.</target>
+      </trans-unit>
+      <trans-unit id="5748395236355383695" datatype="html">
+        <source>Suspend</source>
+        <target>Приостановить</target>
+      </trans-unit>
+      <trans-unit id="7182974689040833178" datatype="html">
+        <source>Resume</source>
+        <target>Возобновить</target>
+      </trans-unit>
+      <trans-unit id="162357767963554026" datatype="html">
+        <source>Close client</source>
+        <target>Закрыть клиента</target>
+      </trans-unit>
+      <trans-unit id="8645852774861371918" datatype="html">
+        <source>Reason (optional)</source>
+        <target>Причина (необязательно)</target>
+      </trans-unit>
+      <trans-unit id="6027919431172737207" datatype="html">
+        <source>Client status changed.</source>
+        <target>Статус клиента изменён.</target>
+      </trans-unit>
+      <trans-unit id="5905737637892796351" datatype="html">
+        <source>Closing is final: a closed client cannot be reopened or edited, and its people lose access for good.</source>
+        <target>Закрытие окончательно: закрытого клиента нельзя открыть снова или редактировать, а его сотрудники навсегда теряют доступ.</target>
+      </trans-unit>
+      <trans-unit id="8062706928467702731" datatype="html">
+        <source>The client&apos;s people will be refused on every request until the client is resumed.</source>
+        <target>Сотрудникам клиента будет отказано в каждом запросе, пока работа клиента не будет возобновлена.</target>
+      </trans-unit>
+      <trans-unit id="192562261806498656" datatype="html">
+        <source>This client is closed. Its details can no longer be changed.</source>
+        <target>Клиент закрыт. Его данные больше нельзя изменить.</target>
+      </trans-unit>
+      <trans-unit id="8812753386614528396" datatype="html">
+        <source>This client was changed by someone else. Reload it and try again.</source>
+        <target>Клиента изменил кто-то другой. Обновите данные и повторите попытку.</target>
+      </trans-unit>
+      <trans-unit id="6775474905864272135" datatype="html">
+        <source>The reason must be at most 500 characters</source>
+        <target>Причина должна содержать не более 500 символов</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

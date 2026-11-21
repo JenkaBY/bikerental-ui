@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content>
+  @if (closing) {
+    <p class="mb-4 rounded bg-red-50 p-3 text-sm text-red-800" role="alert">
+      {{ Labels.ClientCloseFinalWarning }}
+    </p>
+  } @else if (data.transition.target === 'SUSPENDED') {
+    <p class="mb-4 rounded bg-amber-50 p-3 text-sm text-amber-900">
+      {{ Labels.ClientSuspendWarning }}
+    </p>
+  }
+  @if (stale()) {
+    <div class="mb-4 flex items-center gap-4 text-sm text-red-700" role="alert">
+      <span>{{ Labels.ClientStatusStale }}</span>
+      <button mat-stroked-button type="button" (click)="reload()">
+        {{ Labels.ClientReload }}
+      </button>
+    </div>
+  }
+  <form [formGroup]="form" (ngSubmit)="submit()" id="client-status-form">
+    <mat-form-field class="w-full">
+      <mat-label>
+        {{
+          data.transition.reasonRequired
+            ? Labels.ClientStatusReason
+            : Labels.ClientStatusReasonOptional
+        }}
+      </mat-label>
+      <textarea
+        matInput
+        formControlName="reason"
+        rows="3"
+        [attr.maxlength]="reasonMax"
+        [required]="data.transition.reasonRequired"
+      ></textarea>
+      <mat-hint align="end">{{ form.controls.reason.value.length }} / {{ reasonMax }}</mat-hint>
+      @if (form.controls.reason.hasError('required')) {
+        <mat-error>{{ FormErrorMessages.required }}</mat-error>
+      }
+      @if (form.controls.reason.hasError('maxlength')) {
+        <mat-error>{{ FormErrorMessages.clientStatusReasonTooLong }}</mat-error>
+      }
+      @if (form.controls.reason.hasError('server')) {
+        <mat-error>{{ form.controls.reason.getError('server') }}</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>{{ Labels.Cancel }}</button>
+  <button
+    mat-raised-button
+    [color]="closing ? 'warn' : 'primary'"
+    type="submit"
+    form="client-status-form"
+    [disabled]="store.saving() || stale()"
+  >
+    {{ closing ? Labels.ClientCloseAction : Labels.ClientStatusConfirm }}
+  </button>
+</mat-dialog-actions>
