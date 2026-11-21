@@ -1,6 +1,7 @@
 import { EnvironmentProviders } from '@angular/core';
 import { LogLevel, provideAuth } from 'angular-auth-oidc-client';
 import { environment } from '../../environments/environment';
+import { startDevLoginIfRequested } from './dev-login';
 
 interface StoredOidcState {
   authWellKnownEndPoints?: { issuer?: string };
@@ -31,6 +32,7 @@ export function provideOidcAuth(clientId: string): EnvironmentProviders {
   const configId = `oidc-${clientId}`;
 
   purgeStaleWellKnownEndpoints(configId);
+  startDevLoginIfRequested(clientId, configId);
 
   return provideAuth({
     config: {

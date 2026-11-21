@@ -7,7 +7,9 @@ import {
   catchError,
   filter,
   finalize,
+  from,
   fromEvent,
+  NEVER,
   map,
   Observable,
   of,
@@ -20,6 +22,7 @@ import { UsersService } from '../api/generated';
 import { UserProfileMapper, UserSettingsMapper } from '../mappers';
 import { UserStore } from '../state/user.store';
 import { readAccessTokenClaims } from './auth.token-claims';
+import { devLoginRedirect } from './dev-login';
 
 const RETURN_URL_STORAGE_KEY = 'auth_return_url';
 const ACCESS_TOKEN_STALE_MS = 60_000;
@@ -69,7 +72,8 @@ export class AuthService {
   }
 
   checkAuth(): Observable<LoginResponse> {
-    return this.oidc.checkAuth().pipe(
+    return from(devLoginRedirect()).pipe(
+      switchMap((redirecting) => (redirecting ? NEVER : this.oidc.checkAuth())),
       switchMap((result) => (result.isAuthenticated ? of(result) : this.recoverSession(result))),
       switchMap((result) => {
         if (!result.isAuthenticated) {

@@ -6,4 +6,5 @@ export const environment = {
   defaultLocale: 'ru',
   brand: 'Bike Rental',
   timeTravelEnabled: false,
+  devAuth: true,
 };
