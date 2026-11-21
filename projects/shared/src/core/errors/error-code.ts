@@ -127,6 +127,8 @@ export const ErrorCode = {
   CLIENT_LOCATION_UNKNOWN: 'tenants.client.location_unknown',
   CLIENT_CURRENCY_NOT_LEGAL_TENDER: 'tenants.client.currency_not_legal_tender',
   CLIENT_BUSINESS_LOCATION_OUTSIDE_COUNTRY: 'tenants.client.business_location_outside_country',
+  CLIENT_STATUS_TRANSITION_FORBIDDEN: 'tenants.client.status_transition_forbidden',
+  CLIENT_CLOSED_NOT_EDITABLE: 'tenants.client.closed_not_editable',
 } as const;
 
 export type ErrorCodeValue = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -204,6 +206,8 @@ const DOMAIN_CODES = new Set<string>([
   ErrorCode.CLIENT_LOCATION_UNKNOWN,
   ErrorCode.CLIENT_CURRENCY_NOT_LEGAL_TENDER,
   ErrorCode.CLIENT_BUSINESS_LOCATION_OUTSIDE_COUNTRY,
+  ErrorCode.CLIENT_STATUS_TRANSITION_FORBIDDEN,
+  ErrorCode.CLIENT_CLOSED_NOT_EDITABLE,
   ErrorCode.POINT_STATUS_TRANSITION_FORBIDDEN,
   ErrorCode.POINT_LOCATION_CURRENCY_MISMATCH,
   ErrorCode.TENANTS_CLIENT_NOT_ESTABLISHED,

@@ -26,11 +26,14 @@ import {
   PageHeaderComponent,
   suppressErrorNotification,
 } from '@bikerental/shared';
-import type { Client } from '@bikerental/shared';
+import type { Client, ClientStatusTransition } from '@bikerental/shared';
 import { ClientStatusBadgeComponent } from './client-status-badge.component';
 import { ClientFormDialogComponent } from './client-form-dialog.component';
 import { ClientChangeHistoryComponent } from './client-change-history.component';
 import type { ClientFormDialogData } from './client-form-dialog.component';
+import { ClientStatusActionsComponent } from './client-status-actions.component';
+import { ClientStatusDialogComponent } from './client-status-dialog.component';
+import type { ClientStatusDialogData } from './client-status-dialog.component';
 
 @Component({
   selector: 'app-client-details',
@@ -45,6 +48,7 @@ import type { ClientFormDialogData } from './client-form-dialog.component';
     RouterLink,
     ClientStatusBadgeComponent,
     ClientChangeHistoryComponent,
+    ClientStatusActionsComponent,
   ],
   templateUrl: './client-details.component.html',
 })
@@ -84,6 +88,13 @@ export class ClientDetailsComponent {
     this.dialog.open<ClientFormDialogComponent, ClientFormDialogData, Client>(
       ClientFormDialogComponent,
       { data: { client } },
+    );
+  }
+
+  protected changeStatus(client: Client, transition: ClientStatusTransition): void {
+    this.dialog.open<ClientStatusDialogComponent, ClientStatusDialogData, Client>(
+      ClientStatusDialogComponent,
+      { data: { client, transition }, width: '32rem' },
     );
   }
 

@@ -8,10 +8,17 @@
         <mat-icon>storefront</mat-icon>
         <span>{{ Labels.ClientPointsOpen }}</span>
       </a>
-      <button mat-raised-button color="primary" (click)="edit(c)">
-        <mat-icon>edit</mat-icon>
-        <span>{{ Labels.Edit }}</span>
-      </button>
+      <app-client-status-actions
+        [status]="c.status"
+        [disabled]="store.saving()"
+        (transition)="changeStatus(c, $event)"
+      />
+      @if (c.status !== 'CLOSED') {
+        <button mat-raised-button color="primary" (click)="edit(c)">
+          <mat-icon>edit</mat-icon>
+          <span>{{ Labels.Edit }}</span>
+        </button>
+      }
     }
   </div>
 </app-page-header>
@@ -54,7 +61,11 @@
         <dt class="text-slate-500">{{ Labels.ClientUpdatedAt }}</dt>
         <dd>{{ c.updatedAt | date: 'dd MMM yyyy HH:mm' }}</dd>
       </dl>
-      <p class="mt-4 text-xs text-slate-500">{{ Labels.ClientImmutableHint }}</p>
+      @if (c.status === 'CLOSED') {
+        <p class="mt-4 text-xs text-slate-500">{{ Labels.ClientClosedReadOnlyHint }}</p>
+      } @else {
+        <p class="mt-4 text-xs text-slate-500">{{ Labels.ClientImmutableHint }}</p>
+      }
     </mat-card-content>
   </mat-card>
   <app-client-change-history [slug]="c.slug" [version]="c.version" />

@@ -1,6 +1,7 @@
 import type {
   ClientRequest,
   ClientResponse,
+  ClientStatusRequest,
   ClientSummaryResponse,
   ClientUpdateRequest,
 } from '@api-models';
@@ -8,6 +9,7 @@ import type {
   Client,
   ClientDetailsWrite,
   ClientRegistrationWrite,
+  ClientStatusWrite,
   ClientSummary,
 } from '../models/client.model';
 
@@ -47,6 +49,10 @@ export class ClientMapper {
 
   static toUpdateRequest(w: ClientDetailsWrite, expectedVersion: number): ClientUpdateRequest {
     return { ...ClientMapper.details(w), expectedVersion };
+  }
+
+  static toStatusRequest(w: ClientStatusWrite, expectedVersion: number): ClientStatusRequest {
+    return { status: w.status, reason: w.reason.trim() || undefined, expectedVersion };
   }
 
   private static details(w: ClientDetailsWrite): Omit<ClientUpdateRequest, 'expectedVersion'> {

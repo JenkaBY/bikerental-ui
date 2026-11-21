@@ -27,6 +27,7 @@ import {
   Pageable,
   PageClientSummaryResponse,
   ClientRequest,
+  ClientStatusRequest,
   ClientPointResponse,
   ClientChangeFilterParams,
   ClientChangeResponse,
@@ -238,6 +239,55 @@ export class ClientsService {
     };
 
     return this.httpClient.post(url, clientRequest, requestOptions);
+  }
+
+  changeClientStatus(
+    clientSlug: string,
+    clientStatusRequest: ClientStatusRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<ClientResponse>;
+  changeClientStatus(
+    clientSlug: string,
+    clientStatusRequest: ClientStatusRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<ClientResponse>>;
+  changeClientStatus(
+    clientSlug: string,
+    clientStatusRequest: ClientStatusRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<ClientResponse>>;
+  /** Moves a client to the target status: DRAFT to ACTIVE, ACTIVE to SUSPENDED, SUSPENDED to ACTIVE, ACTIVE or SUSPENDED to CLOSED (final). Suspending and closing need a reason. A suspended or closed client's users are refused on their very next request; no business record changes (platform manager only) */
+  changeClientStatus(
+    clientSlug: string,
+    clientStatusRequest: ClientStatusRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/platform/clients/${clientSlug}/status`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.patch(url, clientStatusRequest, requestOptions);
   }
 
   listClientPoints(

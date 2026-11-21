@@ -12,6 +12,7 @@ import type {
   ClientListQuery,
   ClientRegistrationWrite,
   ClientStatus,
+  ClientStatusWrite,
   ClientSummary,
 } from '../models/client.model';
 import type { GeoLocationWrite } from '../models/geo.model';
@@ -98,6 +99,24 @@ export class ClientRegistryStore {
     );
   }
 
+  changeStatus(client: Client, write: ClientStatusWrite): Observable<Client> {
+    this._saving.set(true);
+    return this.service
+      .changeClientStatus(
+        client.slug,
+        ClientMapper.toStatusRequest(write, client.version),
+        'body',
+        {
+          context: suppressErrorNotification(),
+        },
+      )
+      .pipe(
+        map(ClientMapper.fromResponse),
+        tap((updated) => this.replace(updated)),
+        finalize(() => this._saving.set(false)),
+      );
+  }
+
   update(
     client: Client,
     write: ClientFormWrite<ClientDetailsWrite>,
@@ -114,13 +133,15 @@ export class ClientRegistryStore {
         ),
       ),
       map(ClientMapper.fromResponse),
-      tap((updated) => {
-        this._client.set(updated);
-        this._items.update((items) =>
-          items.map((item) => (item.slug === updated.slug ? updated : item)),
-        );
-      }),
+      tap((updated) => this.replace(updated)),
       finalize(() => this._saving.set(false)),
+    );
+  }
+
+  private replace(updated: Client): void {
+    this._client.set(updated);
+    this._items.update((items) =>
+      items.map((item) => (item.slug === updated.slug ? updated : item)),
     );
   }
 
