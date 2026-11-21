@@ -132,15 +132,14 @@ export class PointProfileFormComponent {
     this.form.controls.timeZone.setValue(zone);
   }
 
-  protected applyPreset({ preset, auto }: PointLocationPresetChoice): void {
+  protected applyPreset({ preset }: PointLocationPresetChoice): void {
     const group = this.form.controls.location;
-    if (auto && (group.dirty || group.controls.country.value)) return;
     const sameCountry = this.countryCode() === preset.location.country.code;
     group.reset(geoLocationFormValue(preset.location));
     syncGeoLocationEnabled(group, [this.form.controls.timeZone]);
     if (preset.timeZone) this.form.controls.timeZone.setValue(preset.timeZone);
     else if (!sameCountry) this.form.controls.timeZone.setValue(null);
-    if (!auto) group.markAsDirty();
+    group.markAsDirty();
     this.presetLocation = preset.location;
   }
 

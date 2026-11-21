@@ -6134,10 +6134,6 @@
         <source>Permanently closed</source>
         <target>Закрыт навсегда</target>
       </trans-unit>
-      <trans-unit id="6304432362546770951" datatype="html">
-        <source>Address</source>
-        <target>Адрес</target>
-      </trans-unit>
       <trans-unit id="6753223316028737302" datatype="html">
         <source>No rental points yet</source>
         <target>Пунктов проката пока нет</target>
@@ -6533,10 +6529,6 @@
       <trans-unit id="9068974005085433178" datatype="html">
         <source>Settlements cannot be recorded at a permanently closed point</source>
         <target>Нельзя записать зачисление в навсегда закрытом пункте</target>
-      </trans-unit>
-      <trans-unit id="1495407472428019919" datatype="html">
-        <source>This action is not available yet</source>
-        <target>Это действие пока недоступно</target>
       </trans-unit>
       <trans-unit id="7215101881367554791" datatype="html">
         <source>Show more</source>
@@ -7126,9 +7118,9 @@
         <source>Letters in the pattern are replaced by parts of the date; dots, dashes, slashes, spaces and commas are printed as is.</source>
         <target>Буквы в шаблоне заменяются частями даты; точки, дефисы, косые черты, пробелы и запятые печатаются как есть.</target>
       </trans-unit>
-      <trans-unit id="1299202595444618160" datatype="html">
-        <source>The currency and its symbol are set for the whole business and cannot be changed for a single rental point.</source>
-        <target>Валюта и её символ задаются для всего бизнеса и не могут быть изменены для отдельной точки проката.</target>
+      <trans-unit id="3120586368224668558" datatype="html">
+        <source>The currency symbol is set for the whole business and cannot be changed for a single rental point.</source>
+        <target>Символ валюты задаётся для всего бизнеса и не могут быть изменены для отдельной точки проката.</target>
       </trans-unit>
       <trans-unit id="8511375199506346686" datatype="html">
         <source>No spaces at the start or end</source>
@@ -7138,37 +7130,17 @@
         <source>Remove the spaces at the start or end.</source>
         <target>Уберите пробелы в начале и в конце.</target>
       </trans-unit>
-      <trans-unit id="8415481861837721705" datatype="html">
-        <source>Enter a valid three-letter currency code, for example EUR.</source>
-        <target>Введите корректный трёхбуквенный код валюты, например EUR.</target>
-      </trans-unit>
       <trans-unit id="4327471061205783634" datatype="html">
         <source>Currency</source>
         <target>Валюта</target>
-      </trans-unit>
-      <trans-unit id="3785450236565085084" datatype="html">
-        <source>The three-letter ISO code of the business currency, for example EUR or USD. Changing it clears the custom symbol.</source>
-        <target>Трёхбуквенный код валюты бизнеса по ISO, например EUR или USD. При смене валюты собственный символ сбрасывается.</target>
       </trans-unit>
       <trans-unit id="531734948371687055" datatype="html">
         <source>Currency symbol</source>
         <target>Символ валюты</target>
       </trans-unit>
-      <trans-unit id="5076647074639050571" datatype="html">
-        <source>Shown next to amounts on screen. Documents keep the currency code. Without a value, the default symbol of the currency is used.</source>
-        <target>Отображается рядом с суммами на экране. В документах остаётся код валюты. Без значения используется символ валюты по умолчанию.</target>
-      </trans-unit>
-      <trans-unit id="5124554304547909337" datatype="html">
-        <source>The country and city are set for the whole business and cannot be changed for a single rental point.</source>
-        <target>Страна и город задаются для всего бизнеса и не могут быть изменены для отдельного пункта проката.</target>
-      </trans-unit>
-      <trans-unit id="7740506003180393906" datatype="html">
-        <source><x id="city" equiv-text="String(city)"/> is in <x id="cityCountry" equiv-text="String(cityCountry)"/>, not in <x id="declaredCountry" equiv-text="String(declaredCountry)"/>. Change the city first, or choose a matching country.</source>
-        <target><x id="city" equiv-text="String(city)"/> находится в <x id="cityCountry" equiv-text="String(cityCountry)"/>, а не в <x id="declaredCountry" equiv-text="String(declaredCountry)"/>. Сначала измените город или выберите подходящую страну.</target>
-      </trans-unit>
-      <trans-unit id="7954726000134955891" datatype="html">
-        <source>The city is not in the declared country. Change the city first, or choose a matching country.</source>
-        <target>Город не находится в указанной стране. Сначала измените город или выберите подходящую страну.</target>
+      <trans-unit id="4767442955808345059" datatype="html">
+        <source>Shown next to amounts on screen. Documents keep the currency code. Without a value, the default symbol of the business currency is used.</source>
+        <target>Отображается рядом с суммами на экране. В документах остаётся код валюты. Без значения используется символ валюты бизнеса по умолчанию.</target>
       </trans-unit>
       <trans-unit id="7773453104401330690" datatype="html">
         <source>From city</source>
@@ -7178,33 +7150,9 @@
         <source>Not declared</source>
         <target>Не указано</target>
       </trans-unit>
-      <trans-unit id="3543595656440254811" datatype="html">
-        <source>Enter a valid two-letter country code, for example LT.</source>
-        <target>Введите корректный двухбуквенный код страны, например LT.</target>
-      </trans-unit>
-      <trans-unit id="1453174977733167538" datatype="html">
-        <source>This city is not known. Check the spelling or choose another city.</source>
-        <target>Этот город неизвестен. Проверьте написание или выберите другой город.</target>
-      </trans-unit>
-      <trans-unit id="7929400263121498054" datatype="html">
-        <source>Enter a valid time zone region, for example Europe/Vilnius.</source>
-        <target>Введите корректный часовой пояс, например Europe/Vilnius.</target>
-      </trans-unit>
-      <trans-unit id="5256118567662640681" datatype="html">
-        <source>The two-letter ISO code of the country the business operates in, for example LT.</source>
-        <target>Двухбуквенный ISO-код страны, в которой работает бизнес, например LT.</target>
-      </trans-unit>
-      <trans-unit id="726180643855478149" datatype="html">
-        <source>The city the business operates in. When declared, it sets the business time zone unless a time zone is set explicitly.</source>
-        <target>Город, в котором работает бизнес. Если он указан, по нему определяется часовой пояс бизнеса, если пояс не задан явно.</target>
-      </trans-unit>
       <trans-unit id="4872987153696118205" datatype="html">
         <source>Time zone</source>
         <target>Часовой пояс</target>
-      </trans-unit>
-      <trans-unit id="8028694146383559713" datatype="html">
-        <source>The time zone region, for example Europe/Vilnius. Rental times, reports and agreements use the time zone of the pick-up point.</source>
-        <target>Часовой пояс, например Europe/Vilnius. Время аренды, отчёты и договоры используют часовой пояс пункта выдачи.</target>
       </trans-unit>
       <trans-unit id="6555318547274416232" datatype="html">
         <source>Value</source>
@@ -7234,14 +7182,6 @@
         <source>The rental point now inherits the business value</source>
         <target>Пункт проката теперь наследует значение бизнеса</target>
       </trans-unit>
-      <trans-unit id="811528537209686994" datatype="html">
-        <source>Use a different time zone?</source>
-        <target>Использовать другой часовой пояс?</target>
-      </trans-unit>
-      <trans-unit id="7434590944132936334" datatype="html">
-        <source>Use this time zone</source>
-        <target>Использовать этот часовой пояс</target>
-      </trans-unit>
       <trans-unit id="3874188483520307185" datatype="html">
         <source>Whole business</source>
         <target>Весь бизнес</target>
@@ -7253,10 +7193,6 @@
       <trans-unit id="6777665018592703888" datatype="html">
         <source>“<x id="point" equiv-text="point"/>” will inherit the business value: <x id="value" equiv-text="value"/>.</source>
         <target>«<x id="point" equiv-text="point"/>» будет наследовать значение бизнеса: <x id="value" equiv-text="value"/>.</target>
-      </trans-unit>
-      <trans-unit id="1569712324250692825" datatype="html">
-        <source>“<x id="point" equiv-text="point"/>” will use <x id="pointZone" equiv-text="pointZone"/>, while the business uses <x id="businessZone" equiv-text="businessZone"/>. Rental times, reports and agreements of this point will follow its own time zone.</source>
-        <target>«<x id="point" equiv-text="point"/>» будет использовать <x id="pointZone" equiv-text="pointZone"/>, а бизнес — <x id="businessZone" equiv-text="businessZone"/>. Время аренды, отчёты и договоры этого пункта будут следовать его собственному часовому поясу.</target>
       </trans-unit>
       <trans-unit id="5776052654219814590" datatype="html">
         <source>Rental point: <x id="point" equiv-text="point"/></source>
@@ -7310,17 +7246,9 @@
         <source>Unknown location #<x id="id" equiv-text="id"/></source>
         <target>Неизвестное местоположение #<x id="id" equiv-text="id"/></target>
       </trans-unit>
-      <trans-unit id="3958911053631055860" datatype="html">
-        <source>Choose the location again and save it.</source>
-        <target>Выберите местоположение заново и сохраните его.</target>
-      </trans-unit>
       <trans-unit id="1095723255847940143" datatype="html">
         <source>Business location</source>
         <target>Местоположение бизнеса</target>
-      </trans-unit>
-      <trans-unit id="16914059256416871" datatype="html">
-        <source>The country, city and street of the business. It will replace the Country and City settings in a later release.</source>
-        <target>Страна, город и улица бизнеса. В одном из следующих выпусков заменит настройки «Страна» и «Город».</target>
       </trans-unit>
       <trans-unit id="8379795887727266779" datatype="html">
         <source>Enter 1 to 100 characters with at least one letter</source>
@@ -7333,14 +7261,6 @@
       <trans-unit id="5466710098649403945" datatype="html">
         <source>Saved addresses</source>
         <target>Сохранённые адреса</target>
-      </trans-unit>
-      <trans-unit id="4607581465689784056" datatype="html">
-        <source>Business</source>
-        <target>Бизнес</target>
-      </trans-unit>
-      <trans-unit id="1795536070990986961" datatype="html">
-        <source>Use business address</source>
-        <target>Адрес бизнеса</target>
       </trans-unit>
       <trans-unit id="962765493084218985" datatype="html">
         <source>Platform</source>

@@ -35,7 +35,7 @@
     <p class="text-sm text-amber-700 m-0">{{ labels.PointIncompleteNotice }}</p>
   }
   @if (editing()) {
-    <app-point-location-presets [autoApplyBusiness]="creating()" (chosen)="applyPreset($event)" />
+    <app-point-location-presets (chosen)="applyPreset($event)" />
   }
   <app-geo-location-fields
     [group]="form.controls.location"

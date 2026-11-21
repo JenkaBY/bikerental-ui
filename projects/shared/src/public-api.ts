@@ -86,7 +86,6 @@ export * from './core/state/business-settings.store';
 export * from './core/state/business-currency.store';
 export * from './core/state/business-setting-history.store';
 export * from './core/state/geo-location-lookup.store';
-export * from './core/state/business-location.store';
 export * from './core/state/profile.store';
 export * from './core/state/time-travel.store';
 export * from './core/state/time-travel-store.token';

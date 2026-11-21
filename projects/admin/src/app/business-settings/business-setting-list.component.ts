@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  effect,
   inject,
   OnInit,
   computed,
@@ -22,8 +21,6 @@ import {
   ConfirmDialogComponent,
   ErrorCode,
   formatSettingValue,
-  GEO_LOCATION_REF_VALUE_TYPE,
-  GeoLocationLookupStore,
   Labels,
   NotificationService,
   PointAdminStore,
@@ -31,8 +28,6 @@ import {
   SETTING_SOURCE_META,
   settingHint,
   settingLabel,
-  TIME_ZONE_VALUE_TYPE,
-  zoneWithOffset,
 } from '@bikerental/shared';
 import type { ConfirmDialogData, SettingSourceMeta } from '@bikerental/shared';
 import type { BusinessSetting, SettingValue } from '@ui-models';
@@ -40,10 +35,6 @@ import {
   BusinessSettingDialogComponent,
   BusinessSettingDialogData,
 } from './business-setting-dialog.component';
-import {
-  BusinessGeoLocationDialogComponent,
-  BusinessGeoLocationDialogData,
-} from './business-geo-location-dialog.component';
 import { BusinessSettingPointsComponent } from './business-setting-points.component';
 
 const RELOAD_CODES = new Set<string>([
@@ -169,18 +160,6 @@ export class BusinessSettingListComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
-  private readonly geoLookup = inject(GeoLocationLookupStore);
-
-  constructor() {
-    effect(() =>
-      this.geoLookup.ensure(
-        this.store
-          .settings()
-          .filter((s) => s.valueType === GEO_LOCATION_REF_VALUE_TYPE)
-          .flatMap((s) => [s.effectiveValue, s.installationDefault]),
-      ),
-    );
-  }
 
   ngOnInit(): void {
     this.store.load();
@@ -200,19 +179,10 @@ export class BusinessSettingListComponent implements OnInit {
   }
 
   protected format(setting: BusinessSetting, value: SettingValue | null): string {
-    if (setting.valueType === TIME_ZONE_VALUE_TYPE) return zoneWithOffset(value);
-    if (setting.valueType === GEO_LOCATION_REF_VALUE_TYPE) return this.geoLookup.describe(value);
     return formatSettingValue(value, setting.kind, setting.unit);
   }
 
   openEditDialog(setting: BusinessSetting): void {
-    if (setting.valueType === GEO_LOCATION_REF_VALUE_TYPE) {
-      this.dialog.open<BusinessGeoLocationDialogComponent, BusinessGeoLocationDialogData, boolean>(
-        BusinessGeoLocationDialogComponent,
-        { data: { setting }, width: '760px', viewContainerRef: this.viewContainerRef },
-      );
-      return;
-    }
     this.dialog.open<BusinessSettingDialogComponent, BusinessSettingDialogData, boolean>(
       BusinessSettingDialogComponent,
       { data: { setting }, width: '560px', viewContainerRef: this.viewContainerRef },

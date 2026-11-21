@@ -1,26 +1,18 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {
   ApiErrorParser,
   applyServerErrors,
-  BusinessLocationStore,
   BusinessSettingMapper,
   BusinessSettingsStore,
   businessSettingValueValidator,
   CancelButtonComponent,
   clearServerErrors,
-  ConfirmDialogComponent,
   datePatternSymbols,
   describeSettingRule,
   describeSettingViolation,
@@ -36,11 +28,8 @@ import {
   settingHint,
   settingLabel,
   settingUnitSuffix,
-  TIME_ZONE_VALUE_TYPE,
-  TimeZoneSelectComponent,
-  zoneWithOffset,
 } from '@bikerental/shared';
-import type { ApiError, ConfirmDialogData } from '@bikerental/shared';
+import type { ApiError } from '@bikerental/shared';
 import type { BusinessSetting, SettingValue, SettingViolation } from '@ui-models';
 import { DatePatternLegendComponent } from './date-pattern-legend.component';
 
@@ -71,7 +60,6 @@ const RELOAD_CODES = new Set<string>([
     MatButtonModule,
     CancelButtonComponent,
     DatePatternLegendComponent,
-    TimeZoneSelectComponent,
   ],
   template: `
     <h2 mat-dialog-title>{{ title }}</h2>
@@ -106,35 +94,27 @@ const RELOAD_CODES = new Set<string>([
         </div>
 
         <form [formGroup]="form" (ngSubmit)="save()">
-          @if (isTimeZone) {
-            <app-time-zone-select
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ Labels.BusinessSettingValueLabel }}</mat-label>
+            <input
+              matInput
               formControlName="value"
-              [label]="Labels.BusinessSettingValueLabel"
-              [countryCode]="businessLocation.zoneCountryCode()"
+              [type]="numeric ? 'number' : 'text'"
+              [step]="setting.kind === 'money' ? '0.01' : '1'"
+              [class.font-mono]="setting.kind === 'text'"
+              autocomplete="off"
             />
-          } @else {
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>{{ Labels.BusinessSettingValueLabel }}</mat-label>
-              <input
-                matInput
-                formControlName="value"
-                [type]="numeric ? 'number' : 'text'"
-                [step]="setting.kind === 'money' ? '0.01' : '1'"
-                [class.font-mono]="setting.kind === 'text'"
-                autocomplete="off"
-              />
-              @if (unit) {
-                <span matTextSuffix>{{ unit }}</span>
-              }
-              @if (value.hasError('required')) {
-                <mat-error>{{ FormErrorMessages.required }}</mat-error>
-              } @else if (value.hasError(SERVER_ERROR_KEY)) {
-                <mat-error>{{ value.getError(SERVER_ERROR_KEY) }}</mat-error>
-              } @else if (value.hasError(SETTING_VIOLATIONS_KEY)) {
-                <mat-error>{{ violationText(value.getError(SETTING_VIOLATIONS_KEY)) }}</mat-error>
-              }
-            </mat-form-field>
-          }
+            @if (unit) {
+              <span matTextSuffix>{{ unit }}</span>
+            }
+            @if (value.hasError('required')) {
+              <mat-error>{{ FormErrorMessages.required }}</mat-error>
+            } @else if (value.hasError(SERVER_ERROR_KEY)) {
+              <mat-error>{{ value.getError(SERVER_ERROR_KEY) }}</mat-error>
+            } @else if (value.hasError(SETTING_VIOLATIONS_KEY)) {
+              <mat-error>{{ violationText(value.getError(SETTING_VIOLATIONS_KEY)) }}</mat-error>
+            }
+          </mat-form-field>
         </form>
 
         @if (patternSymbols.length) {
@@ -170,9 +150,6 @@ export class BusinessSettingDialogComponent {
   protected readonly title = this.point
     ? Labels.settingPointDialogTitle(this.point.name)
     : Labels.BusinessSettingDialogTitle;
-  protected readonly isTimeZone = this.setting.valueType === TIME_ZONE_VALUE_TYPE;
-  protected readonly businessLocation = inject(BusinessLocationStore);
-  private readonly dialog = inject(MatDialog);
 
   private readonly dialogRef =
     inject<MatDialogRef<BusinessSettingDialogComponent, boolean>>(MatDialogRef);
@@ -193,7 +170,6 @@ export class BusinessSettingDialogComponent {
   protected readonly form = new FormGroup({ value: this.value });
 
   protected format(value: SettingValue | null): string {
-    if (this.isTimeZone) return zoneWithOffset(value);
     return formatSettingValue(value, this.setting.kind, this.setting.unit);
   }
 
@@ -205,37 +181,7 @@ export class BusinessSettingDialogComponent {
     if (this.form.invalid || this.store.saving()) return;
     const parsed = parseSettingInput(String(this.value.value), this.setting.kind);
     if (parsed === null) return;
-    if (!this.needsZoneConfirmation(parsed)) {
-      this.submit(parsed);
-      return;
-    }
-    this.dialog
-      .open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
-        data: this.zoneConfirmation(parsed),
-      })
-      .afterClosed()
-      .pipe(
-        filter((confirmed) => confirmed === true),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => this.submit(parsed));
-  }
-
-  private needsZoneConfirmation(value: SettingValue): boolean {
-    return !!this.point && this.isTimeZone && value !== this.setting.effectiveValue;
-  }
-
-  private zoneConfirmation(value: SettingValue): ConfirmDialogData {
-    return {
-      title: Labels.SettingPointZoneConfirmTitle,
-      message: Labels.settingPointZoneConfirmMessage(
-        this.point?.name ?? '',
-        zoneWithOffset(value),
-        zoneWithOffset(this.setting.effectiveValue),
-      ),
-      confirmLabel: Labels.SettingPointZoneConfirmButton,
-      cancelLabel: Labels.Cancel,
-    };
+    this.submit(parsed);
   }
 
   private submit(parsed: SettingValue): void {

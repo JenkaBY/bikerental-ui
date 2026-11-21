@@ -24,8 +24,6 @@ import {
   resolveErrorMessage,
   settingBusyKey,
   settingLabel,
-  TIME_ZONE_VALUE_TYPE,
-  zoneWithOffset,
 } from '@bikerental/shared';
 import type { ConfirmDialogData } from '@bikerental/shared';
 import type { BusinessSetting, Point, SettingValue } from '@ui-models';
@@ -160,7 +158,6 @@ export class BusinessSettingPointsComponent {
 
   private format(value: SettingValue | null): string {
     const setting = this.setting();
-    if (setting.valueType === TIME_ZONE_VALUE_TYPE) return zoneWithOffset(value);
     return formatSettingValue(value, setting.kind, setting.unit);
   }
 }
