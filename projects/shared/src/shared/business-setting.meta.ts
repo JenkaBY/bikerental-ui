@@ -77,20 +77,6 @@ const SETTING_TEXTS: Readonly<Record<string, SettingText>> = {
     label: Labels.SettingAgreementDatePatternLabel,
     hint: Labels.SettingAgreementDatePatternHint,
   },
-  'app.business.country': { label: Labels.SettingCountryLabel, hint: Labels.SettingCountryHint },
-  'app.business.city': { label: Labels.SettingCityLabel, hint: Labels.SettingCityHint },
-  'app.business.time-zone': {
-    label: Labels.SettingTimeZoneLabel,
-    hint: Labels.SettingTimeZoneHint,
-  },
-  'app.business.geo-location-id': {
-    label: Labels.SettingGeoLocationLabel,
-    hint: Labels.SettingGeoLocationHint,
-  },
-  'app.business.currency': {
-    label: Labels.SettingCurrencyLabel,
-    hint: Labels.SettingCurrencyHint,
-  },
   'app.business.currency-symbol': {
     label: Labels.SettingCurrencySymbolLabel,
     hint: Labels.SettingCurrencySymbolHint,
@@ -164,9 +150,6 @@ export function formatSettingValue(
   return suffix ? `${value} ${suffix}` : String(value);
 }
 
-export const TIME_ZONE_VALUE_TYPE = 'TIME_ZONE';
-export const GEO_LOCATION_REF_VALUE_TYPE = 'GEO_LOCATION_REF';
-
 export function utcOffset(zone: string, at: Date = new Date()): string {
   try {
     const part = new Intl.DateTimeFormat('en-US', { timeZone: zone, timeZoneName: 'longOffset' })
@@ -229,16 +212,6 @@ export function describeSettingViolation(violation: SettingViolation): string {
       return Labels.SettingViolationSingleLine;
     case 'trimmed':
       return Labels.SettingViolationTrimmed;
-    case 'country_code':
-      return Labels.SettingViolationCountryCode;
-    case 'known_city':
-      return Labels.SettingViolationKnownCity;
-    case 'time_zone':
-      return Labels.SettingViolationTimeZone;
-    case 'currency_code':
-      return Labels.SettingViolationCurrencyCode;
-    case 'geo_location_ref':
-      return Labels.SettingViolationGeoLocationRef;
     case 'pattern_malformed':
       return Labels.SettingViolationPatternMalformed;
     case 'pattern_unformattable':

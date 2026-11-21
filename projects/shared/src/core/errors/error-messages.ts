@@ -193,9 +193,7 @@ export const ErrorMessageCatalog: Record<string, MessageTemplate> = {
   [ErrorCode.SETTINGS_LEVEL_NOT_PERMITTED]: $localize`This setting cannot be changed at this level.`,
   [ErrorCode.SETTINGS_VALUE_INVALID]: $localize`The value does not satisfy the setting's rules.`,
   [ErrorCode.SETTINGS_VERSION_CONFLICT]: $localize`This setting was changed by another administrator. The latest value has been loaded — review it and try again.`,
-  [ErrorCode.SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY]: $localize`The currency and its symbol are set for the whole business and cannot be changed for a single rental point.`,
-  [ErrorCode.SETTINGS_LOCATION_CITY_NOT_IN_COUNTRY]: cityNotInCountryMessage,
-  [ErrorCode.SETTINGS_LOCATION_BUSINESS_LEVEL_ONLY]: $localize`The country and city are set for the whole business and cannot be changed for a single rental point.`,
+  [ErrorCode.SETTINGS_CURRENCY_BUSINESS_LEVEL_ONLY]: $localize`The currency symbol is set for the whole business and cannot be changed for a single rental point.`,
   [ErrorCode.CLIENT_SLUG_DUPLICATE]: clientSlugDuplicateMessage,
   [ErrorCode.CLIENT_SLUG_RESERVED]: clientSlugReservedMessage,
   [ErrorCode.CLIENT_LOCATION_UNKNOWN]: $localize`The chosen business location does not exist. Choose the location again.`,
@@ -270,16 +268,6 @@ function maintenanceDamageReportPointsMixedMessage(params: Record<string, unknow
     return $localize`The selected equipment belongs to several rental points (${pointSlugs.map(String).join(', ')}:pointSlugs:). Name the rental, or file a separate report for each point's equipment.`;
   }
   return $localize`The selected equipment belongs to several rental points. Name the rental, or file a separate report for each point's equipment.`;
-}
-
-function cityNotInCountryMessage(params: Record<string, unknown>): string {
-  const city = params['city'];
-  const cityCountry = params['cityCountry'];
-  const declaredCountry = params['effectiveCountry'] ?? params['declaredCountry'];
-  if (city && cityCountry && declaredCountry) {
-    return $localize`${String(city)}:city: is in ${String(cityCountry)}:cityCountry:, not in ${String(declaredCountry)}:declaredCountry:. Change the city first, or choose a matching country.`;
-  }
-  return $localize`The city is not in the declared country. Change the city first, or choose a matching country.`;
 }
 
 function clientSlugDuplicateMessage(params: Record<string, unknown>): string {

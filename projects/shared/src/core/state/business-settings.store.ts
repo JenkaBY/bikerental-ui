@@ -1,15 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { finalize, map, switchMap, tap } from 'rxjs/operators';
+import { finalize, map, tap } from 'rxjs/operators';
 import type { SettingViewResponse } from '@api-models';
 import { BusinessSettingsService } from '../api/generated';
-import { GeoService } from '../api/geo/geo.service';
-import { GeoLocationLookupStore } from './geo-location-lookup.store';
-import { BusinessLocationStore } from './business-location.store';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { BusinessSettingMapper } from '../mappers/business-setting.mapper';
-import { BusinessCurrencyStore, CURRENCY_CODE_KEY } from './business-currency.store';
-import type { BusinessSetting, BusinessSettingChangeWrite, GeoLocationWrite } from '../models';
+import { BusinessCurrencyStore } from './business-currency.store';
+import type { BusinessSetting, BusinessSettingChangeWrite } from '../models';
 
 export function settingBusyKey(key: string, pointSlug?: string): string {
   return pointSlug ? `${key}@${pointSlug}` : key;
@@ -28,9 +25,6 @@ interface BusinessSettingsState {
 export class BusinessSettingsStore {
   private readonly service = inject(BusinessSettingsService);
   private readonly currency = inject(BusinessCurrencyStore);
-  private readonly geo = inject(GeoService);
-  private readonly geoLookup = inject(GeoLocationLookupStore);
-  private readonly businessLocation = inject(BusinessLocationStore);
 
   private readonly _state = signal<BusinessSettingsState>({
     settings: [],
@@ -62,7 +56,6 @@ export class BusinessSettingsStore {
         next: (settings) => {
           this.patch({ settings, loaded: true });
           this.currency.applyFrom(settings);
-          this.businessLocation.applyFrom(settings);
         },
         error: () => this.patch({ error: true }),
       });
@@ -82,34 +75,9 @@ export class BusinessSettingsStore {
       .pipe(
         map(BusinessSettingMapper.fromResponse),
         tap((setting) => this.replace(setting)),
-        tap((setting) => this.refreshAfterCurrencyChange(setting.key)),
+        tap(() => this.refreshCurrencySymbol()),
         finalize(() => this.patch({ saving: false })),
       );
-  }
-
-  changeGeoLocation(
-    setting: BusinessSetting,
-    write: GeoLocationWrite,
-  ): Observable<BusinessSetting> {
-    this.patch({ saving: true });
-    return this.geo.saveLocation(write, { context: suppressErrorNotification() }).pipe(
-      tap((location) => this.geoLookup.put(location)),
-      switchMap((location) =>
-        this.service.change(
-          setting.key,
-          BusinessSettingMapper.toChangeRequest({
-            value: location.id,
-            expectedVersion: setting.version,
-          }),
-          undefined,
-          { context: suppressErrorNotification() },
-        ),
-      ),
-      map(BusinessSettingMapper.fromResponse),
-      tap((updated) => this.replace(updated)),
-      tap((updated) => this.refreshAfterCurrencyChange(updated.key)),
-      finalize(() => this.patch({ saving: false })),
-    );
   }
 
   reset(setting: BusinessSetting, pointSlug?: string): Observable<BusinessSetting> {
@@ -128,15 +96,13 @@ export class BusinessSettingsStore {
       .pipe(
         map(BusinessSettingMapper.fromResponse),
         tap((updated) => this.replace(updated)),
-        tap((updated) => this.refreshAfterCurrencyChange(updated.key)),
+        tap(() => this.refreshCurrencySymbol()),
         finalize(() => this.setBusy(busyKey, false)),
       );
   }
 
-  private refreshAfterCurrencyChange(key: string): void {
-    if (key === CURRENCY_CODE_KEY) this.load();
-    else this.currency.applyFrom(this._state().settings);
-    this.businessLocation.applyFrom(this._state().settings);
+  private refreshCurrencySymbol(): void {
+    this.currency.applyFrom(this._state().settings);
   }
 
   private replace(setting: BusinessSetting): void {

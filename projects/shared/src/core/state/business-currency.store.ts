@@ -5,25 +5,16 @@ import { BusinessSettingsService } from '../api/generated';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { BusinessSettingMapper } from '../mappers/business-setting.mapper';
 import type { BusinessSetting } from '../models';
-import { BusinessLocationStore } from './business-location.store';
 
-export const CURRENCY_CODE_KEY = 'app.business.currency';
 export const CURRENCY_SYMBOL_KEY = 'app.business.currency-symbol';
-
-interface BusinessCurrencyState {
-  code: string;
-  symbol: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class BusinessCurrencyStore {
   private readonly service = inject(BusinessSettingsService);
-  private readonly businessLocation = inject(BusinessLocationStore);
 
-  private readonly _state = signal<BusinessCurrencyState>({ code: '', symbol: '' });
+  private readonly _symbol = signal('');
 
-  readonly code = computed(() => this._state().code);
-  readonly symbol = computed(() => this._state().symbol || this._state().code);
+  readonly symbol = computed(() => this._symbol());
 
   load(): void {
     this.service
@@ -34,15 +25,11 @@ export class BusinessCurrencyStore {
           BusinessSettingMapper.fromResponse,
         );
         this.applyFrom(settings);
-        this.businessLocation.applyFrom(settings);
       });
   }
 
   applyFrom(settings: readonly BusinessSetting[]): void {
-    const read = (key: string): string => {
-      const value = settings.find((s) => s.key === key)?.effectiveValue;
-      return typeof value === 'string' ? value : '';
-    };
-    this._state.set({ code: read(CURRENCY_CODE_KEY), symbol: read(CURRENCY_SYMBOL_KEY) });
+    const value = settings.find((s) => s.key === CURRENCY_SYMBOL_KEY)?.effectiveValue;
+    this._symbol.set(typeof value === 'string' ? value : '');
   }
 }

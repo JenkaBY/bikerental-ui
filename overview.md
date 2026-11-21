@@ -409,17 +409,6 @@ RESPONSIBILITIES:
   CALLED_BY:
 - GeoLocationLookupStore, PointAdminStore, BusinessSettingsStore, CountryAutocompleteComponent, CityAutocompleteComponent, TimeZoneSelectComponent
 
-COMPONENT_NAME: BusinessLocationStore
-TYPE: Store
-PURPOSE: Root snapshot of the business location settings: effective `app.business.geo-location-id` (resolved through `GeoLocationLookupStore`), `app.business.time-zone` and `app.business.country`.
-RESPONSIBILITIES:
-
-- `applyFrom(settings)` is called by `BusinessCurrencyStore.load()` at startup and by `BusinessSettingsStore` after every load, change and reset.
-- `zoneCountryCode` is the country whose zones the business time zone offers: the geo location's country, otherwise `app.business.country`.
-  SOURCE: `projects/shared/src/core/state/business-location.store.ts`
-  CALLED_BY:
-- BusinessSettingDialogComponent (time zone dropdown), PointLocationPresetsComponent (business address)
-
 COMPONENT_NAME: GeoLocationLookupStore
 TYPE: Store
 PURPOSE: Root cache of geo locations by id, filled by one batch request per page (points list, settings list, settings history).
@@ -431,7 +420,7 @@ RESPONSIBILITIES:
   CALLS:
 - GeoService — `locations()`.
   CALLED_BY:
-- PointAdminStore, BusinessSettingsStore, BusinessSettingListComponent, BusinessSettingHistoryComponent, BusinessGeoLocationDialogComponent
+- PointAdminStore, BusinessSettingsStore, BusinessSettingListComponent, BusinessSettingHistoryComponent
 
 COMPONENT_NAME: PointFinanceService
 TYPE: API
@@ -1441,12 +1430,12 @@ RESPONSIBILITIES:
 
 - Load the whole list once (there is no single-setting read); expose loading / error / saving / per-key busy flags.
 - `change(key, {value, expectedVersion})` and `reset(setting)` send the loaded `version` as `expectedVersion` with `SUPPRESS_ERROR_NOTIFICATION` and replace the row with the returned view.
-- `changeGeoLocation(setting, write)` saves a new geo location, then sends its id as the value of `app.business.geo-location-id` (`GEO_LOCATION_REF`, which ships without a value: `installationDefault` / `effectiveValue` / history values may be `null`).
+- The catalogue is per client (the acting client comes from the session) and has 9 keys; currency, business location and time zone are client attributes, not settings. A key the backend does not return is not shown; a stale write answers `404 settings.key.not_editable`.
   SOURCE: `projects/shared/src/core/state/business-settings.store.ts`
   CALLS:
 - BusinessSettingsService — list, change, reset.
 - BusinessSettingMapper — response/request conversion.
-- BusinessCurrencyStore — `applyFrom()` after every load; a change or reset of `app.business.currency` triggers a reload so the symbol and `MONEY` units refresh.
+- BusinessCurrencyStore — `applyFrom()` after every load; every change or reset re-applies the currency symbol.
   CALLED_BY:
 - BusinessSettingListComponent
 - BusinessSettingDialogComponent
@@ -1454,11 +1443,11 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: BusinessCurrencyStore
 TYPE: Store
-PURPOSE: Root store holding the business currency code and display symbol, read once at startup and used for every on-screen amount.
+PURPOSE: Root store holding the business currency display symbol, read once at startup and used for every on-screen amount.
 RESPONSIBILITIES:
 
-- `load()` reads `app.business.currency` and `app.business.currency-symbol` (`effectiveValue`) from the settings catalogue; failures are swallowed and leave the symbol empty.
-- `symbol` falls back to the code when no symbol is set; `applyFrom(settings)` refreshes both after the console reloads or edits a setting.
+- `load()` reads `app.business.currency-symbol` (`effectiveValue`, whose default follows the client currency) from the settings catalogue; failures are swallowed and leave the symbol empty.
+- `applyFrom(settings)` refreshes the symbol after the console reloads or edits a setting.
 - `MoneyPipe`, `FixedMoneyPipe` and `formatFixedMoney(value, locale, symbol)` render this symbol; `Money.currency` is no longer displayed. Printed documents keep the ISO code.
   SOURCE: `projects/shared/src/core/state/business-currency.store.ts`
   CALLS:
@@ -2791,7 +2780,6 @@ RESPONSIBILITIES:
   CALLS:
 - BusinessSettingsStore — `load()`, `reset()`.
 - BusinessSettingDialogComponent — change a value.
-- BusinessGeoLocationDialogComponent — change `app.business.geo-location-id` (values of that setting are shown as location names via `GeoLocationLookupStore`).
 - ConfirmDialogComponent — reset confirmation.
 - NotificationService / ErrorMessageResolver — success and failure reporting.
   CALLED_BY:
@@ -2804,26 +2792,12 @@ RESPONSIBILITIES:
 
 - Validate on the client with `businessSettingValueValidator` (range, scale, length, single_line; whole minutes for `MINUTES`); `pattern_parts` is checked by the server only.
 - Show `settings.value.invalid` `params.violations[]` inline on the field; bind `validation.*` field errors via `applyServerErrors`.
-- `TIME_ZONE` settings use `TimeZoneSelectComponent` with the zones of `BusinessLocationStore.zoneCountryCode()`.
 - On `409 settings.version.conflict` warn, reload the list and close.
   SOURCE: `projects/admin/src/app/business-settings/business-setting-dialog.component.ts`
   CALLS:
 - BusinessSettingsStore — `change()`, `load()`.
 - describeSettingRule / describeSettingViolation / formatSettingValue / settingLabel / settingHint / datePatternSymbols — `shared/business-setting.meta.ts`.
 - DatePatternLegendComponent — Java pattern symbols for `DATE_TIME_PATTERN` / `DATE_PATTERN`.
-  CALLED_BY:
-- BusinessSettingListComponent
-
-COMPONENT_NAME: BusinessGeoLocationDialogComponent
-TYPE: Gateway
-PURPOSE: Change dialog of the business geo location: country → city → street pickers prefilled from the current location; saving creates a location and stores its id.
-RESPONSIBILITIES:
-
-- Close without a request when the location is unchanged; bind `geo.city.*` / field errors to the location fields; show `settings.value.invalid` violations (`geo_location_ref`) as a toast; on `settings.version.conflict` warn, reload and close.
-  SOURCE: `projects/admin/src/app/business-settings/business-geo-location-dialog.component.ts`
-  CALLS:
-- BusinessSettingsStore — `changeGeoLocation()`, `load()`.
-- GeoLocationFieldsComponent, GeoLocationLookupStore.
   CALLED_BY:
 - BusinessSettingListComponent
 
@@ -3168,7 +3142,7 @@ RESPONSIBILITIES:
 - Only the country is editable at first; choosing it enables city, street and time zone. Changing the country clears the city; every country or city choice refills the zone from the city's `suggestedTimeZone` (or the country's `defaultTimeZone`). An unlisted typed city is created on save.
 - Save sends a new location only when the location changed (otherwise the current `geoLocationId`, or the id of a picked saved address, is reused); points without a location or zone show a notice and can be completed.
 - The time zone is a `TimeZoneSelectComponent` limited to the zones of the chosen country.
-- Above the fields, `PointLocationPresetsComponent` offers "Saved addresses" (the business location first, then the unique locations of the points) and a "Use business address" button; picking one fills country, city, street and the zone of that address (the point's zone, or the business time zone). A new point starts with the business address when one is set.
+- Above the fields, `PointLocationPresetsComponent` offers "Saved addresses" (the unique locations of the existing points); picking one fills country, city, street and that point's time zone.
 
 - Create or update through `PointAdminStore` with the global toast suppressed; bind `point.slug.duplicate` to the slug field and other field errors via `applyServerErrors`; toast "Rental point saved".
 - Emit `saved(point)` / `cancelled()`.
@@ -3183,10 +3157,10 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: PointLocationPresetsComponent
 TYPE: UI
-PURPOSE: "Saved addresses" dropdown and "Use business address" button above the point location fields; emits the chosen address (`auto` for the create-mode default).
+PURPOSE: "Saved addresses" dropdown above the point location fields; emits the chosen address.
   SOURCE: `projects/admin/src/app/points/point-location-presets.component.ts`
   CALLS:
-- PointAdminStore — `points()`, `locations()`; BusinessLocationStore — `location()`, `timeZone()`.
+- PointAdminStore — `points()`, `locations()`.
   CALLED_BY:
 - PointProfileFormComponent
 
@@ -4613,7 +4587,6 @@ RESPONSIBILITIES:
 - GeoService
   CALLED_BY:
 - PointProfileFormComponent
-- BusinessGeoLocationDialogComponent
 
 COMPONENT_NAME: EquipmentTypeDropdownComponent
 TYPE: Utility
