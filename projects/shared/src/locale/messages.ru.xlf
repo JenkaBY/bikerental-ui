@@ -7762,6 +7762,22 @@
         <source>This client has no rental points with this status.</source>
         <target>У этого клиента нет пунктов проката с таким статусом.</target>
       </trans-unit>
+      <trans-unit id="458300824361637025" datatype="html">
+        <source>Your business is not active yet. Ask a platform manager to activate it.</source>
+        <target>Ваш бизнес ещё не активирован. Обратитесь к менеджеру платформы для активации.</target>
+      </trans-unit>
+      <trans-unit id="5350991367205578986" datatype="html">
+        <source>Your business is suspended. Contact a platform manager to restore access.</source>
+        <target>Ваш бизнес приостановлен. Обратитесь к менеджеру платформы, чтобы восстановить доступ.</target>
+      </trans-unit>
+      <trans-unit id="4159730944095881346" datatype="html">
+        <source>Your business is closed. Access is no longer available.</source>
+        <target>Ваш бизнес закрыт. Доступ больше недоступен.</target>
+      </trans-unit>
+      <trans-unit id="3014142150963657456" datatype="html">
+        <source>Client</source>
+        <target>Клиент</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

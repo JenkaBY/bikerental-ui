@@ -41,6 +41,11 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
         <div class="flex flex-col min-w-0">
           <span class="font-medium text-slate-800 truncate">{{ displayName() }}</span>
           <span class="text-sm text-slate-500 truncate">{{ secondary() }}</span>
+          @if (clientName(); as client) {
+            <span class="text-xs text-slate-500 truncate" [title]="labels.AccountClient">{{
+              client
+            }}</span>
+          }
         </div>
       </div>
 
@@ -73,6 +78,7 @@ export class ProfileMenuComponent {
   protected readonly displayName = computed(
     () => this.user()?.displayName || this.user()?.username || '',
   );
+  protected readonly clientName = computed(() => this.user()?.client?.displayName ?? null);
   protected readonly secondary = computed(() => {
     const user = this.user();
     return user?.email || user?.username || '';

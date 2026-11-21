@@ -6,12 +6,12 @@ import {
   UserSettings,
   UserSettingsPatch,
 } from '@ui-models';
-import type { UserResponse } from '../api/generated';
+import type { UserProfileResponse } from '../api/generated';
 
 const THEMES: readonly string[] = ['light', 'dark', 'system'];
 
 export class UserSettingsMapper {
-  static fromUserResponse(response: UserResponse): UserSettings {
+  static fromUserResponse(response: UserProfileResponse): UserSettings {
     return this.fromResponse(response.settings);
   }
 

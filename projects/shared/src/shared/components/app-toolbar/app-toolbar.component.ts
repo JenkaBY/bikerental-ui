@@ -32,17 +32,22 @@ import { TimeTravelDisplayComponent } from '../time-travel-display/time-travel-d
           ></app-toggle-button>
         }
 
-        <span
-          class="text-base font-medium truncate min-w-0 hover:cursor-pointer focus:outline-none"
-          (click)="goHome()"
-          tabindex="0"
-          role="button"
-          (keyup.enter)="goHome()"
-          (keyup.space)="goHome()"
-          (keydown.space)="$event.preventDefault()"
-        >
-          {{ title() }}
-        </span>
+        <div class="flex flex-col min-w-0">
+          <span
+            class="text-base font-medium truncate min-w-0 hover:cursor-pointer focus:outline-none"
+            (click)="goHome()"
+            tabindex="0"
+            role="button"
+            (keyup.enter)="goHome()"
+            (keyup.space)="goHome()"
+            (keydown.space)="$event.preventDefault()"
+          >
+            {{ title() }}
+          </span>
+          @if (subtitle(); as sub) {
+            <span class="text-xs opacity-80 truncate leading-tight">{{ sub }}</span>
+          }
+        </div>
       </div>
 
       <ng-content select="[toolbarCenter]"></ng-content>
@@ -61,6 +66,7 @@ export class AppToolbarComponent {
   protected readonly timeTravelStore = inject(TimeTravelStore);
 
   title = input.required<string>();
+  subtitle = input<string | null>(null);
   showToggle = input<boolean>(true);
 
   menuOpen = input<boolean>(false);

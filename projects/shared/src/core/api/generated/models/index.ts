@@ -1803,6 +1803,24 @@ export interface SettingChangeResponse {
   changedAt: string;
 }
 
+export interface UserClientResponse {
+  slug?: string;
+  displayName?: string;
+}
+
+export interface UserProfileResponse {
+  id?: string;
+  username?: string;
+  email?: string;
+  displayName?: string;
+  status?: 'ACTIVE' | 'DISABLED';
+  mustChangePassword?: boolean;
+  roles?: Array<'ADMIN' | 'OPERATOR' | 'PLATFORM_MANAGER'>;
+  lastLoginAt?: string;
+  settings?: Record<string, string>;
+  client?: UserClientResponse;
+}
+
 export interface PointRevenueFilterParams {
   /** Range start (inclusive), format yyyy-MM-dd */
   from: string;

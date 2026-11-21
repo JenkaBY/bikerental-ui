@@ -472,6 +472,7 @@ export class Labels {
 
   static readonly AccountMenuAria = $localize`Account menu`;
   static readonly ProfileSettingsNav = $localize`Profile settings`;
+  static readonly AccountClient = $localize`Client`;
   static readonly ProfileSaved = $localize`Profile saved`;
   static readonly ProfileAccountTab = $localize`Profile`;
   static readonly ProfileSecurityTab = $localize`Security`;

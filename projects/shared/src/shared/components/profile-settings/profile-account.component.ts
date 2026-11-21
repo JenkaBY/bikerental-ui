@@ -40,6 +40,11 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
         </div>
         <div class="flex flex-col gap-1 min-w-0">
           <span class="font-medium text-slate-800 truncate">{{ username() }}</span>
+          @if (clientName(); as client) {
+            <span class="text-sm text-slate-500 truncate"
+              >{{ labels.AccountClient }}: {{ client }}</span
+            >
+          }
           <div class="flex flex-wrap gap-1">
             @for (role of roles(); track role) {
               <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs">
@@ -91,6 +96,9 @@ export class ProfileAccountComponent {
   protected readonly errors = FormErrorMessages;
 
   protected readonly username = computed(() => this.userStore.currentUser()?.username ?? '');
+  protected readonly clientName = computed(
+    () => this.userStore.currentUser()?.client?.displayName ?? null,
+  );
   protected readonly displayName = computed(() => this.userStore.currentUser()?.displayName ?? '');
   protected readonly roles = computed(() => this.userStore.currentUser()?.roles ?? []);
 

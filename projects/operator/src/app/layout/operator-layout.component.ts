@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
@@ -15,6 +15,7 @@ import {
   OperatingScopeStore,
   PointSwitcherComponent,
   ProfileMenuComponent,
+  UserStore,
 } from '@bikerental/shared';
 import { PointSwitchRefreshService } from '../core/point-switch-refresh.service';
 import { isFullScreenRoute } from './full-screen-route';
@@ -41,7 +42,7 @@ const NAV_ITEMS: NavItem[] = [
   ],
   host: { class: 'flex flex-col h-screen max-w-[480px] mx-auto' },
   template: `
-    <app-toolbar [title]="title" [showToggle]="false">
+    <app-toolbar [title]="title" [subtitle]="clientName()" [showToggle]="false">
       @if (scopeStore.notEstablished()) {
         <span toolbarCenter class="flex items-center gap-1 text-sm font-medium" role="status">
           <mat-icon class="!text-base !w-4 !h-4">location_off</mat-icon>
@@ -76,6 +77,10 @@ export class OperatorLayoutComponent {
   protected brand = inject(APP_BRAND);
   protected title = this.brand;
   protected readonly labels = Labels;
+  private readonly userStore = inject(UserStore);
+  protected readonly clientName = computed(
+    () => this.userStore.currentUser()?.client?.displayName ?? null,
+  );
   protected readonly pointStore = inject(CurrentPointStore);
   protected readonly scopeStore = inject(OperatingScopeStore);
   private readonly auth = inject(AuthService);
