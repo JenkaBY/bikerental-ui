@@ -72,19 +72,29 @@ Flags: `--app admin|operator|platform`, `--roles`, `--user`, `--tenant`, `--at`,
 
 ### Scenario → TTLs
 
-| Scenario                                 | URL params                                      | Expect                                      |
-| ---------------------------------------- | ----------------------------------------------- | ------------------------------------------- |
-| Happy path                               | none                                            | home, roles/tenant applied                  |
-| Access near expiry                       | `at=PT45S&rt=PT10M`                             | next request refreshes first (stale < 60 s) |
-| Access expired on reload                 | `at=PT1S&rt=PT10M`, wait 2 s, reload            | `recoverSession()` via refresh token        |
-| Both expired                             | `at=PT1S&rt=PT1S`, wait 2 s, deep link + reload | login redirect, return URL restored         |
-| No refresh token                         | `at=PT1S&refresh=false`, wait                   | 401 → login                                 |
-| Must change password                     | seeded user with `must_change_password`         | `/change-password` gate                     |
-| Wrong role                               | e.g. `devLogin=OPERATOR` on admin               | `/forbidden`                                |
-| Other tenant / suspended / closed client | `tenant=<id>` or matching user                  | tenant honoured, lifecycle gates            |
-| Switch user                              | second `devLogin` URL                           | new session, stores cleared                 |
+| Scenario                                 | URL params                                                                                                           | Expect                                                         |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Happy path                               | none                                                                                                                 | home, roles/tenant applied                                     |
+| Access near expiry                       | `at=PT45S&rt=PT10M`                                                                                                  | next request refreshes first (stale < 60 s)                    |
+| Access expired on reload                 | `at=PT1S&rt=PT10M`, wait 2 s, reload                                                                                 | `recoverSession()` via refresh token                           |
+| Both expired                             | `at=PT1S&rt=PT1S`, wait 2 s, deep link + reload                                                                      | login redirect, return URL restored                            |
+| No refresh token                         | `at=PT1S`, then drop `authnResult.refresh_token` from `oidc-<clientId>` sessionStorage via `javascript_tool`, reload | re-login (`?code=` callback)                                   |
+| Must change password                     | `user=dev.must-change.acme`                                                                                          | `/change-password` gate                                        |
+| Wrong role                               | e.g. `devLogin=OPERATOR` on admin                                                                                    | `/forbidden`                                                   |
+| Multi-role                               | `devLogin=ADMIN,OPERATOR&user=dev.multi.acme`                                                                        | both roles in claims                                           |
+| Other tenant / suspended / closed client | `user=dev.admin.globex` / `dev.admin.suspended-co` / `dev.admin.closed-co`                                           | tenant honoured; suspended/closed → API 403 `tenants.client.*` |
+| Switch user                              | second `devLogin` URL                                                                                                | new session, stores cleared                                    |
 
 Force expiry: short `at`, then `computer {action:"wait"}` past it (≤ 10 s per call).
+
+Notes from real runs:
+
+- Refreshed access tokens keep the TTL the session was created with (`at=PT1S` stays 1 s after refresh).
+- `refresh=false` is ignored by the session flow (the code exchange always issues a refresh token);
+  it only works for raw tokens (`npm run dev-auth -- --no-refresh`).
+- "Both expired" re-logs in silently while the backend session cookie is alive, so it shows as a
+  `?code=` callback plus restored return URL, not a visible sign-in form.
+- The first `navigate` in a freshly opened preview tab may fail with "denied"; retry once.
 
 ## 5. Exercise the change
 

@@ -40,7 +40,7 @@ http://localhost:4201/?devLogin=ADMIN&user=dev.admin.acme&at=PT30S&rt=PT10M
 ```
 
 Parameters: `devLogin` (roles, comma-separated), `user`, `tenant`, `at` / `rt` (access / refresh
-token TTL, ISO-8601 duration), `refresh=false` (no refresh token). The app redirects to the backend
+token TTL, ISO-8601 duration). The app redirects to the backend
 session endpoint and returns logged in; opening another `devLogin` URL switches user. Every built
 configuration (`dev`, `lan`, `production`) has `devAuth: false`; without the `dev` profile the app
 logs one console warning and uses the normal login.

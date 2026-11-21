@@ -47,7 +47,7 @@ export function provideOidcAuth(clientId: string): EnvironmentProviders {
       silentRenew: false,
       autoUserInfo: false,
       triggerRefreshWhenIdTokenExpired: false,
-      renewTimeBeforeTokenExpiresInSeconds: 60,
+      renewTimeBeforeTokenExpiresInSeconds: 10,
       logLevel: environment.production ? LogLevel.Error : LogLevel.Warn,
     },
   });
