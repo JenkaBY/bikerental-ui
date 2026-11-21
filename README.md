@@ -29,6 +29,25 @@ npm run fix      # auto-fix all lint and formatting issues
 npm run analyze  # visualize production bundle
 ```
 
+### Automatic login in dev
+
+Requires the backend running with the `dev` profile (`/api/dev/auth/{users,tokens,session}`, see
+[JenkaBY/bike-rental#394](https://github.com/JenkaBY/bike-rental/issues/394)). Under `ng serve`
+(`environment.ts`, `devAuth: true`) open any app with a `devLogin` query parameter:
+
+```
+http://localhost:4201/?devLogin=ADMIN&user=dev.admin.acme&at=PT30S&rt=PT10M
+```
+
+Parameters: `devLogin` (roles, comma-separated), `user`, `tenant`, `at` / `rt` (access / refresh
+token TTL, ISO-8601 duration), `refresh=false` (no refresh token). The app redirects to the backend
+session endpoint and returns logged in; opening another `devLogin` URL switches user. Every built
+configuration (`dev`, `lan`, `production`) has `devAuth: false`; without the `dev` profile the app
+logs one console warning and uses the normal login.
+
+Raw tokens for API checks: `npm run dev-auth -- --users`, or
+`npm run dev-auth -- --app operator --roles OPERATOR --at PT30S --field access_token`.
+
 ## Development Process
 
 Before committing, the following checks run automatically via Husky:
@@ -78,19 +97,19 @@ they run are genuinely different decisions:
 
 There are **two deployment targets**, one per workflow:
 
-|               | `pages` (dev) — `deploy-pages.yml`      | `pi` (preview & production) — `build-and-deploy.yml` |
-|---------------|-----------------------------------------|------------------------------------------------------|
-| Where         | GitHub Pages — the public demo          | Both Pi hosts, behind the API stack's router         |
-| API           | the Render web service                  | that same Pi host's API — one image, either host     |
-| API base from | `vars.BIKE_RENTAL_TEST_API` (build time) | `window.location.origin` (runtime)                  |
-| Built with    | `--configuration production,dev`         | `--configuration production`                         |
-| Environment   | `environment.dev.ts`                    | `environment.prod.ts`                                |
-| Apps          | gateway, admin, operator, platform      | gateway, admin, operator, platform (`scripts/apps.mjs`) |
-| Base href     | `/<repo>/`, `/<repo>/admin/`, …         | `/admin/`, `/operator/`                              |
-| Origin vs API | cross-origin (needs CORS)               | **same origin** — no preflights, no CORS on login     |
-| Routing       | static redirect files + root `404.html` | generated Caddy config in the image                  |
-| Triggered by  | manual dispatch only, any branch        | push to master (preview); production promoted by hand in `bike-rental` |
-| Delivered by  | `actions/deploy-pages`                  | image to GHCR + repository dispatch to `bike-rental` |
+|               | `pages` (dev) — `deploy-pages.yml`       | `pi` (preview & production) — `build-and-deploy.yml`                   |
+| ------------- | ---------------------------------------- | ---------------------------------------------------------------------- |
+| Where         | GitHub Pages — the public demo           | Both Pi hosts, behind the API stack's router                           |
+| API           | the Render web service                   | that same Pi host's API — one image, either host                       |
+| API base from | `vars.BIKE_RENTAL_TEST_API` (build time) | `window.location.origin` (runtime)                                     |
+| Built with    | `--configuration production,dev`         | `--configuration production`                                           |
+| Environment   | `environment.dev.ts`                     | `environment.prod.ts`                                                  |
+| Apps          | gateway, admin, operator, platform       | gateway, admin, operator, platform (`scripts/apps.mjs`)                |
+| Base href     | `/<repo>/`, `/<repo>/admin/`, …          | `/admin/`, `/operator/`                                                |
+| Origin vs API | cross-origin (needs CORS)                | **same origin** — no preflights, no CORS on login                      |
+| Routing       | static redirect files + root `404.html`  | generated Caddy config in the image                                    |
+| Triggered by  | manual dispatch only, any branch         | push to master (preview); production promoted by hand in `bike-rental` |
+| Delivered by  | `actions/deploy-pages`                   | image to GHCR + repository dispatch to `bike-rental`                   |
 
 The gateway is the index page on both targets: it exists because something has to answer the bare
 domain, and a page that lets a person pick beats a blind redirect into one of the two applications.
@@ -124,7 +143,7 @@ Two build steps plus a checked-in restore script make this work on static hostin
   their query string to a blind bounce.
 - **SPA path-restore script** — the companion half of the previous step, checked in as the first thing
   in each app's `<head>`: `projects/{gateway,admin,operator}/src/index.html`. It reads the `redirect`
-  param and calls `history.replaceState(...)` to put the original URL back *before* Angular bootstraps,
+  param and calls `history.replaceState(...)` to put the original URL back _before_ Angular bootstraps,
   so the Router sees `…/admin/en/?code=…` instead of the bounce URL.
 
   > ⚠️ This script **must** live in the source `index.html` and must never be injected by a post-build
@@ -201,14 +220,13 @@ client that can neither call the API nor log in). The variable is still named `B
 — it held the same Render host before "dev" had that name, and renaming it needs no code change here:
 
 | Target  | Repository variable    | Injected into        |
-|---------|-------------------------|----------------------|
-| `pages` | `BIKE_RENTAL_TEST_API`  | `environment.dev.ts` |
+| ------- | ---------------------- | -------------------- |
+| `pages` | `BIKE_RENTAL_TEST_API` | `environment.dev.ts` |
 
 `pi` (preview and production) is served on the same origin as its API (see "The `pi` container"
 above), so `environment.prod.ts` reads `window.location.origin` at runtime instead of taking a
 build-time variable — the one published image then works unchanged on both Pi environments, which is
 what lets a single `sha-<7>` be promoted from preview to production.
-
 
 ### Blocking Merges on Failed Build
 
@@ -238,7 +256,7 @@ To enable deployment, configure your repository:
 The **operator** app is a Progressive Web App, so staff can install it on a phone. It uses Angular's
 first-party service worker (`@angular/service-worker`).
 
-- **Scope:** *installable; freshness-first, not offline-first*. Offline operation is **not a supported
+- **Scope:** _installable; freshness-first, not offline-first_. Offline operation is **not a supported
   requirement today** — the config deliberately favours always serving the newest build over serving a
   cached one. Live data (backend API and the dev TimeTravel SSE stream) stays **network-only** and is
   never cached.
@@ -248,7 +266,7 @@ first-party service worker (`@angular/service-worker`).
   - `projects/operator/ngsw-config.json` — caching rules (app shell `prefetch`, assets `lazy`) plus two
     staleness controls. Referenced by the operator build's `serviceWorker` option:
     - `navigationRequestStrategy: "freshness"` — navigations go to the network first and fall back to the
-      cached shell only if the request *throws*, so a reachable network always yields the newest HTML.
+      cached shell only if the request _throws_, so a reachable network always yields the newest HTML.
     - `applicationMaxAge: "1d"` — a **self-healing backstop**, measured from the **build** timestamp
       baked into `ngsw.json` (not from install). Once a build is older than this, the worker stops
       serving it from cache and passes every request through to the network, which unpins a client that
@@ -272,6 +290,7 @@ first-party service worker (`@angular/service-worker`).
     ```
 
   A mismatch between the two is the signature of a client pinned to a stale build.
+
 - **Kill switch (fleet-wide recovery).** If a deploy ever pins clients to a broken or stale build and no
   ordinary fix can reach them, run the **Build and Deploy** workflow manually on `master` with **`disable_service_worker: true`**. This ships Angular's `safety-worker.js` in place of
   `ngsw-worker.js`, which unregisters the service worker and deletes every `ngsw:` cache on each client

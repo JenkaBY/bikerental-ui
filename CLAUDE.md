@@ -42,7 +42,8 @@ are technology-agnostic; do not edit them per-feature.
 - **Skills** (`.claude/skills/`): auto-discovered, loaded on demand by description. Angular skills
   (component, signals, forms, http, routing, di, directives, testing, ssr, tooling,
   data-flow-orchestrator) plus `typescript-es2022`, `playwright-testing`, `github-actions`, and
-  `skill-authoring` (how to write new skills).
+  `skill-authoring` (how to write new skills), and `agent-ui-testing` (verify a change in the browser
+  pane as a chosen seeded user via dev auto-login, no manual login).
 - **MCP** (`.mcp.json`): the `angular-cli` server exposes Angular tools (`find_examples`,
   `get_best_practices`, `list_projects`, `onpush_zoneless_migration`, `search_documentation`). Use
   them to fetch the latest official Angular docs, examples, and best practices when working with

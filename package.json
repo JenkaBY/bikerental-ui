@@ -39,6 +39,7 @@
     "i18n:check": "node scripts/check-ru-translations.mjs",
     "generate:api": "ng-openapi -c projects/shared/config/openapi.config.ts",
     "start:platform": "ng serve platform --port 4203",
+    "dev-auth": "node scripts/dev-auth.mjs",
     "start:platform:ru": "ng serve platform --configuration development,ru --port 4203",
     "build:platform": "ng build platform",
     "build:platform:dev": "ng build platform --configuration production,dev"

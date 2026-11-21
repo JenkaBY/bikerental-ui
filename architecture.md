@@ -526,6 +526,7 @@ AUTHN_AUTHZ:
   - Authentication: OIDC authorization-code flow via `angular-auth-oidc-client`, one client id per authenticated SPA (`bike-rental-admin`, `bike-rental-operator`); `gateway` has no authentication.
   - Token attachment: `apiAuthInterceptor` attaches the bearer token to API-bound requests only, with a single refresh-and-replay on a 401 response.
   - Authorization: role and `mustChangePassword` claims are decoded client-side from the access token (`readAccessTokenClaims`) and gate route activation only (`authGuard`, `mustChangePasswordGuard`, `adminGuard`, `operatorGuard`, `customerProfileGuard`); the backend is the actual authorization authority for every API call.
+  - Dev-only auto-login: when `environment.devAuth` is true (only `environment.ts`, used by `ng serve`), opening an app with `?devLogin=<ROLES>` probes `GET /api/dev/auth/users` and, if present, clears `oidc-<clientId>` sessionStorage and redirects to the backend `/api/dev/auth/session` (redirect target from `DeployedPath.fromBase`), after which the normal authorization-code flow completes silently. Backend without the `dev` profile → one console warning, normal login. `scripts/dev-auth.mjs` issues raw tokens from `POST /api/dev/auth/tokens` for API checks; it is tooling, never bundled.
   - Password policy (length, composition, confirmation match) is enforced client-side before submission and re-validated by the backend.
 
 TRUST_BOUNDARIES:
