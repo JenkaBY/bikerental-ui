@@ -1,0 +1,8 @@
+{
+  "^/[a-z0-9_-]{1,50}/operator": {
+    "target": "http://localhost:4202",
+    "secure": false,
+    "pathRewrite": { "^/[a-z0-9_-]{1,50}/operator": "/operator" },
+    "logLevel": "warn"
+  }
+}

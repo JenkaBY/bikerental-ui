@@ -1,0 +1,8 @@
+{
+  "^/[a-z0-9_-]{1,50}/admin": {
+    "target": "http://localhost:4201",
+    "secure": false,
+    "pathRewrite": { "^/[a-z0-9_-]{1,50}/admin": "/admin" },
+    "logLevel": "warn"
+  }
+}

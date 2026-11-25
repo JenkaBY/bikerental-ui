@@ -14,6 +14,8 @@ export class Labels {
   static readonly Description = $localize`Description`;
   static readonly Name = $localize`Name`;
   static readonly Slug = $localize`Slug`;
+  static readonly BusinessSlug = $localize`Business slug`;
+  static readonly BusinessSlugHint = $localize`The short name of your business, e.g. velo-riga`;
   static readonly Close = $localize`Close`;
   static readonly Edit = $localize`Edit`;
   static readonly Create = $localize`Create`;

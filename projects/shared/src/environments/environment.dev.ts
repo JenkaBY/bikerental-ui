@@ -7,4 +7,7 @@ export const environment = {
   brand: 'Bike Rental',
   timeTravelEnabled: false,
   devAuth: false,
+  adminAddressTemplate: '',
+  operatorAddressTemplate: '',
+  gatewayAddress: '',
 };

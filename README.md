@@ -105,7 +105,7 @@ There are **two deployment targets**, one per workflow:
 | Built with    | `--configuration production,dev`         | `--configuration production`                                           |
 | Environment   | `environment.dev.ts`                     | `environment.prod.ts`                                                  |
 | Apps          | gateway, admin, operator, platform       | gateway, admin, operator, platform (`scripts/apps.mjs`)                |
-| Base href     | `/<repo>/`, `/<repo>/admin/`, …          | `/admin/`, `/operator/`                                                |
+| Base href     | `/<repo>/`, `/<repo>/admin/`, …          | `/admin/`, `/operator/` (served as `/{slug}/admin/`, `/{slug}/operator/`) |
 | Origin vs API | cross-origin (needs CORS)                | **same origin** — no preflights, no CORS on login                      |
 | Routing       | static redirect files + root `404.html`  | generated Caddy config in the image                                    |
 | Triggered by  | manual dispatch only, any branch         | push to master (preview); production promoted by hand in `bike-rental` |
@@ -170,9 +170,11 @@ https://bike-rental.<host>/                → 302 /en/       (the gateway, ROOT
 https://bike-rental.<host>/{en,ru}/        → gateway — the index page, picks admin or operator
 https://bike-rental.<host>/de/x            → 302 /en/x      (unbuilt locale falls back, path kept)
 https://bike-rental.<host>/healthz         → the container is up
-https://bike-rental.<host>/admin           → 302 /admin/en/
-https://bike-rental.<host>/admin/{en,ru}/  → admin SPA (deep links resolve to that locale's shell)
-https://bike-rental.<host>/admin/de/x      → 302 /admin/en/x  (unbuilt locale falls back, path kept)
+https://bike-rental.<host>/velo-riga/admin/{en,ru}/…  → admin SPA of business velo-riga (operator alike)
+https://bike-rental.<host>/velo-riga/admin[/…]        → admin shell of the last-used locale (cookie), no redirect —
+                                                       this is the sign-in callback / post-logout address
+https://bike-rental.<host>/velo-riga/anything-else    → 404 (only the two business SPAs live under a slug)
+https://bike-rental.<host>/admin/{en,ru}/             → the build's own files; the shell sends a slug-less visit to /
 https://bike-rental.<host>/wat             → 404
 ```
 
@@ -205,13 +207,36 @@ one image serves both hosts.
 
 ### OIDC redirect URIs (admin, operator & platform auth)
 
-Both the admin and operator SPAs compute their OAuth `redirect_uri` from `document.baseURI` (the
-app's mount path) — each points at its own base path directly rather than a synthetic
-`/login/callback` route, so it always resolves to a real `index.html` on static hosting instead of
-depending on the 404 SPA-fallback trick. `redirect_uri` and `post_logout_redirect_uri` are therefore
-the same URL per app, and the **backend OAuth client must register it for each context** the app
-runs in. Admin, operator and platform are registered as separate OAuth clients (`bike-rental-admin`,
-`bike-rental-operator` and `bike-rental-platform`, redirect `/platform/…`):
+Admin and operator belong to **one business at a time**, named by the slug in their own address
+(`/velo-riga/admin`). The authorization server reads the business from the slug in `redirect_uri`
+and signs the person in to that business only, so each SPA sends its slug back unchanged:
+
+| Client                 | `redirect_uri`                                 | `post_logout_redirect_uri`   |
+| ---------------------- | ---------------------------------------------- | ---------------------------- |
+| `bike-rental-admin`    | `{origin}{prefix}/{slug}/admin/login/callback`    | `{origin}{prefix}/{slug}/admin`    |
+| `bike-rental-operator` | `{origin}{prefix}/{slug}/operator/login/callback` | `{origin}{prefix}/{slug}/operator` |
+| `bike-rental-platform` | the platform base (`…/platform/…`), unchanged      | same                          |
+
+The backend registers these as **templates** — everything around `{slug}` is matched literally — so
+each environment registers its own:
+
+| Environment      | Admin template (operator: same with `operator`, dev port 4202)                |
+| ---------------- | ------------------------------------------------------------------------------ |
+| local dev        | `http://localhost:4201/{slug}/admin/login/callback`, logout `…/{slug}/admin`   |
+| `pages`          | `https://<user>.github.io/bikerental-ui/{slug}/admin/login/callback`            |
+| `pi` (both hosts) | `https://<host>/{slug}/admin/login/callback`                                   |
+
+Neither address carries a locale. The SPA remembers the last locale in the `bikerental_locale`
+cookie; the container (`gen-ui-config.mjs`) and the Pages `404.html` use it to pick the locale
+shell for a locale-less address, and the app writes the locale segment back into the URL on boot
+(`adoptTenantBase`, `shared/utils/tenant-base.ts`). An address without a slug cannot sign in and is
+sent to the gateway, where the person types the slug. A refused refresh (`invalid_grant`) is
+treated as signed out. **Breaking:** this ships together with the backend's TENANT-003 release —
+an older UI cannot sign in against it, and this UI cannot sign in against an older backend.
+
+In local dev each dev server proxies `/{slug}/{app}/…` to its own `/{app}/…`
+(`proxy.admin.conf.json`, `proxy.operator.conf.json`), and the gateway forwards to the per-app
+ports through `adminAddressTemplate` / `operatorAddressTemplate` in `environment.ts`.
 
 `pages` (dev) is genuinely cross-origin from its API (GitHub Pages → Render), so its base comes from a
 repository variable injected into `environment.dev.ts` at build time by the **Inject Bike Rental

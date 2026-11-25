@@ -2,11 +2,18 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { UserPreferences, UserProfile, UserSettings } from '@ui-models';
 import { UserSettingsMapper } from '../mappers/user-settings.mapper';
 import { LocaleRedirectService } from '../locale-redirect.service';
+import { DeployedPath } from '../../shared/utils/deployed-path';
 
-const SETTINGS_STORAGE_KEY = 'user_settings';
+const SETTINGS_STORAGE_PREFIX = 'user_settings';
+
+function settingsStorageKey(): string {
+  const slug = DeployedPath.fromBase(document.baseURI).slug;
+  return slug ? `${SETTINGS_STORAGE_PREFIX}:${slug}` : SETTINGS_STORAGE_PREFIX;
+}
 
 @Injectable({ providedIn: 'root' })
 export class UserStore {
+  private readonly storageKey = settingsStorageKey();
   private readonly _currentUser = signal<UserProfile | null>(null);
   private readonly _settings = signal<UserSettings>(this.readCache());
   private readonly localeRedirect = inject(LocaleRedirectService);
@@ -25,7 +32,7 @@ export class UserStore {
     effect(() => {
       const settings = this._settings();
       try {
-        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+        localStorage.setItem(this.storageKey, JSON.stringify(settings));
       } catch {
         // Cache is best-effort — the server stays the source of truth.
       }
@@ -38,6 +45,7 @@ export class UserStore {
 
   clearUser(): void {
     this._currentUser.set(null);
+    this._settings.set({});
   }
 
   applySettings(settings: UserSettings): void {
@@ -47,7 +55,10 @@ export class UserStore {
 
   private readCache(): UserSettings {
     try {
-      const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (this.storageKey !== SETTINGS_STORAGE_PREFIX) {
+        localStorage.removeItem(SETTINGS_STORAGE_PREFIX);
+      }
+      const stored = localStorage.getItem(this.storageKey);
       return stored === null ? {} : UserSettingsMapper.fromResponse(JSON.parse(stored));
     } catch {
       return {};

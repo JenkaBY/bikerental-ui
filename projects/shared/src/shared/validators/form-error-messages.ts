@@ -5,6 +5,7 @@ export class FormErrorMessages {
   static readonly streetMaxLength = $localize`Maximum 255 characters`;
   static readonly slugRequired = $localize`Slug is required`;
   static readonly slugPattern = $localize`Only uppercase letters, numbers, hyphens and underscores`;
+  static readonly businessSlugPattern = $localize`Use up to 50 lowercase letters, numbers, hyphens or underscores`;
   static readonly slugMaxLength = $localize`Maximum 50 characters`;
   static readonly nameRequired = $localize`Name is required`;
   static readonly consecutiveSpaces = $localize`Use no more than one space in a row`;

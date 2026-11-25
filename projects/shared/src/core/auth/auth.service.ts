@@ -17,6 +17,7 @@ import {
   switchMap,
   take,
   tap,
+  throwError,
 } from 'rxjs';
 import { UsersService } from '../api/generated';
 import { UserProfileMapper, UserSettingsMapper } from '../mappers';
@@ -105,6 +106,10 @@ export class AuthService {
     if (!this.refreshInFlight$) {
       this.refreshInFlight$ = this.oidc.forceRefreshSession().pipe(
         switchMap((result) => (result.isAuthenticated ? this.syncClaims(result) : of(result))),
+        catchError((error: unknown) => {
+          this.signOutLocally();
+          return throwError(() => error);
+        }),
         finalize(() => {
           this.refreshInFlight$ = null;
         }),
@@ -139,9 +144,7 @@ export class AuthService {
     return this.oidc.getRefreshToken().pipe(
       take(1),
       switchMap((refreshToken) =>
-        refreshToken
-          ? this.oidc.forceRefreshSession().pipe(catchError(() => of(fallback)))
-          : of(fallback),
+        refreshToken ? this.refresh().pipe(catchError(() => of(fallback))) : of(fallback),
       ),
     );
   }
@@ -183,10 +186,14 @@ export class AuthService {
       return;
     }
     const returnUrl = this.router.url;
+    this.signOutLocally();
+    this.login(returnUrl);
+  }
+
+  private signOutLocally(): void {
     this.oidc.logoffLocal();
     this.resetClaims();
     this.userStore.clearUser();
-    this.login(returnUrl);
   }
 
   private syncClaims(result: LoginResponse): Observable<LoginResponse> {

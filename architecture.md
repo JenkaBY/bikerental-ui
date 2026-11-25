@@ -112,7 +112,7 @@ OVERVIEW_REF: `overview.md` (see "Components" → admin feature components, and 
 ENTRY_POINT: `projects/admin/src/main.ts`
 EXPOSES:
   - PROTOCOL: HTTP
-    ENDPOINT_OR_TOPIC: `/admin/` (baseHref; dev server port 4201)
+    ENDPOINT_OR_TOPIC: `/{slug}/admin/` (served per business; build baseHref `/admin/`, rewritten at runtime by `adoptTenantBase`; dev server port 4201)
     DESCRIPTION: Compiled static bundle for the back-office area
 CONSUMES:
   - PROTOCOL: HTTP
@@ -165,7 +165,7 @@ OVERVIEW_REF: `overview.md` (see "Components" → operator feature components, a
 ENTRY_POINT: `projects/operator/src/main.ts`
 EXPOSES:
   - PROTOCOL: HTTP
-    ENDPOINT_OR_TOPIC: `/operator/` (baseHref; dev server port 4202)
+    ENDPOINT_OR_TOPIC: `/{slug}/operator/` (served per business; build baseHref `/operator/`, rewritten at runtime by `adoptTenantBase`; dev server port 4202)
     DESCRIPTION: Compiled static bundle for the rental-workflow area; installable as a PWA (service worker + manifest)
 CONSUMES:
   - PROTOCOL: HTTP
@@ -319,7 +319,7 @@ TO_SERVICE: admin
 PROTOCOL: HTTP
 CHANNEL: full-page navigation (`document.location.href` assignment, not Angular routing)
 DIRECTION: One-way
-PURPOSE: Application-chooser card sends the user into the admin SPA; the target URL is built by `DeployedPath` from `document.baseURI` rather than a hardcoded path, so it resolves correctly under both deployment targets' differing prefixes
+PURPOSE: The person types their business slug and the chooser sends them to `/{slug}/admin` (or `/{slug}/operator`) — no API call. The address is the environment's `adminAddressTemplate` / `operatorAddressTemplate` when set (local dev, where each SPA has its own port), otherwise built by `DeployedPath` from `document.baseURI`, so it resolves correctly under both deployment targets' differing prefixes
 CONTRACT_REF: `projects/gateway/src/app/features/home/home.component.ts`, `projects/shared/src/shared/utils/deployed-path.ts`
 
 INTERACTION_ID: 11
@@ -407,7 +407,7 @@ CONFIG_REF: `projects/operator/ngsw-config.json`, `projects/operator/public/mani
 INFRA_NAME: Deployed-path resolution
 TYPE: Library
 USED_BY_SERVICES: gateway, admin, operator, shared
-PURPOSE: Single place that knows the deployed URL shape (origin/prefix/app/locale/route), because the URL prefix differs between the two deployment targets (`/bikerental-ui/operator/ru/…` on Pages vs `/operator/ru/…` on `pi`) — used for every cross-app link, locale switch and OIDC `redirect_uri`
+PURPOSE: Single place that knows the deployed URL shape (origin/prefix/slug/app/locale/route; the slug only for the business apps admin/operator), because the URL prefix differs between the two deployment targets (`/bikerental-ui/operator/ru/…` on Pages vs `/operator/ru/…` on `pi`) — used for every cross-app link, locale switch and OIDC `redirect_uri`
 CONFIG_REF: `projects/shared/src/shared/utils/deployed-path.ts`
 
 ---
@@ -526,6 +526,7 @@ AUTHN_AUTHZ:
   - Authentication: OIDC authorization-code flow via `angular-auth-oidc-client`, one client id per authenticated SPA (`bike-rental-admin`, `bike-rental-operator`); `gateway` has no authentication.
   - Token attachment: `apiAuthInterceptor` attaches the bearer token to API-bound requests only, with a single refresh-and-replay on a 401 response.
   - Authorization: role and `mustChangePassword` claims are decoded client-side from the access token (`readAccessTokenClaims`) and gate route activation only (`authGuard`, `mustChangePasswordGuard`, `adminGuard`, `operatorGuard`, `customerProfileGuard`); the backend is the actual authorization authority for every API call.
+  - Per-business sign-in: admin and operator are served under the business slug (`/{slug}/admin`, `/{slug}/operator`). `adoptTenantBase()` (`shared/utils/tenant-base.ts`, called by each app's `main.ts` before bootstrap) reads the slug from the path, rewrites `<base href>` to `{prefix}/{slug}/{app}/{locale}/`, writes the locale segment into an address that lacks one, and remembers the locale in the `bikerental_locale` cookie; an address without a slug is sent to the gateway. The OIDC config is built lazily (`StsConfigLoader`) from that base: `redirect_uri` = `{origin}{prefix}/{slug}/{app}/login/callback`, `post_logout_redirect_uri` = `{origin}{prefix}/{slug}/{app}`; the authorization server resolves the business from the slug and puts it in the token's `tenant_id`. Token storage is keyed per client and slug (`oidc-<clientId>-<slug>`). A refused refresh (`invalid_grant` — business no longer active, account of another business) clears the local session and starts a new sign-in.
   - Dev-only auto-login: when `environment.devAuth` is true (only `environment.ts`, used by `ng serve`), opening an app with `?devLogin=<ROLES>` probes `GET /api/dev/auth/users` and, if present, clears `oidc-<clientId>` sessionStorage and redirects to the backend `/api/dev/auth/session` (redirect target from `DeployedPath.fromBase`), after which the normal authorization-code flow completes silently. Backend without the `dev` profile → one console warning, normal login. `scripts/dev-auth.mjs` issues raw tokens from `POST /api/dev/auth/tokens` for API checks; it is tooling, never bundled.
   - Password policy (length, composition, confirmation match) is enforced client-side before submission and re-validated by the backend.
 
@@ -554,9 +555,9 @@ CONTAINER_RUNTIME: Docker (`caddy:2-alpine` base image), used only for the `pi` 
 ORCHESTRATION: NONE in this repository. The `pi` target's image is pushed to GHCR and this repository's involvement ends with a `repository_dispatch` to the backend's own repository (`JenkaBY/bike-rental`), which is responsible for pulling and running the new image on the production host; no Kubernetes/Compose/Helm/Terraform artifacts exist here.
 
 SERVICES_AND_PORTS:
-  - Local development: gateway `http://localhost:4200` (with proxy to the other two), admin `http://localhost:4201`, operator `http://localhost:4202`; backend expected at `http://localhost:8080`.
-  - `pages` target: static files at `https://jenkaby.github.io/bikerental-ui/` — gateway at the site root (`/en/`, `/ru/`), admin at `/admin/…`, operator at `/operator/…`.
-  - `pi` target: one Caddy container listening on port 8080 internally, serving gateway at `/`, admin at `/admin/`, operator at `/operator/` — no path prefix, because the container is the whole origin.
+  - Local development: gateway `http://localhost:4200` (with proxy to the other two), admin `http://localhost:4201/{slug}/admin/`, operator `http://localhost:4202/{slug}/operator/` (each dev server proxies `/{slug}/{app}/…` to its own `/{app}/…` via `proxy.{app}.conf.json`); backend expected at `http://localhost:8080`.
+  - `pages` target: static files at `https://jenkaby.github.io/bikerental-ui/` — gateway at the site root (`/en/`, `/ru/`), admin at `/{slug}/admin/…`, operator at `/{slug}/operator/…` (no such directories exist — the root `404.html` restores them into the app's locale shell).
+  - `pi` target: one Caddy container listening on port 8080 internally, serving gateway at `/`, admin at `/{slug}/admin/`, operator at `/{slug}/operator/` — no path prefix, because the container is the whole origin.
 
 CONFIG_REFS:
   - `.github/workflows/build-and-deploy.yml` — the full pipeline: `quality` → `test` → `build` (matrix `pages`/`pi`) → `ci` gate → `deploy` (Pages) / `image` (GHCR) → `notify-server` (cross-repo dispatch).

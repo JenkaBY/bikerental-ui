@@ -221,6 +221,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.admin.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "admin:build:production"
@@ -369,6 +372,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.operator.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "operator:build:production"

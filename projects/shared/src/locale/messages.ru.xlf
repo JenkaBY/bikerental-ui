@@ -7750,6 +7750,18 @@
         <source>The reason must be at most 500 characters</source>
         <target>Причина должна содержать не более 500 символов</target>
       </trans-unit>
+      <trans-unit id="5321761092367441386" datatype="html">
+        <source>Business slug</source>
+        <target>Код бизнеса</target>
+      </trans-unit>
+      <trans-unit id="2552936269218722860" datatype="html">
+        <source>The short name of your business, e.g. velo-riga</source>
+        <target>Краткое имя вашего бизнеса, например velo-riga</target>
+      </trans-unit>
+      <trans-unit id="8158554892982670902" datatype="html">
+        <source>Use up to 50 lowercase letters, numbers, hyphens or underscores</source>
+        <target>Не более 50 строчных латинских букв, цифр, дефисов или подчёркиваний</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

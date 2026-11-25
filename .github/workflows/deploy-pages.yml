@@ -166,6 +166,14 @@ jobs:
             sed -i "s|BASE_PLACEHOLDER|${BASE}|g; s|APP_PLACEHOLDER|${app}|g" "staging/${app}/index.html"
           done
 
+      # Business applications are addressed under the business slug —
+      # /<repo>/velo-riga/admin/… — and no such directory exists, so every one
+      # of those addresses lands here too. The slug path is restored untouched;
+      # the application reads the slug from it. When the address carries no
+      # locale (the sign-in callback, the post-logout landing) the shell of the
+      # locale the person last used is chosen, from the cookie the application
+      # sets on boot.
+      #
       # GitHub Pages only ever serves the 404.html at the SITE ROOT — nested
       # 404.html files (admin/en/404.html, etc.) are never looked up and are
       # dead weight. This single root 404.html inspects the requested path,
@@ -198,8 +206,13 @@ jobs:
                   var segments = rel.split('/').filter(Boolean);
                   var apps = ['admin', 'operator', 'platform'];
                   var locales = ['en', 'ru'];
+                  var tenantApps = ['admin', 'operator'];
+                  var cookie = document.cookie.match(/(?:^|;\s*)bikerental_locale=([^;]+)/);
+                  var lastLocale = cookie && locales.indexOf(cookie[1]) !== -1 ? cookie[1] : 'en';
                   var appDir;
-                  if (apps.indexOf(segments[0]) !== -1) {
+                  if (/^[a-z0-9_-]{1,50}$/.test(segments[0] || '') && tenantApps.indexOf(segments[1]) !== -1) {
+                    appDir = segments[1] + '/' + (locales.indexOf(segments[2]) !== -1 ? segments[2] : lastLocale);
+                  } else if (apps.indexOf(segments[0]) !== -1) {
                     var locale = locales.indexOf(segments[1]) !== -1 ? segments[1] : 'en';
                     appDir = segments[0] + '/' + locale;
                   } else if (locales.indexOf(segments[0]) !== -1) {
