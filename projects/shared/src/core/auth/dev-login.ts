@@ -40,7 +40,7 @@ async function requestDevSession(clientId: string, configId: string): Promise<bo
     }
   }
 
-  session.searchParams.set('redirect', DeployedPath.fromBase(document.baseURI).toString());
+  session.searchParams.set('redirect', devLoginReturnAddress());
 
   const available = await fetch(new URL('/api/dev/auth/users', environment.apiUrl))
     .then((response) => response.ok)
@@ -56,4 +56,9 @@ async function requestDevSession(clientId: string, configId: string): Promise<bo
   sessionStorage.removeItem(configId);
   window.location.replace(session.toString());
   return true;
+}
+
+function devLoginReturnAddress(): string {
+  const app = DeployedPath.fromBase(document.baseURI);
+  return app.slug ? app.withoutLocale().toString().replace(/\/+$/, '') : app.toString();
 }
