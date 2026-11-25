@@ -1,6 +1,13 @@
 import { EnvironmentProviders } from '@angular/core';
-import { LogLevel, provideAuth } from 'angular-auth-oidc-client';
+import {
+  LogLevel,
+  OpenIdConfiguration,
+  provideAuth,
+  StsConfigLoader,
+  StsConfigStaticLoader,
+} from 'angular-auth-oidc-client';
 import { environment } from '../../environments/environment';
+import { DeployedPath } from '../../shared/utils/deployed-path';
 import { startDevLoginIfRequested } from './dev-login';
 
 interface StoredOidcState {
@@ -27,28 +34,54 @@ function purgeStaleWellKnownEndpoints(configId: string): void {
   }
 }
 
-export function provideOidcAuth(clientId: string): EnvironmentProviders {
+interface ReturnAddresses {
+  redirectUrl: string;
+  postLogoutRedirectUri: string;
+}
+
+function returnAddresses(): ReturnAddresses {
+  const app = DeployedPath.fromBase(document.baseURI);
+
+  if (app.slug) {
+    const businessApp = app.withoutLocale();
+    return {
+      redirectUrl: businessApp.withRoute('login/callback').toString(),
+      postLogoutRedirectUri: stripTrailingSlash(businessApp.toString()),
+    };
+  }
+
   const appBaseUrl = document.baseURI.endsWith('/') ? document.baseURI : `${document.baseURI}/`;
-  const configId = `oidc-${clientId}`;
+  return { redirectUrl: appBaseUrl, postLogoutRedirectUri: appBaseUrl };
+}
+
+export function provideOidcAuth(clientId: string): EnvironmentProviders {
+  return provideAuth({
+    loader: {
+      provide: StsConfigLoader,
+      useFactory: () => new StsConfigStaticLoader(oidcConfig(clientId)),
+    },
+  });
+}
+
+function oidcConfig(clientId: string): OpenIdConfiguration {
+  const slug = DeployedPath.fromBase(document.baseURI).slug;
+  const configId = slug ? `oidc-${clientId}-${slug}` : `oidc-${clientId}`;
 
   purgeStaleWellKnownEndpoints(configId);
   startDevLoginIfRequested(clientId, configId);
 
-  return provideAuth({
-    config: {
-      configId,
-      authority: environment.apiUrl,
-      clientId,
-      redirectUrl: appBaseUrl,
-      postLogoutRedirectUri: appBaseUrl,
-      responseType: 'code',
-      scope: 'openid profile offline_access',
-      useRefreshToken: true,
-      silentRenew: false,
-      autoUserInfo: false,
-      triggerRefreshWhenIdTokenExpired: false,
-      renewTimeBeforeTokenExpiresInSeconds: 10,
-      logLevel: environment.production ? LogLevel.Error : LogLevel.Warn,
-    },
-  });
+  return {
+    configId,
+    authority: environment.apiUrl,
+    clientId,
+    ...returnAddresses(),
+    responseType: 'code',
+    scope: 'openid profile offline_access',
+    useRefreshToken: true,
+    silentRenew: false,
+    autoUserInfo: false,
+    triggerRefreshWhenIdTokenExpired: false,
+    renewTimeBeforeTokenExpiresInSeconds: 10,
+    logLevel: environment.production ? LogLevel.Error : LogLevel.Warn,
+  };
 }

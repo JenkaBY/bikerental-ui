@@ -226,6 +226,7 @@ export * from './shared/utils/point-money-error.classifier';
 export * from './shared/utils/shift-difference';
 export * from './shared/utils/shift-closure-presentation';
 export * from './shared/utils/deployed-path';
+export * from './shared/utils/tenant-base';
 export * from './shared/utils/user-initials.util';
 export * from './shared/utils/geo-location.util';
 export * from './shared/utils/revenue-bucket-label.util';

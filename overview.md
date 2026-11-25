@@ -125,11 +125,12 @@ RESPONSIBILITIES:
 
 COMPONENT_NAME: HomeComponent
 TYPE: Gateway
-PURPOSE: Locale-aware application chooser that hard-navigates to the admin or operator SPA.
+PURPOSE: Locale-aware application chooser: takes a business slug and hard-navigates to that business's admin or operator SPA (`/{slug}/admin`, `/{slug}/operator`), or to the platform SPA.
 RESPONSIBILITIES:
 
 - Read `document.baseURI` and `LOCALE_ID` to derive the deployed URL prefix.
-- Build the target URL with `DeployedPath.fromBase().withApp().withLocale()`.
+- Validate the typed slug (lowercased, `[a-z0-9_-]{1,50}`); admin/operator cards stay disabled until it is valid.
+- Build the target URL from `environment.adminAddressTemplate` / `operatorAddressTemplate` when set, otherwise with `DeployedPath.fromBase().withApp().withSlug().withLocale()`; no API call.
 - Navigate by assigning `document.location.href` (cross-SPA hop, not Angular routing).
   SOURCE: `projects/gateway/src/app/features/home/home.component.ts`
   CALLS:

@@ -52,7 +52,9 @@ Backend JSON  →  core/api/generated/  →  core/mappers/  →  core/models/  �
 are absent locally but present on GitHub Pages (`/operator/…` vs `/bikerental-ui/operator/ru/…`), so
 guessing them ships a prod-only 404. Use `DeployedPath` (`shared/utils/deployed-path.ts`, from
 `@bikerental/shared`): `fromBase(document.baseURI)` / `fromLocation(baseURI, href)`, then
-`.withApp()` / `.withLocale()` / `.withRoute()` / `.toString()`. Locale-code→segment mapping is
+`.withApp()` / `.withSlug()` / `.withLocale()` / `.withRoute()` / `.toString()`. Admin and operator are
+served under the business slug (`/{slug}/admin/…`); `adoptTenantBase()` in each app's `main.ts` puts
+the slug into `<base href>` before bootstrap, so `document.baseURI` already carries it. Locale-code→segment mapping is
 `localeSegment()` in that same file; adding an app/locale means editing `APP_SEGMENTS` /
 `LOCALE_SEGMENTS` there only.
 
