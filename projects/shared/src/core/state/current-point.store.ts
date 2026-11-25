@@ -1,7 +1,9 @@
 import { computed, inject, Injectable, InjectionToken, signal } from '@angular/core';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
+import { HttpContext } from '@angular/common/http';
 import { RentalPointsService } from '../api/generated';
+import { SKIP_POINT_SCOPE } from '../interceptors/point.interceptor';
 import { suppressErrorNotification } from '../errors/http-error-context';
 import { PointMapper } from '../mappers';
 import type { Point } from '../models';
@@ -23,23 +25,34 @@ export class CurrentPointStore {
 
   private readonly _points = signal<Point[]>([]);
   private readonly _switching = signal(false);
+  private readonly _loaded = signal(false);
 
   readonly points = computed(() =>
     this._points().filter((point) => point.status !== 'PERMANENTLY_CLOSED'),
   );
   readonly nameBySlug = computed(() => new Map(this._points().map((p) => [p.slug, p.name])));
-  readonly currentSlug = computed(() => this.userStore.workingPointSlug());
+  readonly currentSlug = computed(() => {
+    const slug = this.userStore.workingPointSlug();
+    return !this._loaded() || this._points().some((p) => p.slug === slug) ? slug : null;
+  });
   readonly current = computed(
     () => this._points().find((p) => p.slug === this.currentSlug()) ?? null,
   );
   readonly canSwitch = computed(() => this.points().length > 1 && !this._switching());
 
   load(): Observable<void> {
-    return this.service.searchPoints({ page: 0, size: MAX_POINTS, sort: ['name'] }).pipe(
-      map((page) => (page.items ?? []).map(PointMapper.fromResponse)),
-      tap((points) => this._points.set(points)),
-      map(() => undefined as void),
-    );
+    return this.service
+      .searchPoints({ page: 0, size: MAX_POINTS, sort: ['name'] }, undefined, 'body', {
+        context: new HttpContext().set(SKIP_POINT_SCOPE, true),
+      })
+      .pipe(
+        map((page) => (page.items ?? []).map(PointMapper.fromResponse)),
+        tap((points) => {
+          this._points.set(points);
+          this._loaded.set(true);
+        }),
+        map(() => undefined as void),
+      );
   }
 
   refreshCurrent(): Observable<void> {
